@@ -532,43 +532,121 @@ LINK_CONFIG = {
     'answer_key':            ('Answer Key',            'btn-indigo', 'fa-key'),
     'syllabus_pdf':          ('Syllabus PDF',          'btn-gray',   'fa-book'),
     'result_link':           ('Result',                'btn-green',  'fa-trophy'),
-    'click_here':            ('Click Here',            'btn-blue',   'fa-link'),
+    'click_here':            ('Open Link',             'btn-blue',   'fa-link'),
     'merit_list':            ('Merit List',            'btn-teal',   'fa-list'),
     'score_card':            ('Score Card',            'btn-orange', 'fa-file'),
 }
 
-def render_important_links(il_obj):
-    if not il_obj or not isinstance(il_obj, dict): return ''
+def smart_label_from_url(url, fallback, job_title='', org=''):
+    """Infer SEO-friendly label from URL patterns + job context if fallback is generic."""
+    u = url.lower()
+    ctx = (job_title or org or '').strip()
+    if re.match(r'^(click here|view|link|here|open link|open)$', fallback.strip(), re.I):
+        if 'admit' in u or 'hallticket' in u or 'hall-ticket' in u:
+            return f'Download {ctx} Admit Card' if ctx else 'Download Admit Card'
+        if 'answer' in u or 'anskey' in u:
+            return f'{ctx} Answer Key' if ctx else 'Download Answer Key'
+        if 'syllabus' in u:
+            return f'Download {ctx} Syllabus' if ctx else 'Download Syllabus'
+        if 'result' in u or 'merit' in u or 'scorecard' in u:
+            return f'Check {ctx} Result' if ctx else 'Check Result'
+        if '.pdf' in u or 'notification' in u or 'advt' in u or 'advertisement' in u:
+            return f'Download {ctx} Notification PDF' if ctx else 'Download Notification PDF'
+        if 'login' in u or 'signin' in u:
+            return f'{ctx} Candidate Login' if ctx else 'Candidate Login'
+        if 'register' in u or 'signup' in u:
+            return f'Register for {ctx}' if ctx else 'Register Now'
+        if 'apply' in u or 'application' in u or 'career' in u or 'recruit' in u:
+            return f'Apply Online for {ctx}' if ctx else 'Apply Online'
+    return fallback
+
+def smart_icon(label_lower, url):
+    u = url.lower()
+    if '.pdf' in u or 'notification' in label_lower or 'pdf' in label_lower or 'advt' in label_lower:
+        return 'fa-file-pdf'
+    if 'admit' in label_lower or 'hallticket' in u: return 'fa-id-card'
+    if 'result' in label_lower or 'merit' in label_lower: return 'fa-trophy'
+    if 'answer' in label_lower: return 'fa-key'
+    if 'syllabus' in label_lower: return 'fa-book'
+    if 'login' in label_lower or 'candidate' in label_lower: return 'fa-right-to-bracket'
+    if 'register' in label_lower: return 'fa-user-plus'
+    if 'apply' in label_lower or 'application' in label_lower: return 'fa-paper-plane'
+    if 'website' in label_lower or ('official' in label_lower and '.pdf' not in u): return 'fa-globe'
+    return 'fa-link'
+
+def smart_css(label_lower, url):
+    u = url.lower()
+    if '.pdf' in u or 'notification' in label_lower or 'pdf' in label_lower: return 'btn-red'
+    if 'admit' in label_lower: return 'btn-teal'
+    if 'result' in label_lower or 'merit' in label_lower: return 'btn-green'
+    if 'answer' in label_lower: return 'btn-indigo'
+    if 'syllabus' in label_lower: return 'btn-gray'
+    if 'login' in label_lower: return 'btn-purple'
+    if 'register' in label_lower: return 'btn-orange'
+    if 'apply' in label_lower: return 'btn-blue'
+    if 'website' in label_lower or ('official' in label_lower and '.pdf' not in u): return 'btn-green'
+    return 'btn-blue'
+
+def render_important_links(il_obj, job_title='', org=''):
+    if not il_obj: return ''
     buttons = ''; seen = set()
 
+    # FORMAT A: list of {label, url} objects (SR/Sarkari format)
+    if isinstance(il_obj, list):
+        for item in il_obj:
+            if not isinstance(item, dict): continue
+            url = str(item.get('url') or item.get('href') or '').strip()
+            lbl = str(item.get('label') or item.get('title') or '').strip()
+            if not url.startswith('http') or is_blocked(url) or url in seen: continue
+            seen.add(url)
+            lbl = smart_label_from_url(url, lbl or 'Open Link', job_title, org)
+            lbl_lower = lbl.lower()
+            icon_k = smart_icon(lbl_lower, url)
+            css_k  = smart_css(lbl_lower, url)
+            buttons += f'<a href="{e(url)}" class="link-btn {css_k}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {icon_k}"></i> {e(lbl[:60])}</a>\n'
+        if buttons:
+            return render_card('linear-gradient(135deg,#1e40af,#1e3a8a)', 'fa-link', 'Important Links',
+                               f'<div class="links-grid">{buttons}</div>')
+        return ''
+
+    # FORMAT B/C/D: dict format
+    if not isinstance(il_obj, dict): return ''
+
+    # Extract _labels for click_here / generic key disambiguation
+    _labels = il_obj.get('_labels', {})
+    if not isinstance(_labels, dict): _labels = {}
+
     for key, val in il_obj.items():
-        if key == 'structured_links': continue
+        if key in ('structured_links', '_labels', 'seo_tags', '_useful_links'): continue
         urls = val if isinstance(val, list) else [val]
-        label, css, icon = LINK_CONFIG.get(key, ('View', 'btn-gray', 'fa-link'))
-        for url in urls:
+        raw_label, css, icon = LINK_CONFIG.get(key, ('Open Link', 'btn-blue', 'fa-link'))
+        label_override = str(_labels.get(key, '') or '').strip()
+        label = label_override if label_override and not re.match(r'^(click here|view|link|here|open)$', label_override, re.I) else raw_label
+        url_count = sum(1 for u in urls if str(u or '').startswith('http'))
+        for idx, url in enumerate(urls):
             url = str(url or '').strip()
             if not url.startswith('http') or is_blocked(url) or url in seen: continue
             seen.add(url)
-            _icon, _css = icon, css
-            if url.lower().endswith('.pdf'): _icon, _css = 'fa-file-pdf', 'btn-red'
-            buttons += f'<a href="{e(url)}" class="link-btn {_css}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {_icon}"></i> {e(label)}</a>\n'
+            final_label = label if url_count <= 1 else f'{label} ({idx+1})'
+            final_label = smart_label_from_url(url, final_label, job_title, org)
+            lbl_lower = final_label.lower()
+            _icon = smart_icon(lbl_lower, url)
+            _css  = smart_css(lbl_lower, url)
+            buttons += f'<a href="{e(url)}" class="link-btn {_css}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {_icon}"></i> {e(final_label[:60])}</a>\n'
 
     structured = il_obj.get('structured_links', [])
     if isinstance(structured, list):
         for item in structured:
             if not isinstance(item, dict): continue
             url = str(item.get('url','') or item.get('href','')).strip()
-            lbl = str(item.get('label','') or item.get('title','View')).strip() or 'View'
+            lbl = str(item.get('label','') or item.get('title','') or 'Open Link').strip() or 'Open Link'
             if not url.startswith('http') or is_blocked(url) or url in seen: continue
             seen.add(url)
+            lbl = smart_label_from_url(url, lbl, job_title, org)
             lbl_lower = lbl.lower()
-            if 'apply' in lbl_lower: icon_k = 'fa-paper-plane'; css_k = 'btn-blue'
-            elif 'result' in lbl_lower: icon_k = 'fa-trophy'; css_k = 'btn-green'
-            elif 'admit' in lbl_lower: icon_k = 'fa-id-card'; css_k = 'btn-teal'
-            elif '.pdf' in url.lower(): icon_k = 'fa-file-pdf'; css_k = 'btn-red'
-            elif 'official' in lbl_lower: icon_k = 'fa-globe'; css_k = 'btn-green'
-            else: icon_k = 'fa-link'; css_k = 'btn-blue'
-            buttons += f'<a href="{e(url)}" class="link-btn {css_k}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {icon_k}"></i> {e(lbl[:50])}</a>\n'
+            icon_k = smart_icon(lbl_lower, url)
+            css_k  = smart_css(lbl_lower, url)
+            buttons += f'<a href="{e(url)}" class="link-btn {css_k}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {icon_k}"></i> {e(lbl[:60])}</a>\n'
 
     if not buttons: return ''
     return render_card('linear-gradient(135deg,#1e40af,#1e3a8a)', 'fa-link', 'Important Links',
@@ -671,7 +749,7 @@ def build_static_html(slug, title, full_job_obj, cat):
     pe     = full_job_obj.get('physical_eligibility') or {}
     hta    = full_job_obj.get('how_to_apply') or []
     insts  = full_job_obj.get('important_instructions') or []
-    il     = full_job_obj.get('important_links') or {}
+    il     = full_job_obj.get('important_links') or full_job_obj.get('importantLinks') or {}
     faq    = full_job_obj.get('faq') or []
 
     canon_url  = f"{BASE_URL}/jobs/{slug}/"
@@ -826,7 +904,7 @@ def build_static_html(slug, title, full_job_obj, cat):
     sections_html += render_physical_eligibility(pe)
     sections_html += render_how_to_apply(hta)
     sections_html += render_instructions(insts)
-    sections_html += render_important_links(il)
+    sections_html += render_important_links(il, job_title=title, org=org)
     sections_html += render_faq(faq)
     # ISSUE-021 FIX: Related jobs for internal linking (PageRank flow to job pages)
     sections_html += generate_related_jobs_html(
@@ -1092,7 +1170,30 @@ for job in sd_jobs:
             else:
                 il_built[key] = href
         raw_il = il_built
-    il = raw_il if isinstance(raw_il, dict) else {}
+    # Handle SR-format importantLinks (camelCase, array of {label, url})
+    if isinstance(raw_il, list):
+        il = raw_il  # pass list directly — render_important_links handles Format A
+    elif isinstance(raw_il, dict):
+        il = raw_il
+        # Merge importantLinks array if present and dict is empty/minimal
+        il_arr = job.get('importantLinks')
+        if isinstance(il_arr, list) and il_arr:
+            if not il:
+                il = il_arr  # use array directly
+            else:
+                # Collect existing URLs to avoid duplicates
+                existing_urls = set()
+                for v in il.values():
+                    for u in (v if isinstance(v, list) else [v]):
+                        if str(u or '').startswith('http'): existing_urls.add(str(u).strip())
+                extra = [item for item in il_arr
+                         if isinstance(item, dict) and str(item.get('url','') or '').strip() not in existing_urls]
+                if extra:
+                    il.setdefault('structured_links', []).extend(
+                        {'url': item['url'], 'label': item.get('label','Open Link')} for item in extra
+                    )
+    else:
+        il = {}
 
     bd = {
         'job_title':        title,

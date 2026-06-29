@@ -533,38 +533,58 @@ function renderRawTables(tables, ilRef){
   return result;
 }
 
-var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],application_form:['Download Application Form','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Apply Online','btn-blue','fa-paper-plane'],merit_list:['Merit List','btn-teal','fa-list']};
+var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official_website:['Official Website','btn-green','fa-globe'],notification_pdf:['Download Notification','btn-red','fa-file-pdf'],download_notification:['Download Notification','btn-red','fa-file-pdf'],official_notification:['Official Notification','btn-red','fa-file-pdf'],application_form:['Download Application Form','btn-red','fa-file-pdf'],registration_link:['Register Now','btn-orange','fa-user-plus'],login_link:['Login','btn-purple','fa-right-to-bracket'],admit_card:['Admit Card','btn-teal','fa-id-card'],answer_key:['Answer Key','btn-indigo','fa-key'],syllabus_pdf:['Syllabus PDF','btn-gray','fa-book'],result_link:['Result','btn-green','fa-trophy'],click_here:['Open Link','btn-blue','fa-link'],merit_list:['Merit List','btn-teal','fa-list']};
 
 // Smart label from URL context
-function smartLabel(u, fallbackLabel, fallbackCss, fallbackIcon){
+function smartLabel(u, fallbackLabel, fallbackCss, fallbackIcon, ctx){
+  // ctx = job title/org for SEO-friendly labels
   var ul=u.toLowerCase();
+  var isGenericFb=/^(click here|view|link|here|open link|open)$/i.test((fallbackLabel||'').trim());
+  function lbl(base){ return (isGenericFb&&ctx) ? base+' '+ctx : base; }
+  if(ul.includes('admit')||ul.includes('hallticket'))
+    return [(isGenericFb&&ctx)?'Download '+ctx+' Admit Card':'Admit Card','btn-teal','fa-id-card'];
+  if(ul.includes('answer')||ul.includes('anskey'))
+    return [(isGenericFb&&ctx)?ctx+' Answer Key':'Answer Key','btn-indigo','fa-key'];
+  if(ul.includes('syllabus'))
+    return [(isGenericFb&&ctx)?'Download '+ctx+' Syllabus':'Syllabus','btn-gray','fa-book'];
+  if(ul.includes('result')||ul.includes('merit'))
+    return [(isGenericFb&&ctx)?'Check '+ctx+' Result':'Result / Merit List','btn-green','fa-trophy'];
   if(ul.endsWith('.pdf')||ul.includes('/pdf')||ul.includes('notice')||ul.includes('advertisement')||ul.includes('notification'))
-    return [fallbackLabel.match(/notif|pdf|advert/i)?fallbackLabel:'Download Notification','btn-red','fa-file-pdf'];
-  if(ul.includes('result')||ul.includes('merit')) return ['Result / Merit List','btn-green','fa-trophy'];
-  if(ul.includes('admit')||ul.includes('hallticket')) return ['Admit Card','btn-teal','fa-id-card'];
-  if(ul.includes('answer')||ul.includes('anskey')) return ['Answer Key','btn-indigo','fa-key'];
-  if(ul.includes('syllabus')) return ['Syllabus','btn-gray','fa-book'];
-  if(ul.includes('register')||ul.includes('signup')||ul.includes('sign-up')||ul.includes('create')) return ['Register Now','btn-orange','fa-user-plus'];
-  if(ul.includes('login')||ul.includes('signin')) return ['Login / Status','btn-purple','fa-right-to-bracket'];
-  if(ul.includes('apprentice')||ul.includes('ibpsreg')||ul.includes('apply')||ul.includes('career')||ul.includes('recruit')||ul.includes('applic')) return ['Apply Online','btn-blue','fa-paper-plane'];
+    return [(isGenericFb&&ctx)?'Download '+ctx+' Notification PDF':
+            (fallbackLabel.match(/notif|pdf|advert/i)?fallbackLabel:'Download Notification'),'btn-red','fa-file-pdf'];
+  if(ul.includes('login')||ul.includes('signin'))
+    return [(isGenericFb&&ctx)?ctx+' Candidate Login':'Candidate Login','btn-purple','fa-right-to-bracket'];
+  if(ul.includes('register')||ul.includes('signup')||ul.includes('sign-up')||ul.includes('create'))
+    return [(isGenericFb&&ctx)?'Register for '+ctx:'Register Now','btn-orange','fa-user-plus'];
+  if(ul.includes('apprentice')||ul.includes('ibpsreg')||ul.includes('apply')||ul.includes('career')||ul.includes('recruit')||ul.includes('applic'))
+    return [(isGenericFb&&ctx)?'Apply Online for '+ctx:'Apply Online','btn-blue','fa-paper-plane'];
   if(ul.includes('apprenticeshipindia')||ul.includes('nats.edu')||ul.includes('nats.')) return ['Apprenticeship Portal','btn-teal','fa-link'];
   return [fallbackLabel, fallbackCss, fallbackIcon];
 }
 
-function renderLinks(il){
+function renderLinks(il,ctx){
   if(!il||typeof il!=='object') return '';
+  // Handle Format A: array of {label, url} — merge into structured_links for rendering
+  if(Array.isArray(il)){
+    var _tmpIl={structured_links:[]};
+    for(var _ai of il){
+      if(_ai&&_ai.url) _tmpIl.structured_links.push({url:_ai.url,label:_ai.label||'Open Link'});
+    }
+    il=_tmpIl;
+  }
   var btns='',seen=new Set();
+  var _labels=(il._labels&&typeof il._labels==='object')?il._labels:{};
   for(var [key,val] of Object.entries(il)){
-    if(key==='structured_links'||key==='seo_tags'||key==='_useful_links') continue;
+    if(key==='structured_links'||key==='seo_tags'||key==='_useful_links'||key==='_labels') continue;
     var urls=Array.isArray(val)?val:[val];
-    var [defLabel,defCss,defIcon]=LINK_CFG[key]||['View','btn-gray','fa-link'];
+    var [defLabel,defCss,defIcon]=LINK_CFG[key]||['Open Link','btn-blue','fa-link'];
+    var _labelOverride=(_labels[key]||'').trim();
+    if(_labelOverride&&!/^(click here|view|link|here|open)$/i.test(_labelOverride)) defLabel=_labelOverride;
     var urlCount=urls.filter(u=>safe(u).startsWith('http')).length;
     for(var url of urls){
       var u=safe(url);if(!u.startsWith('http')||isBlocked(u)||seen.has(u))continue;seen.add(u);
       // For click_here arrays or single-url keys, use smart labels
-      var [label,cl,ic]=(key==='click_here'&&urlCount>1)||urlCount>1
-        ? smartLabel(u, defLabel, defCss, defIcon)
-        : smartLabel(u, defLabel, defCss, defIcon);
+      var [label,cl,ic]=smartLabel(u, defLabel, defCss, defIcon, ctx);
       btns+=`<a href="${esc(u)}" class="link-btn ${cl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ic}"></i> ${esc(label)}</a>\n`;
     }
   }
@@ -572,9 +592,8 @@ function renderLinks(il){
     if(typeof item!=='object') continue;
     var u=safe(item.url||item.href||'');var lbl=safe(item.label||item.title||'View')||'View';
     if(!u.startsWith('http')||isBlocked(u)||seen.has(u))continue;seen.add(u);
-    var [slbl,scl,sic]=smartLabel(u, lbl, 'btn-blue', 'fa-link');
-    // If title is meaningful (not generic), prefer it
-    if(!/^(click here|view|link|here)$/i.test(lbl.trim())) slbl=lbl;
+    var [slbl,scl,sic]=smartLabel(u, lbl, 'btn-blue', 'fa-link', ctx);
+    if(!/^(click here|view|link|here|open link|open)$/i.test(lbl.trim())) slbl=lbl;
     btns+=`<a href="${esc(u)}" class="link-btn ${scl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${sic}"></i> ${esc(slbl.slice(0,50))}</a>\n`;
   }
   // useful_links fallback
@@ -584,9 +603,8 @@ function renderLinks(il){
     var href=safe(ul.links||ul.url||'');if(Array.isArray(ul.links)) href=safe(ul.links[0]||'');
     if(!href.startsWith('http')||isBlocked(href)||seen.has(href))continue;seen.add(href);
     var ulTitle=safe(ul.title||ul.name||'Link');
-    var [ulLbl,ulCl,ulIc]=smartLabel(href, ulTitle, 'btn-blue', 'fa-link');
-    // Prefer explicit title if it's meaningful
-    if(ulTitle&&!/^(click here|view|link|here)$/i.test(ulTitle.trim())) ulLbl=ulTitle;
+    var [ulLbl,ulCl,ulIc]=smartLabel(href, ulTitle, 'btn-blue', 'fa-link', ctx);
+    if(ulTitle&&!/^(click here|view|link|here|open link|open)$/i.test(ulTitle.trim())) ulLbl=ulTitle;
     btns+=`<a href="${esc(href)}" class="link-btn ${ulCl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ulIc}"></i> ${esc(ulLbl.slice(0,50))}</a>\n`;
   }
   return btns?card('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',`<div class="links-grid">${btns}</div>`):'';
@@ -881,7 +899,24 @@ function buildPage(slug, job){
   var sourceUrl=safe(job.source_url||job.url||'');
 
   // Build important_links — merge all sources
-  var il=Object.assign({},job.important_links||{});
+  // Build il from important_links (dict) or importantLinks (SR array)
+  var _rawIl=job.important_links;
+  var il;
+  if(Array.isArray(_rawIl)&&_rawIl.length){
+    // Format A: array of {label, url} — pass directly; renderLinks handles it
+    il=_rawIl;
+  } else {
+    il=Object.assign({},_rawIl||{});
+    // Merge SR-format importantLinks array into structured_links
+    if(Array.isArray(job.importantLinks)&&job.importantLinks.length){
+      if(!il.structured_links) il.structured_links=[];
+      for(var _sItem of job.importantLinks){
+        if(_sItem&&_sItem.url&&_sItem.label){
+          il.structured_links.push({url:_sItem.url,label:_sItem.label});
+        }
+      }
+    }
+  }
   // Array format: [{title, links}]
   if(Array.isArray(job.useful_links)&&job.useful_links.length) il._useful_links=job.useful_links;
   // Object format with _all array: {apply_online:..., _all:[{title,links}]}
@@ -1020,7 +1055,8 @@ function buildPage(slug, job){
   sections+=renderHTA(hta);
   sections+=renderInstructions(insts);
   // 11. Useful Links
-  sections+=renderLinks(il);
+  var _linkCtx=(title+' '+org).trim();
+  sections+=renderLinks(il,_linkCtx);
   // 12. FAQs
   sections+=renderFAQ(faq);
 

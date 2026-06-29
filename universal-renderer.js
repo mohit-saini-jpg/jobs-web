@@ -516,14 +516,23 @@
     const _jobTitle = safe(job.title || (job.basic_details && (job.basic_details.job_title || job.basic_details.post_name)) || '');
     const _orgName  = safe(job.organization || (job.basic_details && (job.basic_details.organization_name || job.basic_details.department)) || '');
     if (il && typeof il === 'object' && !Array.isArray(il)) {
+      const _labels = (il._labels && typeof il._labels === 'object') ? il._labels : {};
       for (const [k, v] of Object.entries(il)) {
+        if (k === '_labels' || k === 'seo_tags' || k === 'structured_links') continue;
         const urls = Array.isArray(v) ? v : [v];
         for (const url of urls) {
           const u = safe(url);
           if (!isUrl(u)) continue;
           const type = classifyLinkKey(k, u);
-          const rawLabel = smartLinkLabel(k, u, urls.length > 1 ? urls.indexOf(url) + 1 : 0);
-          const label = isGenericLabel(rawLabel) ? generateSeoAnchor(u, type, _jobTitle, _orgName) : rawLabel;
+          // Prefer _labels[k] if available and not generic
+          const labelOverride = safe((_labels[k] || ''));
+          let label;
+          if (labelOverride && !isGenericLabel(labelOverride)) {
+            label = labelOverride;
+          } else {
+            const rawLabel = smartLinkLabel(k, u, urls.length > 1 ? urls.indexOf(url) + 1 : 0, `${_jobTitle} ${_orgName}`.trim());
+            label = isGenericLabel(rawLabel) ? generateSeoAnchor(u, type, _jobTitle, _orgName) : rawLabel;
+          }
           job._udyn_links.push({ label, url: u, type });
         }
       }
@@ -628,20 +637,27 @@
     return 'default';
   }
 
-  function smartLinkLabel(key, url, index) {
-    if (/notification_pdf|official_notif/i.test(key)) return 'Official Notification PDF';
-    if (/login/i.test(key)) return 'Candidate Login';
+  function smartLinkLabel(key, url, index, ctx) {
+    // ctx = job title / org for SEO labels
+    var c = (ctx || '').trim();
+    if (/notification_pdf|official_notif/i.test(key)) return c ? `Download ${c} Notification PDF` : 'Official Notification PDF';
+    if (/login/i.test(key)) return c ? `${c} Candidate Login` : 'Candidate Login';
     if (/click_here/i.test(key)) {
-      if (/login|candidate/i.test(url)) return 'Candidate Login / Apply Online';
-      if (isPdf(url)) return 'Download Notification PDF';
-      if (/apply|register/i.test(url)) return 'Apply Online';
-      if (index > 1) return `Link ${index}`;
-      return 'Apply / Official Link';
+      if (/admit|hallticket/i.test(url)) return c ? `Download ${c} Admit Card` : 'Download Admit Card';
+      if (/answer|anskey/i.test(url)) return c ? `${c} Answer Key` : 'Download Answer Key';
+      if (/syllabus/i.test(url)) return c ? `Download ${c} Syllabus` : 'Download Syllabus';
+      if (/result|merit|scorecard/i.test(url)) return c ? `Check ${c} Result` : 'Check Result';
+      if (/login|candidate/i.test(url)) return c ? `${c} Candidate Login` : 'Candidate Login';
+      if (isPdf(url)||/notification|advt|advertisement/i.test(url)) return c ? `Download ${c} Notification PDF` : 'Download Notification PDF';
+      if (/register|signup/i.test(url)) return c ? `Register for ${c}` : 'Register Now';
+      if (/apply|career|recruit|applic/i.test(url)) return c ? `Apply Online for ${c}` : 'Apply Online';
+      if (index > 1) return `Official Link ${index}`;
+      return c ? `${c} – Official Link` : 'Apply / Official Link';
     }
-    if (/apply/i.test(key)) return 'Apply Online';
-    if (/official/i.test(key)) return 'Official Website';
-    if (/notification|advt|advertisement/i.test(key)) return 'Official Notification';
-    if (/pdf/i.test(key) || isPdf(url)) return 'Download PDF';
+    if (/apply/i.test(key)) return c ? `Apply Online for ${c}` : 'Apply Online';
+    if (/official/i.test(key)) return c ? `${c} Official Website` : 'Official Website';
+    if (/notification|advt|advertisement/i.test(key)) return c ? `Download ${c} Notification` : 'Official Notification';
+    if (/pdf/i.test(key) || isPdf(url)) return c ? `Download ${c} PDF` : 'Download PDF';
     if (/website|home/i.test(key)) return 'Official Website';
     return keyToLabel(key);
   }
