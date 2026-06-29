@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260629114121'; // auto-updated by generate_version.js
+const SW_VERSION = '20260629092344'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -400,11 +400,11 @@ async function trimCache(cache, maxEntries, maxAgeMs) {
 // PUSH NOTIFICATIONS — preserved exactly
 // ══════════════════════════════════════════════════════════════
 const CAT_ACTIONS = {
-  'latest-jobs' : [{ action: 'view', title: '💼 Apply Now'    }, { action: 'dismiss', title: '✕' }],
-  'result'      : [{ action: 'view', title: '🏆 Result Dekho' }, { action: 'dismiss', title: '✕' }],
-  'admit-card'  : [{ action: 'view', title: '🎫 Download'     }, { action: 'dismiss', title: '✕' }],
-  'answer-key'  : [{ action: 'view', title: '🔑 Dekho'        }, { action: 'dismiss', title: '✕' }],
-  'admission'   : [{ action: 'view', title: '🎓 Apply'        }, { action: 'dismiss', title: '✕' }],
+  'latest-jobs' : [{ action: 'view', title: '💼 अभी साईट विजिट करे मुका ना खोये' }],
+  'result'      : [{ action: 'view', title: '🏆 अभी साईट विजिट करे मुका ना खोये' }],
+  'admit-card'  : [{ action: 'view', title: '🎫 अभी साईट विजिट करे मुका ना खोये' }],
+  'answer-key'  : [{ action: 'view', title: '🔑 अभी साईट विजिट करे मुका ना खोये' }],
+  'admission'   : [{ action: 'view', title: '🎓 अभी साईट विजिट करे मुका ना खोये' }],
 };
 
 self.addEventListener('push', e => {
@@ -426,8 +426,7 @@ self.addEventListener('push', e => {
       silent    : false,
       vibrate   : [150, 80, 150],
       actions   : CAT_ACTIONS[category] || [
-        { action: 'view',    title: '👁 Dekho' },
-        { action: 'dismiss', title: '✕' },
+        { action: 'view', title: '🔔 अभी साइट विजिट करें मौका ना खोयें' },
       ],
       timestamp : Date.now(),
     })

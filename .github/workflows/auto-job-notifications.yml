@@ -85,7 +85,7 @@ jobs:
               fallbackKey: 'Latest_Notifications',
               topic:       'tsj-latest-jobs',
               emoji:       '💼',
-              action:      '💼 Apply Now',
+              action:      '💼 अभी साइट विजिट करें मौका ना खोयें',
               body:        (t) => `${t.slice(0,80)} — Abhi apply karein! Last date miss mat karo.`,
             },
             'result': {
@@ -93,7 +93,7 @@ jobs:
               fallbackKey: null,
               topic:       'tsj-result',
               emoji:       '🏆',
-              action:      '🏆 Result Dekho',
+              action:      '🏆 अभी साइट विजिट करें मौका ना खोयें',
               body:        (t) => `${t.slice(0,80)} — Result aa gaya! Roll no. check karo.`,
             },
             'admit-card': {
@@ -101,7 +101,7 @@ jobs:
               fallbackKey: null,
               topic:       'tsj-admit-card',
               emoji:       '🎫',
-              action:      '🎫 Download Karo',
+              action:      '🎫 अभी साइट विजिट करें मौका ना खोयें',
               body:        (t) => `${t.slice(0,80)} — Admit Card jari! Abhi download karo.`,
             },
             'answer-key': {
@@ -109,7 +109,7 @@ jobs:
               fallbackKey: null,
               topic:       'tsj-answer-key',
               emoji:       '🔑',
-              action:      '🔑 Dekho',
+              action:      '🔑 अभी साइट विजिट करें मौका ना खोयें',
               body:        (t) => `${t.slice(0,80)} — Answer Key jari!`,
             },
             'admission': {
@@ -117,7 +117,7 @@ jobs:
               fallbackKey: null,
               topic:       'tsj-admission',
               emoji:       '🎓',
-              action:      '🎓 Dekho',
+              action:      '🎓 अभी साइट विजिट करें मौका ना खोयें',
               body:        (t) => `${t.slice(0,80)} — Admission form open!`,
             },
           };
@@ -223,8 +223,7 @@ jobs:
                 requireInteraction: false,
                 vibrate:            [150, 80, 150],
                 actions: [
-                  { action: 'view',    title: cat.action },
-                  { action: 'dismiss', title: '✕ Baad Mein' },
+                  { action: 'view', title: cat.action },
                 ],
               },
               fcmOptions: { link: jobUrl },

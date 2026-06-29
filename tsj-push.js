@@ -256,8 +256,7 @@
         vibrate: [150, 80, 150],
         data   : { url: url, category: catKey },
         actions: [
-          { action: 'view',    title: cat.emoji + ' Dekho' },
-          { action: 'dismiss', title: '✕' }
+          { action: 'view', title: '🔔 अभी साइट विजिट करें मौका ना खोयें' }
         ]
       };
       // Use SW registration.showNotification (works when tab not focused)

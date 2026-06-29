@@ -87,8 +87,7 @@ const message = {
       requireInteraction: false,
       vibrate:            [150, 80, 150],
       actions: [
-        { action: 'view',    title: '👁 Dekho' },
-        { action: 'dismiss', title: '✕ Baad Mein' },
+        { action: 'view', title: '🔔 अभी साइट विजिट करें मौका ना खोयें' },
       ],
     },
     fcmOptions: { link: url },
