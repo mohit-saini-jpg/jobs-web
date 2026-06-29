@@ -538,27 +538,64 @@ LINK_CONFIG = {
 }
 
 def smart_label_from_url(url, fallback, job_title='', org=''):
-    """Infer SEO-friendly label from URL patterns + job context if fallback is generic."""
+    """Per-URL SEO label: URL pattern takes priority, then context, then fallback."""
     u = url.lower()
     ctx = (job_title or org or '').strip()
-    if re.match(r'^(click here|view|link|here|open link|open)$', fallback.strip(), re.I):
-        if 'admit' in u or 'hallticket' in u or 'hall-ticket' in u:
+    is_generic = bool(re.match(r'^(click here|view|link|here|open link|open|official notification pdf|official pdf document)$', (fallback or '').strip(), re.I))
+
+    # ── URL-first detection (always runs, regardless of fallback) ──
+    # PDF files: detect by extension or encoded filename
+    if re.search(r'\.(pdf|PDF)|%2F.*\.pdf|application%20form', url, re.I):
+        # Try to infer PDF type from filename
+        fname = url.split('/')[-1].lower().replace('%20', ' ')
+        if 'application' in fname or 'form' in fname:
+            return f'Download {ctx} Application Form PDF' if ctx else 'Download Application Form PDF'
+        if 'syllabus' in fname:
+            return f'Download {ctx} Syllabus PDF' if ctx else 'Download Syllabus PDF'
+        if 'admit' in fname or 'hallticket' in fname:
             return f'Download {ctx} Admit Card' if ctx else 'Download Admit Card'
-        if 'answer' in u or 'anskey' in u:
-            return f'{ctx} Answer Key' if ctx else 'Download Answer Key'
-        if 'syllabus' in u:
-            return f'Download {ctx} Syllabus' if ctx else 'Download Syllabus'
-        if 'result' in u or 'merit' in u or 'scorecard' in u:
-            return f'Check {ctx} Result' if ctx else 'Check Result'
-        if '.pdf' in u or 'notification' in u or 'advt' in u or 'advertisement' in u:
-            return f'Download {ctx} Notification PDF' if ctx else 'Download Notification PDF'
-        if 'login' in u or 'signin' in u:
-            return f'{ctx} Candidate Login' if ctx else 'Candidate Login'
-        if 'register' in u or 'signup' in u:
-            return f'Register for {ctx}' if ctx else 'Register Now'
-        if 'apply' in u or 'application' in u or 'career' in u or 'recruit' in u:
-            return f'Apply Online for {ctx}' if ctx else 'Apply Online'
-    return fallback
+        if 'result' in fname or 'merit' in fname:
+            return f'{ctx} Result PDF' if ctx else 'Result PDF'
+        if 'answer' in fname or 'anskey' in fname:
+            return f'{ctx} Answer Key PDF' if ctx else 'Answer Key PDF'
+        # Generic PDF — use non-generic fallback if available
+        if not is_generic:
+            return fallback
+        return f'Download {ctx} Notification PDF' if ctx else 'Download Notification PDF'
+
+    if 'admit' in u or 'hallticket' in u or 'hall-ticket' in u:
+        return f'Download {ctx} Admit Card' if ctx else 'Download Admit Card'
+    if 'answer' in u or 'anskey' in u:
+        return f'{ctx} Answer Key' if ctx else 'Download Answer Key'
+    if 'syllabus' in u:
+        return f'Download {ctx} Syllabus' if ctx else 'Download Syllabus'
+    if 'result' in u or 'merit' in u or 'scorecard' in u:
+        return f'Check {ctx} Result' if ctx else 'Check Result'
+    if 'notification' in u or 'advt' in u or 'advertisement' in u:
+        return f'{ctx} Official Notification' if ctx else 'Official Notification'
+    if 'login' in u or 'signin' in u or 'candidate' in u:
+        return f'{ctx} Candidate Login' if ctx else 'Candidate Login'
+    if 'register' in u or 'signup' in u:
+        return f'Register for {ctx}' if ctx else 'Register Now'
+    if 'apply' in u or 'career' in u or 'recruit' in u:
+        return f'Apply Online for {ctx}' if ctx else 'Apply Online'
+
+    # Root/homepage domain URL
+    try:
+        from urllib.parse import urlparse
+        p = urlparse(url)
+        if p.path in ('', '/', None):
+            return f'{ctx} Official Website' if ctx else 'Official Website'
+        # Short path like /page/437 — likely a recruitment/notification page
+        if len(p.path.strip('/').split('/')) <= 2:
+            if is_generic:
+                return f'{ctx} Official Recruitment Page' if ctx else 'Official Recruitment Page'
+    except: pass
+
+    # Non-generic fallback wins
+    if not is_generic:
+        return fallback
+    return f'{ctx} – Official Link' if ctx else 'Open Link' 
 
 def smart_icon(label_lower, url):
     u = url.lower()
@@ -587,7 +624,7 @@ def smart_css(label_lower, url):
     if 'website' in label_lower or ('official' in label_lower and '.pdf' not in u): return 'btn-green'
     return 'btn-blue'
 
-def render_important_links(il_obj, job_title='', org=''):
+def render_important_links(il_obj, job_title='', org='', all_official_links=None):
     if not il_obj: return ''
     buttons = ''; seen = set()
 
@@ -621,14 +658,18 @@ def render_important_links(il_obj, job_title='', org=''):
         urls = val if isinstance(val, list) else [val]
         raw_label, css, icon = LINK_CONFIG.get(key, ('Open Link', 'btn-blue', 'fa-link'))
         label_override = str(_labels.get(key, '') or '').strip()
-        label = label_override if label_override and not re.match(r'^(click here|view|link|here|open)$', label_override, re.I) else raw_label
         url_count = sum(1 for u in urls if str(u or '').startswith('http'))
         for idx, url in enumerate(urls):
             url = str(url or '').strip()
             if not url.startswith('http') or is_blocked(url) or url in seen: continue
             seen.add(url)
-            final_label = label if url_count <= 1 else f'{label} ({idx+1})'
-            final_label = smart_label_from_url(url, final_label, job_title, org)
+            # _labels wins only for single-URL keys; multi-URL arrays use per-URL detection
+            if url_count == 1 and label_override and not re.match(r'^(click here|view|link|here|open)$', label_override, re.I):
+                final_label = label_override
+                final_label = smart_label_from_url(url, final_label, job_title, org)
+            else:
+                # Per-URL: always detect from URL first, fallback to raw_label
+                final_label = smart_label_from_url(url, raw_label, job_title, org)
             lbl_lower = final_label.lower()
             _icon = smart_icon(lbl_lower, url)
             _css  = smart_css(lbl_lower, url)
@@ -647,6 +688,20 @@ def render_important_links(il_obj, job_title='', org=''):
             icon_k = smart_icon(lbl_lower, url)
             css_k  = smart_css(lbl_lower, url)
             buttons += f'<a href="{e(url)}" class="link-btn {css_k}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {icon_k}"></i> {e(lbl[:60])}</a>\n'
+
+    # Merge all_official_links (scraper's extracted links table)
+    if isinstance(all_official_links, list):
+        for item in all_official_links:
+            if not isinstance(item, dict): continue
+            url = str(item.get('url') or item.get('href') or '').strip()
+            lbl = str(item.get('label') or item.get('title') or '').strip()
+            if not url.startswith('http') or is_blocked(url) or url in seen: continue
+            seen.add(url)
+            lbl = smart_label_from_url(url, lbl or 'Open Link', job_title, org)
+            lbl_lower = lbl.lower()
+            icon_k = smart_icon(lbl_lower, url)
+            css_k  = smart_css(lbl_lower, url)
+            buttons += f'<a href="{e(url)}" class="link-btn {css_k}" target="_blank" rel="noopener noreferrer"><i class="fa-solid {icon_k}"></i> {e(lbl[:70])}</a>\n'
 
     if not buttons: return ''
     return render_card('linear-gradient(135deg,#1e40af,#1e3a8a)', 'fa-link', 'Important Links',
@@ -904,7 +959,7 @@ def build_static_html(slug, title, full_job_obj, cat):
     sections_html += render_physical_eligibility(pe)
     sections_html += render_how_to_apply(hta)
     sections_html += render_instructions(insts)
-    sections_html += render_important_links(il, job_title=title, org=org)
+    sections_html += render_important_links(il, job_title=title, org=org, all_official_links=full_job_obj.get('all_official_links') or [])
     sections_html += render_faq(faq)
     # ISSUE-021 FIX: Related jobs for internal linking (PageRank flow to job pages)
     sections_html += generate_related_jobs_html(

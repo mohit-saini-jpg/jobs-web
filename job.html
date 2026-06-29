@@ -133,7 +133,7 @@ a{text-decoration:none}
   </main>
   <div id="footerPlaceholder"></div>
   <script>fetch('/footer.html',{cache:'no-store'}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{if(h){var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}})</script>
-  <script src="/tsj-menu.js?v=20260629162606" defer></script>
+  <script src="/tsj-menu.js?v=20260629114121" defer></script>
 <script>
 (function(){
 'use strict';
@@ -537,28 +537,35 @@ var LINK_CFG={apply_online:['Apply Online','btn-blue','fa-paper-plane'],official
 
 // Smart label from URL context
 function smartLabel(u, fallbackLabel, fallbackCss, fallbackIcon, ctx){
-  // ctx = job title/org for SEO-friendly labels
   var ul=u.toLowerCase();
-  var isGenericFb=/^(click here|view|link|here|open link|open)$/i.test((fallbackLabel||'').trim());
-  function lbl(base){ return (isGenericFb&&ctx) ? base+' '+ctx : base; }
-  if(ul.includes('admit')||ul.includes('hallticket'))
-    return [(isGenericFb&&ctx)?'Download '+ctx+' Admit Card':'Admit Card','btn-teal','fa-id-card'];
-  if(ul.includes('answer')||ul.includes('anskey'))
-    return [(isGenericFb&&ctx)?ctx+' Answer Key':'Answer Key','btn-indigo','fa-key'];
-  if(ul.includes('syllabus'))
-    return [(isGenericFb&&ctx)?'Download '+ctx+' Syllabus':'Syllabus','btn-gray','fa-book'];
-  if(ul.includes('result')||ul.includes('merit'))
-    return [(isGenericFb&&ctx)?'Check '+ctx+' Result':'Result / Merit List','btn-green','fa-trophy'];
-  if(ul.endsWith('.pdf')||ul.includes('/pdf')||ul.includes('notice')||ul.includes('advertisement')||ul.includes('notification'))
-    return [(isGenericFb&&ctx)?'Download '+ctx+' Notification PDF':
-            (fallbackLabel.match(/notif|pdf|advert/i)?fallbackLabel:'Download Notification'),'btn-red','fa-file-pdf'];
-  if(ul.includes('login')||ul.includes('signin'))
-    return [(isGenericFb&&ctx)?ctx+' Candidate Login':'Candidate Login','btn-purple','fa-right-to-bracket'];
-  if(ul.includes('register')||ul.includes('signup')||ul.includes('sign-up')||ul.includes('create'))
-    return [(isGenericFb&&ctx)?'Register for '+ctx:'Register Now','btn-orange','fa-user-plus'];
-  if(ul.includes('apprentice')||ul.includes('ibpsreg')||ul.includes('apply')||ul.includes('career')||ul.includes('recruit')||ul.includes('applic'))
-    return [(isGenericFb&&ctx)?'Apply Online for '+ctx:'Apply Online','btn-blue','fa-paper-plane'];
-  if(ul.includes('apprenticeshipindia')||ul.includes('nats.edu')||ul.includes('nats.')) return ['Apprenticeship Portal','btn-teal','fa-link'];
+  var isGenericFb=/^(click here|view|link|here|open link|open|official notification pdf|official pdf document)$/i.test((fallbackLabel||'').trim());
+  var c=ctx||'';
+  // PDF by extension or encoded filename — always detect
+  if(/\.pdf$|%2F[^/]*\.pdf|\.pdf\?|application%20form/i.test(u)){
+    var fname=ul.split('/').pop().replace(/%20/g,' ');
+    if(/application|form/.test(fname)) return [c?'Download '+c+' Application Form PDF':'Download Application Form PDF','btn-red','fa-file-pdf'];
+    if(/syllabus/.test(fname)) return [c?'Download '+c+' Syllabus PDF':'Download Syllabus PDF','btn-gray','fa-book'];
+    if(/admit|hallticket/.test(fname)) return [c?'Download '+c+' Admit Card':'Download Admit Card','btn-teal','fa-id-card'];
+    if(/result|merit/.test(fname)) return [c?c+' Result PDF':'Result PDF','btn-green','fa-trophy'];
+    if(/answer|anskey/.test(fname)) return [c?c+' Answer Key PDF':'Answer Key PDF','btn-indigo','fa-key'];
+    if(!isGenericFb) return [fallbackLabel,'btn-red','fa-file-pdf'];
+    return [c?'Download '+c+' Notification PDF':'Download Notification PDF','btn-red','fa-file-pdf'];
+  }
+  if(ul.includes('admit')||ul.includes('hallticket')) return [c?'Download '+c+' Admit Card':'Admit Card','btn-teal','fa-id-card'];
+  if(ul.includes('answer')||ul.includes('anskey')) return [c?c+' Answer Key':'Answer Key','btn-indigo','fa-key'];
+  if(ul.includes('syllabus')) return [c?'Download '+c+' Syllabus':'Syllabus','btn-gray','fa-book'];
+  if(ul.includes('result')||ul.includes('merit')) return [c?'Check '+c+' Result':'Result / Merit List','btn-green','fa-trophy'];
+  if(ul.includes('notification')||ul.includes('advertisement')||ul.includes('advt'))
+    return [c?c+' Official Notification':'Official Notification','btn-red','fa-file-pdf'];
+  if(ul.includes('login')||ul.includes('signin')||ul.includes('candidate')) return [c?c+' Candidate Login':'Candidate Login','btn-purple','fa-right-to-bracket'];
+  if(ul.includes('register')||ul.includes('signup')||ul.includes('sign-up')) return [c?'Register for '+c:'Register Now','btn-orange','fa-user-plus'];
+  if(ul.includes('apply')||ul.includes('career')||ul.includes('recruit')||ul.includes('applic')||ul.includes('ibpsreg'))
+    return [c?'Apply Online for '+c:'Apply Online','btn-blue','fa-paper-plane'];
+  if(ul.includes('apprenticeshipindia')||ul.includes('nats.edu')) return ['Apprenticeship Portal','btn-teal','fa-link'];
+  // Root domain or short path → Official Website
+  try{var _p=new URL(u);if(_p.pathname==='/'||_p.pathname==='') return [c?c+' Official Website':'Official Website','btn-green','fa-globe'];}catch(e){}
+  // Short page path
+  if(isGenericFb&&c&&(ul.match(/\/page\/\d+/)||ul.split('/').filter(Boolean).length<=2)) return [c+' Official Recruitment Page','btn-blue','fa-link'];
   return [fallbackLabel, fallbackCss, fallbackIcon];
 }
 
@@ -577,9 +584,11 @@ function renderLinks(il,ctx){
   for(var [key,val] of Object.entries(il)){
     if(key==='structured_links'||key==='seo_tags'||key==='_useful_links'||key==='_labels') continue;
     var urls=Array.isArray(val)?val:[val];
+    var urlCount=urls.filter(function(u){return safe(u).startsWith('http');}).length;
     var [defLabel,defCss,defIcon]=LINK_CFG[key]||['Open Link','btn-blue','fa-link'];
     var _labelOverride=(_labels[key]||'').trim();
-    if(_labelOverride&&!/^(click here|view|link|here|open)$/i.test(_labelOverride)) defLabel=_labelOverride;
+    // _labels wins only for single-URL keys; multi-URL → per-URL smartLabel detection
+    if(urlCount===1&&_labelOverride&&!/^(click here|view|link|here|open)$/i.test(_labelOverride)) defLabel=_labelOverride;
     var urlCount=urls.filter(u=>safe(u).startsWith('http')).length;
     for(var url of urls){
       var u=safe(url);if(!u.startsWith('http')||isBlocked(u)||seen.has(u))continue;seen.add(u);
@@ -606,6 +615,15 @@ function renderLinks(il,ctx){
     var [ulLbl,ulCl,ulIc]=smartLabel(href, ulTitle, 'btn-blue', 'fa-link', ctx);
     if(ulTitle&&!/^(click here|view|link|here|open link|open)$/i.test(ulTitle.trim())) ulLbl=ulTitle;
     btns+=`<a href="${esc(href)}" class="link-btn ${ulCl}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${ulIc}"></i> ${esc(ulLbl.slice(0,50))}</a>\n`;
+  }
+  // all_official_links — scraper's extracted link table
+  for(var _aol of (il._all_official_links||[])){
+    if(typeof _aol!=='object') continue;
+    var _au=safe(_aol.url||_aol.href||'');var _al=safe(_aol.label||_aol.title||'Open Link');
+    if(!_au.startsWith('http')||isBlocked(_au)||seen.has(_au)) continue;seen.add(_au);
+    var [_ll,_lc,_li]=smartLabel(_au,_al,'btn-blue','fa-link',_linkCtx);
+    if(_al&&!/^(click here|view|link|here|open|official pdf document)$/i.test(_al.trim())) _ll=_al;
+    btns+=`<a href="${esc(_au)}" class="link-btn ${_lc}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${_li}"></i> ${esc(_ll.slice(0,70))}</a>\n`;
   }
   return btns?card('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',`<div class="links-grid">${btns}</div>`):'';
 }
@@ -1056,6 +1074,9 @@ function buildPage(slug, job){
   sections+=renderInstructions(insts);
   // 11. Useful Links
   var _linkCtx=(title+' '+org).trim();
+  // Attach all_official_links into il for renderLinks to process
+  if(Array.isArray(job.all_official_links)&&job.all_official_links.length)
+    il._all_official_links=job.all_official_links;
   sections+=renderLinks(il,_linkCtx);
   // 12. FAQs
   sections+=renderFAQ(faq);

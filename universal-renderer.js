@@ -520,14 +520,15 @@
       for (const [k, v] of Object.entries(il)) {
         if (k === '_labels' || k === 'seo_tags' || k === 'structured_links') continue;
         const urls = Array.isArray(v) ? v : [v];
+        const urlCount = urls.filter(u => isUrl(safe(u))).length;
+        const labelOverride = safe((_labels[k] || ''));
         for (const url of urls) {
           const u = safe(url);
           if (!isUrl(u)) continue;
           const type = classifyLinkKey(k, u);
-          // Prefer _labels[k] if available and not generic
-          const labelOverride = safe((_labels[k] || ''));
           let label;
-          if (labelOverride && !isGenericLabel(labelOverride)) {
+          // _labels wins only for single-URL keys; multi-URL arrays → per-URL URL detection
+          if (urlCount === 1 && labelOverride && !isGenericLabel(labelOverride)) {
             label = labelOverride;
           } else {
             const rawLabel = smartLinkLabel(k, u, urls.length > 1 ? urls.indexOf(url) + 1 : 0, `${_jobTitle} ${_orgName}`.trim());
@@ -601,6 +602,19 @@
             });
           }
         }
+      }
+    }
+
+    // ── all_official_links ───────────────────────────────────────────────
+    if (Array.isArray(job.all_official_links)) {
+      for (const item of job.all_official_links) {
+        if (!item || typeof item !== 'object') continue;
+        const url = safe(item.url || item.href || '');
+        if (!isUrl(url)) continue;
+        const rawLbl = safe(item.label || item.title || '');
+        const type = classifyLinkKey(rawLbl || 'link', url);
+        const label = isGenericLabel(rawLbl) ? generateSeoAnchor(url, type, _jobTitle, _orgName) : rawLbl;
+        job._udyn_links.push({ label, url, type });
       }
     }
 
