@@ -3982,6 +3982,386 @@ SECTION_META_DESC = {
     'syllabus':            "Government Exam Syllabus 2026: Download latest syllabus PDF for SSC, Railway, UPSC, Bank, Police, Teaching and state PSC exams.",
 }
 
+
+# ── STATE-WISE RICH SEO CONTENT (unique per state, injected by _seo_listing_content) ──
+_STATE_SEO_CONTENT = {
+  "Uttar Pradesh": """<h2>About Uttar Pradesh Government Jobs 2026</h2>
+<p>Uttar Pradesh Sarkari Naukri 2026 ke liye yeh sabse sahi jagah hai. UPPSC (Uttar Pradesh Public Service Commission) sabse bada recruitment body hai jo har saal civil services, administrative aur technical posts ke liye notification jari karta hai. Lucknow, Kanpur, Agra, Varanasi, Prayagraj, Meerut jaise major districts ke candidates yahan apni yogyata ke mutabik latest vacancies track kar sakte hain. UP Government Jobs 2026 mein iss saal badi sankhya mein bharti expected hai.</p>
+<p>UP ke important recruitment bodies mein UPSRTC, UP Jal Nigam, UPPCL aur UPSSSC shamil hain. UP Police Bharti Evam Pramotion Board ke through constable, SI aur inspector level posts aate hain. UP NHM aur SGPGI Lucknow ke under nursing, pharmacist, technician aur doctor level ke posts nikalte hain. UP Basic Shiksha Parishad aur UPSESSB ke through teacher aur lecturer recruitments hoti hain. BHU Varanasi, AMU Aligarh aur Lucknow University mein bhi academic posts available hain 2026 mein.</p>
+<p>Govt Jobs in UP mein 10th pass, 12th pass, ITI, Diploma, Graduate aur PG sabhi ke liye vacancies nikalti hain. Gorakhpur, Mathura, Bareilly, Allahabad jaise districts ke candidates bhi online form ke zariye apply kar sakte hain. Online form, admit card aur result sab ek jagah milega Top Sarkari Jobs par.</p>
+<h2>Latest Government Jobs in Uttar Pradesh</h2>
+<p>Latest UP Government Jobs mein abhi UPPSC, UPSSSC, UP Police aur NHM ki vacancies open hain. UP Sarkari Naukri 2026 ke liye online form, admit card download aur result sab Top Sarkari Jobs par milenge. Nayi notification miss mat karo — daily check karo.</p>
+<h2>Qualification Wise Jobs in Uttar Pradesh</h2>
+<p>UP mein 10th pass ke liye peon, driver, MTS posts hain. 12th pass ke liye UP Police constable aur clerk vacancies hain. ITI aur Diploma walon ke liye technical posts UPPCL aur UP Jal Nigam mein available hain. Graduate aur Post Graduate candidates UPPSC PCS exam aur UPSESSB teaching posts ke liye apply kar sakte hain.</p>
+<h2>Department Wise Recruitment in Uttar Pradesh</h2>
+<p>UP Police Bharti Board mein constable aur SI posts, SGPGI Lucknow mein medical staff, UP Basic Shiksha Parishad mein teacher bharti, aur UPPCL mein technical posts — yeh sab UP ke major recruitment sources hain 2026 mein. UPPSC exam calendar follow karo aur Top Sarkari Jobs par Uttar Pradesh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Rajasthan": """<h2>About Rajasthan Government Jobs 2026</h2>
+<p>Rajasthan Sarkari Naukri 2026 mein iss saal kaafi vacancies aane ki ummeed hai. RPSC (Rajasthan Public Service Commission) state ki sabse badi recruitment agency hai jo RAS, RTS aur other civil services ke liye exam conduct karti hai. Jaipur, Jodhpur, Udaipur, Kota, Bikaner, Ajmer jaise cities mein candidates badi sankhya mein government jobs ke liye taiyari kar rahe hain. Rajasthan mein sarkari naukri ka competition high hai isliye time par apply karna zaroori hai.</p>
+<p>RSMSSB, Rajasthan RVUNL aur Rajasthan Grameen Bank important recruitment bodies hain. Rajasthan Police aur RAC ke through constable, patwari aur inspector posts nikalte hain. RMSC aur RUHS Jaipur ke under nursing officer, lab technician aur pharmacist ke posts aate hain. RBSE aur Rajasthan DELED Board ke through Level 1 aur Level 2 teacher recruitment hoti hai. University of Rajasthan, MLSU Udaipur aur MDS University Ajmer mein bhi academic posts available hain 2026 mein.</p>
+<p>Rajasthan Government Jobs 2026 mein 10th se lekar post graduate tak sabhi ke liye avsar hain. Jodhpur, Kota, Bikaner, Sikar ke candidates bhi online form ke zariye apply kar sakte hain. RSMSSB ke through patwari, LDC, lab assistant jaise posts bhi nikalte hain.</p>
+<h2>Latest Government Jobs in Rajasthan</h2>
+<p>Latest Rajasthan Government Jobs mein RPSC, RSMSSB, Rajasthan Police aur NHM ki vacancies abhi open hain. Online form, admit card aur result sab Top Sarkari Jobs par ek jagah milenge. Rajasthan Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Rajasthan</h2>
+<p>Rajasthan mein 10th pass ke liye peon aur class IV posts hain, 12th pass ke liye constable aur LDC. ITI holders ke liye RVUNL mein technical posts available hain. Diploma candidates PWD aur engineering department mein apply kar sakte hain. Graduate aur PG candidates RPSC RAS aur college lecturer posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Rajasthan</h2>
+<p>Rajasthan Police aur RAC, RMSC health department, RBSE teacher bharti aur RSMSSB patwari recruitment — yeh sab Rajasthan ke top recruitment sources hain. RVUNL mein technical aur non-technical dono posts available hain. RPSC exam schedule follow karo aur Top Sarkari Jobs par Rajasthan Recruitment 2026 ka full update paao.</p>""",
+
+  "Bihar": """<h2>About Bihar Government Jobs 2026</h2>
+<p>Bihar Sarkari Naukri 2026 ke aspiring candidates ke liye yeh page sabhi zaroori updates ka hub hai. BPSC (Bihar Public Service Commission) Bihar ka sabse important exam conduct karta hai jo BAS, BPS aur other Group A B posts ke liye hota hai. Patna, Gaya, Muzaffarpur, Bhagalpur, Darbhanga, Purnia jaise districts mein lakho candidates government job ki taiyari mein jute hain. Bihar Government Jobs 2026 mein teacher bharti, police bharti aur health department ki vacancies badi sankhya mein expected hain.</p>
+<p>BSPHCL, Bihar STET aur Bihar State Road Transport major recruitment organizations hain. Bihar Police aur BPSSC ke through constable, SI aur other posts nikale jaate hain. SHSB aur PMCH Patna ke through health department mein ANM, GNM, lab technician aur doctor level ki bharti hoti hai. BSEB aur Bihar School Examination Board ke through teacher eligibility test aur school teacher posts fill ki jaati hain. Patna University, Magadh University aur Nalanda Open University mein bhi non-teaching posts available hain.</p>
+<p>Govt Jobs in Bihar mein 10th pass waale MTS aur Group D ke liye eligible hain jabki 12th pass waale constable aur clerk apply kar sakte hain. ITI aur diploma holders ke liye BSPHCL mein posts hain. Darbhanga, Bhagalpur, Gaya ke candidates bhi online form se asaani se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Bihar</h2>
+<p>Latest Bihar Government Jobs mein BPSC, BPSSC, Bihar Police aur STET ki vacancies currently open hain. Bihar Sarkari Naukri 2026 ke liye online form, admit card aur result sab Top Sarkari Jobs par milega. Nayi notification miss mat karo.</p>
+<h2>Qualification Wise Jobs in Bihar</h2>
+<p>Bihar mein 10th pass ke liye police constable aur Group D posts hain. 12th pass ke liye clerk, assistant aur BSEB related posts milte hain. ITI holders ke liye BSPHCL technical posts aur diploma candidates ke liye engineering department mein avsar hain. Graduate aur PG waale BPSC exam aur STET teacher posts ke liye apply karein.</p>
+<h2>Department Wise Recruitment in Bihar</h2>
+<p>Bihar Police aur BPSSC, SHSB health bharti, BSEB teacher recruitment aur BSPHCL technical posts — yeh Bihar ke top hiring departments hain 2026 mein. BPSC exam ki taiyari karo aur Top Sarkari Jobs par Bihar Recruitment 2026 ka daily update paao.</p>""",
+
+  "Madhya Pradesh": """<h2>About Madhya Pradesh Government Jobs 2026</h2>
+<p>Madhya Pradesh Sarkari Naukri 2026 ke liye MP mein kaafi vacancies aa rahi hain. MPPSC (Madhya Pradesh Public Service Commission) state ka pramukh exam body hai jo MP State Services, Forest Service aur other posts ke liye selection karta hai. Bhopal, Indore, Jabalpur, Gwalior, Ujjain aur Rewa jaise cities mein candidates badi tadaad mein government jobs ki taiyari karte hain.</p>
+<p>MPPKVVCL, MP Madhya Kshetra Vidyut Vitaran aur MP Housing Board important recruitment bodies hain. MP Police aur MP Vyapam ke through constable, SI, patwari aur other posts nikale jaate hain. MP NHM aur AIIMS Bhopal ke under ANM, staff nurse aur technical posts aate hain. MPBSE aur MP Teacher Eligibility Board ke through primary aur secondary teacher bharti hoti hai. Barkatullah University Bhopal, Vikram University Ujjain aur DAVV Indore mein academic posts bhi available hain 2026 mein.</p>
+<p>MP Recruitment 2026 mein 10th pass se lekar PG tak sabhi ke liye avsar hain. Gwalior, Satna, Sagar, Chhindwara jaise districts ke candidates bhi online form ke zariye apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Madhya Pradesh</h2>
+<p>Latest MP Government Jobs mein MPPSC, MP Vyapam, MP Police aur NHM ki vacancies open hain. Online form, admit card aur result sab Top Sarkari Jobs par ek jagah milenge. Madhya Pradesh Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Madhya Pradesh</h2>
+<p>MP mein 10th pass ke liye peon aur Group D posts hain. 12th pass ke liye MP Police constable aur clerk posts available hain. ITI holders MPPKVVCL mein technical posts ke liye apply kar sakte hain. Diploma candidates PWD mein aur Graduate/PG candidates MPPSC aur MPTET teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Madhya Pradesh</h2>
+<p>MP Police aur Vyapam, AIIMS Bhopal medical staff, MPBSE teacher bharti aur MPPKVVCL technical posts — yeh MP ke major recruitment sources hain 2026 mein. MPPSC exam calendar track karo aur Top Sarkari Jobs par Madhya Pradesh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Maharashtra": """<h2>About Maharashtra Government Jobs 2026</h2>
+<p>Maharashtra Sarkari Naukri 2026 ke liye iss page par sabhi latest updates milenge. MPSC (Maharashtra Public Service Commission) Maharashtra ka sabse prestigious exam conduct karta hai jo Maharashtra Civil Services, Police Service aur Engineering Services ke liye selection karta hai. Mumbai, Pune, Nagpur, Nashik, Aurangabad, Thane jaise cities ke candidates badi sankhya mein Maharashtra Government Jobs 2026 ki taiyari karte hain.</p>
+<p>MSRTC, MAHADISCOM aur Maharashtra Metro Rail important recruitment bodies hain. Maharashtra Police aur MHB ke through constable, PSI aur other posts nikale jaate hain. Maharashtra NHM aur KEM Mumbai ke under nursing officer, technician aur doctor posts aate hain. Maharashtra SSC Board aur MSEB ke through teacher bharti hoti hai. Mumbai University, Pune University aur Nagpur University mein bhi teaching aur non-teaching posts available hain 2026 mein.</p>
+<p>Maharashtra Recruitment 2026 mein 10th, 12th, ITI, Diploma, Graduate aur PG — sabhi ke liye opportunities hain. Kolhapur, Solapur, Amravati ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Maharashtra</h2>
+<p>Latest Maharashtra Government Jobs mein MPSC, Maharashtra Police, MSRTC aur NHM ki vacancies currently open hain. Online form, admit card aur result Top Sarkari Jobs par ek jagah milta hai. Maharashtra Sarkari Naukri 2026 ki notification miss mat karo.</p>
+<h2>Qualification Wise Jobs in Maharashtra</h2>
+<p>Maharashtra mein 10th pass ke liye peon, constable aur Group D posts hain. 12th pass ke liye clerk aur assistant posts milte hain. ITI holders MAHADISCOM mein, diploma candidates PWD mein apply kar sakte hain. Graduate aur PG waale MPSC exams aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Maharashtra</h2>
+<p>Maharashtra Police aur MHB, NHM health bharti, MSEB teacher recruitment aur MSRTC driver posts — yeh Maharashtra ke top hiring departments hain 2026 mein. MPSC schedule follow karo aur Top Sarkari Jobs par Maharashtra Recruitment 2026 ka full update paao.</p>""",
+
+  "Gujarat": """<h2>About Gujarat Government Jobs 2026</h2>
+<p>Gujarat Sarkari Naukri 2026 ke liye iss page par sabhi latest vacancies milti hain. GPSC (Gujarat Public Service Commission) Gujarat mein Class 1 aur Class 2 government officers ki bharti karta hai. Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar aur Bhavnagar ke candidates badi sankhya mein Gujarat Government Jobs 2026 ki taiyari mein lage hue hain.</p>
+<p>GSRTC, GUVNL, Gujarat Metro Rail aur GNFC important recruitment bodies hain. Gujarat Police aur LRD ke through constable, PSI aur LRD bharti hoti hai. GMERS aur Civil Hospital Ahmedabad ke under health department mein staff nurse, lab tech aur doctor posts aate hain. GSEB aur Gujarat HTAT Board ke through primary aur secondary teacher recruitment hoti hai. Gujarat University, MS University Baroda aur Saurashtra University mein bhi academic posts available hain 2026 mein.</p>
+<p>Gujarat Recruitment 2026 mein 10th pass waale Group D, 12th pass waale constable aur clerk, ITI holders GUVNL mein apply kar sakte hain. Jamnagar, Junagadh, Anand ke candidates bhi online form se asaani se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Gujarat</h2>
+<p>Latest Gujarat Government Jobs mein GPSC, GSSSB, Gujarat Police aur GUVNL ki vacancies open hain. Gujarat Sarkari Naukri 2026 ke liye online form, admit card aur result sab Top Sarkari Jobs par milenge. Koi bhi vacancy miss mat karo.</p>
+<h2>Qualification Wise Jobs in Gujarat</h2>
+<p>Gujarat mein 10th pass ke liye peon aur Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders GUVNL mein, diploma candidates Gujarat PWD mein apply kar sakte hain. Graduate aur PG candidates GPSC Class 1/2 exam aur HTAT teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Gujarat</h2>
+<p>Gujarat Police LRD, GMERS health bharti, GSEB teacher recruitment aur GUVNL technical posts — yeh Gujarat ke top hiring departments hain 2026 mein. GPSC aur GSSSB ka calendar follow karo aur Top Sarkari Jobs par Gujarat Recruitment 2026 ka poora update paao.</p>""",
+
+  "West Bengal": """<h2>About West Bengal Government Jobs 2026</h2>
+<p>West Bengal Sarkari Naukri 2026 ke liye yeh page sabhi latest vacancies ka reliable source hai. WBPSC (West Bengal Public Service Commission) West Bengal Civil Service aur other state-level posts ke liye selection conduct karta hai. Kolkata, Howrah, Asansol, Siliguri, Durgapur aur Bardhaman jaise cities ke candidates badi tadaad mein government jobs ki taiyari karte hain.</p>
+<p>WBSEDCL, CSTC, West Bengal PWD aur Kolkata Metro important recruitment bodies hain. West Bengal Police aur Kolkata Police ke through constable aur sub-inspector posts nikale jaate hain. WBNHM aur SSKM Hospital Kolkata ke under health posts aate hain. WBBSE aur WBCHSE ke through school teacher recruitment hoti hai. Calcutta University, Jadavpur University aur Kalyani University mein bhi academic posts available hain 2026 mein.</p>
+<p>WB Recruitment 2026 mein 10th pass, 12th pass, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Malda, Murshidabad, Purulia ke candidates bhi online form se easily apply kar sakte hain.</p>
+<h2>Latest Government Jobs in West Bengal</h2>
+<p>Latest WB Government Jobs mein WBPSC, WB Police, WBSEDCL aur NHM ki vacancies open hain. Online form, admit card download aur result sab Top Sarkari Jobs par ek jagah milenge. West Bengal Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in West Bengal</h2>
+<p>WB mein 10th pass ke liye Group D aur constable posts hain. 12th pass ke liye clerk aur assistant posts. ITI holders WBSEDCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG waale WBPSC exam aur school teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in West Bengal</h2>
+<p>West Bengal Police, WBNHM health bharti, WBBSE teacher recruitment aur WBSEDCL technical posts — yeh WB ke top hiring departments hain 2026 mein. WBPSC calendar follow karo aur Top Sarkari Jobs par West Bengal Recruitment 2026 ka poora update paao.</p>""",
+
+  "Tamil Nadu": """<h2>About Tamil Nadu Government Jobs 2026</h2>
+<p>Tamil Nadu Sarkari Naukri 2026 ke liye TNPSC (Tamil Nadu Public Service Commission) sabse pramukh recruitment body hai jo Group 1, Group 2, Group 4 aur CCSE exams conduct karta hai. Chennai, Coimbatore, Madurai, Tiruchirappalli, Salem aur Erode jaise major cities mein lakho candidates Tamil Nadu Government Jobs 2026 ki taiyari kar rahe hain.</p>
+<p>TNEB, TNSTC, TANGEDCO aur Tamil Nadu PWD important recruitment bodies hain. Tamil Nadu Police aur TNUSRB ke through police constable, SI aur fingerprint examiner posts nikale jaate hain. Tamil Nadu NHM aur Government Hospitals Chennai ke under health posts aate hain. TN School Education aur TNTET Board ke through teacher recruitment hoti hai. University of Madras, Anna University aur Bharathidasan University mein bhi academic posts available hain 2026 mein.</p>
+<p>TN Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Tirunelveli, Vellore, Thanjavur, Dindigul ke candidates bhi online form se easily apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Tamil Nadu</h2>
+<p>Latest Tamil Nadu Government Jobs mein TNPSC, TN Police, TANGEDCO aur NHM ki vacancies open hain. Online form, hall ticket download aur result sab Top Sarkari Jobs par milenge. Tamil Nadu Sarkari Naukri 2026 ka daily update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Tamil Nadu</h2>
+<p>TN mein 10th pass ke liye constable aur Group D, 12th pass ke liye clerk, typist aur VAO posts. ITI holders TANGEDCO mein, Diploma candidates TWAD Board mein apply kar sakte hain. Graduate aur PG candidates TNPSC Group 1/2 aur teacher eligibility test ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Tamil Nadu</h2>
+<p>TNUSRB police bharti, Tamil Nadu NHM health posts, TNTET teacher recruitment aur TANGEDCO technical posts — yeh TN ke top hiring departments hain 2026 mein. TNPSC calendar follow karo aur Top Sarkari Jobs par Tamil Nadu Recruitment 2026 ka full update paao.</p>""",
+
+  "Karnataka": """<h2>About Karnataka Government Jobs 2026</h2>
+<p>Karnataka Sarkari Naukri 2026 ke liye KPSC (Karnataka Public Service Commission) sabse important exam body hai jo KAS, KPS aur other Group A B posts ke liye selection karta hai. Bengaluru, Mysuru, Hubballi, Mangaluru, Belagavi aur Kalaburagi jaise cities mein candidates badi tadaad mein Karnataka Government Jobs 2026 ki taiyari mein lage hain.</p>
+<p>BMTC, KSRTC, BESCOM aur Karnataka Neeravari Nigam pramukh recruitment bodies hain. Karnataka Police aur KSP ke through police constable, PSI aur other posts nikale jaate hain. KSDNEB aur NIMHANS Bangalore ke under health aur nursing posts aate hain. Karnataka School Examination Board aur DPAR ke through teacher aur government servant recruitment hoti hai. Bangalore University, Mysore University aur Visvesvaraya Tech University mein bhi academic posts available hain 2026 mein.</p>
+<p>Karnataka Recruitment 2026 mein 10th pass se lekar post graduate tak sabhi ke liye avsar hain. Shivamogga, Tumakuru, Dharwad, Vijayapura ke candidates bhi online form ke zariye apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Karnataka</h2>
+<p>Latest Karnataka Government Jobs mein KPSC, KSP, BESCOM aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par ek jagah milta hai. Karnataka Sarkari Naukri 2026 ka daily update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Karnataka</h2>
+<p>Karnataka mein 10th pass ke liye Group D aur constable posts hain. 12th pass ke liye KSRTC conductor aur clerk posts. ITI holders BESCOM mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG waale KPSC KAS aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Karnataka</h2>
+<p>KSP police bharti, KSDNEB health posts, Karnataka School teacher recruitment aur BESCOM technical posts — yeh Karnataka ke top hiring departments hain 2026 mein. KPSC exam calendar follow karo aur Top Sarkari Jobs par Karnataka Recruitment 2026 ka poora update paao.</p>""",
+
+  "Telangana": """<h2>About Telangana Government Jobs 2026</h2>
+<p>Telangana Sarkari Naukri 2026 ke liye TSPSC (Telangana State Public Service Commission) sabse pramukh exam body hai jo Group 1, Group 2, Group 3 aur other state service posts ke liye selection karta hai. Hyderabad, Warangal, Karimnagar, Nizamabad, Khammam aur Adilabad jaise cities ke candidates Telangana Government Jobs 2026 ke liye taiyar hain.</p>
+<p>TSRTC, TSSPDCL, Hyderabad Metro Rail aur TSNPDCL important recruitment bodies hain. Telangana Police aur TSLPRB ke through constable, SI aur other posts nikalte hain. TS NHM aur Osmania General Hospital ke under ANM, GNM aur technical health posts aate hain. TSBIE aur TS TET Board ke through teacher recruitment hoti hai. Osmania University, Kakatiya University aur JNTU Hyderabad mein bhi academic posts available hain 2026 mein.</p>
+<p>Telangana Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Nalgonda, Mahbubnagar, Medak ke candidates bhi online form se easily apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Telangana</h2>
+<p>Latest Telangana Government Jobs mein TSPSC, TSLPRB, TSSPDCL aur NHM ki vacancies open hain. Online form, hall ticket aur result sab Top Sarkari Jobs par ek jagah milenge. Telangana Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Telangana</h2>
+<p>TS mein 10th pass ke liye constable aur peon posts, 12th pass ke liye clerk aur typist. ITI holders TSSPDCL mein, Diploma candidates TSRTC mein apply kar sakte hain. Graduate aur PG waale TSPSC Group 1 aur teacher eligibility test ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Telangana</h2>
+<p>TSLPRB police bharti, TS NHM health posts, TSTET teacher recruitment aur TSSPDCL technical posts — yeh TS ke top hiring departments hain 2026 mein. TSPSC exam calendar follow karo aur Top Sarkari Jobs par Telangana Recruitment 2026 ka full update paao.</p>""",
+
+  "Andhra Pradesh": """<h2>About Andhra Pradesh Government Jobs 2026</h2>
+<p>Andhra Pradesh Sarkari Naukri 2026 ke liye APPSC (Andhra Pradesh Public Service Commission) pramukh recruitment body hai jo Group 1, Group 2, Group 3 aur other posts ke liye exam conduct karta hai. Visakhapatnam, Vijayawada, Guntur, Tirupati, Kakinada aur Nellore jaise cities mein candidates AP Government Jobs 2026 ki taiyari kar rahe hain.</p>
+<p>APSRTC, APEPDCL, AP Grama Sachivalayam aur APGENCO important recruitment bodies hain. AP Police aur APSLPRB ke through constable, SI aur fire department posts nikalte hain. AP NHM aur Government General Hospital Vijayawada ke under health posts aate hain. APBSE aur AP Teacher Recruitment Board ke through DSC aur teacher posts fill ki jaati hain. Andhra University, Sri Venkateswara University aur Krishna University mein bhi academic posts available hain 2026 mein.</p>
+<p>AP Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Kurnool, Kadapa, Chittoor ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Andhra Pradesh</h2>
+<p>Latest AP Government Jobs mein APPSC, APSLPRB, APEPDCL aur NHM ki vacancies open hain. Online form, admit card aur result sab Top Sarkari Jobs par milenge. Andhra Pradesh Sarkari Naukri 2026 ka koi bhi notification yahan se track karo.</p>
+<h2>Qualification Wise Jobs in Andhra Pradesh</h2>
+<p>AP mein 10th pass ke liye Grama Sachivalayam aur constable posts, 12th pass ke liye clerk aur assistant. ITI holders APEPDCL mein, Diploma candidates APGENCO mein apply kar sakte hain. Graduate aur PG waale APPSC Group 1 aur DSC teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Andhra Pradesh</h2>
+<p>APSLPRB police bharti, AP NHM health posts, AP DSC teacher recruitment aur APEPDCL technical posts — yeh AP ke top hiring departments hain 2026 mein. APPSC exam calendar follow karo aur Top Sarkari Jobs par Andhra Pradesh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Haryana": """<h2>About Haryana Government Jobs 2026</h2>
+<p>Haryana Sarkari Naukri 2026 ke liye yeh page sabse accurate aur updated source hai. HPSC (Haryana Public Service Commission) Haryana mein HCS, HPS aur other Group A B posts ke liye selection conduct karta hai. Gurugram, Faridabad, Ambala, Hisar, Karnal, Rohtak aur Panipat jaise industrial cities ke candidates badi tadaad mein Haryana Government Jobs 2026 ki taiyari mein jute hain.</p>
+<p>HSIDC, Haryana Roadways, DHBVN aur UHBVN pramukh recruitment bodies hain. Haryana Police aur HSSC ke through constable, SI, patwari aur Gram Sachiv posts nikalte hain. PGIMS Rohtak aur Haryana NHM ke under staff nurse, ANM, lab technician aur medical officer posts aate hain. HBSE aur Haryana Shiksha Vibhag ke through PRT, TGT, PGT teacher recruitment hoti hai. Kurukshetra University, MDU Rohtak aur Chaudhary Devi Lal University mein bhi academic posts available hain 2026 mein.</p>
+<p>Haryana Recruitment 2026 mein 10th, 12th, ITI, Diploma, Graduate aur PG sabhi ke liye vacancies nikalti hain. Bhiwani, Sirsa, Rewari, Mahendragarh ke candidates bhi online form se easily apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Haryana</h2>
+<p>Latest Haryana Government Jobs mein HSSC, HPSC, Haryana Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par ek jagah milenge. Haryana Sarkari Naukri 2026 ka koi bhi update miss mat karo — daily check karo.</p>
+<h2>Qualification Wise Jobs in Haryana</h2>
+<p>Haryana mein 10th pass ke liye Group D aur peon posts hain. 12th pass ke liye constable aur clerk. ITI holders DHBVN mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates HPSC HCS exam aur PGT teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Haryana</h2>
+<p>Haryana Police HSSC, PGIMS Rohtak health bharti, HBSE teacher recruitment aur DHBVN technical posts — yeh Haryana ke top hiring departments hain 2026 mein. HSSC aur HPSC calendar follow karo aur Top Sarkari Jobs par Haryana Recruitment 2026 ka poora update paao.</p>""",
+
+  "Punjab": """<h2>About Punjab Government Jobs 2026</h2>
+<p>Punjab Sarkari Naukri 2026 ke liye PPSC (Punjab Public Service Commission) state mein sabse important exam body hai. Ludhiana, Amritsar, Jalandhar, Patiala, Bathinda aur Mohali jaise cities ke candidates badi sankhya mein Punjab Government Jobs 2026 ki taiyari mein hain.</p>
+<p>PRTC, PSPCL, Punjab Mandi Board aur Punjab Housing Board important recruitment bodies hain. Punjab Police aur PSSSB ke through constable, sub-inspector aur other posts nikalte hain. PGIMER Chandigarh aur Punjab NHM ke under health posts nikali jaati hain. PSEB aur Punjab Shiksha Board ke through teacher recruitment hoti hai. Panjab University Chandigarh, Guru Nanak Dev University aur Punjab Agricultural University mein bhi academic posts available hain 2026 mein.</p>
+<p>Punjab Recruitment 2026 mein 10th, 12th, ITI, Diploma, Graduate aur PG sabhi ke liye avsar hain. Ferozepur, Gurdaspur, Sangrur, Hoshiarpur ke candidates bhi online form ke zariye apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Punjab</h2>
+<p>Latest Punjab Government Jobs mein PPSC, PSSSB, Punjab Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par ek jagah milte hain. Punjab Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Punjab</h2>
+<p>Punjab mein 10th pass ke liye Group D aur constable posts, 12th pass ke liye clerk aur assistant posts hain. ITI holders PSPCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates PPSC PCS aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Punjab</h2>
+<p>Punjab Police PSSSB, PGIMER health staff, PSEB teacher recruitment aur PSPCL technical posts — yeh Punjab ke top hiring departments hain 2026 mein. PPSC exam calendar follow karo aur Top Sarkari Jobs par Punjab Recruitment 2026 ka full update paao.</p>""",
+
+  "Delhi": """<h2>About Delhi Government Jobs 2026</h2>
+<p>Delhi Sarkari Naukri 2026 ke liye yeh page sabse reliable update source hai. DSSSB (Delhi Subordinate Services Selection Board) Delhi mein teacher, clerk, patwari aur other Group B C posts ke liye recruitment karta hai. New Delhi, East Delhi, West Delhi, North Delhi, South Delhi aur Dwarka ke candidates badi tadaad mein Delhi Government Jobs 2026 ki taiyari karte hain. Delhi mein central aur state dono level ke jobs available hain.</p>
+<p>DTC, DMRC Metro, Delhi Jal Board aur NDMC pramukh recruitment organizations hain. Delhi Police aur CISF ke through constable, head constable aur sub-inspector posts nikalte hain. AIIMS New Delhi aur Delhi NHM ke under doctor, nurse aur paramedical posts aate hain. CBSE aur Directorate of Education Delhi ke through TGT, PGT teacher posts fill ki jaati hain. Delhi University, Jamia Millia Islamia aur JNU mein bhi academic posts available hain 2026 mein.</p>
+<p>Govt Jobs in Delhi sirf local candidates ke liye nahi — pure India se apply kar sakte hain. 10th ke liye Group D, 12th ke liye constable aur clerk, ITI holders ke liye DMRC technical posts aur Graduate/PG ke liye DSSSB — sab available hain.</p>
+<h2>Latest Government Jobs in Delhi</h2>
+<p>Latest Delhi Government Jobs mein DSSSB, Delhi Police, DMRC aur AIIMS ki vacancies open hain. Online form, admit card download aur result sab Top Sarkari Jobs par ek jagah milenge. Delhi Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Delhi</h2>
+<p>Delhi mein 10th pass ke liye Group D aur constable posts, 12th pass ke liye clerk aur assistant. ITI holders DMRC mein, Diploma candidates Delhi Jal Board mein apply kar sakte hain. Graduate aur PG waale DSSSB teacher posts aur Delhi PSC ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Delhi</h2>
+<p>Delhi Police CISF, AIIMS medical staff, DSSSB teacher recruitment aur DMRC technical posts — yeh Delhi ke top hiring departments hain 2026 mein. DSSSB exam calendar follow karo aur Top Sarkari Jobs par Delhi Recruitment 2026 ka poora update paao.</p>""",
+
+  "Odisha": """<h2>About Odisha Government Jobs 2026</h2>
+<p>Odisha Sarkari Naukri 2026 ke liye OPSC (Odisha Public Service Commission) sabse important recruitment body hai jo OAS, OPS aur other state civil services ke liye exam conduct karta hai. Bhubaneswar, Cuttack, Rourkela, Berhampur, Sambalpur aur Puri jaise cities mein candidates badi sankhya mein Odisha Government Jobs 2026 ki taiyari mein hain.</p>
+<p>OSRTC, GRIDCO, Odisha Mining Corporation aur NALCO pramukh recruitment bodies hain. Odisha Police aur OSSC ke through constable aur other posts nikalte hain. OHRC aur AIIMS Bhubaneswar ke under health department mein medical posts aate hain. BSE Odisha aur CHSE Odisha ke through teacher recruitment hoti hai. Utkal University, Berhampur University aur Sambalpur University mein bhi academic posts available hain 2026 mein.</p>
+<p>Odisha Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Koraput, Sundargarh, Keonjhar, Ganjam ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Odisha</h2>
+<p>Latest Odisha Government Jobs mein OPSC, OSSC, Odisha Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Odisha Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Odisha</h2>
+<p>Odisha mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk aur assistant posts hain. ITI holders GRIDCO mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates OPSC OAS aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Odisha</h2>
+<p>Odisha Police OSSC, OHRC health bharti, BSE Odisha teacher recruitment aur GRIDCO technical posts — yeh Odisha ke top hiring departments hain 2026 mein. OPSC calendar follow karo aur Top Sarkari Jobs par Odisha Recruitment 2026 ka full update paao.</p>""",
+
+  "Jharkhand": """<h2>About Jharkhand Government Jobs 2026</h2>
+<p>Jharkhand Sarkari Naukri 2026 ke liye JPSC (Jharkhand Public Service Commission) pramukh exam body hai jo JPSC Civil Services aur other Group A B posts ke liye selection karta hai. Ranchi, Dhanbad, Jamshedpur, Bokaro, Hazaribagh aur Giridih jaise cities mein candidates Jharkhand Government Jobs 2026 ki taiyari mein hain.</p>
+<p>JBVNL, JSRTC aur Jharkhand Housing Board important recruitment bodies hain. Jharkhand Police aur JSSC ke through constable, SI aur other posts nikalte hain. Jharkhand NHM aur Rajendra Institute Ranchi ke under health posts aate hain. JAC Board aur Jharkhand Shiksha Pariyojna ke through teacher recruitment hoti hai. Ranchi University, VBKU aur VBU Hazaribagh mein bhi academic posts available hain 2026 mein.</p>
+<p>Jharkhand Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Dumka, Deoghar, Pakur, Lohardaga ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Jharkhand</h2>
+<p>Latest Jharkhand Government Jobs mein JPSC, JSSC, Jharkhand Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Jharkhand Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Jharkhand</h2>
+<p>Jharkhand mein 10th pass ke liye Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders JBVNL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates JPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Jharkhand</h2>
+<p>Jharkhand Police JSSC, NHM health bharti, JAC teacher recruitment aur JBVNL technical posts — yeh Jharkhand ke top hiring departments hain 2026 mein. JPSC calendar follow karo aur Top Sarkari Jobs par Jharkhand Recruitment 2026 ka poora update paao.</p>""",
+
+  "Chhattisgarh": """<h2>About Chhattisgarh Government Jobs 2026</h2>
+<p>Chhattisgarh Sarkari Naukri 2026 ke liye CGPSC (Chhattisgarh Public Service Commission) pramukh recruitment body hai. Raipur, Bilaspur, Durg, Bhilai, Jagdalpur aur Korba jaise cities mein candidates CG Government Jobs 2026 ki taiyari kar rahe hain.</p>
+<p>CSRTC, CSPDCL aur Chhattisgarh Housing Board important recruitment bodies hain. Chhattisgarh Police aur CGPEB ke through constable posts nikalte hain. CG NHM aur AIIMS Raipur ke under health posts aate hain. CGBSE aur CG Vyavsayik Pariksha Mandal ke through teacher posts fill ki jaati hain. Pt. Ravishankar Shukla University, Hemchand Yadav University aur CSVTU Bhilai mein bhi academic posts available hain 2026 mein.</p>
+<p>CG Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Surguja, Bastar, Rajnandgaon, Korba ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Chhattisgarh</h2>
+<p>Latest CG Government Jobs mein CGPSC, CGPEB, CG Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Chhattisgarh Sarkari Naukri 2026 ka daily update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Chhattisgarh</h2>
+<p>CG mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk aur assistant posts hain. ITI holders CSPDCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates CGPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Chhattisgarh</h2>
+<p>CG Police CGPEB, AIIMS Raipur health posts, CGBSE teacher recruitment aur CSPDCL technical posts — yeh CG ke top hiring departments hain 2026 mein. CGPSC calendar follow karo aur Top Sarkari Jobs par Chhattisgarh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Assam": """<h2>About Assam Government Jobs 2026</h2>
+<p>Assam Sarkari Naukri 2026 ke liye APSC (Assam Public Service Commission) pramukh exam body hai jo ACS, APS aur other state services posts ke liye selection karta hai. Guwahati, Dibrugarh, Silchar, Jorhat, Tinsukia aur Nagaon jaise cities mein candidates badi sankhya mein Assam Government Jobs 2026 ki taiyari mein hain.</p>
+<p>ASTC, APDCL, Oil India Limited aur NF Railway important recruitment bodies hain. Assam Police aur SLPRB ke through constable, SI aur other posts nikalte hain. GMCH Guwahati aur Assam NHM ke under health posts aate hain. SEBA aur AHSEC Board ke through teacher recruitment hoti hai. Gauhati University, Dibrugarh University aur Tezpur University mein bhi academic posts available hain 2026 mein.</p>
+<p>Assam Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Kamrup, Sonitpur, Cachar, Barpeta ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Assam</h2>
+<p>Latest Assam Government Jobs mein APSC, SLPRB, Assam Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par ek jagah milenge. Assam Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Assam</h2>
+<p>Assam mein 10th pass ke liye constable aur Group D, 12th pass ke liye clerk aur assistant posts hain. ITI holders APDCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates APSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Assam</h2>
+<p>SLPRB police bharti, Assam NHM health posts, SEBA teacher recruitment aur APDCL technical posts — yeh Assam ke top hiring departments hain 2026 mein. APSC calendar follow karo aur Top Sarkari Jobs par Assam Recruitment 2026 ka full update paao.</p>""",
+
+  "Kerala": """<h2>About Kerala Government Jobs 2026</h2>
+<p>Kerala Sarkari Naukri 2026 ke liye Kerala PSC (Kerala Public Service Commission) sabse pramukh exam body hai jo LDC, LD Typist, Plus Two Level aur Degree Level posts ke liye selection karta hai. Thiruvananthapuram, Kochi, Kozhikode, Thrissur, Kannur aur Alappuzha jaise cities mein candidates Kerala Government Jobs 2026 ki taiyari mein hain.</p>
+<p>KSRTC, KSEB, Cochin Shipyard aur Kerala Minerals pramukh recruitment bodies hain. Kerala Police aur Kerala Armed Police ke through constable posts nikalte hain. AIMS Kochi aur Kerala NHM ke under health posts aate hain. KBPE aur DHSE Kerala ke through HSA aur UP School teacher posts fill ki jaati hain. University of Kerala, Mahatma Gandhi University aur Calicut University mein bhi academic posts available hain 2026 mein.</p>
+<p>Kerala Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Palakkad, Malappuram, Kottayam, Kollam ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Kerala</h2>
+<p>Latest Kerala Government Jobs mein Kerala PSC, Kerala Police, KSEB aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Kerala Sarkari Naukri 2026 ka daily update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Kerala</h2>
+<p>Kerala mein 10th pass ke liye LDC aur constable posts, 12th pass ke liye LD Typist aur Plus Two Level posts hain. ITI holders KSEB mein, Diploma candidates Cochin Shipyard mein apply kar sakte hain. Graduate aur PG candidates Kerala PSC Degree Level posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Kerala</h2>
+<p>Kerala Police, AIMS Kochi health staff, KBPE teacher recruitment aur KSEB technical posts — yeh Kerala ke top hiring departments hain 2026 mein. Kerala PSC notifications follow karo aur Top Sarkari Jobs par Kerala Recruitment 2026 ka poora update paao.</p>""",
+
+  "Himachal Pradesh": """<h2>About Himachal Pradesh Government Jobs 2026</h2>
+<p>Himachal Pradesh Sarkari Naukri 2026 ke liye HPPSC (Himachal Pradesh Public Service Commission) aur HPSSSB pramukh recruitment bodies hain. Shimla, Dharamshala, Mandi, Solan, Hamirpur aur Kullu jaise hill districts ke candidates HP Government Jobs 2026 ki taiyari mein hain.</p>
+<p>HRTC, HPSEB aur HP Housing Board important recruitment bodies hain. HP Police aur HPSSSB ke through constable, clerk aur patwari posts nikalte hain. IGMC Shimla aur HP NHM ke under health posts aate hain. HPBOSE aur HP Shiksha Board ke through TGT, PGT aur teacher recruitment hoti hai. HP University Shimla, Himachal Pradesh Technical University aur CSK Agriculture University mein bhi academic posts available hain 2026 mein.</p>
+<p>HP Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Sirmaur, Kinnaur, Lahaul-Spiti, Chamba ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Himachal Pradesh</h2>
+<p>Latest HP Government Jobs mein HPPSC, HPSSSB, HP Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Himachal Pradesh Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Himachal Pradesh</h2>
+<p>HP mein 10th pass ke liye Group D aur constable, 12th pass ke liye JBT teacher aur clerk posts hain. ITI holders HPSEB mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates HPPSC exam aur TGT/PGT teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Himachal Pradesh</h2>
+<p>HP Police HPSSSB, IGMC health bharti, HPBOSE teacher recruitment aur HPSEB technical posts — yeh HP ke top hiring departments hain 2026 mein. HPPSC calendar follow karo aur Top Sarkari Jobs par Himachal Pradesh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Uttarakhand": """<h2>About Uttarakhand Government Jobs 2026</h2>
+<p>Uttarakhand Sarkari Naukri 2026 ke liye UKPSC (Uttarakhand Public Service Commission) aur UKSSSC pramukh recruitment bodies hain. Dehradun, Haridwar, Roorkee, Haldwani, Nainital aur Rishikesh ke candidates UK Government Jobs 2026 ki taiyari mein hain.</p>
+<p>UTC, UPCL, Uttarakhand Housing Corporation aur THDC India important recruitment bodies hain. Uttarakhand Police aur UKSSSC ke through constable, patwari aur other posts nikalte hain. AIIMS Rishikesh aur UK NHM ke under health posts aate hain. UBSE aur UK Board of School Education ke through teacher recruitment hoti hai. HNB Garhwal University, Kumaun University aur Uttarakhand Technical University mein bhi academic posts available hain 2026 mein.</p>
+<p>UK Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Pauri, Tehri, Pithoragarh, Chamoli ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Uttarakhand</h2>
+<p>Latest Uttarakhand Government Jobs mein UKPSC, UKSSSC, UK Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Uttarakhand Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Uttarakhand</h2>
+<p>UK mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk aur patwari posts hain. ITI holders UPCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates UKPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Uttarakhand</h2>
+<p>UK Police UKSSSC, AIIMS Rishikesh health posts, UBSE teacher recruitment aur UPCL technical posts — yeh UK ke top hiring departments hain 2026 mein. UKPSC calendar follow karo aur Top Sarkari Jobs par Uttarakhand Recruitment 2026 ka full update paao.</p>""",
+
+  "Jammu and Kashmir": """<h2>About Jammu and Kashmir Government Jobs 2026</h2>
+<p>Jammu and Kashmir Sarkari Naukri 2026 ke liye JKPSC (Jammu and Kashmir Public Service Commission) aur JKSSB pramukh recruitment bodies hain. Jammu, Srinagar, Anantnag, Baramulla, Udhampur aur Rajouri ke candidates J&K Government Jobs 2026 ki taiyari mein hain. UT status milne ke baad J&K mein UPSC aur JKPSC dono ke through opportunities aur badh gayi hain.</p>
+<p>JKRTC, JKSPDC, J&K Bank aur JKPDD important recruitment bodies hain. J&K Police aur JKSSB ke through constable aur sub-inspector posts nikalte hain. SKIMS Soura aur J&K NHM ke under health posts aate hain. JKBOSE aur School Education Department ke through teacher recruitment hoti hai. University of Jammu, University of Kashmir aur SMVDU mein bhi academic posts available hain 2026 mein.</p>
+<p>J&K Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Kulgam, Shopian, Kishtwar, Ramban ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Jammu and Kashmir</h2>
+<p>Latest J&K Government Jobs mein JKPSC, JKSSB, J&K Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Jammu and Kashmir Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Jammu and Kashmir</h2>
+<p>J&K mein 10th pass ke liye constable aur Group D, 12th pass ke liye clerk aur assistant posts hain. ITI holders JKSPDC mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates JKPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Jammu and Kashmir</h2>
+<p>J&K Police JKSSB, SKIMS health bharti, JKBOSE teacher recruitment aur JKSPDC technical posts — yeh J&K ke top hiring departments hain 2026 mein. JKPSC calendar follow karo aur Top Sarkari Jobs par Jammu Kashmir Recruitment 2026 ka poora update paao.</p>""",
+
+  "Goa": """<h2>About Goa Government Jobs 2026</h2>
+<p>Goa Sarkari Naukri 2026 ke liye Goa Public Service Commission (GPSC Goa) pramukh recruitment body hai. Panaji, Margao, Vasco da Gama, Mapusa, Ponda aur Bicholim ke candidates Goa Government Jobs 2026 ki taiyari mein hain. Tourism hub hone ke bawajood Goa mein education, health, mining aur port sector mein government jobs ka scope wide hai.</p>
+<p>KTC Goa, Goa Electricity Department, EDC Goa aur Goa Shipyard important recruitment bodies hain. Goa Police aur Goa Armed Police ke through constable posts nikalte hain. Goa Medical College Panaji aur Goa NHM ke under health posts aate hain. GBSHSE aur Goa School Education ke through teacher recruitment hoti hai. Goa University aur NIT Goa mein bhi academic posts available hain 2026 mein.</p>
+<p>Goa Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. North Goa aur South Goa ke candidates online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Goa</h2>
+<p>Latest Goa Government Jobs mein GPSC Goa, Goa Police, KTC aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Goa Sarkari Naukri 2026 ka koi bhi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Goa</h2>
+<p>Goa mein 10th pass ke liye Group D aur constable posts, 12th pass ke liye clerk aur assistant hain. ITI holders Goa Shipyard mein, Diploma candidates EDC Goa mein apply kar sakte hain. Graduate aur PG candidates GPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Goa</h2>
+<p>Goa Police, Goa Medical College health staff, GBSHSE teacher recruitment aur Goa Electricity Department technical posts — yeh Goa ke top hiring departments hain 2026 mein. GPSC Goa calendar follow karo aur Top Sarkari Jobs par Goa Recruitment 2026 ka full update paao.</p>""",
+
+  "Tripura": """<h2>About Tripura Government Jobs 2026</h2>
+<p>Tripura Sarkari Naukri 2026 ke liye TPSC (Tripura Public Service Commission) aur TRPB pramukh recruitment bodies hain. Agartala, Dharmanagar, Udaipur, Kailashahar, Belonia aur Sabroom ke candidates Tripura Government Jobs 2026 ki taiyari mein hain.</p>
+<p>TRTC, TSECL aur Tripura Tribal Welfare Department important recruitment bodies hain. Tripura Police aur TRPB ke through constable posts nikalte hain. AGMC Agartala aur Tripura NHM ke under health posts aate hain. TBSE aur Tripura School Education ke through teacher recruitment hoti hai. Tripura University, MBB University aur ICFAI University Tripura mein bhi academic posts available hain 2026 mein.</p>
+<p>Tripura Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Sepahijala, Gomati, Unakoti, Khowai ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Tripura</h2>
+<p>Latest Tripura Government Jobs mein TPSC, TRPB, Tripura Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Tripura Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Tripura</h2>
+<p>Tripura mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders TSECL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates TPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Tripura</h2>
+<p>Tripura Police TRPB, AGMC health bharti, TBSE teacher recruitment aur TSECL technical posts — yeh Tripura ke top hiring departments hain 2026 mein. TPSC calendar follow karo aur Top Sarkari Jobs par Tripura Recruitment 2026 ka poora update paao.</p>""",
+
+  "Manipur": """<h2>About Manipur Government Jobs 2026</h2>
+<p>Manipur Sarkari Naukri 2026 ke liye MPSC Manipur (Manipur Public Service Commission) pramukh recruitment body hai. Imphal, Churachandpur, Bishnupur, Thoubal, Senapati aur Ukhrul ke candidates Manipur Government Jobs 2026 ki taiyari mein hain.</p>
+<p>MSRTC, MSPDCL aur Manipur Housing Board important recruitment bodies hain. Manipur Police aur MPPRB ke through constable posts nikalte hain. JNIMS Imphal aur Manipur NHM ke under health posts aate hain. BSEM aur COHSEM Board ke through teacher recruitment hoti hai. Manipur University aur DM College mein bhi academic posts available hain 2026 mein.</p>
+<p>Manipur Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Chandel, Jiribam, Tamenglong, Kangpokpi ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Manipur</h2>
+<p>Latest Manipur Government Jobs mein MPSC, MPPRB, Manipur Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Manipur Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Manipur</h2>
+<p>Manipur mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders MSPDCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates MPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Manipur</h2>
+<p>Manipur Police MPPRB, JNIMS health bharti, BSEM teacher recruitment aur MSPDCL technical posts — yeh Manipur ke top hiring departments hain 2026 mein. MPSC calendar follow karo aur Top Sarkari Jobs par Manipur Recruitment 2026 ka poora update paao.</p>""",
+
+  "Meghalaya": """<h2>About Meghalaya Government Jobs 2026</h2>
+<p>Meghalaya Sarkari Naukri 2026 ke liye MPSC Meghalaya (Meghalaya Public Service Commission) pramukh recruitment body hai. Shillong, Tura, Jowai, Nongpoh, Williamnagar aur Baghmara ke candidates Meghalaya Government Jobs 2026 ki taiyari mein hain.</p>
+<p>MTC, MEPCO aur Meghalaya Housing Corporation important recruitment bodies hain. Meghalaya Police aur MRPB ke through constable posts nikalte hain. Civil Hospital Shillong aur Meghalaya NHM ke under health posts aate hain. MBOSE aur MSCE Board ke through teacher recruitment hoti hai. North Eastern Hill University aur Martin Luther Christian University mein bhi academic posts available hain 2026 mein.</p>
+<p>Meghalaya Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. East Khasi Hills, Ri Bhoi, West Garo Hills ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Meghalaya</h2>
+<p>Latest Meghalaya Government Jobs mein MPSC, MRPB, Meghalaya Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Meghalaya Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Meghalaya</h2>
+<p>Meghalaya mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders MEPCO mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates MPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Meghalaya</h2>
+<p>Meghalaya Police MRPB, Civil Hospital health staff, MBOSE teacher recruitment aur MEPCO technical posts — yeh Meghalaya ke top hiring departments hain 2026 mein. MPSC calendar follow karo aur Top Sarkari Jobs par Meghalaya Recruitment 2026 ka poora update paao.</p>""",
+
+  "Nagaland": """<h2>About Nagaland Government Jobs 2026</h2>
+<p>Nagaland Sarkari Naukri 2026 ke liye NPSC (Nagaland Public Service Commission) pramukh recruitment body hai. Kohima, Dimapur, Mokokchung, Tuensang, Wokha aur Zunheboto ke candidates Nagaland Government Jobs 2026 ki taiyari mein hain.</p>
+<p>NSRTC, Nagaland Power Department aur Nagaland Housing Federation important recruitment bodies hain. Nagaland Police aur NPRB ke through constable posts nikalte hain. Naga Hospital Authority aur Nagaland NHM ke under health posts aate hain. NBSE aur NCHSE Board ke through teacher recruitment hoti hai. Nagaland University aur ICFAI University Nagaland mein bhi academic posts available hain 2026 mein.</p>
+<p>Nagaland Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Phek, Kiphire, Longleng, Mon ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Nagaland</h2>
+<p>Latest Nagaland Government Jobs mein NPSC, NPRB, Nagaland Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Nagaland Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Nagaland</h2>
+<p>Nagaland mein 10th pass ke liye Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders Power Department mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates NPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Nagaland</h2>
+<p>Nagaland Police NPRB, Naga Hospital health staff, NBSE teacher recruitment aur Nagaland Power Department technical posts — yeh Nagaland ke top hiring departments hain 2026 mein. NPSC calendar follow karo aur Top Sarkari Jobs par Nagaland Recruitment 2026 ka poora update paao.</p>""",
+
+  "Mizoram": """<h2>About Mizoram Government Jobs 2026</h2>
+<p>Mizoram Sarkari Naukri 2026 ke liye MPSC Mizoram (Mizoram Public Service Commission) pramukh recruitment body hai. Aizawl, Lunglei, Champhai, Serchhip, Kolasib aur Lawngtlai ke candidates Mizoram Government Jobs 2026 ki taiyari mein hain.</p>
+<p>MZRTC, ZIDCO aur Mizoram Housing Board important recruitment bodies hain. Mizoram Police aur MIRPB ke through constable posts nikalte hain. Civil Hospital Aizawl aur Mizoram NHM ke under health posts aate hain. MBSE aur HSSLC Board ke through teacher recruitment hoti hai. Mizoram University aur Pachhunga University College mein bhi academic posts available hain 2026 mein.</p>
+<p>Mizoram Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Mamit, Siaha, Saitual, Khawzawl ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Mizoram</h2>
+<p>Latest Mizoram Government Jobs mein MPSC Mizoram, MIRPB, Mizoram Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Mizoram Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Mizoram</h2>
+<p>Mizoram mein 10th pass ke liye Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders ZIDCO mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates MPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Mizoram</h2>
+<p>Mizoram Police MIRPB, Civil Hospital health staff, MBSE teacher recruitment aur ZIDCO technical posts — yeh Mizoram ke top hiring departments hain 2026 mein. MPSC Mizoram calendar follow karo aur Top Sarkari Jobs par Mizoram Recruitment 2026 ka poora update paao.</p>""",
+
+  "Arunachal Pradesh": """<h2>About Arunachal Pradesh Government Jobs 2026</h2>
+<p>Arunachal Pradesh Sarkari Naukri 2026 ke liye APPSC Arunachal (Arunachal Pradesh Public Service Commission) aur APSSB pramukh recruitment bodies hain. Itanagar, Naharlagun, Pasighat, Ziro, Bomdila aur Tawang ke candidates AP Government Jobs 2026 ki taiyari mein hain.</p>
+<p>APST, APECL aur Arunachal Pradesh Housing Board important recruitment bodies hain. Arunachal Pradesh Police aur APSSB ke through constable posts nikalte hain. TRIHMS Naharlagun aur AP NHM Arunachal ke under health posts aate hain. CBSE Arunachal aur APDHTE ke through teacher recruitment hoti hai. Rajiv Gandhi University aur Arunachal University of Studies mein bhi academic posts available hain 2026 mein.</p>
+<p>Arunachal Pradesh Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Papum Pare, East Siang, West Kameng, Dibang Valley ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Arunachal Pradesh</h2>
+<p>Latest Arunachal Pradesh Government Jobs mein APPSC, APSSB, AP Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Arunachal Pradesh Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Arunachal Pradesh</h2>
+<p>Arunachal mein 10th pass ke liye Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders APECL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates APPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Arunachal Pradesh</h2>
+<p>AP Police APSSB, TRIHMS health staff, CBSE teacher recruitment aur APECL technical posts — yeh Arunachal ke top hiring departments hain 2026 mein. APPSC calendar follow karo aur Top Sarkari Jobs par Arunachal Pradesh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Sikkim": """<h2>About Sikkim Government Jobs 2026</h2>
+<p>Sikkim Sarkari Naukri 2026 ke liye SPSC (Sikkim Public Service Commission) aur SSSB pramukh recruitment bodies hain. Gangtok, Namchi, Mangan, Gyalshing, Rangpo aur Jorethang ke candidates Sikkim Government Jobs 2026 ki taiyari mein hain.</p>
+<p>SNT Sikkim, SPDCL aur Sikkim Housing Development Corporation important recruitment bodies hain. Sikkim Police aur SSSB ke through constable posts nikalte hain. STNM Hospital Gangtok aur Sikkim NHM ke under health posts aate hain. BSEM Sikkim aur COHSEM Sikkim ke through teacher recruitment hoti hai. Sikkim University aur Sikkim Manipal University mein bhi academic posts available hain 2026 mein.</p>
+<p>Sikkim Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. North Sikkim, West Sikkim, South Sikkim ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Sikkim</h2>
+<p>Latest Sikkim Government Jobs mein SPSC, SSSB, Sikkim Police aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Sikkim Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Sikkim</h2>
+<p>Sikkim mein 10th pass ke liye Group D, 12th pass ke liye constable aur clerk posts hain. ITI holders SPDCL mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates SPSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Sikkim</h2>
+<p>Sikkim Police SSSB, STNM Hospital health staff, COHSEM teacher recruitment aur SPDCL technical posts — yeh Sikkim ke top hiring departments hain 2026 mein. SPSC calendar follow karo aur Top Sarkari Jobs par Sikkim Recruitment 2026 ka poora update paao.</p>""",
+
+  "Chandigarh": """<h2>About Chandigarh Government Jobs 2026</h2>
+<p>Chandigarh Sarkari Naukri 2026 ke liye CSSC (Chandigarh Service Selection Commission) aur UT Administration pramukh recruitment bodies hain. Chandigarh Sector 1-50, Industrial Area, Manimajra aur Panchkula nearby ke candidates Chandigarh Government Jobs 2026 ki taiyari mein hain. Union Territory hone ki wajah se yahan central aur UT dono level ke jobs available hain.</p>
+<p>CTU Chandigarh, PSPCL, Chandigarh Housing Board aur CSCL important recruitment bodies hain. Chandigarh Police aur UT Police ke through constable posts nikalte hain. PGIMER Chandigarh aur Government Medical College ke under health posts aate hain. CBSE Board aur UT Education Department ke through teacher recruitment hoti hai. Panjab University Chandigarh aur Chandigarh University mein bhi academic posts available hain 2026 mein.</p>
+<p>Chandigarh Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. CTU mein driver posts, PGIMER mein technical posts aur UT Administration mein clerk posts regularly nikalte hain.</p>
+<h2>Latest Government Jobs in Chandigarh</h2>
+<p>Latest Chandigarh Government Jobs mein CSSC, Chandigarh Police, PGIMER aur CTU ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Chandigarh Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Chandigarh</h2>
+<p>Chandigarh mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk aur assistant posts hain. ITI holders CTU mein, Diploma candidates UT PWD mein apply kar sakte hain. Graduate aur PG candidates CSSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Chandigarh</h2>
+<p>Chandigarh Police UT, PGIMER medical staff, UT Education teacher recruitment aur CTU technical posts — yeh Chandigarh ke top hiring departments hain 2026 mein. CSSC notifications follow karo aur Top Sarkari Jobs par Chandigarh Recruitment 2026 ka poora update paao.</p>""",
+
+  "Puducherry": """<h2>About Puducherry Government Jobs 2026</h2>
+<p>Puducherry Sarkari Naukri 2026 ke liye PSCPB (Puducherry Service Commission cum Public Board) pramukh recruitment body hai. Puducherry, Karaikal, Mahe aur Yanam — in chaar enclaves ke candidates Puducherry Government Jobs 2026 ki taiyari mein hain.</p>
+<p>PRTC, PCCW aur Puducherry Industrial Promotion Development important recruitment bodies hain. Puducherry Police aur UT Armed Police ke through constable posts nikalte hain. JIPMER Puducherry aur Indira Gandhi Government Hospital ke under health posts aate hain — JIPMER ek very prestigious institution hai. PBSE aur Pondicherry Board ke through teacher recruitment hoti hai. Pondicherry University mein bhi academic posts available hain 2026 mein.</p>
+<p>Puducherry Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Villianur, Ozhukarai, Bahour ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Puducherry</h2>
+<p>Latest Puducherry Government Jobs mein PSCPB, Puducherry Police, JIPMER aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Puducherry Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Puducherry</h2>
+<p>Puducherry mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders PCCW mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates PSCPB exam aur JIPMER technical posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Puducherry</h2>
+<p>Puducherry Police UT, JIPMER medical staff, PBSE teacher recruitment aur PRTC technical posts — yeh Puducherry ke top hiring departments hain 2026 mein. PSCPB notifications follow karo aur Top Sarkari Jobs par Puducherry Recruitment 2026 ka poora update paao.</p>""",
+
+  "Andaman and Nicobar Islands": """<h2>About Andaman and Nicobar Islands Government Jobs 2026</h2>
+<p>Andaman and Nicobar Islands Sarkari Naukri 2026 ke liye ANDAMAN SSC (Andaman and Nicobar Staff Selection Commission) aur UT Administration pramukh recruitment bodies hain. Port Blair, Diglipur, Mayabunder, Car Nicobar aur Campbell Bay ke candidates A&N Government Jobs 2026 ki taiyari mein hain.</p>
+<p>Andaman Nicobar Transport, Port Blair Municipality aur ANIIDCO important recruitment bodies hain. Andaman Police aur UT Police Force ke through constable posts nikalte hain. GB Pant Hospital Port Blair aur UT NHM ke under health posts aate hain. CBSE Andaman aur Directorate of Education A&N ke through teacher recruitment hoti hai. Dr. BR Ambedkar Institute of Technology mein bhi academic posts available hain 2026 mein.</p>
+<p>A&N Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. North Andaman, Middle Andaman, Little Andaman ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Andaman and Nicobar Islands</h2>
+<p>Latest A&N Government Jobs mein ANDAMAN SSC, UT Police, GB Pant Hospital aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Andaman Nicobar Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Andaman and Nicobar Islands</h2>
+<p>A&N mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders Port Blair Municipality mein, Diploma candidates PWD mein apply kar sakte hain. Graduate aur PG candidates ANDAMAN SSC exam aur teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Andaman and Nicobar Islands</h2>
+<p>A&N Police UT, GB Pant Hospital medical staff, DoE teacher recruitment aur ANIIDCO technical posts — yeh A&N ke top hiring departments hain 2026 mein. UT Administration notifications follow karo aur Top Sarkari Jobs par Andaman Nicobar Recruitment 2026 ka poora update paao.</p>""",
+
+  "Ladakh": """<h2>About Ladakh Government Jobs 2026</h2>
+<p>Ladakh Sarkari Naukri 2026 ke liye LAHDC Leh aur LAHDC Kargil (Ladakh Autonomous Hill Development Council) pramukh recruitment bodies hain. Leh, Kargil, Nubra, Zanskar, Drass aur Sankoo ke candidates Ladakh Government Jobs 2026 ki taiyari mein hain. 2019 mein UT status milne ke baad Ladakh mein government jobs ka scope aur badh gaya hai.</p>
+<p>LAHDC, LREDA aur UT Ladakh PWD important recruitment bodies hain. Ladakh Police aur UT Police Recruitment ke through constable posts nikalte hain. SNM Hospital Leh aur Kargil District Hospital ke under health posts aate hain. CBSE Ladakh aur UT Education Department ke through teacher recruitment hoti hai. University of Ladakh nayi hai aur isme teaching posts 2026 mein expected hain.</p>
+<p>Ladakh Recruitment 2026 mein 10th, 12th, ITI, Diploma aur Graduate sabhi ke liye avsar hain. Changtang, Sham, Rupshu, Zanskar ke candidates bhi online form se apply kar sakte hain.</p>
+<h2>Latest Government Jobs in Ladakh</h2>
+<p>Latest Ladakh Government Jobs mein LAHDC, UT Police, SNM Hospital aur NHM ki vacancies open hain. Online form, admit card aur result Top Sarkari Jobs par milenge. Ladakh Sarkari Naukri 2026 ka koi update miss mat karo.</p>
+<h2>Qualification Wise Jobs in Ladakh</h2>
+<p>Ladakh mein 10th pass ke liye Group D aur constable, 12th pass ke liye clerk posts hain. ITI holders PWD mein, Diploma candidates LREDA mein apply kar sakte hain. Graduate aur PG candidates LAHDC exam aur University of Ladakh teacher posts ke liye eligible hain.</p>
+<h2>Department Wise Recruitment in Ladakh</h2>
+<p>Ladakh Police UT, SNM Hospital health staff, UT Education teacher recruitment aur PWD technical posts — yeh Ladakh ke top hiring departments hain 2026 mein. LAHDC notifications follow karo aur Top Sarkari Jobs par Ladakh Recruitment 2026 ka poora update paao.</p>""",
+}
+# ── END STATE SEO CONTENT ────────────────────────────────────────────────────
+
+
 def _seo_listing_content(title, jobs, canon_url):
     """Unique SEO content for listing pages — fixes thin content for ~4900 pages."""
     import re as _re
@@ -3991,9 +4371,15 @@ def _seo_listing_content(title, jobs, canon_url):
     _name = _re.sub(r'\s*(govt|government)\s+jobs?\s*$','', _name, flags=_re.I).strip()
     if '/state/' in _url or '/state-jobs/' in _url:
         _st = _re.sub(r'\s*(govt|government)\s+jobs?.*$','', _name, flags=_re.I).strip()
+        # ── Rich state-specific SEO content ──
+        _rich = _STATE_SEO_CONTENT.get(_st, '')
+        if _rich:
+            return ('<div class="seo-content" style="margin:24px 10px 8px;padding:18px 20px;'                    'background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;'                    'font-size:.92rem;line-height:1.7;color:#334155">'                    + _rich + '</div>')
+        # Fallback for unknown states
         p1 = (f"{_st} Government Jobs {_yr}: Is page par {_st} state ke saare latest sarkari naukri notifications milenge. Yahan {_st} ke government departments, boards, corporations aur public sector me nikalne wali sabhi vacancies update ki jaati hain.")
         p2 = (f"{_st} me sarkari job dhoondhne wale candidates ko yahan recruitment ki puri jankari milti hai: post name, total vacancies, eligibility, age limit, application fee, important dates aur direct apply link.")
         p3 = (f"Naye {_st} government job alerts ke liye is page ko regularly check karein. Hum {_st} ke sabhi districts aur departments ki vacancies cover karte hain.")
+        return ('<div class="seo-content" style="margin:24px 10px 8px;padding:18px 20px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;font-size:.92rem;line-height:1.7;color:#334155">'            f'<h2 style="font-size:1.1rem;font-weight:800;color:#0d2257;margin:0 0 12px">About {e(_st)} {_yr}</h2>'            f'<p style="margin:0 0 12px">{e(p1)}</p>'            f'<p style="margin:0 0 12px">{e(p2)}</p>'            f'<p style="margin:0">{e(p3)}</p>'            '</div>')
     elif '/district/' in _url:
         _dt = _re.sub(r'\s+govt jobs.*$','', _name, flags=_re.I).strip()
         _dt = _re.sub(r'\s*\(.*\)\s*$','', _dt).strip()
