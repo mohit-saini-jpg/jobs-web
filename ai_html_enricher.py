@@ -449,8 +449,9 @@ def main():
         progress["calls_today"] = calls_today
         save_progress(progress)
 
-        # Har page ke baad turant commit — cancel hone par bhi loss nahi
-        git_commit(processed, calls_today)
+        # Har 10 pages ke baad commit — cancel hone par max 10 pages ka loss
+        if processed % 10 == 0:
+            git_commit(processed, calls_today)
 
         time.sleep(DELAY_SEC)
 
