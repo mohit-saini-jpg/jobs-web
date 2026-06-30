@@ -835,7 +835,7 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 # vacancy column) never reaches pages whose JSON data did not change, because
 # the data-only hash stays identical and write() skips them.
 # Format: YYYYMMDD.N  — bump N for multiple changes the same day.
-TEMPLATE_VERSION = '20260630.1'
+TEMPLATE_VERSION = '20260630.2'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1258,11 +1258,34 @@ def _il_label(v, fallback=''):
     """Extract display label from an important_links value."""
     return (v.get('label') or fallback) if isinstance(v, dict) else fallback
 
+_GENERIC_LINK_LABELS = {'click here','click','view','here','open','link','open link',
+                        'official pdf document','official pdf','pdf','download','click_here'}
+
+def _smart_link_label(url, fallback=''):
+    """Resolve a human link label. Prefer a meaningful fallback; otherwise derive
+    one from the URL so we NEVER render the generic 'Click Here' as anchor text."""
+    fb = (fallback or '').strip()
+    if fb and fb.lower() not in _GENERIC_LINK_LABELS:
+        return fb[:70]
+    u = (url or '').strip().lower()
+    if u.endswith('.pdf') or '.pdf?' in u or '.pdf#' in u: return 'Download Notification PDF'
+    if 'admit' in u or 'hallticket' in u: return 'Download Admit Card'
+    if 'answer' in u or 'anskey' in u:    return 'Answer Key'
+    if 'syllabus' in u:                   return 'Syllabus'
+    if 'result' in u or 'merit' in u:     return 'Result'
+    if 'login' in u or 'signin' in u:     return 'Login'
+    if 'register' in u or 'signup' in u or 'sign-up' in u: return 'Register Now'
+    if 'apply' in u or 'career' in u or 'recruit' in u or 'applic' in u: return 'Apply Online'
+    # bare domain (no real path) → Official Website
+    _after = re.sub(r'^https?://', '', u).rstrip('/')
+    return 'Official Website'
+
 def _prepare_il(job_obj):
     """Build a clean important_links dict from any job object.
 
     Handles all three raw formats:
     - dict with _labels sub-key → promotes labels into {url, label} entries
+      (value may be a single url OR a list of urls under one key)
     - list of {label, url} dicts → converts to keyed dict
     - all_official_links → merged in (deduped by URL)
     Returns a dict that render_links() can consume.
@@ -1273,10 +1296,17 @@ def _prepare_il(job_obj):
         _labels = raw_il.get('_labels') or {}
         for k, v in raw_il.items():
             if k == '_labels' or not v: continue
-            u = str(v).strip()
-            if is_blocked(u): continue
-            lbl = safe(_labels.get(k, ''))
-            il[k] = {'url': u, 'label': lbl} if lbl else u
+            # a single key may map to ONE url string OR a LIST of urls (ESIC etc.)
+            _urls = v if isinstance(v, list) else [v]
+            _base_lbl = safe(_labels.get(k, ''))
+            for _idx, _uu in enumerate(_urls):
+                u = str(_uu or '').strip()
+                if not u.startswith('http') or is_blocked(u): continue
+                # first url uses the _labels value; extra urls get a URL-derived label
+                lbl = _smart_link_label(u, _base_lbl if _idx == 0 else '')
+                _key = k if _idx == 0 else f'{k}_{_idx+1}'
+                while _key in il: _key = f'{_key}_x'
+                il[_key] = {'url': u, 'label': lbl}
     elif isinstance(raw_il, list):
         for itm in raw_il:
             if not isinstance(itm, dict): continue
@@ -1373,7 +1403,9 @@ def render_links(il_obj):
             elif 'result' in key: icon, css = 'fa-trophy', 'lk-result'
             elif 'admit' in key: icon, css = 'fa-id-card', 'lk-admit'
             elif 'answer' in key: icon, css = 'fa-key', 'lk-answer'
-            rows += _row(lbl_override or label, u, css, icon)
+            # NEVER show literal "Click Here" — resolve a real label from URL
+            _final_lbl = _smart_link_label(u, lbl_override or label)
+            rows += _row(_final_lbl, u, css, icon)
     for item in (il_obj.get('structured_links') or []):
         if not isinstance(item, dict): continue
         u = str(item.get('url','') or item.get('href','')).strip()
@@ -1392,7 +1424,7 @@ def render_links(il_obj):
                 ('fa-file','lk-orange') if ('upload' in ll or 'fee' in ll or 'pay' in ll) else \
                 ('fa-list','lk-merit') if ('list' in ll or 'merit' in ll) else \
                 ('fa-link','lk-default')
-        rows += _row(lbl[:60], u, cl, ic)
+        rows += _row(_smart_link_label(u, lbl)[:60], u, cl, ic)
     return f'<div class="links-rows">{rows}</div>' if rows else ''
 
 def auto_generate_faqs(job_obj):
@@ -3082,7 +3114,7 @@ def build_all_sections(job_obj):
             body = (f'<div class="edu-sec" style="line-height:1.7">{e(_ai_hta)}</div>'
                     if _ai_hta else render_hta(val))
         elif key == 'important_instructions': body = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(safe(s))}</span></div>' for s in (val if isinstance(val,list) else [val]) if safe(s))
-        elif key == 'important_links':  body = render_links(val)
+        elif key == 'important_links':  body = render_links(il)  # use _prepare_il-merged links (labels, all_official_links, list-expansion)
         elif key == 'faq':
             # AI LAYER: prefer AI-expanded FAQs; wrap in sentinel so patch_ai_html.py
             # can update in-place without re-injecting (idempotent).
