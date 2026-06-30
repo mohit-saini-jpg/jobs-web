@@ -52,14 +52,28 @@ AI_GRADIENTS = re.compile(
     r'background:linear-gradient\(135deg,#(?:1d4ed8|7c3aed|0f766e|047857|b45309|475569|be123c)'
 )
 
+# DON'T MISS sidebar widget text leaked into qualification/details fields
+# Matches the HTML-escaped form (<li>DON&#x27;T MISS...) or raw form
+_DONT_MISS_LI = re.compile(
+    r'<li>DON(?:&#x27;|&apos;|\'|’|‘)?T\s+MISS.*?</li>',
+    re.DOTALL | re.IGNORECASE
+)
+
 # ── Stats ─────────────────────────────────────────────────────────────────────
 stats = {'scanned': 0, 'already_ok': 0, 'dup_faq_fixed': 0,
-         'aol_removed': 0, 'sentinel_added': 0, 'written': 0, 'errors': 0}
+         'aol_removed': 0, 'sentinel_added': 0, 'dont_miss_fixed': 0,
+         'written': 0, 'errors': 0}
 
 
 def fix_page(html: str, path: str) -> tuple[str, list]:
     """Return (new_html, list_of_changes) or (html, []) if nothing changed."""
     changes = []
+
+    # ── 0. Remove DON'T MISS leaked sidebar text from <li> items ─────────────
+    new_html = _DONT_MISS_LI.sub('', html)
+    if new_html != html:
+        html = new_html
+        changes.append("removed DON'T MISS sidebar text from list items")
 
     # ── 1. Remove duplicate FAQs ─────────────────────────────────────────────
     # Count all FAQs section cards
@@ -174,9 +188,10 @@ for fpath in all_pages:
 
     # Update stats
     for c in changes:
-        if 'FAQs' in c:      stats['dup_faq_fixed'] += 1
+        if 'FAQs' in c:          stats['dup_faq_fixed'] += 1
         if 'Official Links' in c: stats['aol_removed'] += 1
         if 'sentinel' in c or 'TSJ_AI_BLOCK' in c: stats['sentinel_added'] += 1
+        if "DON'T MISS" in c:    stats['dont_miss_fixed'] += 1
 
     if VERBOSE or not APPLY:
         slug = fpath.split(os.sep)[-2]
@@ -201,6 +216,7 @@ print(f"  Pages scanned   : {stats['scanned']}")
 print(f"  Already OK      : {stats['already_ok']}")
 print(f"  Dup FAQs fixed  : {stats['dup_faq_fixed']}")
 print(f"  AOL removed     : {stats['aol_removed']}")
+print(f"  DON'T MISS fixed: {stats['dont_miss_fixed']}")
 print(f"  Sentinels added : {stats['sentinel_added']}")
 if APPLY:
     print(f"  Files written   : {stats['written']}")

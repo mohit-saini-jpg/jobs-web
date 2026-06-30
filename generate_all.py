@@ -854,9 +854,12 @@ def write(path, html_content, skip_if_exists=False):
             if existing_m and existing_m.group(1) == new_m.group(1):
                 _patch_jsonld(p, html_content)
                 return  # content hash unchanged; JSON-LD patch only
+            # Hash differs (or old page had no hash) → fall through and rewrite
         else:
-            # Legacy page without hash sentinel — fall back to AI heuristic
-            existing_has_ai = b'ai_overview' in p.read_bytes() or b'fa-circle-info' in p.read_bytes()
+            # New HTML has no TSJ_HASH (shouldn't happen for detail pages) — legacy heuristic:
+            # only skip if old page ALSO has AI content (avoid wiping enriched pages)
+            existing_bytes = p.read_bytes()
+            existing_has_ai = b'ai_overview' in existing_bytes or b'fa-circle-info' in existing_bytes
             new_has_ai = 'ai_overview' in html_content or 'Expert Analysis' in html_content
             if not (new_has_ai and not existing_has_ai):
                 _patch_jsonld(p, html_content)
@@ -1535,6 +1538,7 @@ def render_qualification(val):
         return ''
     ORDER = ['education_qualification','qualification','eligibility','required_degree',
              'technical_qualification','experience_required','details','nationality']
+    _SKIP_QUAL_KEYS = {'matched_qualifications','post_wise_qualification'}
     pairs = []
     seen_labels = set()
     for k in ORDER:
@@ -1543,15 +1547,34 @@ def render_qualification(val):
         if v and lbl not in seen_labels:
             seen_labels.add(lbl)
             pairs.append((lbl, v))
-    # any extra unknown keys (except matched_qualifications, handled below)
+    # any extra unknown keys (except handled separately below)
     for k, v in val.items():
-        if k in ORDER or k == 'matched_qualifications': continue
+        if k in ORDER or k in _SKIP_QUAL_KEYS: continue
         sv = sanitize_short_info(safe(v)); lbl = key_label(k)
         if sv and lbl not in seen_labels:
             seen_labels.add(lbl)
             pairs.append((lbl, sv))
     rows = kv_rows(pairs)
     out = f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else ''
+    # post_wise_qualification → two-column table (Post Name | Qualification)
+    pwq = val.get('post_wise_qualification')
+    if isinstance(pwq, list) and pwq:
+        pwq_rows = ''
+        for item in pwq:
+            if not isinstance(item, dict): continue
+            pname = safe(item.get('post_name') or item.get('post') or '')
+            qual  = sanitize_short_info(safe(
+                item.get('essential_qualification') or item.get('qualification') or
+                item.get('eligibility') or item.get('details') or ''))
+            if not pname and not qual: continue
+            pwq_rows += (f'<tr><th style="min-width:160px;white-space:normal">{e(pname)}</th>'
+                         f'<td style="white-space:normal">{e(qual)}</td></tr>')
+        if pwq_rows:
+            out += ('<div style="margin-top:12px;overflow-x:auto">'
+                    '<table class="kv-table"><thead><tr>'
+                    '<th style="background:#1e40af;color:#fff">Post Name</th>'
+                    '<th style="background:#1e40af;color:#fff">Essential Qualification</th>'
+                    '</tr></thead><tbody>' + pwq_rows + '</tbody></table></div>')
     # matched_qualifications -> badges
     mq = val.get('matched_qualifications')
     if isinstance(mq, list) and mq:
@@ -5000,7 +5023,7 @@ if not FJA_RAW:
                 for _c in (_j.get('fja_categories') or []):
                     _tmp[_c].append(_j)
             FJA_RAW = dict(_tmp)
-        print(f"  [unified→FJA] {len(_uni_jobs)} unified jobs → {len(FJA_RAW)} FJA categories")
+        print(f"  [unified->FJA] {len(_uni_jobs)} unified jobs -> {len(FJA_RAW)} FJA categories")
 
 FJA     = {cat: [j for j in jobs if not is_garbage_title(
                (j.get('basic_details') or {}).get('job_title','') or j.get('title',''))]
@@ -5080,7 +5103,7 @@ if not SJ_SEC:
                                      'category': 'STATE WISE JOBS - ' + _st,
                                      'items': _st_jobs})
         SJ_SEC = _sj_sections
-        print(f"  [unified→state] {len(SJ_SEC)} state sections from unified data")
+        print(f"  [unified->state] {len(SJ_SEC)} state sections from unified data")
 # ── STATE JOBS: Add correct slug to prevent search duplicates ────────────────
 # Smart search uses slugify(item.name) for state_jobs items → wrong slug
 # (e.g. 'BEL – Havildar – 4 Posts' → 'bel-havildar-security-4-posts' which is wrong).
@@ -5152,7 +5175,10 @@ for _existing_html in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html')
         _em = _H1_RE_PRELOAD.search(_eh)
         if _em:
             _etitle = _em.group(1).strip()
-            seen_jobs[_eslug] = '__disk__'
+            # Register fingerprint for cross-source dedup (prevents two JSON sources
+            # from building two pages for the same job). Do NOT add to seen_jobs —
+            # that would block the FJA/SARK loops from rebuilding existing pages
+            # when content changes (hash differs or page has no TSJ_HASH yet).
             _efp = _fingerprint(_etitle) if '_fingerprint' in globals() else ''
             if _efp and _efp not in seen_fp:
                 seen_fp[_efp] = _eslug
@@ -7480,7 +7506,7 @@ def prune_duplicate_pages():
 # Duplicate pages delete karna band — ek baar bana hua URL hamesha live rahega.
 # Disk preload (upar) already dedup handle karta hai — same slug dobara nahi likhega.
 _dup_removed = 0
-print("  [dedup] prune disabled — permanent page system active")
+print("  [dedup] prune disabled - permanent page system active")
 
 # ── ORPHAN PAGE REMOVAL: One-Job-One-URL-One-HTML enforcement ────────────────
 # Pages exist on disk but NOT in current JSON = orphan from past generates.
@@ -7544,7 +7570,7 @@ def remove_orphan_pages():
 
     # SAFETY: if valid_slugs is suspiciously small, ABORT (don't delete everything!)
     if len(valid_slugs) < 100:
-        print(f"  [orphan-check] SAFETY ABORT — valid_slugs too small, skipping cleanup")
+        print(f"  [orphan-check] SAFETY ABORT - valid_slugs too small, skipping cleanup")
         return 0
 
     # Find orphan pages on disk
@@ -7584,7 +7610,7 @@ def remove_orphan_pages():
 # Listing pages (category/section) automatically update hote hain — wahan se
 # removed job dikhai nahi dega, lekin detail page accessible rahega.
 _orphans_removed = 0
-print("  [orphan-cleanup] disabled — all existing pages preserved permanently")
+print("  [orphan-cleanup] disabled - all existing pages preserved permanently")
 
 # ── ONE-JOB-ONE-URL-ONE-HTML VERIFICATION ─────────────────────────────────────
 # After all generation + cleanup, verify the canonical guarantee:
@@ -7682,7 +7708,7 @@ def verify_one_job_one_url():
         for _o in list(_orphans_still)[:10]:
             print(f"           orphan: /jobs/{_o}/")
     print(f"  [verify] JSON jobs without page: {len(_missing_pages)} (likely garbage titles or skipped)")
-    print(f"  ✅ ONE-JOB-ONE-URL-ONE-HTML: {len(_disk_pages)} unique pages, no duplicate URLs")
+    print(f"  [OK] ONE-JOB-ONE-URL-ONE-HTML: {len(_disk_pages)} unique pages, no duplicate URLs")
 
 verify_one_job_one_url()
 print(f"  Total cleanup: {_dup_removed} dup + {_orphans_removed} orphans = {_dup_removed + _orphans_removed} pages removed")
@@ -7691,7 +7717,7 @@ print(f"  Total cleanup: {_dup_removed} dup + {_orphans_removed} orphans = {_dup
 # Page Not Available wale ya empty pages delete karna band.
 # Permanent page system mein koi bhi /jobs/ page delete nahi hoga.
 _broken_removed = 0
-print("  [broken-pages] deletion disabled — permanent page system active")
+print("  [broken-pages] deletion disabled - permanent page system active")
 
 
 # If dedup_engine.py produced a redirect map, inject those 301s into _redirects
