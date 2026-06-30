@@ -104,6 +104,12 @@ def render_faq(faq_list):
 def get_slug(job):
     return (job.get("_canonical_slug") or job.get("slug") or "").strip()
 
+# ── Sentinel markers (idempotent re-inject) ───────────────────────────────────
+_AI_BLOCK_START = '<!-- TSJ_AI_BLOCK_START -->'
+_AI_BLOCK_END   = '<!-- TSJ_AI_BLOCK_END -->'
+_AI_FAQ_START   = '<!-- TSJ_AI_FAQ_START -->'
+_AI_FAQ_END     = '<!-- TSJ_AI_FAQ_END -->'
+
 # ── Main patcher ──────────────────────────────────────────────────────────────
 def patch_html(html: str, job: dict) -> tuple[str, list]:
     """
@@ -112,42 +118,36 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
     """
     changes = []
 
-    # ── 1. AI sections inject (first sec-card ke pehle) ─────────────────────
+    # ── 1. AI sections inject ────────────────────────────────────────────────
     ai_html = render_ai_sections(job)
     if ai_html:
-        already_has_ai = ("fa-circle-info" in html and "edu-sec" in html and
-                          "Expert Analysis" in html)
-        if already_has_ai:
-            # Replace existing AI block (between AI sentinel markers if present,
-            # else remove all existing ai sec-cards and re-insert)
-            # Find first sec-card that has fa-circle-info (Overview card)
-            pat = re.compile(
-                r'<section class="sec-card">.*?<i class="fa-solid fa-circle-info"></i>.*?</section>\n?',
-                re.DOTALL)
-            if pat.search(html):
-                html = pat.sub("", html, count=1)
-                changes.append("replaced existing overview card")
-
-        # Insert BEFORE the first <section class="sec-card"> in the page body
-        insert_marker = '<section class="sec-card">'
-        pos = html.find(insert_marker)
-        if pos != -1:
-            html = html[:pos] + ai_html + html[pos:]
-            changes.append(f"injected {ai_html.count('sec-card')} AI section(s)")
+        wrapped_ai = f'{_AI_BLOCK_START}\n{ai_html}{_AI_BLOCK_END}\n'
+        if _AI_BLOCK_START in html:
+            # Sentinel present → replace the entire existing block
+            html = re.sub(
+                re.escape(_AI_BLOCK_START) + r'.*?' + re.escape(_AI_BLOCK_END) + r'\n?',
+                wrapped_ai,
+                html, count=1, flags=re.DOTALL
+            )
+            changes.append(f"replaced AI block ({ai_html.count('sec-card')} section(s))")
         else:
-            # Fallback: insert before </main> or </article> or </body>
-            for end_tag in ["</main>", "</article>", "</body>"]:
-                pos = html.rfind(end_tag)
-                if pos != -1:
-                    html = html[:pos] + ai_html + html[pos:]
-                    changes.append(f"injected {ai_html.count('sec-card')} AI section(s) (fallback)")
-                    break
+            # First injection: insert before first <section class="sec-card">
+            pos = html.find('<section class="sec-card">')
+            if pos != -1:
+                html = html[:pos] + wrapped_ai + html[pos:]
+                changes.append(f"injected {ai_html.count('sec-card')} AI section(s)")
+            else:
+                for end_tag in ["</main>", "</article>", "</body>"]:
+                    pos = html.rfind(end_tag)
+                    if pos != -1:
+                        html = html[:pos] + wrapped_ai + html[pos:]
+                        changes.append(f"injected {ai_html.count('sec-card')} AI section(s) (fallback)")
+                        break
 
     # ── 2. Title tag update ──────────────────────────────────────────────────
     ai_title = safe(job.get("ai_title") or "")
     if ai_title:
         new_title = ai_title[:65].rstrip()
-        # Match <title>...</title>
         new_html, n = re.subn(
             r'(<title>)(.*?)(</title>)',
             lambda m: m.group(1) + e(new_title) + m.group(3),
@@ -173,7 +173,6 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
     # ── 4. H1 update ─────────────────────────────────────────────────────────
     ai_h1 = safe(job.get("ai_h1") or "")
     if ai_h1:
-        # Only update the main post-title H1 (inside .post-title or first h1)
         new_html, n = re.subn(
             r'(<h1[^>]*class="[^"]*post-title[^"]*"[^>]*>)(.*?)(</h1>)',
             lambda m: m.group(1) + e(ai_h1) + m.group(3),
@@ -188,15 +187,29 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
     if isinstance(ai_faqs, list) and ai_faqs:
         faq_html = render_faq(ai_faqs)
         if faq_html:
-            # Replace existing FAQ items inside .faq-wrap / faq section
-            faq_pat = re.compile(
-                r'(<div[^>]+class="[^"]*faq-wrap[^"]*"[^>]*>)(.*?)(</div>\s*</section>)',
-                re.DOTALL | re.IGNORECASE
-            )
-            m = faq_pat.search(html)
-            if m:
-                html = html[:m.start()] + m.group(1) + faq_html + m.group(3) + html[m.end():]
-                changes.append("updated FAQ section")
+            wrapped_faq = f'{_AI_FAQ_START}{faq_html}{_AI_FAQ_END}'
+            if _AI_FAQ_START in html:
+                # Sentinel present → replace existing FAQ block
+                html = re.sub(
+                    re.escape(_AI_FAQ_START) + r'.*?' + re.escape(_AI_FAQ_END),
+                    wrapped_faq,
+                    html, count=1, flags=re.DOTALL
+                )
+                changes.append("replaced FAQ block")
+            else:
+                # First injection: insert items inside .faq-wrap
+                faq_pat = re.compile(
+                    r'(<div[^>]+class="[^"]*faq-wrap[^"]*"[^>]*>)(.*?)(</div>\s*</section>)',
+                    re.DOTALL | re.IGNORECASE
+                )
+                m = faq_pat.search(html)
+                if m:
+                    html = html[:m.start()] + m.group(1) + wrapped_faq + m.group(3) + html[m.end():]
+                    changes.append("updated FAQ section")
+
+    # Sanity: no duplicate AI blocks (catches double-inject bugs)
+    assert html.count(_AI_BLOCK_START) <= 1, "Duplicate AI block detected!"
+    assert html.count(_AI_FAQ_START) <= 1, "Duplicate FAQ block detected!"
 
     return html, changes
 

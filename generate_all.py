@@ -12,7 +12,7 @@ Output  : /jobs/ /state/ /education/ /category/study/
           jobs-index.json  sections-index.json
 """
 
-import json, re, os, html as _html, shutil
+import json, re, os, html as _html, shutil, hashlib
 from datetime import date, datetime
 from pathlib import Path
 
@@ -826,25 +826,41 @@ def _patch_jsonld(page_path, new_html):
     except Exception:
         pass
 
+_HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
+
+def _page_content_hash(job_obj):
+    """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched separately)."""
+    def _clean(obj):
+        if isinstance(obj, dict):
+            return {k: _clean(v) for k, v in sorted(obj.items()) if not k.startswith('ai_')}
+        if isinstance(obj, list):
+            return [_clean(v) for v in obj]
+        return obj
+    raw = json.dumps(_clean(job_obj), sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.md5(raw.encode('utf-8')).hexdigest()[:16]
+
 def write(path, html_content, skip_if_exists=False):
     """Write HTML to disk.
-    skip_if_exists=True  -> job detail pages: skip if exists UNLESS new AI content
+    skip_if_exists=True  -> job detail pages: skip if content hash unchanged
     skip_if_exists=False -> listing/category/section pages: always fully rewrite
     """
     global written
     p = Path(path)
     if skip_if_exists and p.exists():
-        # AI UPGRADE CHECK: agar new HTML mein AI sections hain aur existing page mein
-        # nahi hain — force rewrite karo taaki AI content render ho.
-        existing_has_ai = b'ai_overview' in p.read_bytes() or b'fa-circle-info' in p.read_bytes()
-        new_has_ai = 'ai_overview' in html_content or 'Expert Analysis' in html_content
-        if new_has_ai and not existing_has_ai:
-            # Fall through to full rewrite below
-            pass
+        new_m = _HASH_RE.search(html_content)
+        if new_m:
+            existing_bytes = p.read_bytes()
+            existing_m = _HASH_RE.search(existing_bytes.decode('utf-8', errors='replace'))
+            if existing_m and existing_m.group(1) == new_m.group(1):
+                _patch_jsonld(p, html_content)
+                return  # content hash unchanged; JSON-LD patch only
         else:
-            # SCHEMA PATCH: refresh JSON-LD blocks only
-            _patch_jsonld(p, html_content)
-            return
+            # Legacy page without hash sentinel — fall back to AI heuristic
+            existing_has_ai = b'ai_overview' in p.read_bytes() or b'fa-circle-info' in p.read_bytes()
+            new_has_ai = 'ai_overview' in html_content or 'Expert Analysis' in html_content
+            if not (new_has_ai and not existing_has_ai):
+                _patch_jsonld(p, html_content)
+                return
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
         f.write(html_content)
@@ -1174,8 +1190,28 @@ def render_kv_dict(d, order=None, threshold=90):
 def render_selection(sp):
     if not sp: return ''
     if isinstance(sp, str): sp = [s.strip() for s in re.split(r'[,\n;/→]', sp) if s.strip()]
-    steps = [safe(s) for s in sp if safe(s)]
-    steps = _clean_section_items(steps)[:25]   # C4: cap + clean
+    if not sp: return ''
+    # Table-row fragments: list of dicts → render as a table, not numbered chips
+    if isinstance(sp, list) and sp and isinstance(sp[0], dict):
+        # Collect all keys (ordered by first appearance) and build table rows
+        all_keys = []
+        seen_keys = set()
+        for row in sp:
+            if isinstance(row, dict):
+                for k in row:
+                    if k not in seen_keys:
+                        all_keys.append(k)
+                        seen_keys.add(k)
+        if all_keys:
+            thead = ''.join(f'<th>{e(key_label(k))}</th>' for k in all_keys)
+            tbody = ''
+            for row in sp:
+                if not isinstance(row, dict): continue
+                tbody += '<tr>' + ''.join(f'<td>{e(safe(row.get(k,"")))}</td>' for k in all_keys) + '</tr>'
+            if tbody:
+                return f'<table class="kv-table"><thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table>'
+    steps = [safe(s) for s in sp if safe(s) and isinstance(s, str)]
+    steps = _clean_section_items(steps)[:25]
     if not steps: return ''
     return '<div class="sel-steps">' + ''.join(
         f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(_smart_truncate(s,140))}</div>'
@@ -1191,6 +1227,14 @@ def render_hta(steps):
     items = ''.join(f'<li class="hta-item"><span class="hta-num">{i+1}</span><span>{e(s)}</span></li>'
                     for i, s in enumerate(filtered))
     return f'<ul class="hta-list">{items}</ul>'
+
+def _il_url(v):
+    """Extract URL from an important_links value (plain str OR {url,label} dict)."""
+    return (v['url'] if isinstance(v, dict) else str(v or '')).strip()
+
+def _il_label(v, fallback=''):
+    """Extract display label from an important_links value."""
+    return (v.get('label') or fallback) if isinstance(v, dict) else fallback
 
 def render_links(il_obj):
     if not il_obj or not isinstance(il_obj, dict): return ''
@@ -1224,10 +1268,15 @@ def render_links(il_obj):
     rows = ''; seen = set()
     for key, val in il_obj.items():
         if key in ('structured_links','seo_tags'): continue
-        urls = val if isinstance(val, list) else [val]
+        # val shapes: plain url str, list of urls, or {url, label} dict
+        if isinstance(val, dict) and 'url' in val:
+            pairs = [(_il_url(val), _il_label(val))]
+        elif isinstance(val, list):
+            pairs = [(str(v or '').strip(), '') for v in val]
+        else:
+            pairs = [(str(val or '').strip(), '')]
         label, css, icon = LINK_CFG.get(key, (key_label(key), 'lk-default', 'fa-link'))
-        for url in urls:
-            u = str(url or '').strip()
+        for u, lbl_override in pairs:
             if not u.startswith('http') or is_blocked(u) or u in seen: continue
             seen.add(u)
             ul = u.lower()
@@ -1236,7 +1285,7 @@ def render_links(il_obj):
             elif 'result' in key: icon, css = 'fa-trophy', 'lk-result'
             elif 'admit' in key: icon, css = 'fa-id-card', 'lk-admit'
             elif 'answer' in key: icon, css = 'fa-key', 'lk-answer'
-            rows += _row(label, u, css, icon)
+            rows += _row(lbl_override or label, u, css, icon)
     for item in (il_obj.get('structured_links') or []):
         if not isinstance(item, dict): continue
         u = str(item.get('url','') or item.get('href','')).strip()
@@ -1364,7 +1413,9 @@ def auto_generate_faqs(job_obj):
     il = job_obj.get('important_links') or {}
     pdf_link = ''
     if isinstance(il, dict):
-        pdf_link = safe(il.get('notification_pdf','') or il.get('official_website','') or il.get('admit_card','') or il.get('result_link','') or il.get('apply_online',''))
+        pdf_link = (_il_url(il.get('notification_pdf')) or _il_url(il.get('official_website'))
+                    or _il_url(il.get('admit_card')) or _il_url(il.get('result_link'))
+                    or _il_url(il.get('apply_online')))
     tl = title.lower()
     if len(faqs) < 3:
         # Detect content type from title for a relevant Q
@@ -1602,16 +1653,37 @@ def render_vacancy_table(vac_list):
         else:
             vac_rows.append(r)
 
+    def _vac_heading(r):
+        return safe(r.get('table_heading') or r.get('tableHeading') or '').strip().lower()
+
+    def _group_vac_by_heading(rows):
+        """Group consecutive vacancy rows that share the same table_heading."""
+        groups, current, cur_h = [], [], None
+        for r in rows:
+            h = _vac_heading(r)
+            if cur_h is None or h == cur_h or not h:
+                current.append(r)
+                if h: cur_h = h
+            else:
+                groups.append(current)
+                current = [r]; cur_h = h
+        if current:
+            groups.append(current)
+        return groups
+
     # if there's a genuine split (both groups non-trivial), render separately
     if cat_rows and (vac_rows or len(cat_rows) >= 1):
         parts = []
         if vac_rows:
-            parts.append(_render_vac_group(vac_rows, mode='vacancy'))
+            for grp in _group_vac_by_heading(vac_rows):
+                parts.append(_render_vac_group(grp, mode='vacancy'))
         if cat_rows:
             parts.append(_render_vac_group(cat_rows, mode='catwise'))
         return ''.join(p for p in parts if p)
-    # otherwise single table (no category-wise data)
-    return _render_vac_group(vac_list, mode='vacancy')
+    # otherwise single table (no category-wise data) — still group by heading
+    parts = [_render_vac_group(grp, mode='vacancy')
+             for grp in _group_vac_by_heading(vac_list)]
+    return ''.join(p for p in parts if p)
 
 
 def _render_vac_group(vac_list, mode='vacancy'):
@@ -3047,13 +3119,11 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     # SECURE FALLBACK: ai_extracted_structured_data for missing fields
     ai_data = job_obj.get('ai_extracted_structured_data') or {}
     # Official website (used in job + non-job schemas)
-    _SITE_BLOCKED = {'topsarkarijobs.com','sarkariresult.com','freejobalert.com',
-                     'sarkarinetwork.com','sarkariresultshine.com'}
     _official_site_url = safe(
-        (job_obj.get('important_links') or {}).get('official_website','') or
-        (job_obj.get('useful_links') or {}).get('official_website','') or
+        _il_url((job_obj.get('important_links') or {}).get('official_website')) or
+        _il_url((job_obj.get('useful_links') or {}).get('official_website')) or
         (job_obj.get('basic_details') or {}).get('official_website','') or '')
-    if any(b in _official_site_url for b in _SITE_BLOCKED):
+    if is_blocked(_official_site_url):
         _official_site_url = ''
 
     if slug is None:
@@ -3074,13 +3144,11 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         # FIX #3: hiringOrganization.sameAs must be the EMPLOYER's official site,
         # not our own domain (self-referencing sameAs causes GSC schema errors).
         _official_site = safe(
-            (job_obj.get('important_links') or {}).get('official_website', '') or
-            (job_obj.get('useful_links') or {}).get('official_website', '') or
+            _il_url((job_obj.get('important_links') or {}).get('official_website')) or
+            _il_url((job_obj.get('useful_links') or {}).get('official_website')) or
             (job_obj.get('basic_details') or {}).get('official_website', '') or '')
-        _BLOCKED_SITES = {'topsarkarijobs.com', 'sarkariresult.com', 'freejobalert.com',
-                          'sarkarinetwork.com', 'sarkariresultshine.com'}
         _hiring_org = {'@type': 'Organization', 'name': org}
-        if _official_site and not any(b in _official_site for b in _BLOCKED_SITES):
+        if _official_site and not is_blocked(_official_site):
             _hiring_org['sameAs'] = _official_site
         # ── SECURE FALLBACK: addressRegion + postalCode from loc/state/ai_data ──
         # Map common state names/abbreviations to (region, postalCode)
@@ -3812,7 +3880,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     bc_html += f'<span class="bc-sep">›</span><span aria-current="page">{e(title[:55])}{"…" if len(title)>55 else ""}</span></nav>'
 
     # Quick apply link
-    apply_url = safe(il.get('apply_online','') or il.get('registration_link','') or bd.get('official_website',''))
+    apply_url = safe(_il_url(il.get('apply_online')) or _il_url(il.get('registration_link')) or bd.get('official_website',''))
     apply_banner = ''
     if apply_url and not is_blocked(apply_url):
         apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="noopener noreferrer" class="apply-cta">'
@@ -3921,9 +3989,11 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     else:
         _og_img_job = f"{BASE_URL}/og-jobs.png"
 
+    _content_sig = _page_content_hash(job_obj)
     return f'''<!DOCTYPE html>
 <html lang="en-IN">
 <head>
+<!-- TSJ_HASH:{_content_sig} -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
 <title>{e(title_tag)}</title>
@@ -5595,7 +5665,7 @@ for job in SARK:
             key = base; n = 2
             while key in il:
                 key = f'{base}_{n}'; n += 1
-            il[key] = url
+            il[key] = {'url': url, 'label': lbl}
     for field, key in [
         ('apply_online_link',            'apply_online'),
         ('official_notification_pdf_link','notification_pdf'),

@@ -125,6 +125,10 @@ jobs:
           echo "PAGES_GENERATED=${TOTAL}" >> $GITHUB_ENV
           echo "Pages: jobs=$JOBS state=$STATE edu=$EDU cat=$CAT sec=$SEC qual=$QUAL TOTAL=$TOTAL"
 
+      - name: Validate generated pages
+        if: ${{ inputs.run_validate == true }}
+        run: python3 scripts/validate.py --fail
+
       - name: Commit and Push (safe - no stale merge)
         run: |
           git config user.name "github-actions[bot]"
