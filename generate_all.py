@@ -835,7 +835,7 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 # vacancy column) never reaches pages whose JSON data did not change, because
 # the data-only hash stays identical and write() skips them.
 # Format: YYYYMMDD.N  — bump N for multiple changes the same day.
-TEMPLATE_VERSION = '20260630.2'
+TEMPLATE_VERSION = '20260630.3'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -969,6 +969,75 @@ SECTION_META = {
     'useful_links':         ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
     'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
 }
+
+# ── DYNAMIC SEO HEADINGS ─────────────────────────────────────────────────────
+# Each major section heading becomes "[Job Title core] : [keyword-rich context]"
+# so every <h2> carries the recruitment's primary keyword phrase. Headings still
+# hide automatically when their section body is empty (handled by sec_card()).
+_DYN_HEADING = {
+    'basic_details':         'Job Overview',
+    'important_dates':       'Important Dates & Timelines',
+    'application_fee':       'Application Fee Details',
+    'age_limit':             'Age Limit',                       # may append " as on <date>"
+    'qualification':         'Eligibility & Qualification',
+    'vacancy_details':       'Vacancy Details',                 # may append " Total : N Posts"
+    'subject_wise_vacancy':  'Subject-wise Vacancy Details',
+    'category_wise_vacancy': 'Category-wise Vacancy Details',
+    'salary_details':        'Salary Details & Pay Scale',
+    'selection_process':     'Selection Process & Exam Pattern',
+    'exam_pattern':          'Exam Pattern',
+    'syllabus':              'Syllabus',
+    'physical_eligibility':  'Physical Eligibility',
+    'how_to_apply':          'How to Apply Online Step-by-Step',
+    'important_instructions':'Important Instructions',
+    'important_links':       'Important Links & Notification PDF',
+    'faq':                   'Frequently Asked Questions (FAQ)',
+}
+
+# Boilerplate tails stripped from the job title to keep headings tight but keyword-rich.
+_HEADING_TITLE_TAIL = re.compile(
+    r'\s*[-–—:]\s*(apply online|apply offline|apply now|walk[\s-]?in|notification out|'
+    r'last date|online form|short notice|recruitment notification).*$', re.I)
+
+def _seo_heading_title(job_obj):
+    """Concise, keyword-rich title prefix for section <h2>s (org + exam + year),
+    with the long '- Apply Online for N Posts' boilerplate trimmed off."""
+    if not isinstance(job_obj, dict): return ''
+    bd = job_obj.get('basic_details') or {}
+    t = safe(bd.get('job_title') or job_obj.get('title') or job_obj.get('name') or '')
+    if not t: return ''
+    t = _HEADING_TITLE_TAIL.sub('', t).strip()
+    t = re.sub(r'\s+for\s+\d[\d,]*\s+.*$', '', t, flags=re.I).strip()  # "... for 267 MTS Posts"
+    # trim trailing boilerplate words that add no keyword value
+    t = re.sub(r'\s+(notification out|notification|online form|apply online|'
+               r'short notice|out)\s*$', '', t, flags=re.I).strip()
+    if len(t) > 58:
+        t = t[:58].rsplit(' ', 1)[0].rstrip(' ,;:-–(')
+    return t
+
+def _dyn_section_heading(key, job_obj):
+    """Return the dynamic '[Title] : [Context]' heading for a section key, or the
+    plain SECTION_META label when the key isn't a mapped content section / no title."""
+    suffix = _DYN_HEADING.get(key)
+    if not suffix:
+        meta = SECTION_META.get(key)
+        return meta[0] if meta else (key if isinstance(key, str) else key_label(key))
+    t = _seo_heading_title(job_obj)
+    if key == 'age_limit':
+        ag = job_obj.get('age_limit') or {}
+        if isinstance(ag, dict):
+            _ason = safe(ag.get('as_on_date') or ag.get('as_on') or ag.get('asondate') or
+                         ag.get('as_on_the_date') or '')
+            if _ason: suffix = f'Age Limit as on {_ason}'
+    elif key == 'vacancy_details':
+        bd = job_obj.get('basic_details') or {}
+        _cnt = safe(bd.get('total_vacancies') or bd.get('total_vacancy') or
+                    job_obj.get('total_post') or job_obj.get('total_vacancy') or '')
+        _cnt = re.sub(r'[^\d,]', '', _cnt)
+        suffix = f'Vacancy Details Total : {_cnt} Posts' if _cnt else 'Vacancy Details & Eligibility'
+    if not t:
+        return suffix
+    return f'{t} : {suffix}'
 
 def sec_card(key_or_title, icon, grad, body, total_count=None):
     if not body or not str(body).strip(): return ''
@@ -1377,11 +1446,13 @@ def render_links(il_obj):
         'syllabus':             ('Syllabus',              'lk-syllabus','fa-book'),
     }
     def _row(label, url, css, icon):
-        # row: label on the left, colored "Open" button on the right
+        # row: label on the left, colored "Open" button on the right.
+        # Outbound official links carry rel="nofollow noopener" (SEO Section 4.7):
+        # preserves crawl equity by not passing PageRank to external sites.
         dl = ' download' if str(url).lower().endswith('.pdf') else ''
         return (f'<div class="lk-row">'
                 f'<span class="lk-label">{e(label)}</span>'
-                f'<a href="{e(url)}" class="lk-open {css}" target="_blank" rel="noopener noreferrer"{dl}>'
+                f'<a href="{e(url)}" class="lk-open {css}" target="_blank" rel="nofollow noopener noreferrer"{dl}>'
                 f'<i class="fa-solid {icon}"></i> Open</a></div>\n')
     rows = ''; seen = set()
     for key, val in il_obj.items():
@@ -2592,7 +2663,7 @@ def build_all_sections(job_obj):
             else: continue
             if _pre_body and _pre_body.strip():
                 _pre_meta = SECTION_META.get(_pre_key, (_pre_key.replace('_',' ').title(), 'fa-circle-info', '1d4ed8,#2563eb'))
-                html += sec_card(_pre_meta[0], _pre_meta[1], _pre_meta[2], _pre_body)
+                html += sec_card(_dyn_section_heading(_pre_key, job_obj), _pre_meta[1], _pre_meta[2], _pre_body)
         # Now render the edu content sections
         html += render_edu_sections(sections)
         rendered.add('sections')
@@ -3128,7 +3199,7 @@ def build_all_sections(job_obj):
         else:                           body = ''
         meta = SECTION_META.get(key)
         if meta and body and body.strip():
-            html += sec_card(key, meta[1], meta[2], body)
+            html += sec_card(_dyn_section_heading(key, job_obj), meta[1], meta[2], body)
 
     # ── UNIVERSAL FALLBACK: ANY top-level JSON key not rendered above gets
     # auto-rendered via _smart_render in JSON's natural order. New keys added
@@ -4021,8 +4092,9 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if _ld_s: _parts.append(f'Last Date: {_ld_s}')
     _cta_md = f'Apply {apply_m.lower() if apply_m else "online"} at Top Sarkari Jobs.'
     _md_full = '. '.join(p.rstrip('.') for p in _parts) + '. ' + _cta_md
-    if len(_md_full) > 155:
-        _cut = _md_full[:155]
+    # SEO: meta description target window is 140–150 chars (Section 4.4).
+    if len(_md_full) > 150:
+        _cut = _md_full[:150]
         # back off to last full word; avoid mid-word cut
         if ' ' in _cut:
             _cut = _cut[:_cut.rfind(' ')]
@@ -4033,7 +4105,12 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     # ── AI LAYER (Phase 5): prefer ai_meta_description if present.
     _ai_meta = safe(job_obj.get('ai_meta_description', '') or '')
     if _ai_meta:
-        meta_desc = _ai_meta[:160].rstrip()
+        _ai_meta = _ai_meta.strip()
+        if len(_ai_meta) > 150:
+            _cut = _ai_meta[:150]
+            if ' ' in _cut: _cut = _cut[:_cut.rfind(' ')]
+            _ai_meta = _strip_dangling(_cut) + '…'
+        meta_desc = _ai_meta
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs, slug)
 
@@ -4047,7 +4124,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     apply_url = safe(_il_url(il.get('apply_online')) or _il_url(il.get('registration_link')) or bd.get('official_website',''))
     apply_banner = ''
     if apply_url and not is_blocked(apply_url):
-        apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="noopener noreferrer" class="apply-cta">'
+        apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="nofollow noopener noreferrer" class="apply-cta">'
                        f'<i class="fa-solid fa-paper-plane"></i> Apply Online / Official Website ↗</a>')
 
     # Header (with share buttons)
