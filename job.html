@@ -299,16 +299,17 @@ function renderQual(obj){
 
 function renderVacancy(arr){
   if(!Array.isArray(arr)||!arr.length) return '';
-  var COL_MAP={post_name:['post_name','post','name','Post Name'],total:['total','total_vacancies','total_posts','Total Posts','Total'],ur:['ur','general','UR'],obc:['obc','OBC'],sc:['sc','SC'],st:['st','ST'],ews:['ews','EWS'],women:['women','Women'],salary:['salary','pay_scale','Salary'],qualification:['eligibility','qualification','Educational Qualification']};
-  var ORDER=['post_name','total','ur','obc','sc','st','ews','women','salary','qualification'];
-  var LABELS={post_name:'Post Name',total:'Total Posts',ur:'UR/General',obc:'OBC',sc:'SC',st:'ST',ews:'EWS',women:'Women',salary:'Salary',qualification:'Qualification'};
+  var COL_MAP={post_name:['post_name','post','name','Post Name','Post','Name Of Post','subject','Subject'],department:['department','Department','specialty','Specialty','speciality','Speciality','discipline','Discipline','trade','Trade','branch','Branch'],total:['total','total_vacancies','total_posts','Total Posts','Total','total_post'],ur:['ur','general','UR','General'],obc:['obc','OBC'],sc:['sc','SC'],st:['st','ST'],ews:['ews','EWS'],women:['women','Women','female','Female'],pay_level:['pay_level','Pay Level','Level','Pay Matrix Level'],salary:['salary','pay_scale','Salary'],qualification:['eligibility','qualification','Educational Qualification','essential_qualification']};
+  var ORDER=['post_name','department','total','ur','obc','sc','st','ews','women','pay_level','salary','qualification'];
+  var LABELS={post_name:'Post Name',department:'Department',total:'Total Posts',ur:'UR/General',obc:'OBC',sc:'SC',st:'ST',ews:'EWS',women:'Women',pay_level:'Pay Level',salary:'Salary',qualification:'Qualification'};
   var norm=[],avail=new Set();
   // GARBAGE FILTER: skip rows that are clearly not vacancy data
   var GARBAGE_POST=/^\d{1,2}\s+\w+\s+\d{4}|^\d{4}$|^(apply\s+online|official\s+website|notification|download|click\s+here|login)/i;
+  var TOTAL_LBL=/^(total|grand\s*total|sum)\b/i;
   for(var row of arr){
     if(typeof row!=='object') continue;
     // For post_wise format: {post_name, eligibility}
-    var postVal=safe(row.post_name||row.post||row.name||'');
+    var postVal=safe(row.post_name||row.post||row.Post||row.name||'');
     if(postVal && GARBAGE_POST.test(postVal.trim())) continue; // skip garbage rows
     var n={};
     for(var [col,aliases] of Object.entries(COL_MAP))
@@ -318,13 +319,19 @@ function renderVacancy(arr){
   if(!norm.length) return '';
   var cols=ORDER.filter(c=>avail.has(c));
   if(!cols.length) return '';
+  // Descriptive label per row (post_name OR department) — used to detect subtotal rows
+  function _rowLabel(r){return safe(r.post_name||r.department||'');}
+  // Embedded "Total"/subtotal rows (ESIC-style) must NOT render as data NOR be summed.
+  var dataRows=norm.filter(function(r){return !TOTAL_LBL.test(_rowLabel(r).trim());});
+  var totalRowsSeen=norm.length-dataRows.length;
+  if(!dataRows.length) dataRows=norm;
   var head='<th>Sr.</th>'+cols.map(c=>`<th>${LABELS[c]}</th>`).join('');
   var rows='',tots={};
-  norm.forEach((r,i)=>{
+  dataRows.forEach((r,i)=>{
     rows+=`<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(r[c]||'')}</td>`).join('')}</tr>`;
     ['total','ur','obc','sc','st','ews','women'].forEach(c=>{if(cols.includes(c)){try{tots[c]=(tots[c]||0)+parseInt(String(r[c]||'0').replace(/\D/g,'')||'0');}catch(e){}}});
   });
-  if(Object.keys(tots).length>0&&norm.length>1){
+  if(Object.keys(tots).length>0&&dataRows.length>1){
     var tc='<td><strong>Total</strong></td>'+cols.map(c=>`<td>${c in tots?'<strong>'+tots[c]+'</strong>':''}</td>`).join('');
     rows+=`<tr class="vac-tot">${tc}</tr>`;
   }

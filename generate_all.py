@@ -828,15 +828,25 @@ def _patch_jsonld(page_path, new_html):
 
 _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 
+# ── TEMPLATE_VERSION ─────────────────────────────────────────────────────────
+# The content hash is mixed with this version string. BUMP IT whenever the
+# RENDERER/template logic changes (not the data) so every existing page is
+# force-rewritten on the next run. Without this, a renderer fix (e.g. a new
+# vacancy column) never reaches pages whose JSON data did not change, because
+# the data-only hash stays identical and write() skips them.
+# Format: YYYYMMDD.N  — bump N for multiple changes the same day.
+TEMPLATE_VERSION = '20260630.1'
+
 def _page_content_hash(job_obj):
-    """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched separately)."""
+    """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
+    separately) PLUS the template version, so renderer changes invalidate the hash."""
     def _clean(obj):
         if isinstance(obj, dict):
             return {k: _clean(v) for k, v in sorted(obj.items()) if not k.startswith('ai_')}
         if isinstance(obj, list):
             return [_clean(v) for v in obj]
         return obj
-    raw = json.dumps(_clean(job_obj), sort_keys=True, ensure_ascii=False, default=str)
+    raw = TEMPLATE_VERSION + '\x00' + json.dumps(_clean(job_obj), sort_keys=True, ensure_ascii=False, default=str)
     return hashlib.md5(raw.encode('utf-8')).hexdigest()[:16]
 
 def write(path, html_content, skip_if_exists=False):
@@ -1790,6 +1800,7 @@ def _render_vac_group(vac_list, mode='vacancy'):
     if mode == 'catwise':
         ALL_COLS = [
             ('post_name',['post_name','post','name','Post Name','Name Of Post','Post','subject','Subject']),
+            ('department',['department','Department','specialty','Specialty','speciality','Speciality','discipline','Discipline','trade','Trade','branch','Branch']),
             ('ur',['ur','general','UR','General (UR)','General']),
             ('obc',['obc','OBC']),('sc',['sc','SC']),('st',['st','ST']),('ews',['ews','EWS']),
             ('bc',['bc','BC']),('ebc',['ebc','EBC']),
@@ -1935,22 +1946,30 @@ def _render_vac_group(vac_list, mode='vacancy'):
     _genuine_ct = len(norm) - _phys_ct
     clean = []
     explicit_total = None
+    _total_rows_seen = 0   # count of embedded "Total"/subtotal rows (ESIC-style)
     for r in norm:
-        name = r.get('post_name', '') or r.get('state','') or r.get('language','')
+        # unified descriptive label = first non-numeric column present (incl. department)
+        _lbl_val = (r.get('post_name','') or r.get('state','') or
+                    r.get('language','') or r.get('department',''))
+        name = _lbl_val
         # drop physical-eligibility pollution rows (only when there ARE genuine
         # vacancy rows too — otherwise this might be a genuine physical table that
         # the section router will handle elsewhere)
         if _genuine_ct >= 1 and _is_physical_row(r):
             continue
-        # capture an explicitly-labelled total row, don't render it as a data line
-        if _is_total_label(r.get('post_name','') or r.get('state','') or r.get('language','')):
+        # capture an explicitly-labelled total row, don't render it as a data line.
+        # ESIC-style tables embed per-group "Total" subtotal rows (Department:"Total")
+        # — these must NOT render as data AND must NOT be summed into the grand total.
+        if _is_total_label(_lbl_val):
             t = _to_int(r.get('total'))
             if t: explicit_total = t
+            _total_rows_seen += 1
             continue
         # capture an UNLABELLED total row: has a Total value but no descriptive label at all
         if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and str(r.get('total','')).strip():
             t = _to_int(r.get('total'))
             if t: explicit_total = t
+            _total_rows_seen += 1
             continue
         # drop rows completely empty of label AND total
         if _label_cols and not any(str(r.get(lc,'')).strip() for lc in _label_cols) and not str(r.get('total','')).strip():
@@ -1970,7 +1989,11 @@ def _render_vac_group(vac_list, mode='vacancy'):
         data_nums = [x for x in (_to_int(r.get('total')) for r in clean) if x]
         data_sum = sum(data_nums) if data_nums else 0
         data_max = max(data_nums) if data_nums else 0
-        if grand_total is not None and grand_total < data_max:
+        # Multiple embedded subtotal rows (e.g. ESIC Specialist=14 + SR=34): no single
+        # captured "Total" is the grand total — the sum of detail rows is authoritative.
+        if _total_rows_seen >= 2:
+            grand_total = data_sum or grand_total
+        elif grand_total is not None and grand_total < data_max:
             grand_total = data_sum or None      # captured "total" was bogus -> use real sum
         if grand_total is None and data_nums:
             grand_total = data_sum
