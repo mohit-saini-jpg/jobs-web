@@ -194,6 +194,42 @@ def registered_slug(title):
         _SLUG_REGISTRY_DIRTY = True
     return s
 
+def _job_title_of(job_obj):
+    bd = job_obj.get('basic_details') or {} if isinstance(job_obj, dict) else {}
+    return str((bd.get('job_title') if isinstance(bd, dict) else '') or
+               (job_obj.get('title') if isinstance(job_obj, dict) else '') or
+               (job_obj.get('name') if isinstance(job_obj, dict) else '') or '').strip()
+
+def _register_title_slug(job_obj, slug):
+    """Record title-fingerprint → canonical slug so any component that only has a
+    title (not the full job dict) resolves to the SAME physically-generated URL."""
+    global _SLUG_REGISTRY_DIRTY
+    if not slug or not isinstance(job_obj, dict):
+        return
+    t = _job_title_of(job_obj)
+    if not t:
+        return
+    fp = _sr_fingerprint(t)
+    if fp and _SLUG_REGISTRY.get(fp) != slug:
+        _SLUG_REGISTRY[fp] = slug
+        _SLUG_REGISTRY_DIRTY = True
+
+def canonical_job_slug(title, job_obj=None):
+    """THE resolver for listing-card / hub URLs. Returns the exact slug the detail
+    page was generated at. Prefers the full job dict; otherwise resolves a title
+    through the slug registry (populated by get_canonical_slug as pages build)."""
+    if isinstance(job_obj, dict):
+        s = get_canonical_slug(job_obj)
+        if s:
+            return s
+    t = str(title or '').strip()
+    if not t:
+        return ''
+    fp = _sr_fingerprint(t)
+    if fp and fp in _SLUG_REGISTRY:
+        return _SLUG_REGISTRY[fp]
+    return registered_slug(t)
+
 
 # ── CANONICAL SLUG RESOLVER ───────────────────────────────────────────────────
 # Rule: ONE job = ONE URL everywhere on the site.
@@ -217,7 +253,11 @@ def get_canonical_slug(job_obj):
     # Priority 1: explicit _canonical_slug from scraper (most reliable)
     cs = str(job_obj.get('_canonical_slug') or '').strip()
     if cs:
-        return _norm_slug(cs)
+        s = _norm_slug(cs)
+        # register title→slug so TITLE-ONLY resolvers (listing cards built from
+        # index data without the full job dict) resolve to this exact slug.
+        _register_title_slug(job_obj, s)
+        return s
 
     # Priority 2: raw slug field (normalize it — strip SR prefix, hex suffix)
     raw = str(job_obj.get('slug') or '').strip()
@@ -260,6 +300,7 @@ def get_canonical_slug(job_obj):
                             )
                     except Exception:
                         pass
+            _register_title_slug(job_obj, s)
             return s
 
     # Priority 3: derive from title via slug-registry (title-change proof)
@@ -4774,6 +4815,20 @@ def _seo_listing_content(title, jobs, canon_url):
         f'<p style="margin:0">{e(p3)}</p>'
         '</div>')
 
+_DISK_JOB_SLUGS = None
+def _page_exists_on_disk(slug):
+    """Ground-truth check: does jobs/<slug>/index.html physically exist?
+    seen_jobs is NOT reliable — it includes slugs that were _mark_job'd but whose
+    detail-page write was skipped (deduped/filtered), so a slug can be in seen_jobs
+    with no file. Listings must link only to pages that actually exist on disk.
+    Lazily built once (all detail pages are written before any listing renders)."""
+    global _DISK_JOB_SLUGS
+    if _DISK_JOB_SLUGS is None:
+        import glob as _g
+        _DISK_JOB_SLUGS = set(os.path.basename(os.path.dirname(p))
+                              for p in _g.glob(str(ROOT / 'jobs' / '*' / 'index.html')))
+    return slug in _DISK_JOB_SLUGS
+
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
@@ -4844,6 +4899,29 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         # Guarantees listing card href matches the actual /jobs/{slug}/index.html
         # on disk. Prevents 404s from prefix / truncation / hash mismatches.
         jslug = get_canonical_slug(job)
+        # ── ZERO-404 GUARANTEE ────────────────────────────────────────────────
+        # If this job's canonical slug has no physical page (deduped into another
+        # record, filtered, or title-drifted), resolve it to the real canonical
+        # page via the dedup fingerprint maps; if still none exists, SKIP the card
+        # entirely rather than emit a dead /jobs/<slug>/ link. seen_jobs holds every
+        # page on disk (preloaded + freshly built) by the time listings render.
+        _has_listing_override = bool(safe(job.get('_listing_url','')))
+        if not _has_listing_override and not _page_exists_on_disk(jslug):
+            _alt = None
+            try:
+                _dup, _canon = _is_dup_job(jslug, jtitle)
+                if _canon and _page_exists_on_disk(_canon):
+                    _alt = _canon
+            except Exception:
+                pass
+            if not _alt:
+                _fp_alt = _fingerprint(jtitle)
+                if _fp_alt and _page_exists_on_disk(seen_fp.get(_fp_alt, '')):
+                    _alt = seen_fp[_fp_alt]
+            if _alt:
+                jslug = _alt
+            else:
+                continue   # no real page on disk → never render a 404 link
         # Landing/index pages can override the per-row link target (e.g. /state/{slug}/
         # instead of /jobs/{slug}/) via the optional _listing_url field.
         _row_url = safe(job.get('_listing_url','')) or f"/jobs/{e(jslug)}/"
@@ -4948,7 +5026,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         for _j in (jobs or [])[:30]:
             _js = get_canonical_slug(_j)
             _jn = _j.get('title','') or (_j.get('basic_details') or {}).get('job_title','') or _j.get('name','') or ''
-            if _js and _js not in _seen and _jn:
+            if _js and _js not in _seen and _jn and _page_exists_on_disk(_js):
                 _pick.append((_js, _jn[:65]))
                 _seen.add(_js)
             if len(_pick) >= 12: break
@@ -5394,7 +5472,9 @@ def _related_jobs_html(slug, cat='', org='', qual='', state='', limit=8):
         return ''
     items = ''.join(
         f'<li class="sec-item"><a href="/jobs/{e(it["slug"])}/">{e(it["title"][:90])}</a></li>'
-        for it in picked[:limit])
+        for it in picked[:limit] if _page_exists_on_disk(it.get("slug","")))
+    if not items:
+        return ''
     return ('<section class="sec-card" style="margin-top:16px">'
             '<div class="sec-head"><div class="left">'
             '<i class="fa-solid fa-link"></i> Related Jobs</div></div>'
@@ -5660,7 +5740,7 @@ for _fj in (CJ.get('freejobalert_unified',{}) or {}).get('deduped_jobs',[]):
     _fbd = _fj.get('basic_details',{}) or {}
     _ft = _fbd.get('job_title','')
     if not _ft: continue
-    _fslug = slugify(_ft)[:80]
+    _fslug = get_canonical_slug(_fj)  # SINGLE SOURCE OF TRUTH — same slug as detail page
     _ftok = _title_tokens(_ft)
     if len(_ftok) >= 3:   # only meaningful titles
         _fja_token_index.append((_ftok, _fslug, _ft.lower()))
@@ -6436,7 +6516,7 @@ for _uj in _uni_jobs_list:
     _fja_bd = (_uj.get('basic_details') or {})
     _fja_title = _fja_bd.get('job_title', '')
     if _fja_title:
-        _derived = slugify(_fja_title)[:80]
+        _derived = get_canonical_slug(_uj)  # canonical resolver (prefers _canonical_slug/slug)
         if _derived:
             _uj['slug'] = _derived
             _slug_derived += 1
@@ -6682,7 +6762,7 @@ for cat_slug, cat_data in _cat_listing_jobs.items():
         bd = j.get('basic_details', {}) or {}
         t = safe(bd.get('job_title', '') or j.get('title', ''))
         if not t: continue
-        _items.append({'name': t, 'slug': slugify(t)[:80]})
+        _items.append({'name': t, 'slug': get_canonical_slug(j)})  # canonical — never slugify(title)
     if not _items: continue
     _qual_sections.append({
         'id': cat_slug,
@@ -6783,10 +6863,9 @@ for cat_key, url_slug in SARK_CAT_MAP.items():
                 if not _t2: continue
                 _is_offline = 'offline' in _t2.lower()
                 if cat_key == 'OFFLINE_FORM' and not _is_offline: continue
-                # Convert to sark-like format
-                _sl2 = _uj2.get('slug','') or slugify(
-                    re.search(r'/articles/([^/?#]+)/?$', _uj2.get('_scraped_from','')).group(1)
-                    if re.search(r'/articles/([^/?#]+)/?$', _uj2.get('_scraped_from','')) else _t2)
+                # Convert to sark-like format — use canonical resolver so the card
+                # URL is identical to the physically generated detail-page path.
+                _sl2 = get_canonical_slug(_uj2)
                 _imp2 = (_uj2.get('important_dates') or {})
                 sark_jobs.append({
                     'category': cat_key,
@@ -6925,6 +7004,8 @@ def _du_page(name, url, sec_title, other_items):
         on_disp = on_full[:80]                      # truncated for display only
         ou  = (oi.get('url') or '').strip()
         osl = _du_slug(on_full, ou)                 # slug from FULL name — matches generated page
+        if not _page_exists_on_disk(osl):           # never emit a 404 link
+            continue
         others += '<li class="sec-item"><a href="/jobs/' + osl + '/">' + e(on_disp) + '</a></li>'
     if others:
         others = (
@@ -7143,7 +7224,9 @@ for _eslug, (_elbl, _efja, _esark) in _EXTRA_SEC.items():
         _ebd  = (_ej.get('basic_details') or {})
         _et   = safe(_ebd.get('job_title') or _ej.get('title',''))
         if not _et: continue
-        _esl  = slugify(_et)[:80]
+        _esl  = get_canonical_slug(_ej)  # canonical — matches detail page path
+        if not _page_exists_on_disk(_esl):  # never emit a 404 link
+            continue
         _eld  = safe(_ebd.get('last_updated') or _ej.get('post_date',''))
         _esl_html += (f'<li class="sec-item"><a href="/jobs/{_esl}/">{e(_et[:90])}</a>'
                       + (f'<span class="sec-date">{e(_eld)}</span>' if _eld else '')
@@ -7196,7 +7279,7 @@ for _mj in SARK:
     if not _mt: continue
     _mini_jobs.append({
         'title': _mt,
-        'slug':  slugify(_mt)[:80],
+        'slug':  get_canonical_slug(_mj),  # canonical — matches detail page path
         'cat':   _mj.get('category',''),
         'date':  safe((_mj.get('important_dates') or {}).get('last_date','') or _mj.get('post_date',''))
     })
