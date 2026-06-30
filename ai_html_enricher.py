@@ -43,6 +43,11 @@ def e(s): return _html.escape(str(s or ""), quote=True)
 def ue(s): return _html.unescape(str(s or ""))
 def striptags(s): return re.sub(r"<[^>]+>", "", str(s or "")).strip()
 
+# Strip leaked "Don't Miss" sidebar widget text that the scraper concatenates
+# onto short_information — same pattern as generate_all.py's sanitize_short_info.
+_DONT_MISS_RE = re.compile(r"DON[''']?T\s+MISS.*", re.I | re.S)
+def _sanitize(text): return _DONT_MISS_RE.sub("", str(text or "")).strip()
+
 def sec_card(heading, icon, grad, body):
     return (
         f'<section class="sec-card">'
@@ -132,9 +137,12 @@ def extract_facts(html: str, slug: str) -> dict:
     if headings:
         facts["sections"] = [ue(h) for h in headings if h not in ("Overview","Expert Analysis","Who Should Apply","Preparation Tips","Salary Insights","Job Profile","Selection Strategy","FAQs")]
 
-    # 6. Meta description (existing, for context)
+    # 6. Meta description (existing, for context) — sanitize DON'T MISS pollution
     meta_m = re.search(r'<meta name="description" content="([^"]+)"', html)
-    if meta_m: facts["existingMeta"] = ue(meta_m.group(1))[:200]
+    if meta_m:
+        _meta_raw = _sanitize(ue(meta_m.group(1)))
+        if len(_meta_raw) >= 20:
+            facts["existingMeta"] = _meta_raw[:200]
 
     return {k: v for k, v in facts.items() if v}
 

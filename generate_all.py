@@ -230,6 +230,36 @@ def get_canonical_slug(job_obj):
             raw = raw[:-len(_tail.group(0))]
         s = _norm_slug(raw)
         if s:
+            # SEO FIX (One Job = One URL) — self-healing registry:
+            # If the registry has a DIFFERENT stale entry for this title's
+            # fingerprint, correct it now so future runs don't mint a frozen
+            # duplicate folder via the old stale slug.
+            bd2 = job_obj.get('basic_details') or {}
+            _t2 = str(
+                bd2.get('job_title') or job_obj.get('title') or
+                job_obj.get('name') or ''
+            ).strip()
+            if _t2:
+                _fp2 = _sr_fingerprint(_t2)
+                if _fp2 and _fp2 in _SLUG_REGISTRY and _SLUG_REGISTRY[_fp2] != s:
+                    global _SLUG_REGISTRY_DIRTY
+                    _old_reg = _SLUG_REGISTRY[_fp2]
+                    _SLUG_REGISTRY[_fp2] = s
+                    _SLUG_REGISTRY_DIRTY = True
+                    # Log the drift so it's visible run-over-run
+                    try:
+                        import os as _os2
+                        _drift_path = _os2.path.join(
+                            _os2.path.dirname(_SLUG_REGISTRY_PATH or '.'),
+                            '..', 'REGISTRY_DRIFT_LOG.md'
+                        )
+                        with open(_drift_path, 'a', encoding='utf-8') as _df:
+                            _df.write(
+                                f"- fp=`{_fp2}` old=`{_old_reg}` "
+                                f"new=`{s}` (job.slug Priority-2 override)\n"
+                            )
+                    except Exception:
+                        pass
             return s
 
     # Priority 3: derive from title via slug-registry (title-change proof)
@@ -651,6 +681,19 @@ def slugify(text):
     text = text.strip('-')[:80].strip('-')
     return text or 'page'
 
+# ── DON'T MISS scraper-leak sanitizer ────────────────────────────────────────
+# The scraper sometimes concatenates a "Don't Miss" sidebar widget onto the
+# real short_information field. Strip it before it reaches meta-descriptions
+# or AI prompts, preventing polluted/identical content across 350+ pages.
+_DONT_MISS_RE = re.compile(r"DON[’‘']?T\s+MISS.*", re.I | re.S)
+
+def sanitize_short_info(text):
+    """Remove leaked 'Don't Miss' sidebar widget text from short_information."""
+    if not text:
+        return ''
+    cleaned = _DONT_MISS_RE.sub('', str(text)).strip()
+    return cleaned
+
 def _norm_slug(s):
     """Normalize any slug (from JSON or wherever) - strip trailing dashes,
     collapse repeated dashes. JSON slugs from PC scraper sometimes end with '-'
@@ -928,7 +971,7 @@ def render_basic_details(bd):
         if not sv: continue
         done.add(k)
         rows += f'<tr><th>{e(key_label(k))}</th><td>{e(sv)}</td></tr>'
-    si = safe(bd.get('short_information',''))
+    si = sanitize_short_info(safe(bd.get('short_information','')))
     si_html = f'<div class="short-info"><i class="fa-solid fa-circle-info"></i> {e(si)}</div>' if si else ''
     return si_html + (f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else '')
 
@@ -1317,7 +1360,7 @@ def auto_generate_faqs(job_obj):
     # ── Content-based fallback for notice/date-sheet/result/admit pages that
     #    have a title + short info + links but no structured job fields.
     #    Derive FAQs from ACTUAL page content (title, short_info, links). ──
-    short = safe(job_obj.get('short_info','') or job_obj.get('short_information','') or bd.get('short_information',''))
+    short = sanitize_short_info(safe(job_obj.get('short_info','') or job_obj.get('short_information','') or bd.get('short_information','')))
     il = job_obj.get('important_links') or {}
     pdf_link = ''
     if isinstance(il, dict):
@@ -2990,7 +3033,7 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
     title = safe(bd.get('job_title','') or job_obj.get('title',''))
     org   = safe(bd.get('organization_name','') or 'Government of India')
     loc   = safe(bd.get('job_location','') or 'India')
-    desc  = safe(bd.get('short_information',''))[:500] or title
+    desc  = sanitize_short_info(safe(bd.get('short_information','')))[:500] or title
     # Smart last_d: for result/admitcard pages, application deadline is stale — prefer result_date/exam_date
     _is_result_page = any(x in str(job_obj.get('category','')).lower() for x in ('result','admit'))
     if _is_result_page:
@@ -3699,10 +3742,17 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     # Additive + safe: if the AI field is null/missing, behaviour is exactly as before.
     _ai_title = safe(job_obj.get('ai_title', '') or '')
     if _ai_title:
-        title_tag = smart_title_cut(_ai_title, 65)
-    short_info = safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information',''))
+        # Strip any brand suffix the AI may have baked in, then re-apply via
+        # the same _jp + _BRAND pattern so the FINAL <title> is always ≤60 chars.
+        _ai_bare = re.sub(r'\s*\|?\s*Top Sarkari Jobs\s*$', '', _ai_title, flags=re.I).strip()
+        title_tag = smart_title_cut(_ai_bare + _BRAND, 60)
+    short_info = sanitize_short_info(safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information','')))
     # Build meta description inline
     _si = short_info.rstrip('.,; ').strip() if short_info else ''
+    # Fallback: if sanitized short_info is too short to be meaningful, build
+    # description purely from structured fields that are never polluted.
+    if len(_si) < 30:
+        _si = ''
     _vd = vacancies if vacancies and vacancies not in ('—','') else ''
     _ld_s = last_d.strip() if last_d and last_d not in ('—','') else ''
     # ❸ FIX: build description that ends on a clean word/sentence boundary
