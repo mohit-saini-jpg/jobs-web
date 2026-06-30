@@ -2485,7 +2485,9 @@ def build_all_sections(job_obj):
     rendered = set()
     # ── AI LAYER (Phase 5): AI content sections render FIRST (prominent), only
     # when present. Pure addition — no effect on jobs without AI content. ──
-    html += _render_ai_sections(job_obj)
+    _ai_secs_html = _render_ai_sections(job_obj)
+    if _ai_secs_html:
+        html += f'<!-- TSJ_AI_BLOCK_START -->\n{_ai_secs_html}<!-- TSJ_AI_BLOCK_END -->\n'
     # AI overview replaces the old short-info card: if ai_overview exists, mark
     # short_information as "already handled" so we don't show both (no dup).
     if safe(job_obj.get('ai_overview', '') or ''):
@@ -3036,9 +3038,13 @@ def build_all_sections(job_obj):
         elif key == 'important_instructions': body = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(safe(s))}</span></div>' for s in (val if isinstance(val,list) else [val]) if safe(s))
         elif key == 'important_links':  body = render_links(val)
         elif key == 'faq':
-            # AI LAYER: prefer AI-expanded FAQs if present, else scraped FAQ.
+            # AI LAYER: prefer AI-expanded FAQs; wrap in sentinel so patch_ai_html.py
+            # can update in-place without re-injecting (idempotent).
             _ai_faqs = job_obj.get('ai_expanded_faqs') or []
-            body = render_faq(_ai_faqs if _ai_faqs else val)
+            if _ai_faqs:
+                body = f'<!-- TSJ_AI_FAQ_START -->{render_faq(_ai_faqs)}<!-- TSJ_AI_FAQ_END -->'
+            else:
+                body = render_faq(val)
         elif key == 'sections':
             body = render_edu_sections(val) if isinstance(val,list) else ''
         else:                           body = ''
