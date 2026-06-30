@@ -1211,7 +1211,16 @@ def render_selection(sp):
             if tbody:
                 return f'<table class="kv-table"><thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table>'
     steps = [safe(s) for s in sp if safe(s) and isinstance(s, str)]
-    steps = _clean_section_items(steps)[:25]
+    steps = _clean_section_items(steps)
+    # Merge dangling short fragments (< 20 chars, no terminal punctuation) into
+    # the preceding step — these are scraper-split comma fragments, not real steps
+    merged = []
+    for s in steps:
+        if merged and len(s) <= 20 and not re.search(r'[.!?:]$', s.strip()):
+            merged[-1] = merged[-1].rstrip(', ') + ', ' + s
+        else:
+            merged.append(s)
+    steps = [s for s in merged if len(s) > 4][:25]
     if not steps: return ''
     return '<div class="sel-steps">' + ''.join(
         f'<div class="sel-step"><span class="sel-num">{i+1}</span>{e(_smart_truncate(s,140))}</div>'
@@ -1267,7 +1276,7 @@ def render_links(il_obj):
                 f'<i class="fa-solid {icon}"></i> Open</a></div>\n')
     rows = ''; seen = set()
     for key, val in il_obj.items():
-        if key in ('structured_links','seo_tags'): continue
+        if key in ('structured_links','seo_tags','_labels'): continue
         # val shapes: plain url str, list of urls, or {url, label} dict
         if isinstance(val, dict) and 'url' in val:
             pairs = [(_il_url(val), _il_label(val))]
@@ -1463,7 +1472,7 @@ def render_qualification(val):
     pairs = []
     seen_labels = set()
     for k in ORDER:
-        v = safe(val.get(k))
+        v = sanitize_short_info(safe(val.get(k)))
         lbl = key_label(k)
         if v and lbl not in seen_labels:
             seen_labels.add(lbl)
@@ -1471,7 +1480,7 @@ def render_qualification(val):
     # any extra unknown keys (except matched_qualifications, handled below)
     for k, v in val.items():
         if k in ORDER or k == 'matched_qualifications': continue
-        sv = safe(v); lbl = key_label(k)
+        sv = sanitize_short_info(safe(v)); lbl = key_label(k)
         if sv and lbl not in seen_labels:
             seen_labels.add(lbl)
             pairs.append((lbl, sv))
@@ -1711,6 +1720,7 @@ def _render_vac_group(vac_list, mode='vacancy'):
             ('male',['male','Male','men','Men']),
             ('women',['women','Women','female','Female']),
             ('transgender',['transgender','Transgender']),
+            ('pay_level',['Pay Level','pay_level','Level','Pay Matrix Level','PayLevel','Pay Matrix','pay band']),
             ('salary',['salary','pay_scale','Scale of Pay','Salary']),
             ('qualification',['eligibility','qualification','Educational Qualification']),
             ('department',['department','Department']),
@@ -1718,7 +1728,8 @@ def _render_vac_group(vac_list, mode='vacancy'):
         ]
     LABELS = {'post_name':'Post Name','subjects':'Subjects Details','advt_no':'Advt No','state':'State / UT','language':'Language',
               'total':'Total','age':'Age Limit','ur':'UR/General','obc':'OBC',
-              'sc':'SC','st':'ST','ews':'EWS','bc':'BC','ebc':'EBC','women':'Women/Female','male':'Male','transgender':'Transgender','salary':'Salary',
+              'sc':'SC','st':'ST','ews':'EWS','bc':'BC','ebc':'EBC','women':'Women/Female','male':'Male','transgender':'Transgender',
+              'pay_level':'Pay Level','salary':'Salary',
               'qualification':'Qualification','department':'Department','notification_pdf':'Notification'}
     # flatten nested categoryWise dict into flat keys so columns line up
     _flat_list = []
@@ -2234,7 +2245,10 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'application_fees',
              'minimum_age','maximum_age','salary_pay_scale','homepage_serial',
              'organization','post_name','total_vacancy','apply_mode','job_location',
-             'short_information','board_name','listing_date','title'}
+             'short_information','board_name','listing_date','title',
+             'all_official_links',   # merged into important_links at build time
+             'fja_categories','state_tags','district_tags',  # tag-only, no page value
+             }
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','eligibility_section','course_details','vacancy_details','subject_wise_vacancy','category_wise_vacancy','salary_details',
@@ -2268,7 +2282,7 @@ def _smart_render(val, depth=0):
 
     # String → paragraph (preserves line breaks)
     if isinstance(val, str):
-        _txt = safe(val).strip()
+        _txt = sanitize_short_info(safe(val)).strip()
         if not _txt:
             return ''
         # If contains "|" separators → bullet list (common scraper pattern)
@@ -5640,8 +5654,13 @@ for job in SARK:
     il = {}
     raw_il = job.get('important_links') or {}
     if isinstance(raw_il, dict):
+        _il_labels = raw_il.get('_labels') or {}
         for k, v in raw_il.items():
-            if v and not is_blocked(str(v)): il[k] = v
+            if k == '_labels' or not v: continue
+            u = str(v).strip()
+            if is_blocked(u): continue
+            lbl = safe(_il_labels.get(k, ''))
+            il[k] = {'url': u, 'label': lbl} if lbl else u
     elif isinstance(raw_il, list):
         # master format: [{label, url}, ...] — preserve EVERY link with a unique key
         for itm in raw_il:
@@ -5687,6 +5706,29 @@ for job in SARK:
             if not href.startswith('http') or is_blocked(href): continue
             k = ('apply_online' if 'apply' in lbl else 'notification_pdf' if any(x in lbl for x in ['notif','pdf']) else 'result_link' if 'result' in lbl else 'admit_card' if 'admit' in lbl else 'answer_key' if 'answer' in lbl else 'official_website' if 'official' in lbl else 'click_here')
             if k not in il: il[k] = href
+
+    # Merge all_official_links into il (preserves original labels; deduped by URL)
+    _aol = job.get('all_official_links') or []
+    if isinstance(_aol, list) and _aol:
+        _il_seen_urls = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
+        for _ai in _aol:
+            if not isinstance(_ai, dict): continue
+            _u = str(_ai.get('url') or '').strip()
+            _l = str(_ai.get('label') or '').strip()
+            if not _u.startswith('http') or is_blocked(_u) or _u in _il_seen_urls: continue
+            _il_seen_urls.add(_u)
+            _ll = _l.lower()
+            if 'apply' in _ll: _ab = 'apply_online'
+            elif any(x in _ll for x in ['notif','pdf','notice','advt']): _ab = 'notification_pdf'
+            elif 'result' in _ll: _ab = 'result_link'
+            elif 'admit' in _ll: _ab = 'admit_card'
+            elif 'answer' in _ll: _ab = 'answer_key'
+            elif 'login' in _ll: _ab = 'login_link'
+            elif 'official' in _ll or 'website' in _ll: _ab = 'official_website'
+            else: _ab = re.sub(r'[^a-z0-9]+','_', _ll).strip('_')[:40] or 'link'
+            _ak = _ab; _an = 2
+            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
+            il[_ak] = {'url': _u, 'label': _l}
 
     # Build sections from all possible sources
     sections_out = job.get('sections') or []
