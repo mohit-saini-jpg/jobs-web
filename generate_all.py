@@ -1245,6 +1245,72 @@ def _il_label(v, fallback=''):
     """Extract display label from an important_links value."""
     return (v.get('label') or fallback) if isinstance(v, dict) else fallback
 
+def _prepare_il(job_obj):
+    """Build a clean important_links dict from any job object.
+
+    Handles all three raw formats:
+    - dict with _labels sub-key → promotes labels into {url, label} entries
+    - list of {label, url} dicts → converts to keyed dict
+    - all_official_links → merged in (deduped by URL)
+    Returns a dict that render_links() can consume.
+    """
+    raw_il = job_obj.get('important_links') or {}
+    il = {}
+    if isinstance(raw_il, dict):
+        _labels = raw_il.get('_labels') or {}
+        for k, v in raw_il.items():
+            if k == '_labels' or not v: continue
+            u = str(v).strip()
+            if is_blocked(u): continue
+            lbl = safe(_labels.get(k, ''))
+            il[k] = {'url': u, 'label': lbl} if lbl else u
+    elif isinstance(raw_il, list):
+        for itm in raw_il:
+            if not isinstance(itm, dict): continue
+            url = str(itm.get('url') or itm.get('link') or itm.get('links') or '').strip()
+            lbl = str(itm.get('label') or itm.get('title') or itm.get('name') or '').strip()
+            if not url.startswith('http') or is_blocked(url): continue
+            ll = lbl.lower()
+            if 'apply' in ll:          base = 'apply_online'
+            elif any(x in ll for x in ['short notif']): base = 'short_notification'
+            elif 'date extend' in ll or 'extended' in ll: base = 'date_extended_notice'
+            elif any(x in ll for x in ['notif','notice','advt','advertisement']): base = 'notification_pdf'
+            elif 'result' in ll:       base = 'result_link'
+            elif 'admit' in ll:        base = 'admit_card'
+            elif 'answer' in ll:       base = 'answer_key'
+            elif 'syllabus' in ll:     base = 'syllabus'
+            elif 'official' in ll or 'website' in ll: base = 'official_website'
+            else:
+                base = re.sub(r'[^a-z0-9]+','_', ll).strip('_')[:40] or 'click_here'
+            key = base; n = 2
+            while key in il:
+                key = f'{base}_{n}'; n += 1
+            il[key] = {'url': url, 'label': lbl}
+
+    # Merge all_official_links (deduped by URL, original label preserved)
+    _aol = job_obj.get('all_official_links') or []
+    if isinstance(_aol, list) and _aol:
+        _seen = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
+        for _item in _aol:
+            if not isinstance(_item, dict): continue
+            _u = str(_item.get('url') or '').strip()
+            _l = str(_item.get('label') or '').strip()
+            if not _u.startswith('http') or is_blocked(_u) or _u in _seen: continue
+            _seen.add(_u)
+            _ll = _l.lower()
+            if 'apply' in _ll:   _ab = 'apply_online'
+            elif any(x in _ll for x in ['notif','pdf','notice','advt']): _ab = 'notification_pdf'
+            elif 'result' in _ll:  _ab = 'result_link'
+            elif 'admit' in _ll:   _ab = 'admit_card'
+            elif 'answer' in _ll:  _ab = 'answer_key'
+            elif 'login' in _ll:   _ab = 'login_link'
+            elif 'official' in _ll or 'website' in _ll: _ab = 'official_website'
+            else: _ab = re.sub(r'[^a-z0-9]+','_', _ll).strip('_')[:40] or 'link'
+            _ak = _ab; _an = 2
+            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
+            il[_ak] = {'url': _u, 'label': _l}
+    return il
+
 def render_links(il_obj):
     if not il_obj or not isinstance(il_obj, dict): return ''
     LINK_CFG = {
@@ -1419,7 +1485,7 @@ def auto_generate_faqs(job_obj):
     #    have a title + short info + links but no structured job fields.
     #    Derive FAQs from ACTUAL page content (title, short_info, links). ──
     short = sanitize_short_info(safe(job_obj.get('short_info','') or job_obj.get('short_information','') or bd.get('short_information','')))
-    il = job_obj.get('important_links') or {}
+    il = _prepare_il(job_obj)
     pdf_link = ''
     if isinstance(il, dict):
         pdf_link = (_il_url(il.get('notification_pdf')) or _il_url(il.get('official_website'))
@@ -2429,7 +2495,7 @@ def build_all_sections(job_obj):
     sections = job_obj.get('sections') or []
     has_sarkari = bool(sections and any(sec.get('title') for sec in sections if isinstance(sec,dict)))
     has_edu_secs = bool(sections and any(sec.get('heading') is not None for sec in sections if isinstance(sec,dict)) and not has_sarkari)
-    il = job_obj.get('important_links') or {}
+    il = _prepare_il(job_obj)
 
     if has_sarkari:
         html += render_sarkari_sections(sections, il)
@@ -5650,41 +5716,8 @@ for job in SARK:
 
     _mark_job(slug, title, job.get('category',''))
 
-    # Build important_links from all sources
-    il = {}
-    raw_il = job.get('important_links') or {}
-    if isinstance(raw_il, dict):
-        _il_labels = raw_il.get('_labels') or {}
-        for k, v in raw_il.items():
-            if k == '_labels' or not v: continue
-            u = str(v).strip()
-            if is_blocked(u): continue
-            lbl = safe(_il_labels.get(k, ''))
-            il[k] = {'url': u, 'label': lbl} if lbl else u
-    elif isinstance(raw_il, list):
-        # master format: [{label, url}, ...] — preserve EVERY link with a unique key
-        for itm in raw_il:
-            if not isinstance(itm, dict): continue
-            url = str(itm.get('url') or itm.get('link') or itm.get('links') or '').strip()
-            lbl = str(itm.get('label') or itm.get('title') or itm.get('name') or '').strip()
-            if not url.startswith('http') or is_blocked(url): continue
-            ll = lbl.lower()
-            # choose a stable key; fall back to a slugified label so duplicates don't collide
-            if 'apply' in ll:                       base = 'apply_online'
-            elif any(x in ll for x in ['short notif']): base = 'short_notification'
-            elif 'date extend' in ll or 'extended' in ll: base = 'date_extended_notice'
-            elif any(x in ll for x in ['notif','notice','advt','advertisement']): base = 'notification_pdf'
-            elif 'result' in ll:                    base = 'result_link'
-            elif 'admit' in ll:                     base = 'admit_card'
-            elif 'answer' in ll:                    base = 'answer_key'
-            elif 'syllabus' in ll:                  base = 'syllabus'
-            elif 'official' in ll or 'website' in ll: base = 'official_website'
-            else:
-                base = re.sub(r'[^a-z0-9]+','_', ll).strip('_')[:40] or 'click_here'
-            key = base; n = 2
-            while key in il:
-                key = f'{base}_{n}'; n += 1
-            il[key] = {'url': url, 'label': lbl}
+    # Build important_links — _prepare_il handles dict/_labels/list/all_official_links
+    il = _prepare_il(job)
     for field, key in [
         ('apply_online_link',            'apply_online'),
         ('official_notification_pdf_link','notification_pdf'),
@@ -5706,29 +5739,6 @@ for job in SARK:
             if not href.startswith('http') or is_blocked(href): continue
             k = ('apply_online' if 'apply' in lbl else 'notification_pdf' if any(x in lbl for x in ['notif','pdf']) else 'result_link' if 'result' in lbl else 'admit_card' if 'admit' in lbl else 'answer_key' if 'answer' in lbl else 'official_website' if 'official' in lbl else 'click_here')
             if k not in il: il[k] = href
-
-    # Merge all_official_links into il (preserves original labels; deduped by URL)
-    _aol = job.get('all_official_links') or []
-    if isinstance(_aol, list) and _aol:
-        _il_seen_urls = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
-        for _ai in _aol:
-            if not isinstance(_ai, dict): continue
-            _u = str(_ai.get('url') or '').strip()
-            _l = str(_ai.get('label') or '').strip()
-            if not _u.startswith('http') or is_blocked(_u) or _u in _il_seen_urls: continue
-            _il_seen_urls.add(_u)
-            _ll = _l.lower()
-            if 'apply' in _ll: _ab = 'apply_online'
-            elif any(x in _ll for x in ['notif','pdf','notice','advt']): _ab = 'notification_pdf'
-            elif 'result' in _ll: _ab = 'result_link'
-            elif 'admit' in _ll: _ab = 'admit_card'
-            elif 'answer' in _ll: _ab = 'answer_key'
-            elif 'login' in _ll: _ab = 'login_link'
-            elif 'official' in _ll or 'website' in _ll: _ab = 'official_website'
-            else: _ab = re.sub(r'[^a-z0-9]+','_', _ll).strip('_')[:40] or 'link'
-            _ak = _ab; _an = 2
-            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
-            il[_ak] = {'url': _u, 'label': _l}
 
     # Build sections from all possible sources
     sections_out = job.get('sections') or []

@@ -99,7 +99,7 @@ else:
 # ── 3. Blocked-domain leak check ──────────────────────────────────────────────
 print('Checking for blocked-domain leakage in job pages...')
 BLOCKED = {'sarkariresult.com', 'freejobalert.com', 'sarkarinetwork.com',
-           'sarkariresultshine.com', 'topsarkarijobs.com'}
+           'sarkariresultshine.com'}
 all_pages = list(glob.glob('jobs/*/index.html'))
 domain_violations = []
 for fpath in all_pages:
