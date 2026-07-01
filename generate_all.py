@@ -876,7 +876,7 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 # vacancy column) never reaches pages whose JSON data did not change, because
 # the data-only hash stays identical and write() skips them.
 # Format: YYYYMMDD.N  — bump N for multiple changes the same day.
-TEMPLATE_VERSION = '20260630.3'
+TEMPLATE_VERSION = '20260701.2'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1406,6 +1406,15 @@ def _prepare_il(job_obj):
         _labels = raw_il.get('_labels') or {}
         for k, v in raw_il.items():
             if k == '_labels' or not v: continue
+            # IDEMPOTENT: value may already be a resolved {url, label} dict from a
+            # prior _prepare_il pass (SARK loop pre-builds `il` then build_all_sections
+            # re-runs _prepare_il). Without this, str({'url':...}) breaks the URL and
+            # every link silently vanishes from the page.
+            if isinstance(v, dict) and (v.get('url') or v.get('link')):
+                u = str(v.get('url') or v.get('link') or '').strip()
+                if not u.startswith('http') or is_blocked(u): continue
+                il[k] = {'url': u, 'label': _smart_link_label(u, safe(v.get('label') or _labels.get(k, '')))}
+                continue
             # a single key may map to ONE url string OR a LIST of urls (ESIC etc.)
             _urls = v if isinstance(v, list) else [v]
             _base_lbl = safe(_labels.get(k, ''))
@@ -1462,6 +1471,34 @@ def _prepare_il(job_obj):
             _ak = _ab; _an = 2
             while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
             il[_ak] = {'url': _u, 'label': _l}
+
+    # Merge all_links / useful_links arrays (SARK LATEST_JOBS NEW / OFFLINE_FORM format:
+    # [{label|title, url}]) so their official job links also render as buttons.
+    for _src_key in ('all_links', 'useful_links'):
+        _arr = job_obj.get(_src_key) or []
+        if not isinstance(_arr, list) or not _arr: continue
+        _seen2 = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
+        for _item in _arr:
+            if not isinstance(_item, dict): continue
+            _u = str(_item.get('url') or _item.get('link') or (
+                     (_item.get('links') or [''])[0] if isinstance(_item.get('links'), list)
+                     else _item.get('links') or '')).strip()
+            _l = str(_item.get('label') or _item.get('title') or _item.get('name') or '').strip()
+            if not _u.startswith('http') or is_blocked(_u) or _u in _seen2: continue
+            _seen2.add(_u)
+            _lbl = _smart_link_label(_u, _l)
+            _ll = (_l + ' ' + _u).lower()
+            if 'apply' in _ll or 'career' in _ll:   _ab = 'apply_online'
+            elif any(x in _ll for x in ['notif','pdf','advt']): _ab = 'notification_pdf'
+            elif 'result' in _ll:  _ab = 'result_link'
+            elif 'admit' in _ll:   _ab = 'admit_card'
+            elif 'answer' in _ll:  _ab = 'answer_key'
+            elif 'login' in _ll:   _ab = 'login_link'
+            elif 'official' in _ll or 'website' in _ll or 'visit' in _ll: _ab = 'official_website'
+            else: _ab = re.sub(r'[^a-z0-9]+','_', _lbl.lower()).strip('_')[:40] or 'link'
+            _ak = _ab; _an = 2
+            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
+            il[_ak] = {'url': _u, 'label': _lbl}
     return il
 
 def render_links(il_obj):
@@ -2712,7 +2749,14 @@ def build_all_sections(job_obj):
     for key in SECTION_ORDER:
         if key in rendered: continue
         val = job_obj.get(key)
-        if val is None or val == '' or val == [] or val == {}: continue
+        if val is None or val == '' or val == [] or val == {}:
+            # important_links may itself be empty {} while all_official_links /
+            # all_links (already merged into `il` by _prepare_il) still hold real
+            # links — render from `il` instead of skipping the section.
+            if key == 'important_links' and il:
+                val = il
+            else:
+                continue
         rendered.add(key)
         if key == 'basic_details':      body = render_basic_details(val)
         elif key == 'important_dates':  body = render_dates(val)
@@ -3234,7 +3278,18 @@ def build_all_sections(job_obj):
             if _ai_faqs:
                 body = f'<!-- TSJ_AI_FAQ_START -->{render_faq(_ai_faqs)}<!-- TSJ_AI_FAQ_END -->'
             else:
-                body = render_faq(val)
+                _json_faqs = [f for f in (val if isinstance(val, list) else [])
+                              if isinstance(f, dict) and safe(f.get('question')) and safe(f.get('answer'))]
+                # SEO: guarantee a useful minimum. Thin JSON FAQ (<5) — common before
+                # the nightly AI enricher runs — is supplemented with FAQs auto-built
+                # from THIS page's real fields (dates/fee/eligibility/vacancy — never
+                # invented). render_faq dedupes; capped so it stays tidy.
+                if len(_json_faqs) < 5:
+                    _extra = [f for f in auto_generate_faqs(job_obj) if f not in _json_faqs]
+                    _merged = (_json_faqs + _extra)[:12]
+                else:
+                    _merged = _json_faqs
+                body = render_faq(_merged)
         elif key == 'sections':
             body = render_edu_sections(val) if isinstance(val,list) else ''
         else:                           body = ''
@@ -5807,6 +5862,7 @@ def _normalize_sarkari_job(job):
         'selectionProcess':'selection_process', 'dataTables':'data_tables',
         'subjectWiseVacancy':'subject_wise_vacancy', 'courseDetails':'course_details',
         'eligibilitySection':'eligibility_section',
+        'faqs':'faq',   # LATEST_JOBS NEW / OFFLINE_FORM use plural 'faqs'
     }
     for cam, snk in CAMEL.items():
         if j.get(cam) and not j.get(snk):
