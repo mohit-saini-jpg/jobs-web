@@ -881,7 +881,7 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              also get the new isolated breakdown tables.
 # 20260701.4 — vacancy_breakdown skips buckets already shown above (dedup parity)
 #              so duplicate data no longer leaves an orphan empty card.
-TEMPLATE_VERSION = '20260701.4'
+TEMPLATE_VERSION = '20260701.7-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -2814,6 +2814,85 @@ def _render_ai_sections(job_obj):
     return out
 
 
+# ── FJA content_sections renderer (dynamic, complete, un-mixed titled tables) ──
+# Scraper ab har section ka heading + uski saari tables (structured, isolated,
+# multi-column matrix-safe) `content_sections` me deta hai. Yahan usse generic
+# render karte hain — koi bhi (naya bhi) table apne heading ke saath aata hai,
+# kabhi mix nahi. Jo sections special renderers me handle hote hain (how to apply /
+# links / faq / overview) unhe skip karte hain.
+_CSALL_SKIP_RE = re.compile(
+    r'(how\s*to\s*apply|apply\s*online|step[\s-]*by[\s-]*step|application\s*process|'
+    r'important\s*link|useful\s*link|^\s*faq\b|frequently\s*asked|'
+    r'official\s*notification|pdf\s*download|^\s*overview|basic\s*detail|'
+    r'common\s*mistake|other\s*active|other\s*(latest\s*)?(govt\s*)?(jobs|recruitment)|'
+    r'you\s*might\s*be\s*interested|other\s*posts|about\s*the\s*author)',
+    re.I)
+_CSALL_ICONS = [
+    ('date',      'fa-calendar-check',        'b91c1c,#dc2626'),
+    ('fee',       'fa-indian-rupee-sign',     'c2410c,#ea580c'),
+    ('salary',    'fa-indian-rupee-sign',     '15803d,#16a34a'),
+    ('pay',       'fa-indian-rupee-sign',     '15803d,#16a34a'),
+    ('age',       'fa-user-clock',            '0f766e,#0891b2'),
+    ('eligib',    'fa-graduation-cap',        '4338ca,#6366f1'),
+    ('qualif',    'fa-graduation-cap',        '4338ca,#6366f1'),
+    ('vacan',     'fa-chart-pie',             '15803d,#16a34a'),
+    ('post',      'fa-chart-pie',             '15803d,#16a34a'),
+    ('selection', 'fa-list-check',            '5b21b6,#7c3aed'),
+    ('exam',      'fa-file-lines',            '0369a1,#0284c7'),
+    ('pattern',   'fa-file-lines',            '0369a1,#0284c7'),
+    ('syllabus',  'fa-book',                  '4338ca,#6366f1'),
+]
+
+def _csall_table_html(rows):
+    if not isinstance(rows, list) or not rows: return ''
+    cols = []
+    for r in rows:
+        if isinstance(r, dict):
+            for k in r.keys():
+                if k not in cols: cols.append(k)
+    if not cols: return ''
+    head = ''.join(f'<th>{e(key_label(c))}</th>' for c in cols)
+    body = ''
+    for r in rows:
+        if not isinstance(r, dict): continue
+        body += '<tr>' + ''.join(f'<td>{e(safe(r.get(c, "")))}</td>' for c in cols) + '</tr>'
+    if not body: return ''
+    return (f'<div class="tbl-scroll"><table class="data-table">'
+            f'<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+
+def render_content_sections_all(sections):
+    if not isinstance(sections, list): return ''
+    out = ''
+    for sec in sections:
+        if not isinstance(sec, dict): continue
+        heading = safe(sec.get('heading', ''))
+        if not heading or _CSALL_SKIP_RE.search(heading): continue
+        tables = sec.get('tables') or []
+        text = safe(sec.get('text', ''))
+        body = ''
+        if text:
+            body += (f'<div style="padding:10px 14px;font-size:.9rem;color:#334155;'
+                     f'line-height:1.6">{e(text[:900])}</div>')
+        multi = len([t for t in tables if isinstance(t, dict) and t.get('rows')]) > 1
+        for t in tables:
+            if not isinstance(t, dict): continue
+            th = _csall_table_html(t.get('rows') or [])
+            if not th: continue
+            cap = safe(t.get('caption', ''))
+            if cap and multi:
+                body += (f'<div style="font-weight:700;color:#334155;'
+                         f'margin:12px 14px 4px;font-size:.92rem;">{e(cap)}</div>')
+            body += th
+        if not body: continue
+        icon, grad = 'fa-table-list', '475569,#334155'
+        hl = heading.lower()
+        for kw, ic, gr in _CSALL_ICONS:
+            if kw in hl:
+                icon, grad = ic, gr; break
+        out += sec_card(heading, icon, grad, body)
+    return out
+
+
 def build_all_sections(job_obj):
     html = ''
     rendered = set()
@@ -2833,10 +2912,43 @@ def build_all_sections(job_obj):
     has_edu_secs = bool(sections and any(sec.get('heading') is not None for sec in sections if isinstance(sec,dict)) and not has_sarkari)
     il = _prepare_il(job_obj)
 
-    if has_sarkari:
+    # ── FJA content_sections FIRST — complete, un-mixed, titled tables. ──
+    # Kuch generation loops job_obj se content_sections strip kar dete hain, isliye
+    # _scraped_from / slug / title se global lookup (_CS_BY_KEY) fallback — robust.
+    _cs = job_obj.get('content_sections')
+    if not (isinstance(_cs, list) and _cs):
+        _bd0 = job_obj.get('basic_details') or {}
+        for _lk in (job_obj.get('_scraped_from'), job_obj.get('slug'),
+                    _cs_norm_title(_bd0.get('job_title', '') or job_obj.get('title', ''))):
+            if _lk and _lk in _CS_BY_KEY:
+                _cs = _CS_BY_KEY[_lk]
+                break
+    # content_sections (list format) kabhi raw "Content Sections" card na bane
+    if isinstance(job_obj.get('content_sections'), list):
+        rendered.add('content_sections')
+    _cs_rendered = False
+    if isinstance(_cs, list) and any(isinstance(s, dict) and s.get('tables') for s in _cs):
+        _bd = job_obj.get('basic_details')
+        if _bd and _bd != {}:
+            _bd_body = render_basic_details(_bd)
+            if _bd_body and _bd_body.strip():
+                _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', '1e40af,#3b82f6'))
+                html += sec_card('basic_details', _bm[1], _bm[2], _bd_body)
+                rendered.add('basic_details')
+        html += render_content_sections_all(_cs)
+        # Covered typed keys + raw carriers ko rendered mark karo (dobara / raw dump na ho)
+        for _k in ('content_sections', 'important_dates', 'application_fee', 'age_limit',
+                   'qualification', 'vacancy_details', 'vacancy_breakdown',
+                   'category_wise_vacancy', 'salary_details', 'selection_process',
+                   'exam_pattern', 'syllabus', 'physical_eligibility',
+                   'tables', 'text_sections', 'data_tables', 'details_page_content'):
+            rendered.add(_k)
+        _cs_rendered = True
+
+    if not _cs_rendered and has_sarkari:
         html += render_sarkari_sections(sections, il)
         rendered.add('sections')
-    elif has_edu_secs:
+    elif not _cs_rendered and has_edu_secs:
         # For education/state pages: render Job Overview + Important Dates FIRST (above edu content)
         for _pre_key in ('basic_details', 'important_dates', 'application_fee'):
             _pre_val = job_obj.get(_pre_key)
@@ -5279,6 +5391,28 @@ print("Loading JSON data...")
 _load_first_seen(ROOT)   # C1: load persisted datePosted map
 _load_slug_registry(ROOT)  # Slug registry: title-change proof permanent slugs
 with open(CJ_FILE, encoding='utf-8') as f: CJ = json.load(f)
+
+# Capture FJA content_sections IMMEDIATELY after load — some later loops strip it
+# (and even _scraped_from) from job dicts. Key by URL + slug + normalized title so
+# build_all_sections can always recover it, whichever key the job_obj still has.
+def _cs_norm_title(t):
+    return re.sub(r'[^a-z0-9]+', ' ', str(t or '').lower()).strip()
+
+_CS_BY_KEY = {}
+try:
+    _cs_n = 0
+    for _uj0 in (CJ.get('freejobalert_unified', {}) or {}).get('deduped_jobs', []) or []:
+        _cs0 = _uj0.get('content_sections')
+        if not (isinstance(_cs0, list) and _cs0):
+            continue
+        _cs_n += 1
+        _title0 = (_uj0.get('basic_details') or {}).get('job_title', '')
+        for _k0 in (_uj0.get('_scraped_from'), _uj0.get('slug'), _cs_norm_title(_title0)):
+            if _k0:
+                _CS_BY_KEY[_k0] = _cs0
+    print(f"  [content_sections] cached {_cs_n} FJA section-sets ({len(_CS_BY_KEY)} keys)")
+except Exception as _e0:
+    print(f"  [content_sections] cache failed: {_e0}")
 with open(DU_FILE, encoding='utf-8') as f: DU = json.load(f)
 
 # ── SLUG NORMALIZATION: PC scraper ke slugs me kabhi-kabhi trailing dash ──
