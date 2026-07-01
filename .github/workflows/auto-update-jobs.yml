@@ -92,6 +92,9 @@ jobs:
       - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
         run: python3 generate_all.py
 
+      - name: Backfill JobPosting schema (streetAddress/addressRegion/postalCode/validThrough)
+        run: python3 fix_jobposting_schema.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 
