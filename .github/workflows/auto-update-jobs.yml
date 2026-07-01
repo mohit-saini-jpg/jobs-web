@@ -177,7 +177,29 @@ jobs:
               t = unicodedata.normalize('NFKD', str(t)).encode('ascii', 'ignore').decode()
               t = t.replace('&', ' and ').lower()
               t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')
-              return t[:120] or 'job'
+              return t[:80] or 'job'
+
+          def _norm_slug(s):
+              s = re.sub(r'[\s_]+', '-', str(s or '').strip().lower())
+              s = re.sub(r'-+', '-', s)
+              return s.strip('-')[:80].strip('-')
+
+          def canonical_slug(job, title):
+              # SAME priority as generate_all.py get_canonical_slug so the section-card
+              # list (from sections-index.json) matches the physical /jobs/<slug>/ page.
+              cs = str(job.get('_canonical_slug') or '').strip()
+              if cs:
+                  return _norm_slug(cs)
+              raw = str(job.get('slug') or '').strip()
+              if raw:
+                  raw = re.sub(r'^sr_[a-z_]+-', '', raw)
+                  m = re.search(r'-([0-9a-f]{6,8})$', raw)
+                  if m and not m.group(1).isdigit():
+                      raw = raw[:-len(m.group(0))]
+                  s = _norm_slug(raw)
+                  if s:
+                      return s
+              return slugify(title)
 
           def norm_date(d):
               if not d: return ''
@@ -197,7 +219,7 @@ jobs:
                   dates = job.get('important_dates', {})
                   last_date = dates.get('last_date_to_apply') or dates.get('last_date') or ''
                   items.append((norm_date(last_date), {
-                      'slug': slugify(title), 'name': title,
+                      'slug': canonical_slug(job, title), 'name': title,
                       'date': last_date,
                       'org': bd.get('organization_name', ''),
                       'vac': str(bd.get('total_vacancies', ''))
@@ -215,7 +237,7 @@ jobs:
                   if not title: continue
                   if any(g in title.lower() for g in _GARBAGE): continue
                   si_items.append({
-                      'slug': slugify(title), 'name': title,
+                      'slug': canonical_slug(j, title), 'name': title,
                       'date': j.get('important_dates', {}).get('Last Date', ''),
                       'org': j.get('organization', ''),
                       'vac': str(j.get('total_vacancy', ''))
