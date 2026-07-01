@@ -876,7 +876,12 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 # vacancy column) never reaches pages whose JSON data did not change, because
 # the data-only hash stays identical and write() skips them.
 # Format: YYYYMMDD.N  — bump N for multiple changes the same day.
-TEMPLATE_VERSION = '20260701.2'
+# 20260701.3 — added vacancy_breakdown renderer (FreeJobAlert snake_case);
+#              bump forces re-render of ALL existing pages so previous posts
+#              also get the new isolated breakdown tables.
+# 20260701.4 — vacancy_breakdown skips buckets already shown above (dedup parity)
+#              so duplicate data no longer leaves an orphan empty card.
+TEMPLATE_VERSION = '20260701.4'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -991,6 +996,7 @@ SECTION_META = {
     'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    '4338ca,#6366f1'),
     'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '4338ca,#6366f1'),
     'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
+    'vacancy_breakdown':    ('Vacancy Breakdown',         'fa-table-list',         '0f766e,#0d9488'),
     'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          '15803d,#16a34a'),
     'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
     'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
@@ -1022,6 +1028,7 @@ _DYN_HEADING = {
     'age_limit':             'Age Limit',                       # may append " as on <date>"
     'qualification':         'Eligibility & Qualification',
     'vacancy_details':       'Vacancy Details',                 # may append " Total : N Posts"
+    'vacancy_breakdown':     'Vacancy Breakdown',
     'subject_wise_vacancy':  'Subject-wise Vacancy Details',
     'category_wise_vacancy': 'Category-wise Vacancy Details',
     'salary_details':        'Salary Details & Pay Scale',
@@ -1879,6 +1886,106 @@ def _render_generic_rows(rows, heading=''):
                   f'<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
 
 
+# ── FreeJobAlert vacancy_breakdown renderer (snake_case ONLY) ──────────────
+# Generic, dynamic, null-safe renderer for the `vacancy_breakdown` field that
+# FreeJobAlert (freejobalert_unified) records carry. Sarkari (sarkari_data)
+# records use camelCase and never contain this field, so this NEVER fires for
+# them. Mirrors universal-renderer.js cardVacancyBreakdown()/prettifyBreakdownKey().
+_BREAKDOWN_LABELS = {
+    'post_wise_breakdown':       'Post-wise Breakdown',
+    'category_wise_breakdown':   'Category-wise Breakdown',
+    'company_wise_breakdown':    'Company-wise Breakdown',
+    'discipline_wise_breakdown': 'Discipline-wise Breakdown',
+    'gender_wise_breakdown':     'Gender-wise Breakdown',
+    'pwd_wise_breakdown':        'PwD-wise Breakdown',
+    'additional_breakdown':      'Additional Breakdown',
+    # Column-level abbreviations
+    'pwd': 'PwD', 'pwbd': 'PwBD', 'hh': 'HH', 'sld': 'SLD', 'oh': 'OH', 'vh': 'VH',
+    'ur': 'UR', 'sc': 'SC', 'st': 'ST', 'obc': 'OBC', 'ews': 'EWS', 'esm': 'ESM',
+    'gen': 'General', 'wd': 'WD', 'dv': 'DV', 'apst': 'APST', 'sebc': 'SEBC',
+    's_no': 'S.No', 'sl_no': 'Sl. No', 'sr_no': 'Sr. No', 's_n': 'S.No', 'sn': 'S.No',
+}
+
+def prettify_breakdown_key(k):
+    """snake_case breakdown key → clean title (Rule 4). Known buckets/abbrevs get
+    exact labels; any '<x>_wise_breakdown' is generic; else fall back to
+    key_label() so new/unknown keys still render (never crashes)."""
+    raw = safe(k).strip()
+    if not raw:
+        return ''
+    lc = raw.lower()
+    if lc in _BREAKDOWN_LABELS:
+        return _BREAKDOWN_LABELS[lc]
+    m = re.match(r'^(.+?)_wise_breakdown$', lc)
+    if m:
+        return key_label(m.group(1)) + '-wise Breakdown'
+    return key_label(raw)
+
+def render_vacancy_breakdown(vb, prior_html=''):
+    """Render the `vacancy_breakdown` object as one isolated table per bucket.
+       • Rule 1 — Null-safe: missing / non-dict / {} → '' (no crash).
+       • Rule 2 — Dynamic buckets: iterate vb.items(); no hardcoded sections.
+       • Rule 3 — Dynamic columns: UNION of every row's keys → table headers.
+       • Rule 4 — prettify_breakdown_key() maps snake_case → clean titles.
+    `prior_html` = the page HTML rendered so far. A bucket whose table merely
+    repeats one already shown above (vacancy_details / category_wise_vacancy from
+    the same source data) is SKIPPED — otherwise the page-level _dedup_tbl() pass
+    would blank that table and leave an orphan 'Vacancy Breakdown' card."""
+    if not vb or not isinstance(vb, dict):          # Rule 1
+        return ''
+    # Text-signature dedup, mirroring _dedup_tbl() so parity is exact.
+    def _sig(frag):
+        return re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', frag)).strip().lower()
+    seen = set()
+    for _tb in re.findall(r'<table\b.*?</table>', prior_html or '', flags=re.S):
+        s = _sig(_tb)
+        if len(s) >= 20:
+            seen.add(s)
+    parts = []
+    for bucket_key, bucket in vb.items():           # Rule 2 — dynamic buckets
+        heading = prettify_breakdown_key(bucket_key)
+        # Normalize bucket → list of non-empty row dicts
+        if isinstance(bucket, list):
+            rows = [r for r in bucket
+                    if isinstance(r, dict) and any(str(v).strip() for v in r.values())]
+        elif isinstance(bucket, dict) and bucket:
+            rows = [bucket]
+        else:
+            rows = []
+        if not rows:
+            # Present but not tabular (string) — render generically, don't drop it
+            if isinstance(bucket, str) and bucket.strip():
+                parts.append(f'<div class="kv-stack-head" style="margin-top:4px">{e(heading)}</div>'
+                             f'<div class="edu-sec">{e(bucket.strip())}</div>')
+            continue
+        # Rule 3 — dynamic columns: UNION of all row keys (JSON insertion order)
+        cols = []
+        for r in rows:
+            for k in r.keys():
+                ks = str(k).strip()
+                if ks and not ks.startswith('_') and ks not in cols:
+                    cols.append(ks)
+        if not cols:
+            continue
+        head = ''.join(f'<th>{e(prettify_breakdown_key(c))}</th>' for c in cols)   # Rule 4
+        body = ''
+        for r in rows:
+            tds = ''
+            for c in cols:
+                v = r.get(c, '')
+                tds += f'<td>{e(safe(v))}</td>' if str(v).strip() != '' else '<td>&mdash;</td>'
+            body += f'<tr>{tds}</tr>'
+        table_html = (f'<div class="tbl-scroll"><table class="data-table">'
+                      f'<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+        tsig = _sig(table_html)
+        if len(tsig) >= 20 and tsig in seen:        # already shown above → skip
+            continue
+        seen.add(tsig)
+        parts.append(f'<div class="kv-stack-head" style="margin-top:4px">{e(heading)}</div>'
+                     + table_html)
+    return ''.join(parts)
+
+
 def render_vacancy_table(vac_list):
     """Render vacancy rows. SR pages cram a Vacancy-Details table (Post Name |
     Total | Qualification) AND a Category-Wise table (Post Name | UR | OBC | SC |
@@ -2544,7 +2651,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              }
 
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
-                 'qualification','eligibility_section','course_details','vacancy_details','subject_wise_vacancy','category_wise_vacancy','salary_details',
+                 'qualification','eligibility_section','course_details','vacancy_details','vacancy_breakdown','subject_wise_vacancy','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
@@ -2815,6 +2922,7 @@ def build_all_sections(job_obj):
             else:
                 body = ''
         elif key == 'vacancy_details':  body = render_vacancy_table(val)
+        elif key == 'vacancy_breakdown': body = render_vacancy_breakdown(val, prior_html=html)
         elif key == 'subject_wise_vacancy': body = render_vacancy_table(val) if isinstance(val,list) else ''
         elif key == 'eligibility_section':
             # NDA-type "Army Wing : ...", "For Airforce & Naval Wing : ..."

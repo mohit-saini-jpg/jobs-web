@@ -290,6 +290,35 @@
       .trim();
   }
 
+  /* ── Prettify snake_case breakdown keys → clean titles ──────────────────
+     Dedicated mapper for the FreeJobAlert `vacancy_breakdown` renderer
+     (Rule 4). Known bucket names + category abbreviations get exact labels;
+     any "<x>_wise_breakdown" is handled generically; everything else falls
+     back to keyToLabel() so new/unknown keys still render (never crashes). */
+  const _BREAKDOWN_LABELS = {
+    post_wise_breakdown:       'Post-wise Breakdown',
+    category_wise_breakdown:   'Category-wise Breakdown',
+    company_wise_breakdown:    'Company-wise Breakdown',
+    discipline_wise_breakdown: 'Discipline-wise Breakdown',
+    gender_wise_breakdown:     'Gender-wise Breakdown',
+    pwd_wise_breakdown:        'PwD-wise Breakdown',
+    additional_breakdown:      'Additional Breakdown',
+    // Column-level abbreviations
+    pwd: 'PwD', pwbd: 'PwBD', hh: 'HH', sld: 'SLD', oh: 'OH', vh: 'VH',
+    ur: 'UR', sc: 'SC', st: 'ST', obc: 'OBC', ews: 'EWS', esm: 'ESM',
+    gen: 'General', wd: 'WD', dv: 'DV', apst: 'APST', sebc: 'SEBC',
+    s_no: 'S.No', sl_no: 'Sl. No', sr_no: 'Sr. No', s_n: 'S.No', sn: 'S.No',
+  };
+  function prettifyBreakdownKey(k) {
+    const raw = safe(k).trim();
+    if (!raw) return '';
+    const lc = raw.toLowerCase();
+    if (_BREAKDOWN_LABELS[lc]) return _BREAKDOWN_LABELS[lc];
+    const m = lc.match(/^(.+?)_wise_breakdown$/);          // generic *_wise_breakdown
+    if (m) return keyToLabel(m[1]) + '-wise Breakdown';
+    return keyToLabel(raw);                                 // dynamic fallback
+  }
+
   function hasContent(v) {
     if (v == null) return false;
     if (typeof v === 'string') return v.trim().length > 0;
@@ -953,7 +982,7 @@
 
   const KNOWN_KEYS = new Set([
     'basic_details','important_dates','application_fee','application_fees',
-    'age_limit','qualification','vacancy_details','category_wise_vacancy',
+    'age_limit','qualification','vacancy_details','vacancy_breakdown','category_wise_vacancy',
     'salary_details','selection_process','exam_pattern','syllabus',
     'physical_eligibility','physical_standards','how_to_apply','important_instructions',
     'important_links','important_links_obj','faq','faqs','seo_tags','category',
@@ -1124,6 +1153,66 @@
     if (!html) return null;
     return makeCard('udyn-vacancy-extended','linear-gradient(135deg,#15803d,#16a34a)',
       'fa-solid fa-chart-pie','Vacancy Details', html);
+  }
+
+  /* ── 6c-2. Vacancy Breakdown (FreeJobAlert snake_case ONLY) ──────────────
+     Generic, backward-compatible renderer for the `vacancy_breakdown` field.
+       • Rule 1 — Null-safe: missing / non-object / {} → '' (no crash).
+       • Rule 2 — Dynamic buckets: loops Object.keys(vb); no hardcoded sections.
+       • Rule 3 — Dynamic columns: UNION of every row's keys → table headers.
+       • Rule 4 — prettifyBreakdownKey() maps snake_case → clean titles.
+     Sarkari (camelCase) records never carry `vacancy_breakdown` (normalizeJob
+     has no alias for it), so this card is emitted for FreeJobAlert only. */
+  function cardVacancyBreakdown(vb) {
+    // Rule 1 — null safety
+    if (!vb || typeof vb !== 'object' || Array.isArray(vb)) return '';
+    const buckets = Object.keys(vb);                 // Rule 2 — dynamic buckets
+    if (!buckets.length) return '';
+
+    let html = '';
+    for (const bucketKey of buckets) {
+      const bucket = vb[bucketKey];
+      if (!hasContent(bucket)) continue;
+
+      const topBorder = html ? '1px solid #dcfce7' : 'none';
+      const heading =
+        `<div style="padding:7px 14px 3px;font-size:.79rem;font-weight:700;color:#15803d;` +
+        `background:#f0fdf4;border-top:${topBorder};border-bottom:1px solid #dcfce7;">` +
+        `${esc(prettifyBreakdownKey(bucketKey))}</div>`;
+
+      // Normalize bucket → array of row objects
+      let rows = [];
+      if (Array.isArray(bucket)) {
+        rows = bucket.filter(r => r && typeof r === 'object' && !Array.isArray(r) && hasContent(r));
+      } else if (typeof bucket === 'object') {
+        rows = [bucket];
+      }
+
+      // Present but not tabular (string/number/nested) — render generically, don't drop it
+      if (!rows.length) {
+        html += heading + `<div class="udyn-detail">${deepRender(bucket, 1)}</div>`;
+        continue;
+      }
+
+      // Rule 3 — dynamic columns: UNION of all row keys across the whole bucket
+      const cols = [...new Set(rows.flatMap(r => Object.keys(r).filter(c => !c.startsWith('_'))))];
+      if (!cols.length) continue;
+
+      const thead = `<thead><tr>${cols.map(c =>
+        `<th>${esc(prettifyBreakdownKey(c))}</th>`).join('')}</tr></thead>`;   // Rule 4
+      const tbody = rows.map(r =>
+        `<tr>${cols.map(c =>
+          `<td>${hasContent(r[c]) ? deepRender(r[c], 1) : '<span style="color:#94a3b8;">—</span>'}</td>`
+        ).join('')}</tr>`
+      ).join('');
+
+      html += heading +
+        `<div class="udyn-table-scroll"><table class="udyn-vac-table">${thead}<tbody>${tbody}</tbody></table></div>`;
+    }
+
+    if (!html) return '';
+    return makeCard('udyn-vacancy-breakdown','linear-gradient(135deg,#0f766e,#0d9488)',
+      'fa-solid fa-table-list','Vacancy Breakdown', html);
   }
 
   /* ── 6d. Physical Eligibility ── */
@@ -1964,6 +2053,7 @@
     { id: 'udyn-age-limit',          icon: 'fa-user-clock',         label: 'Age Limit'              },
     { id: 'udyn-qualification',      icon: 'fa-graduation-cap',     label: 'Qualification'          },
     { id: 'udyn-vacancy-extended',   icon: 'fa-chart-pie',          label: 'Vacancy Details'        },
+    { id: 'udyn-vacancy-breakdown',  icon: 'fa-table-list',         label: 'Vacancy Breakdown'      },
     { id: 'udyn-physical',           icon: 'fa-dumbbell',           label: 'Physical Eligibility'   },
     { id: 'udyn-exam-pattern',       icon: 'fa-file-lines',         label: 'Exam Pattern'           },
     { id: 'udyn-syllabus',           icon: 'fa-book',               label: 'Syllabus'               },
@@ -2287,6 +2377,12 @@
     ═══════════════════════════════════════════ */
     const vacCard = cardVacancy(vacRows, vacCW);
     if (vacCard) appendCard(vacCard);
+
+    /* ═══════════════════════════════════════════
+       SECTION 6b: VACANCY BREAKDOWN (FreeJobAlert snake_case only)
+    ═══════════════════════════════════════════ */
+    const vbCard = cardVacancyBreakdown(rawJob.vacancy_breakdown);
+    if (vbCard) appendCard(vbCard);
 
     /* ═══════════════════════════════════════════
        SECTION 7: CATEGORY-WISE VACANCY (standalone if large)
