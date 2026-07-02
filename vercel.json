@@ -214,7 +214,47 @@
     },
     {
       "source": "/state-jobs/",
-      "destination": "/section/state-jobs/",
+      "destination": "/state/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/state-jobs/",
+      "destination": "/state/",
+      "statusCode": 301
+    },
+    {
+      "source": "/category/study-material/",
+      "destination": "/category/study/",
+      "statusCode": 301
+    },
+    {
+      "source": "/category/khabar/",
+      "destination": "/section/today-updates/",
+      "statusCode": 301
+    },
+    {
+      "source": "/category/popular/",
+      "destination": "/section/top-20-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/category/admissions/",
+      "destination": "/section/admissions/",
+      "statusCode": 301
+    },
+    {
+      "source": "/category/admit-result/",
+      "destination": "/section/results/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/central-jobs/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/engineering-jobs/",
+      "destination": "/section/btech-jobs/",
       "statusCode": 301
     },
     {

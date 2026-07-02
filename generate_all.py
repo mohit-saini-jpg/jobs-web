@@ -4163,7 +4163,7 @@ REL_CATS_HTML = '''<div class="rel-section">
       <a href="/state-jobs/west-bengal/" class="rel-btn">West Bengal</a>
       <a href="/state-jobs/andaman-and-nicobar/" class="rel-btn">Andaman &amp; Nicobar</a>
       <a href="/state-jobs/dadra-and-nagar-haveli/" class="rel-btn">Dadra &amp; Nagar Haveli</a>
-      <a href="/state-jobs/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All State Jobs</a>
+      <a href="/state/" class="rel-btn rel-btn-all"><i class="fa-solid fa-list"></i> All State Jobs</a>
     </div>
   </div>
 
@@ -4183,13 +4183,13 @@ REL_CATS_HTML = '''<div class="rel-section">
       <a href="/section/teaching-jobs/" class="rel-btn"><i class="fa-solid fa-chalkboard-user"></i> Teaching Jobs</a>
       <a href="/section/army-jobs/" class="rel-btn"><i class="fa-solid fa-shield-halved"></i> Army / Navy / AF</a>
       <a href="/section/healthcare-jobs/" class="rel-btn"><i class="fa-solid fa-stethoscope"></i> Medical / Health</a>
-      <a href="/section/engineering-jobs/" class="rel-btn"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
-      <a href="/section/central-jobs/" class="rel-btn"><i class="fa-solid fa-landmark"></i> Central Govt Jobs</a>
+      <a href="/section/btech-jobs/" class="rel-btn"><i class="fa-solid fa-gear"></i> Engineering Jobs</a>
+      <a href="/section/latest-jobs/" class="rel-btn"><i class="fa-solid fa-landmark"></i> Central Govt Jobs</a>
       <a href="/section/admissions/" class="rel-btn"><i class="fa-solid fa-graduation-cap"></i> Admissions</a>
       <a href="/section/govt-scheme-yojna/" class="rel-btn"><i class="fa-solid fa-hand-holding-heart"></i> Govt Schemes</a>
       <a href="/section/top-20-jobs/" class="rel-btn"><i class="fa-solid fa-medal"></i> Top 20 Jobs</a>
       <a href="/section/jobs-with-last-date/" class="rel-btn"><i class="fa-solid fa-clock"></i> Last Date Near</a>
-      <a href="/category/popular/" class="rel-btn"><i class="fa-solid fa-star"></i> Popular Categories</a>
+      <a href="/section/top-20-jobs/" class="rel-btn"><i class="fa-solid fa-star"></i> Popular Categories</a>
     </div>
   </div>
 
