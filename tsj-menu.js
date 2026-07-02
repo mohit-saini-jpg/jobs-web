@@ -188,3 +188,39 @@ document.addEventListener('keydown', function(e){
     document.querySelectorAll('.nav-dd-btn').forEach(function(b){b.setAttribute('aria-expanded','false');});
   }
 });
+
+// ── Google Translate widget — lazy-loaded, NO cloaking ───────────────────────
+// Loads the Google Translate script ONLY after the first user interaction (or a
+// short idle fallback), so it adds nothing to initial page load / LCP / CLS.
+// Googlebot sees the exact same markup + script — no user-agent detection.
+(function(){
+  var loaded=false;
+  function loadGT(){
+    if(loaded)return; loaded=true;
+    var s=document.createElement('script');
+    s.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    s.async=true;
+    (document.body||document.documentElement).appendChild(s);
+  }
+  window.addEventListener('scroll',loadGT,{once:true,passive:true});
+  window.addEventListener('touchstart',loadGT,{once:true,passive:true});
+  window.addEventListener('keydown',loadGT,{once:true});
+  window.addEventListener('click',loadGT,{once:true});
+  // Passive-user fallback during idle time, so it never blocks page load.
+  if('requestIdleCallback' in window){ requestIdleCallback(function(){ setTimeout(loadGT,3000); }); }
+  else { setTimeout(loadGT,4000); }
+})();
+
+window.googleTranslateElementInit=function(){
+  var el=document.getElementById('google_translate_element');
+  if(!el){ setTimeout(window.googleTranslateElementInit,200); return; }   // header may still be injecting
+  if(el.getAttribute('data-gt-done')) return;
+  try{
+    new google.translate.TranslateElement(
+      { pageLanguage:'en', autoDisplay:false,
+        includedLanguages:'en,hi,bn,ta,te,mr,gu,kn,ml,pa,or,as,ur' },
+      'google_translate_element'
+    );
+    el.setAttribute('data-gt-done','1');
+  }catch(e){}
+};

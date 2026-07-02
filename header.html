@@ -97,6 +97,15 @@ a, button, [role="button"] {
 }
 /* ── Header Actions ── */
 .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+/* Google Translate widget (lazy-loaded). min-width reserves space to avoid layout shift (CLS). */
+.translate-widget { display: flex; align-items: center; min-width: 88px; min-height: 30px; }
+.translate-widget .goog-te-gadget { font-size: 0 !important; line-height: 0; color: transparent; }
+.translate-widget .goog-te-gadget span { display: none !important; }
+.translate-widget .goog-te-gadget select { font-size: 12px; font-weight: 700; padding: 4px 6px; margin: 0; border-radius: 6px; border: 1px solid rgba(0,0,0,.18); background: #fff; color: #0d2257; cursor: pointer; max-width: 130px; }
+body.translated-ltr, body.translated-rtl { top: 0 !important; }
+.goog-te-banner-frame { display: none !important; }
+.goog-tooltip, #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
 .wa-btn-header {
   background: #25d366; color: #fff; border: none; border-radius: 7px;
   padding: 7px 12px; font-size: .78rem; font-weight: 800; cursor: pointer;
@@ -370,6 +379,7 @@ a, button, [role="button"] {
     </a>
 
     <div class="header-actions">
+      <div id="google_translate_element" class="translate-widget" aria-label="Change language"></div>
       <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
         <i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel<small>Get Instant Updates</small>
       </a>
