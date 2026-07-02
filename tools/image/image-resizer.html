@@ -282,13 +282,6 @@
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
       <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
-        <input type="checkbox" id="cropEnable" style="width:auto;margin:0"> ✂️ Crop Image (Optional)
-      </label>
-      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Enable karein to upar crop box aayega — box drag/resize karke area choose karein.</p>
-    </div>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
-      <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="bgRemove" style="width:auto;margin:0"> 🌫️ Background Remove (Optional)
       </label>
       <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Tick karein to AI image ka background hata dega (pehli baar model ~10-15 sec load hoga). <b>PNG</b> format choose karein to transparent background milega.</p>
@@ -517,12 +510,12 @@
   var cropperInst=null;
   function initCrop(){
     var card=G('crop-card'),img=G('cropImg');
-    if(!G('cropEnable')||!G('cropEnable').checked||!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}return;}
+    if(!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}return;}
     card.style.display='';
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:0.9,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN});}catch(e){}
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,crop:function(){_bgCache=null;}});}catch(e){}
       _bgCache=null;
     };
     img.src=srcImg.src;
@@ -535,7 +528,7 @@
     if(!natW||!srcImg){alert('Image abhi load ho rahi hai — 1 second baad Process karein.');return;}
     var unit=G('unit').value,dpi=G('dpi').value;
     var renderSrc=srcImg, sw=natW, sh=natH;
-    if(G('cropEnable')&&G('cropEnable').checked&&cropperInst){var _cc=cropperInst.getCroppedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
+    if(cropperInst){var _cc=cropperInst.getCroppedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
     var tw=toPx(G('w').value,unit,dpi,sw),th=toPx(G('h').value,unit,dpi,sh);
     if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
     if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
@@ -543,7 +536,6 @@
     var pw=G('progress-wrap');pw.style.display='block';
     var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
     try{
-      if(G('cropEnable')&&G('cropEnable').checked)_bgCache=null;
       if(G('bgRemove')&&G('bgRemove').checked){
         bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
         renderSrc=await removeBgToCanvas(renderSrc);sw=renderSrc.width;sh=renderSrc.height;
@@ -633,12 +625,11 @@
     if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
-    if(G('cropEnable'))G('cropEnable').addEventListener('change',initCrop);
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
     if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
-      G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('cropEnable'))G('cropEnable').checked=false;if(G('crop-card'))G('crop-card').style.display='none';
+      G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';
       var fp=G('file-preview');if(fp)fp.classList.remove('show');
       G('progress-wrap').style.display='none';G('pbar').style.width='0%';
       var rc=G('result-card');if(rc)rc.classList.remove('show');
