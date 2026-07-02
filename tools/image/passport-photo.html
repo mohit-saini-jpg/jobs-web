@@ -812,6 +812,44 @@ function onBgRemoveToggle(){
   doBgRemove();
 }
 
+// ── Smart matting cleanup ───────────────────────────────────────────────────
+// The AI mask leaves the old background as a faint SEMI-TRANSPARENT halo/ghost
+// around the subject (hair, shoulders, dupatta). On a new bg colour that shows
+// as an ugly blur. This (a) steepens the alpha so faint ghost pixels become fully
+// transparent and the subject stays solid with a clean anti-aliased edge, and
+// (b) de-fringes: repaints the thin rim with nearby OPAQUE foreground colour so
+// no old-background tint bleeds onto the edge.
+function refineCutout(canvas){
+  try{
+    var ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+    if(!w||!h)return canvas;
+    var img=ctx.getImageData(0,0,w,h),d=img.data,n=w*h,i,a,t,x;
+    var LO=0.45,HI=0.62;                       // alpha threshold band
+    for(i=0;i<n;i++){
+      a=d[i*4+3]/255;
+      if(a<=LO)t=0; else if(a>=HI)t=1; else {x=(a-LO)/(HI-LO);t=x*x*(3-2*x);}
+      d[i*4+3]=t*255;
+    }
+    for(var pass=0;pass<2;pass++){
+      var src=new Uint8ClampedArray(d);
+      for(var y=0;y<h;y++)for(var xx=0;xx<w;xx++){
+        var idx=(y*w+xx)*4,av=src[idx+3];
+        if(av>4&&av<250){
+          var r=0,g=0,b=0,c=0,dy,dx,ny,nx,nidx;
+          for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){
+            ny=y+dy;nx=xx+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;
+            nidx=(ny*w+nx)*4;
+            if(src[nidx+3]>=250){r+=src[nidx];g+=src[nidx+1];b+=src[nidx+2];c++;}
+          }
+          if(c>0){d[idx]=r/c;d[idx+1]=g/c;d[idx+2]=b/c;}
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }catch(e){}
+  return canvas;
+}
+
 function doBgRemove(){
   if(!S.croppedCanvas)return;
   var loader=document.getElementById('bgLoader');
@@ -848,6 +886,7 @@ function doBgRemove(){
           ctx.clearRect(0,0,c.width,c.height);
           ctx.drawImage(img,0,0,c.width,c.height);
           URL.revokeObjectURL(url);
+          refineCutout(c);   // sharpen mask + de-fringe → no old-bg halo on edges
           S.removedBgCanvas=c;
           loader.classList.remove('show');
           showRemovedPreview(c);
