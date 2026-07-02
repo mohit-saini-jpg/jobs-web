@@ -98,6 +98,11 @@
   ],
   "redirects": [
     {
+      "source": "/tools/image-tools.html",
+      "destination": "/tools/tools-image.html",
+      "statusCode": 301
+    },
+    {
       "source": "/index.html",
       "destination": "/",
       "statusCode": 301
