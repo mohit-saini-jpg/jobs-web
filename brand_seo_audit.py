@@ -108,16 +108,22 @@ def check_sitemaps():
 
 
 def check_redirects():
-    """The Netlify _redirects must consolidate /index.html and /view.html to /."""
-    path = os.path.join(ROOT, "_redirects")
+    """Site is hosted on Vercel — redirects live in vercel.json (the Netlify-style
+    _redirects file is ignored by Vercel). Ensure /index.html and /view.html
+    consolidate to / there."""
+    path = os.path.join(ROOT, "vercel.json")
     if not os.path.exists(path):
-        return ["_redirects file MISSING"]
-    content = open(path, encoding="utf-8", errors="ignore").read()
+        return ["vercel.json MISSING (Vercel redirects config)"]
+    try:
+        data = json.load(open(path, encoding="utf-8"))
+    except Exception as e:
+        return [f"vercel.json parse error: {e}"]
+    srcs = {r.get("source"): r for r in data.get("redirects", []) if isinstance(r, dict)}
     missing = []
-    if not re.search(r"^/index\.html\s+/\s+301", content, re.M):
-        missing.append("/index.html -> / 301 rule missing")
-    if not re.search(r"^/view\.html\s+/\s+301", content, re.M):
-        missing.append("/view.html -> / 301 rule missing")
+    for dup in ("/index.html", "/view.html"):
+        r = srcs.get(dup)
+        if not r or r.get("destination") != "/":
+            missing.append(f"{dup} -> / redirect missing in vercel.json")
     return missing
 
 

@@ -103,6 +103,11 @@
       "statusCode": 301
     },
     {
+      "source": "/view.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
       "source": "/about.html",
       "destination": "/about/",
       "statusCode": 301
