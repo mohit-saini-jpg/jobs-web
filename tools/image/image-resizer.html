@@ -238,6 +238,29 @@
       <div class="form-group"><label>Quality (JPG/WebP/AVIF): <span id="qv">90%</span></label><input type="range" id="q" min="10" max="100" value="90" style="width:100%"></div>
       <div class="form-group"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="lockAR" checked style="width:auto;margin:0"> Lock Aspect Ratio</label></div>
     </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <label style="font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:1rem">
+        <input type="checkbox" id="tkbEnable" style="width:auto;margin:0"> 🗜️ File Size (KB) — Optional
+      </label>
+      <div id="tkbBody" style="display:none;margin-top:12px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-weight:600">Target Size:</span>
+          <input type="number" id="tkb" value="50" min="5" max="5000" style="width:90px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
+        </div>
+        <input type="range" id="tkbRange" min="5" max="2000" value="50" style="width:100%">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button type="button" class="tkb-p" data-kb="20" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">20 KB</button>
+          <button type="button" class="tkb-p" data-kb="50" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">50 KB</button>
+          <button type="button" class="tkb-p" data-kb="100" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">100 KB</button>
+          <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
+          <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
+        </div>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">File-size target JPG / WEBP / AVIF ke liye kaam karta hai (quality auto-adjust hoti hai). Doosre format select ho to JPG use hoga.</p>
+      </div>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -379,6 +402,23 @@
   }
   function fillBG(ctx,fmt,w,h){if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}}
 
+  // Encode to a target FILE SIZE (KB) by binary-searching the quality — picks the
+  // highest quality whose output is <= target. Works for lossy formats only.
+  async function encodeToTargetKB(cv,fmt,targetKB){
+    var lossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
+    var useFmt=lossy?fmt:'jpg';
+    var mime=useFmt==='webp'?'image/webp':(useFmt==='avif'?'image/avif':'image/jpeg');
+    var ext=(useFmt==='webp')?'webp':(useFmt==='avif')?'avif':(useFmt==='jpeg'?'jpeg':'jpg');
+    var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null;
+    for(var i=0;i<9;i++){
+      var q=(lo+hi)/2,b;
+      try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' is browser mein support nahi — JPG ya WebP choose karein.');}
+      if(b.size<=target){best=b;lo=q;}else{hi=q;}
+    }
+    if(!best){try{best=await canvasToBlobP(cv,mime,0.05);}catch(e){throw new Error('Encode fail — chhota target ya doosra format try karein.');}}
+    return{blob:best,ext:ext};
+  }
+
   async function runProcess(){
     var inp=G('main-file');
     if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
@@ -402,8 +442,16 @@
       }else{
         cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,0,0,tw,th);
       }
-      bar.style.width='65%';G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';
-      var out=await encode(cv,fmt,quality);
+      var out;
+      if(G('tkbEnable')&&G('tkbEnable').checked){
+        var tkb=Math.max(3,parseFloat(G('tkb').value)||50);
+        var isLossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
+        G('pmsg').textContent='Target '+tkb+' KB'+(isLossy?'':' (JPG)')+' ke liye adjust ho raha hai...';
+        out=await encodeToTargetKB(cv,fmt,tkb);
+      }else{
+        bar.style.width='65%';G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';
+        out=await encode(cv,fmt,quality);
+      }
       bar.style.width='100%';G('pmsg').textContent='Done!';
       var url=URL.createObjectURL(out.blob);
       var rc=G('result-card'),holder=G('resz-img');
@@ -431,6 +479,11 @@
     if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
     if(G('h'))G('h').addEventListener('input',function(){syncAR('h');});
     if(G('q'))G('q').addEventListener('input',function(){G('qv').textContent=G('q').value+'%';});
+    // Target file-size (KB) controls
+    if(G('tkbEnable'))G('tkbEnable').addEventListener('change',function(){G('tkbBody').style.display=this.checked?'block':'none';});
+    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=Math.min(2000,Math.max(5,parseFloat(this.value)||50));G('tkbRange').value=v;});
+    if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
+    document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;
