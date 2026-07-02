@@ -209,7 +209,34 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Quality (%)</label><input type="range" id="quality" min="10" max="100" value="80"><div class="range-val" id="quality-val">80%</div></div><div class="form-group"><label>Output Format</label><select><option>Same as Input</option><option>JPEG</option><option>PNG</option><option>WebP</option></select></div></div><script>document.getElementById&&document.getElementById("quality")&&document.getElementById("quality").addEventListener("input",function(){document.getElementById("quality-val").textContent=this.value+"%";})</script>
+    <div class="form-grid">
+      <div class="form-group"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+      </select></div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional</div>
+      <div id="tkbBody" style="margin-top:12px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-weight:600">Target Size:</span>
+          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
+        </div>
+        <input type="range" id="tkbRange" min="5" max="2000" value="100" style="width:100%">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button type="button" class="tkb-p" data-kb="20" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">20 KB</button>
+          <button type="button" class="tkb-p" data-kb="50" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">50 KB</button>
+          <button type="button" class="tkb-p" data-kb="100" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">100 KB</button>
+          <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
+          <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
+        </div>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → image bilkul us size ki compress hogi (JPG/WEBP best). Khali chhodein → normal compress. PNG select ho to size-target JPG se hoga.</p>
+      </div>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,31 +278,60 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+  // ── Real compressor: target File Size (KB) or normal compress ──────────────
+  function G(id){return document.getElementById(id);}
+  var srcImg=null,natW=0,natH=0;
+  function loadImageFromFile(f){var url=URL.createObjectURL(f);var img=new Image();img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;};img.src=url;}
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
+  async function encodeTarget(cv,fmt,targetKB){
+    var lossy=['jpg','jpeg','webp'].indexOf(fmt)>=0, useFmt=lossy?fmt:'jpg';
+    var mime=useFmt==='webp'?'image/webp':'image/jpeg';
+    var ext=(useFmt==='webp')?'webp':(useFmt==='jpeg'?'jpeg':'jpg');
+    var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null,i,b,q;
+    for(i=0;i<10;i++){q=(lo+hi)/2;try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' browser mein support nahi.');}if(b.size<=target){best=b;lo=q;}else{hi=q;}}
+    if(!best){best=await canvasToBlobP(cv,mime,0.05);}
+    if(best.size<target){best=new Blob([best,new Uint8Array(Math.round(target-best.size))],{type:mime});}   // pad to exact target
+    return{blob:best,ext:ext};
   }
-  document.addEventListener('DOMContentLoaded',()=>{
+  async function encodeNormal(cv,fmt){
+    if(fmt==='png')return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+    if(fmt==='webp')return{blob:await canvasToBlobP(cv,'image/webp',0.8),ext:'webp'};
+    return{blob:await canvasToBlobP(cv,'image/jpeg',0.8),ext:(fmt==='jpeg'?'jpeg':'jpg')};
+  }
+  async function runProcess(){
+    var inp=G('main-file');
+    if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
+    if(!srcImg){alert('Image load ho rahi hai — 1 second baad try karein.');return;}
+    var f=inp.files[0], fmt=G('fmt').value, tkbVal=parseFloat(G('tkb').value);
+    var pw=G('progress-wrap');pw.style.display='block';var bar=G('pbar');bar.style.width='40%';G('pmsg').textContent='Compress ho raha hai...';
+    try{
+      var cv=document.createElement('canvas');cv.width=natW;cv.height=natH;var ctx=cv.getContext('2d');
+      if(['jpg','jpeg'].indexOf(fmt)>=0||tkbVal>0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,natW,natH);}
+      ctx.drawImage(srcImg,0,0);
+      var out;
+      if(tkbVal>0){G('pmsg').textContent='Target '+tkbVal+' KB ke liye adjust ho raha hai...';out=await encodeTarget(cv,fmt,tkbVal);}
+      else{out=await encodeNormal(cv,fmt);}
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(out.blob);
+      var rc=G('result-card'),holder=G('cmp-img');
+      if(!holder){holder=document.createElement('img');holder.id='cmp-img';holder.alt='Compressed';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb';rc.insertBefore(holder,G('stat-row'));}
+      holder.src=url;
+      var saved=f.size>0?Math.max(0,Math.round((1-out.blob.size/f.size)*100)):0;
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+formatBytes(f.size)+'</div><div class="stat-lbl">Original</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+saved+'%</div><div class="stat-lbl">Saved</div></div>';
+      rc.classList.add('show');
+      var base=(f.name||'image').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-compressed.'+out.ext;a.click();};
+    }catch(err){pw.style.display='none';alert('Compress nahi ho paya. Dobara try karein.\n\n'+(err&&err.message?err.message:err));}
+  }
+  document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
-    });
+    var mf=G('main-file');if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
+    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
+    if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
+    document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;natW=0;natH=0;var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var ci=G('cmp-img');if(ci)ci.removeAttribute('src');});
   });
 </script>
 
