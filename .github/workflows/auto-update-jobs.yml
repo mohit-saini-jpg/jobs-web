@@ -98,6 +98,9 @@ jobs:
       - name: Backfill JobPosting schema (streetAddress/addressRegion/postalCode/validThrough)
         run: python3 fix_jobposting_schema.py
 
+      - name: Normalize schema datetimes to ISO-8601 + timezone (no missing-timezone warnings)
+        run: python3 fix_schema_dates.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 

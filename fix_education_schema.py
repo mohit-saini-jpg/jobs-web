@@ -33,6 +33,20 @@ _PUBLISHER = {
 }
 _LDJSON_RE = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
 _CANON_RE = re.compile(r'<link\s+rel="canonical"\s+href="([^"]+)"', re.I)
+_DATEONLY_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+
+
+def _iso_dt(d):
+    """Full ISO-8601 with IST timezone so Google never flags missing timezone."""
+    d = (d or '').strip()
+    if not d:
+        return ''
+    if _DATEONLY_RE.match(d):
+        return d + 'T00:00:00+05:30'
+    m = re.match(r'^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?)$', d)
+    if m:
+        return d + '+05:30'
+    return d
 
 
 def _meta(html, key):
@@ -66,6 +80,8 @@ def _newsarticle_from(jp, html, canon):
     }
     if desc:
         art["description"] = desc[:300]
+    dp = _iso_dt(dp)
+    dm = _iso_dt(dm) or dp
     if dp:
         art["datePublished"] = dp
         art["dateModified"] = dm or dp
