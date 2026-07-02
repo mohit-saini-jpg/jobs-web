@@ -49,6 +49,29 @@ def _lastmod_for(url):
         pass
     return TODAY
 
+def _norm_slug(s):
+    s = str(s or "").strip().lower()
+    s = re.sub(r"[\s_]+", "-", s)
+    s = re.sub(r"-+", "-", s)
+    return s.strip("-")[:80].strip("-")
+
+def is_junk_slug(slug):
+    """Mirror of generate_all.is_junk_slug — keep junk /jobs/ slugs (all-numeric,
+    too few letters, lone acronym+year, or the 'page' fallback) OUT of the sitemap
+    so Google stops crawling pages that will later 404."""
+    s = _norm_slug(slug)
+    if not s or s == "page":
+        return True
+    letters = re.sub(r"[^a-z]", "", s)
+    if len(letters) < 4:
+        return True
+    if re.fullmatch(r"[\d\-]+", s):
+        return True
+    tokens = [t for t in s.split("-") if re.fullmatch(r"[a-z]{3,}", t)]
+    if len(tokens) < 2 and len(letters) < 8:
+        return True
+    return False
+
 def has_index(p):
     return os.path.isfile(os.path.join(p, "index.html"))
 
@@ -107,9 +130,12 @@ def write_index(path, children):
 def main():
     counts = {}
 
-    # Jobs
+    # Jobs — exclude junk slugs (all-numeric / lone-acronym / 'page' fallback)
+    # so pages that will later 404 are never advertised to Google.
+    job_urls = [u for u in urls_from_dir("jobs")
+                if not is_junk_slug(u.rstrip("/").rsplit("/", 1)[-1])]
     counts["sitemap-jobs.xml"] = write_urlset(
-        "sitemap-jobs.xml", urls_from_dir("jobs"), "weekly", "0.8")
+        "sitemap-jobs.xml", job_urls, "weekly", "0.8")
 
     # States (both /state/ and /state-jobs/ hubs)
     state_urls = urls_from_dir("state") + urls_from_dir("state-jobs")

@@ -760,6 +760,45 @@ def clean_slug(s):
     s = re.sub(r'-+', '-', s).strip('-')
     return s[:80] or ''
 
+# ── JUNK-SLUG GUARD — permanently stop CREATING junk /jobs/ pages ────────────
+# Root cause of the GSC "Not found (404)" churn: when the scraper fails to
+# extract a real job title, slugify() falls back to numbers / stray fragments and
+# a junk page like /jobs/1-2026-5/, /jobs/2002/, /jobs/page/, /jobs/ppp/ gets
+# created. Google indexes it, then it dies on the next data refresh → 404.
+# is_junk_slug() detects these so write() can refuse to CREATE new ones.
+# It NEVER removes an existing page (guard only fires when the file is absent),
+# so nothing currently live is affected — only brand-new junk is prevented.
+_JUNK_SKIP_SEEN = set()
+
+def is_junk_slug(slug):
+    """True when a /jobs/ slug carries no real job content: the literal 'page'
+    fallback, all-numeric (2002, 1-2026-5, 20-000), too few letters (id, pdf,
+    ppp, ews), or a lone acronym/word + year (hssc-2026, haryana, yojana)."""
+    s = _norm_slug(slug)
+    if not s or s == 'page':
+        return True
+    letters = re.sub(r'[^a-z]', '', s)
+    if len(letters) < 4:                        # id, pdf, ppp, ews, lpg, '-'
+        return True
+    if re.fullmatch(r'[\d\-]+', s):             # 2002, 1500, 20-000, 1-2026-5, 2026-12
+        return True
+    tokens = [t for t in s.split('-') if re.fullmatch(r'[a-z]{3,}', t)]
+    if len(tokens) < 2 and len(letters) < 8:    # hssc-2026, brcm-2026, apply, haryana, yojana
+        return True
+    return False
+
+def _log_junk_skip(slug):
+    if not slug or slug in _JUNK_SKIP_SEEN:
+        return
+    _JUNK_SKIP_SEEN.add(slug)
+    try:
+        _p = Path(ROOT) / 'data' / 'SKIPPED_JUNK_SLUGS.md'
+        _p.parent.mkdir(parents=True, exist_ok=True)
+        with open(_p, 'a', encoding='utf-8') as _f:
+            _f.write(f"- `{slug}`  (skipped {date.today().isoformat()})\n")
+    except Exception:
+        pass
+
 def is_blocked(url):
     return any(d in str(url).lower() for d in BLOCKED)
 
@@ -902,6 +941,14 @@ def write(path, html_content, skip_if_exists=False):
     """
     global written
     p = Path(path)
+    # ── JUNK-SLUG GUARD: never CREATE a brand-new junk /jobs/<slug>/ page (the
+    # source of future 404s). Fires ONLY when the file is absent, so every page
+    # already on disk is preserved untouched — zero risk to anything live.
+    if not p.exists():
+        _pp = p.parts
+        if len(_pp) >= 3 and _pp[-1] == 'index.html' and _pp[-3] == 'jobs' and is_junk_slug(_pp[-2]):
+            _log_junk_skip(_pp[-2])
+            return
     if skip_if_exists and p.exists():
         new_m = _HASH_RE.search(html_content)
         if new_m:
