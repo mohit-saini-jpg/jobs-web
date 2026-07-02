@@ -156,6 +156,426 @@
       "source": "/tools-audio-video.html",
       "destination": "/tools/audio-video/",
       "statusCode": 301
+    },
+    {
+      "source": "/section/8th-pass-jobs/",
+      "destination": "/section/8th-pass/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/any-graduate-jobs/",
+      "destination": "/section/graduation-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/bcom-jobs/",
+      "destination": "/section/ba-pass/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/btech-be-jobs/",
+      "destination": "/section/btech-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/medical-hospital-jobs/",
+      "destination": "/section/healthcare-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/police-defence-jobs/",
+      "destination": "/section/army-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/post-graduate-jobs/",
+      "destination": "/section/post-graduation-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/teaching-faculty-jobs/",
+      "destination": "/section/teaching-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/latest-notifications/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/section/m-e-mtech/",
+      "destination": "/category/study/",
+      "statusCode": 301
+    },
+    {
+      "source": "/qualification/latest-notifications/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state-jobs/",
+      "destination": "/section/state-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/uttar-pradesh/",
+      "destination": "/state-jobs/uttar-pradesh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/maharashtra/",
+      "destination": "/state-jobs/maharashtra/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/delhi/",
+      "destination": "/state-jobs/delhi/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/karnataka/",
+      "destination": "/state-jobs/karnataka/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/tamil-nadu/",
+      "destination": "/state-jobs/tamil-nadu/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/rajasthan/",
+      "destination": "/state-jobs/rajasthan/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/gujarat/",
+      "destination": "/state-jobs/gujarat/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/madhya-pradesh/",
+      "destination": "/state-jobs/madhya-pradesh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/haryana/",
+      "destination": "/state-jobs/haryana/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/punjab/",
+      "destination": "/state-jobs/punjab/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/west-bengal/",
+      "destination": "/state-jobs/west-bengal/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/bihar/",
+      "destination": "/state-jobs/bihar/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/andhra-pradesh/",
+      "destination": "/state-jobs/andhra-pradesh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/telangana/",
+      "destination": "/state-jobs/telangana/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/kerala/",
+      "destination": "/state-jobs/kerala/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/odisha/",
+      "destination": "/state-jobs/odisha/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/jharkhand/",
+      "destination": "/state-jobs/jharkhand/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/assam/",
+      "destination": "/state-jobs/assam/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/chhattisgarh/",
+      "destination": "/state-jobs/chhattisgarh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/uttarakhand/",
+      "destination": "/state-jobs/uttarakhand/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/himachal-pradesh/",
+      "destination": "/state-jobs/himachal-pradesh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/jammu-and-kashmir/",
+      "destination": "/state-jobs/jammu-and-kashmir/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/goa/",
+      "destination": "/state-jobs/goa/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/tripura/",
+      "destination": "/state-jobs/tripura/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/meghalaya/",
+      "destination": "/state-jobs/meghalaya/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/chandigarh/",
+      "destination": "/state-jobs/chandigarh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/puducherry/",
+      "destination": "/state-jobs/puducherry/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/andaman-nicobar/",
+      "destination": "/state-jobs/andaman-nicobar/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/sikkim/",
+      "destination": "/state-jobs/sikkim/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/mizoram/",
+      "destination": "/state-jobs/mizoram/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/nagaland/",
+      "destination": "/state-jobs/nagaland/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/arunachal-pradesh/",
+      "destination": "/state-jobs/arunachal-pradesh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/jk/",
+      "destination": "/state-jobs/jammu-and-kashmir/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/dadra-nh/",
+      "destination": "/state-jobs/dadra-nh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/daman-diu/",
+      "destination": "/state-jobs/daman-diu/",
+      "statusCode": 301
+    },
+    {
+      "source": "/contact.html",
+      "destination": "/contact/",
+      "statusCode": 301
+    },
+    {
+      "source": "/sitemap.html",
+      "destination": "/sitemap/",
+      "statusCode": 301
+    },
+    {
+      "source": "/education-jobs.html",
+      "destination": "/education/",
+      "statusCode": 301
+    },
+    {
+      "source": "/admit-card.html",
+      "destination": "/section/admit-card/",
+      "statusCode": 301
+    },
+    {
+      "source": "/search.html",
+      "destination": "/search/",
+      "statusCode": 301
+    },
+    {
+      "source": "/jobs-index.html",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/education-detail.html",
+      "destination": "/education/",
+      "statusCode": 301
+    },
+    {
+      "source": "/latest-sarkari-jobs/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/latest-sarkari-jobs/2026/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/upcoming-government-jobs/",
+      "destination": "/section/upcoming-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/all-india-government-jobs/",
+      "destination": "/section/latest-govt-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/jobs-with-last-date/",
+      "destination": "/section/last-date-reminder/",
+      "statusCode": 301
+    },
+    {
+      "source": "/ssc-jobs/",
+      "destination": "/section/ssc-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/upsc-jobs/",
+      "destination": "/section/upsc-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/railway-jobs/",
+      "destination": "/section/railway-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/bank-jobs/",
+      "destination": "/section/bank-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/police-jobs/",
+      "destination": "/section/police-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/teaching-jobs/",
+      "destination": "/section/teaching-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/army-jobs/",
+      "destination": "/section/army-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/defence-jobs/",
+      "destination": "/section/defence-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/medical-jobs/",
+      "destination": "/section/medical-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/10th-pass-jobs/",
+      "destination": "/section/10th-pass-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/12th-pass-jobs/",
+      "destination": "/section/12th-pass-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/8th-pass-jobs/",
+      "destination": "/section/8th-pass-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/diploma-jobs/",
+      "destination": "/section/diploma-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/iti-jobs/",
+      "destination": "/section/iti-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/graduation-jobs/",
+      "destination": "/section/graduation-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/latest-jobs/",
+      "destination": "/section/latest-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/upcoming-jobs/",
+      "destination": "/section/upcoming-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/central-jobs/",
+      "destination": "/section/central-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/haryana-jobs/",
+      "destination": "/section/haryana-jobs/",
+      "statusCode": 301
+    },
+    {
+      "source": "/results/",
+      "destination": "/section/results/",
+      "statusCode": 301
+    },
+    {
+      "source": "/admit-card/",
+      "destination": "/section/admit-card/",
+      "statusCode": 301
+    },
+    {
+      "source": "/answer-key/",
+      "destination": "/section/answer-key/",
+      "statusCode": 301
+    },
+    {
+      "source": "/admissions/",
+      "destination": "/section/admissions/",
+      "statusCode": 301
+    },
+    {
+      "source": "/admission/",
+      "destination": "/section/admission/",
+      "statusCode": 301
+    },
+    {
+      "source": "/latest-govt-jobs/",
+      "destination": "/section/latest-govt-jobs/",
+      "statusCode": 301
     }
   ]
 }
