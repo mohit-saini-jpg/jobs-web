@@ -209,7 +209,58 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Input Format</label><select><option>Auto Detect</option><option>JPG/JPEG</option><option>PNG</option><option>WebP</option><option>BMP</option><option>GIF</option><option>HEIC</option><option>TIFF</option></select></div><div class="form-group"><label>Output Format</label><select><option>JPEG (.jpg)</option><option>PNG (.png)</option><option>WebP (.webp)</option><option>BMP (.bmp)</option><option>GIF (.gif)</option></select></div><div class="form-group"><label>Quality (JPEG/WebP)</label><input type="range" id="aq" min="50" max="100" value="90"><div class="range-val" id="aq-val">90%</div></div></div><script>document.getElementById&&document.getElementById("aq")&&document.getElementById("aq").addEventListener("input",function(){document.getElementById("aq-val").textContent=this.value+"%";})</script>
+    <div class="form-grid">
+      <div class="form-group"><label>Input Format (auto)</label><select id="inFmt" disabled>
+        <option value="">— Upload karein —</option>
+        <option value="jpg">JPG</option><option value="jpeg">JPEG</option><option value="png">PNG</option>
+        <option value="webp">WEBP</option><option value="avif">AVIF</option><option value="gif">GIF</option>
+        <option value="bmp">BMP</option><option value="ico">ICO</option><option value="svg">SVG</option>
+        <option value="tiff">TIFF</option><option value="heic">HEIC</option>
+      </select></div>
+      <div class="form-group"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+        <option value="avif">AVIF</option>
+        <option value="bmp">BMP</option>
+        <option value="gif">GIF</option>
+        <option value="tiff">TIFF</option>
+        <option value="ico">ICO</option>
+        <option value="pdf">PDF</option>
+      </select></div>
+      <div class="form-group"><label>Rotate</label><select id="rot">
+        <option value="0">0° (None)</option>
+        <option value="90">90° ↻ Right</option>
+        <option value="180">180° Flip</option>
+        <option value="270">270° ↺ Left</option>
+      </select></div>
+      <div class="form-group"><label>Flip / Mirror</label><select id="flip">
+        <option value="none">None</option>
+        <option value="h">Horizontal ⇋</option>
+        <option value="v">Vertical ⇅</option>
+      </select></div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional</div>
+      <div id="tkbBody" style="margin-top:12px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-weight:600">Target Size:</span>
+          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
+        </div>
+        <input type="range" id="tkbRange" min="5" max="2000" value="100" style="width:100%">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button type="button" class="tkb-p" data-kb="20" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">20 KB</button>
+          <button type="button" class="tkb-p" data-kb="50" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">50 KB</button>
+          <button type="button" class="tkb-p" data-kb="100" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">100 KB</button>
+          <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
+          <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
+        </div>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → output us size ka banega (JPG/WEBP/AVIF). Khali chhodein → best quality.</p>
+      </div>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,31 +302,78 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+  // ══════ Real converter: any image → 10 formats + rotate/flip + File Size (KB) ══════
+  function G(id){return document.getElementById(id);}
+  var srcImg=null,natW=0,natH=0;
+  var _EXT_MAP={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif','image/gif':'gif','image/bmp':'bmp','image/x-icon':'ico','image/vnd.microsoft.icon':'ico','image/svg+xml':'svg','image/tiff':'tiff','image/heic':'heic','image/heif':'heic'};
+  function loadImageFromFile(f){
+    var url=URL.createObjectURL(f);var img=new Image();
+    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;
+      var ext=_EXT_MAP[f.type]||((f.name||'').split('.').pop()||'').toLowerCase();
+      var sel=G('inFmt');if(sel){sel.selectedIndex=0;for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===ext){sel.selectedIndex=i;break;}}}
+    };
+    img.onerror=function(){alert('Ye file browser mein open nahi hui. HEIC/TIFF/SVG kuch browsers support nahi karte — JPG/PNG try karein.');};
+    img.src=url;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
+  function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('Library load fail'));};document.head.appendChild(s);});}
+  function canvasToBMP(cv){var w=cv.width,h=cv.height,data=cv.getContext('2d').getImageData(0,0,w,h).data;var rowSize=Math.floor((24*w+31)/32)*4,pix=rowSize*h,size=54+pix;var buf=new ArrayBuffer(size),dv=new DataView(buf);dv.setUint16(0,0x424D,false);dv.setUint32(2,size,true);dv.setUint32(10,54,true);dv.setUint32(14,40,true);dv.setInt32(18,w,true);dv.setInt32(22,h,true);dv.setUint16(26,1,true);dv.setUint16(28,24,true);dv.setUint32(34,pix,true);var off=54;for(var y=0;y<h;y++){var row=off+(h-1-y)*rowSize;for(var x=0;x<w;x++){var i=(y*w+x)*4,p=row+x*3;dv.setUint8(p,data[i+2]);dv.setUint8(p+1,data[i+1]);dv.setUint8(p+2,data[i]);}}return new Blob([buf],{type:'image/bmp'});}
+  function pngToICO(pngBuf,w,h){var head=new ArrayBuffer(22),dv=new DataView(head);dv.setUint16(0,0,true);dv.setUint16(2,1,true);dv.setUint16(4,1,true);dv.setUint8(6,w>=256?0:w);dv.setUint8(7,h>=256?0:h);dv.setUint8(8,0);dv.setUint8(9,0);dv.setUint16(10,1,true);dv.setUint16(12,32,true);dv.setUint32(14,pngBuf.byteLength,true);dv.setUint32(18,22,true);return new Blob([head,pngBuf],{type:'image/x-icon'});}
+  async function encode(cv,fmt,quality){var q=quality/100;
+    if(fmt==='png')return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+    if(fmt==='jpg'||fmt==='jpeg')return{blob:await canvasToBlobP(cv,'image/jpeg',q),ext:fmt};
+    if(fmt==='webp')return{blob:await canvasToBlobP(cv,'image/webp',q),ext:'webp'};
+    if(fmt==='avif'){try{return{blob:await canvasToBlobP(cv,'image/avif',q),ext:'avif'};}catch(e){throw new Error('AVIF is browser mein support nahi — WebP/PNG choose karein.');}}
+    if(fmt==='bmp')return{blob:canvasToBMP(cv),ext:'bmp'};
+    if(fmt==='ico'){var pb=await canvasToBlobP(cv,'image/png');return{blob:pngToICO(await pb.arrayBuffer(),cv.width,cv.height),ext:'ico'};}
+    if(fmt==='gif'){var m=await import('https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js');var dd=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;var pal=m.quantize(dd,256),idx=m.applyPalette(dd,pal),enc=m.GIFEncoder();enc.writeFrame(idx,cv.width,cv.height,{palette:pal});enc.finish();return{blob:new Blob([enc.bytes()],{type:'image/gif'}),ext:'gif'};}
+    if(fmt==='tiff'){await loadScript('https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js');var im=cv.getContext('2d').getImageData(0,0,cv.width,cv.height);var tif=UTIF.encodeImage(im.data.buffer,cv.width,cv.height);return{blob:new Blob([tif],{type:'image/tiff'}),ext:'tiff'};}
+    if(fmt==='pdf'){await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');var JsPDF=(window.jspdf||{}).jsPDF;var durl=cv.toDataURL('image/jpeg',Math.max(0.5,q));var pdf=new JsPDF({orientation:cv.width>=cv.height?'l':'p',unit:'px',format:[cv.width,cv.height]});pdf.addImage(durl,'JPEG',0,0,cv.width,cv.height);return{blob:pdf.output('blob'),ext:'pdf'};}
+    return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+  }
+  async function encodeToTargetKB(cv,fmt,targetKB){var lossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0,useFmt=lossy?fmt:'jpg';var mime=useFmt==='webp'?'image/webp':(useFmt==='avif'?'image/avif':'image/jpeg');var ext=(useFmt==='webp')?'webp':(useFmt==='avif')?'avif':(useFmt==='jpeg'?'jpeg':'jpg');var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null,i,b,q;for(i=0;i<10;i++){q=(lo+hi)/2;try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' support nahi.');}if(b.size<=target){best=b;lo=q;}else{hi=q;}}if(!best){best=await canvasToBlobP(cv,mime,0.05);}if(best.size<target){best=new Blob([best,new Uint8Array(Math.round(target-best.size))],{type:mime});}return{blob:best,ext:ext};}
+  function fillBG(ctx,fmt,w,h){if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}}
+  function renderCanvas(fmt){
+    var rot=(+G('rot').value)||0, flip=G('flip').value, swap=(rot===90||rot===270);
+    var cw=swap?natH:natW, ch=swap?natW:natH;
+    var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;var ctx=cv.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    fillBG(ctx,fmt,cw,ch);
+    ctx.translate(cw/2,ch/2);ctx.rotate(rot*Math.PI/180);
+    if(flip==='h')ctx.scale(-1,1);if(flip==='v')ctx.scale(1,-1);
+    ctx.drawImage(srcImg,-natW/2,-natH/2,natW,natH);
+    return cv;
+  }
+  async function runProcess(){
+    if(!srcImg){alert('Pehle image select karein!');return;}
+    var fmt=G('fmt').value, tkbVal=parseFloat(G('tkb').value);
+    var pw=G('progress-wrap');pw.style.display='block';var bar=G('pbar');bar.style.width='45%';G('pmsg').textContent='Convert ho raha hai...';
+    try{
+      var cv=renderCanvas(fmt);
+      var out;
+      if(tkbVal>0){G('pmsg').textContent='Target '+tkbVal+' KB ke liye adjust...';out=await encodeToTargetKB(cv,fmt,tkbVal);}
+      else{G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';out=await encode(cv,fmt,92);}
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(out.blob);
+      var rc=G('result-card'),holder=G('conv-img');
+      if(!holder){holder=document.createElement('img');holder.id='conv-img';holder.alt='Converted';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 50%/20px 20px';rc.insertBefore(holder,G('stat-row'));}
+      if(['pdf','tiff','ico'].indexOf(fmt)>=0){try{holder.src=cv.toDataURL('image/png');}catch(_e){holder.removeAttribute('src');}}else holder.src=url;
+      var inF=(G('inFmt')&&G('inFmt').value?G('inFmt').value.toUpperCase():'IMG');
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+inF+' → '+out.ext.toUpperCase()+'</div><div class="stat-lbl">Converted</div></div><div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">Output</div></div>';
+      rc.classList.add('show');
+      var base=(G('main-file').files[0]?G('main-file').files[0].name:'image').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'.'+out.ext;a.click();};
+    }catch(err){pw.style.display='none';alert('Convert nahi ho paya. Dobara try karein.\n\n'+(err&&err.message?err.message:err));}
+  }
+  document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
-    });
+    var mf=G('main-file');if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
+    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
+    if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
+    document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;natW=0;natH=0;var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var ci=G('conv-img');if(ci)ci.removeAttribute('src');if(G('inFmt'))G('inFmt').selectedIndex=0;});
   });
 </script>
 
