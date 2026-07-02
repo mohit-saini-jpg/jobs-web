@@ -76,6 +76,7 @@ jobs:
           python3 fix_education_schema.py
           python3 fix_jobposting_schema.py
           python3 fix_schema_dates.py
+          python3 build_redirect_map.py
           echo "Generation complete"
 
       - name: Fix AI duplication in built pages

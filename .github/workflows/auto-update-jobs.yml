@@ -101,6 +101,9 @@ jobs:
       - name: Normalize schema datetimes to ISO-8601 + timezone (no missing-timezone warnings)
         run: python3 fix_schema_dates.py
 
+      - name: Build Vercel edge redirect map from _redirects (historical 301s)
+        run: python3 build_redirect_map.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 
