@@ -760,13 +760,13 @@ function loadBgLib(cb){
   if(bgLibLoading){bgLibCallbacks.push(cb);return;}
   bgLibLoading=true;
   bgLibCallbacks.push(cb);
-  // Load the ESM module. The correct entry is dist/index.mjs (the old
-  // dist/background-removal.mjs path was a 404 → "Failed to fetch module").
-  // Try jsdelivr first, then unpkg as a fallback so a single CDN hiccup
-  // doesn't break the tool.
+  // Load the ESM module. IMPORTANT: the raw dist/index.mjs has BARE imports
+  // (lodash, ndarray, onnxruntime-web) that a browser cannot resolve, so a direct
+  // import() of it fails. Use CDN endpoints that pre-bundle/rewrite those deps into
+  // browser-loadable ESM: jsdelivr "+esm", with esm.sh as a fallback.
   var cdnUrls=[
-    'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/index.mjs',
-    'https://unpkg.com/@imgly/background-removal@1.4.5/dist/index.mjs'
+    'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm',
+    'https://esm.sh/@imgly/background-removal@1.4.5'
   ];
   (function tryLoad(i){
     if(i>=cdnUrls.length){
