@@ -209,6 +209,14 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📋 Exam / Job Preset — auto signature size</label>
+      <select id="jobPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="">— Apna exam / job choose karein (size apne aap set) —</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi signature ke <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap set ho jayenge. Baad mein chahe to manually badal sakte hain.</p>
+    </div>
+
     <div class="form-grid">
       <div class="form-group"><label>Width</label><input type="number" id="w" placeholder="width" min="0" step="any"></div>
       <div class="form-group"><label>Height</label><input type="number" id="h" placeholder="height" min="0" step="any"></div>
@@ -541,8 +549,41 @@
     }
   }
 
+  // Exam/Job → [name, width_px, height_px, max_KB] (signature sizes)
+  var JOB_PRESETS_SIG=[
+    {g:'SSC',items:[['SSC CGL',140,60,20],['SSC CHSL',140,60,20],['SSC MTS',140,60,20],['SSC GD',140,60,20]]},
+    {g:'Railway',items:[['Railway NTPC',140,60,40],['Railway Group D',140,60,40],['Railway ALP',140,60,40]]},
+    {g:'Banking',items:[['IBPS PO',140,60,20],['IBPS Clerk',140,60,20],['SBI PO',140,60,20],['SBI Clerk',140,60,20]]},
+    {g:'UPSC',items:[['UPSC Civil Services',350,100,300],['UPSC NDA',350,100,300],['UPSC CDS',350,100,300]]},
+    {g:'Police / State',items:[['DSSSB',300,80,100],['HSSC CET',140,60,50],['Haryana Police',140,60,50],['Delhi Police',140,60,50],['State PSC',300,80,100]]},
+    {g:'Defence / CAPF',items:[['Army Agniveer',140,60,50],['Air Force Agniveer',140,60,50],['Navy SSR/MR',140,60,50],['BSF',140,60,50],['CRPF',140,60,50],['CISF',140,60,50],['ITBP',140,60,50],['SSB',140,60,50]]},
+    {g:'Medical / Teaching',items:[['AIIMS',300,80,100],['KVS Recruitment',300,80,100],['NVS Recruitment',300,80,100]]}
+  ];
+  function populateJobPreset(data){
+    var sel=G('jobPreset');if(!sel)return;
+    data.forEach(function(grp){
+      var og=document.createElement('optgroup');og.label=grp.g;
+      grp.items.forEach(function(it){
+        var o=document.createElement('option');
+        o.value=it[0];o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);o.setAttribute('data-kb',it[3]);
+        o.textContent=it[0]+'  —  '+it[1]+'×'+it[2]+' px, ≤'+it[3]+' KB';
+        og.appendChild(o);
+      });
+      sel.appendChild(og);
+    });
+    sel.addEventListener('change',function(){
+      var o=sel.options[sel.selectedIndex];if(!o||!o.getAttribute('data-w'))return;
+      G('unit').value='px';
+      G('w').value=o.getAttribute('data-w');
+      G('h').value=o.getAttribute('data-h');
+      var kb=o.getAttribute('data-kb');
+      G('tkb').value=kb; if(G('tkbRange'))G('tkbRange').value=Math.min(2000,+kb);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
+    populateJobPreset(JOB_PRESETS_SIG);
     var mf=G('main-file');
     if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err)prefill();});});
     if(G('unit'))G('unit').addEventListener('change',prefill);
