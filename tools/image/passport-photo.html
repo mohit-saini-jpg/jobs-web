@@ -760,19 +760,34 @@ function loadBgLib(cb){
   if(bgLibLoading){bgLibCallbacks.push(cb);return;}
   bgLibLoading=true;
   bgLibCallbacks.push(cb);
-  // Load from CDN
-  import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.mjs')
-    .then(function(mod){
-      bgRemoveLib=mod;
+  // Load the ESM module. The correct entry is dist/index.mjs (the old
+  // dist/background-removal.mjs path was a 404 → "Failed to fetch module").
+  // Try jsdelivr first, then unpkg as a fallback so a single CDN hiccup
+  // doesn't break the tool.
+  var cdnUrls=[
+    'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/index.mjs',
+    'https://unpkg.com/@imgly/background-removal@1.4.5/dist/index.mjs'
+  ];
+  (function tryLoad(i){
+    if(i>=cdnUrls.length){
       bgLibLoading=false;
-      bgLibCallbacks.forEach(function(fn){fn(null,mod);});
+      var e=new Error('Background-removal module kisi bhi CDN se load nahi hua');
+      bgLibCallbacks.forEach(function(fn){fn(e,null);});
       bgLibCallbacks=[];
-    })
-    .catch(function(err){
-      bgLibLoading=false;
-      bgLibCallbacks.forEach(function(fn){fn(err,null);});
-      bgLibCallbacks=[];
-    });
+      return;
+    }
+    import(cdnUrls[i])
+      .then(function(mod){
+        bgRemoveLib=mod;
+        bgLibLoading=false;
+        bgLibCallbacks.forEach(function(fn){fn(null,mod);});
+        bgLibCallbacks=[];
+      })
+      .catch(function(err){
+        console.warn('bg-removal CDN failed:',cdnUrls[i],err&&err.message);
+        tryLoad(i+1);   // next CDN
+      });
+  })(0);
 }
 
 function onBgRemoveToggle(){
@@ -815,7 +830,9 @@ function doBgRemove(){
     // Convert canvas to blob
     S.croppedCanvas.toBlob(function(blob){
       lib.removeBackground(blob,{
-        publicPath:'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/',
+        // Model + WASM data live on the official @imgly data CDN (chunked/hashed).
+        // The old jsdelivr /dist/ path did NOT host these files → removal failed.
+        publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
         progress:function(key,current,total){
           var pct=total>0?Math.round(current/total*100):0;
           document.getElementById('bgLoaderMsg').textContent='Processing: '+pct+'%';
