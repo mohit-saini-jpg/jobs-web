@@ -315,29 +315,52 @@
     if(!srcImg)return;
     var addText=G('addText').checked, ws=addText&&G('whiteSpace').checked;
     var iw=Math.max(1,Math.round(natW*scale)), ih=Math.max(1,Math.round(natH*scale));
-    var extra=ws?Math.round(ih*0.15):0;
-    canvas.width=iw; canvas.height=ih+extra;
     var ctx=canvas.getContext('2d');
+
+    // Name (top line) + Date (bottom line) — STACKED and centered. Each line's
+    // font auto-shrinks so it NEVER overflows the image width.
+    var lines=[];
+    if(addText){
+      var nm=(G('nameTxt').value||'').trim(), dt=(G('dateTxt').value||'').trim();
+      if(nm)lines.push({txt:nm,size:(+G('nameSize').value||28),color:G('nameColor').value});
+      if(dt)lines.push({txt:dt,size:(+G('dateSize').value||22),color:G('dateColor').value});
+    }
+    var maxW=iw*0.90, pad=Math.round(ih*0.03), sumH=0;
+    if(lines.length){
+      var mctx=(renderTo._m||(renderTo._m=document.createElement('canvas'))).getContext('2d');
+      lines.forEach(function(L){
+        var fs=Math.max(6,L.size)*scale;
+        mctx.font='700 '+fs+'px Arial,sans-serif';
+        var tw=mctx.measureText(L.txt).width;
+        if(tw>maxW)fs=fs*maxW/tw;          // shrink to fit width → never out of image
+        L.fs=fs; L.lineH=Math.ceil(fs*1.35); sumH+=L.lineH;
+      });
+    }
+    var extra=0;
+    if(ws){ extra=sumH+pad*2; }              // white strip grows to fit the two lines
+    else if(lines.length){                   // overlay: keep inside bottom region
+      var region=Math.round(ih*0.30);
+      if(sumH>region){var k=region/sumH;lines.forEach(function(L){L.fs*=k;L.lineH*=k;});sumH*=k;}
+    }
+
+    canvas.width=iw; canvas.height=ih+extra;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.filter=buildFilter();
     ctx.drawImage(srcImg,0,0,iw,ih);
     ctx.filter='none';
     if(extra>0){ctx.fillStyle='#ffffff';ctx.fillRect(0,ih,iw,extra);}
-    if(addText){
-      var name=(G('nameTxt').value||'').trim(), dt=(G('dateTxt').value||'').trim();
-      var pad=Math.round(iw*0.03);
-      var yBase = extra>0 ? (ih+extra*0.66) : (ih-pad);
-      function put(txt,sizePx,color,align){
-        if(!txt)return;
-        var fs=Math.max(6,sizePx)*scale;
-        ctx.font='700 '+fs+'px Arial, sans-serif';
-        ctx.textAlign=align; ctx.textBaseline='alphabetic';
-        var xx = align==='left' ? pad : (iw-pad);
-        if(extra===0){ ctx.lineWidth=Math.max(2,fs*0.14); ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.lineJoin='round'; ctx.strokeText(txt,xx,yBase); }
-        ctx.fillStyle=color; ctx.fillText(txt,xx,yBase);
-      }
-      put(name,(+G('nameSize').value||28),G('nameColor').value,'left');
-      put(dt,(+G('dateSize').value||22),G('dateColor').value,'right');
+
+    if(lines.length){
+      var regionTop = ws ? ih : (ih - sumH - pad);
+      var regionH   = ws ? extra : (sumH + pad);
+      var y = regionTop + (regionH - sumH)/2;
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      lines.forEach(function(L){
+        ctx.font='700 '+L.fs+'px Arial,sans-serif';
+        if(!ws){ ctx.lineWidth=Math.max(2,L.fs*0.16); ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.lineJoin='round'; ctx.strokeText(L.txt, iw/2, y); }
+        ctx.fillStyle=L.color; ctx.fillText(L.txt, iw/2, y);
+        y += L.lineH;
+      });
     }
   }
 
