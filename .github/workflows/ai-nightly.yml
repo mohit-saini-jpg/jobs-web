@@ -75,9 +75,9 @@ jobs:
         env:
           GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL:    'llama-3.1-8b-instant'
-          GROQ_SAFE_RPM: '3'
-          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '200' }}
-          DAILY_LIMIT:   '200'
+          GROQ_SAFE_RPM: '5'
+          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '300' }}
+          DAILY_LIMIT:   '300'
           FORCE_REGEN:   ${{ github.event.inputs.force || 'false' }}
           JOBS_DIR:      'jobs'
         run: |

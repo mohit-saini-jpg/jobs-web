@@ -319,6 +319,31 @@ def save_progress(p):
     tmp.write_text(json.dumps(p, ensure_ascii=False), encoding="utf-8")
     tmp.replace(PROGRESS_FILE)
 
+def site_progress(base: Path):
+    """Scan the whole jobs tree: how many pages already carry AI content vs not.
+    Answers 'kitne HTML me data add hua, kitne bache' site-wide (persists across
+    days via the AI_MARKER baked into each page — not the daily progress file)."""
+    total = enriched = 0
+    for f in base.rglob("index.html"):
+        total += 1
+        try:
+            if AI_MARKER in f.read_text(encoding="utf-8", errors="ignore"):
+                enriched += 1
+        except Exception:
+            pass
+    return enriched, total
+
+def write_summary(lines):
+    """Append a Markdown block to the GitHub Actions run summary (if running in CI)."""
+    gs = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not gs:
+        return
+    try:
+        with open(gs, "a", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+    except Exception:
+        pass
+
 # ── Git commit ────────────────────────────────────────────────────────────────
 def git_commit(count, calls):
     import subprocess
@@ -359,14 +384,21 @@ def main():
     done_slugs = set(progress["done_slugs"])
     calls_today = progress["calls_today"]
 
-    print(f"📊 Today: {calls_today} calls done, {len(done_slugs)} pages processed")
+    enr0, tot0 = site_progress(JOBS_DIR)
+    print(f"📊 Site coverage: {enr0}/{tot0} job pages enriched  |  {tot0 - enr0} remaining")
+    print(f"📊 Today: {calls_today}/{DAILY_LIMIT} API calls used")
+    if calls_today >= DAILY_LIMIT:
+        print("   ℹ️  Aaj ka daily quota already use ho chuka — kal fresh run pe agle pages honge (ye normal hai).")
     print()
 
-    # Collect HTML files to process
+    # Collect HTML files to process — NEWEST first so fresh jobs get AI content
+    # promptly. Already-enriched pages are skipped (AI_MARKER), so the backlog of
+    # older un-enriched pages still drains over subsequent days.
     if SINGLE_SLUG:
         html_files = [JOBS_DIR / SINGLE_SLUG / "index.html"]
     else:
-        html_files = sorted(JOBS_DIR.rglob("index.html"))
+        html_files = sorted(JOBS_DIR.rglob("index.html"),
+                            key=lambda p: p.stat().st_mtime, reverse=True)
 
     processed = 0
     skipped_done = 0
@@ -473,7 +505,18 @@ def main():
     print(f"  ⏭️  Already AI : {skipped_ai}")
     print(f"  ⏭️  Done today : {skipped_done}")
     print(f"  ❌ Errors     : {errors}")
+    enr1, tot1 = site_progress(JOBS_DIR)
+    remaining = tot1 - enr1
+    days_left = (remaining + DAILY_LIMIT - 1) // max(1, DAILY_LIMIT)
+    print(f"  📊 Site total : {enr1}/{tot1} enriched  |  {remaining} remaining  (~{days_left} days @ {DAILY_LIMIT}/day)")
     print("=" * 60)
+    write_summary([
+        "### 🤖 AI Content Enrichment Progress",
+        f"- **Patched this run:** {processed}",
+        f"- **Site coverage:** {enr1}/{tot1} job pages enriched",
+        f"- **Remaining:** {remaining}",
+        f"- **Est. days left:** ~{days_left} (at {DAILY_LIMIT}/day)",
+    ])
 
 # ══════════════════════════════════════════════════════════════════
 # MICRODATA INJECTOR — Google crawl fields (no API needed)
