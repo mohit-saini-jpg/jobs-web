@@ -258,6 +258,13 @@
       </div>
     </div>
 
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="bgRemove" style="width:auto;margin:0"> 🌫️ Background Remove (Optional)
+      </label>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Tick karein to AI image ka background hata dega (pehli baar model ~10-15 sec load hoga). <b>PNG</b> format choose karein to transparent background milega.</p>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -307,7 +314,7 @@
 
   function loadImageFromFile(f,cb){
     var url=URL.createObjectURL(f);var img=new Image();
-    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;cb&&cb();};
+    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;_bgCache=null;cb&&cb();};
     img.onerror=function(){cb&&cb('load-fail');};
     img.src=url;
   }
@@ -423,6 +430,61 @@
     return{blob:best,ext:ext};
   }
 
+  // ── Optional AI Background Remove (shared engine) ─────────────────────────
+  var _bgLib=null,_bgCache=null;
+  function _loadBgLib(){
+    return new Promise(function(res,rej){
+      if(_bgLib){res(_bgLib);return;}
+      var urls=['https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm','https://esm.sh/@imgly/background-removal@1.4.5'];
+      (function t(i){ if(i>=urls.length){rej(new Error('Background-removal module load nahi hua'));return;}
+        import(urls[i]).then(function(m){_bgLib=m;res(m);}).catch(function(){t(i+1);}); })(0);
+    });
+  }
+  function _refineCutout(canvas){
+    try{
+      var ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,n=w*h,i;
+      if(!w||!h)return canvas;
+      var img=ctx.getImageData(0,0,w,h),d=img.data,LO=0.15,HI=0.50;
+      var cls=new Uint8Array(n);
+      for(i=0;i<n;i++){var a=d[i*4+3];cls[i]=a>=HI*255?2:(a>=LO*255?1:0);}
+      var keep=new Uint8Array(n),stack=new Int32Array(n),sp=0,p,px,py,q;
+      for(i=0;i<n;i++)if(cls[i]===2){keep[i]=1;stack[sp++]=i;}
+      while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
+        if(px>0){q=p-1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+      }
+      var reach=new Uint8Array(n),x,y,e;sp=0;
+      for(x=0;x<w;x++){e=x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=(h-1)*w+x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      for(y=0;y<h;y++){e=y*w;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=y*w+w-1;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
+        if(px>0){q=p-1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+      }
+      for(i=0;i<n;i++)if(!keep[i]&&!reach[i])keep[i]=1;
+      var al=new Uint8ClampedArray(n);for(i=0;i<n;i++)al[i]=keep[i]?255:0;
+      var al2=new Uint8ClampedArray(n),s,cc,dy,dx,ny,nx;
+      for(y=0;y<h;y++)for(x=0;x<w;x++){s=0;cc=0;for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){ny=y+dy;nx=x+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;s+=al[ny*w+nx];cc++;}al2[y*w+x]=s/cc;}
+      for(i=0;i<n;i++)d[i*4+3]=al2[i];
+      ctx.putImageData(img,0,0);
+    }catch(e){}
+    return canvas;
+  }
+  async function removeBgToCanvas(imgOrCanvas){
+    if(_bgCache)return _bgCache;
+    var lib=await _loadBgLib();
+    var iw=imgOrCanvas.naturalWidth||imgOrCanvas.width, ih=imgOrCanvas.naturalHeight||imgOrCanvas.height;
+    var c0=document.createElement('canvas');c0.width=iw;c0.height=ih;c0.getContext('2d').drawImage(imgOrCanvas,0,0);
+    var blob=await new Promise(function(r){c0.toBlob(r,'image/png');});
+    var resBlob=await lib.removeBackground(blob,{publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'});
+    var rbmp=await createImageBitmap(resBlob);
+    var c=document.createElement('canvas');c.width=rbmp.width;c.height=rbmp.height;c.getContext('2d').drawImage(rbmp,0,0);
+    _refineCutout(c); _bgCache=c; return c;
+  }
+
   async function runProcess(){
     var inp=G('main-file');
     if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
@@ -435,16 +497,21 @@
     var pw=G('progress-wrap');pw.style.display='block';
     var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
     try{
+      var renderSrc=srcImg;
+      if(G('bgRemove')&&G('bgRemove').checked){
+        bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
+        renderSrc=await removeBgToCanvas(srcImg);
+      }
       var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
       if(mode==='fit'){
         var s=Math.min(tw/natW,th/natH),ow=Math.max(1,Math.round(natW*s)),oh=Math.max(1,Math.round(natH*s));
-        cv.width=ow;cv.height=oh;fillBG(ctx,fmt,ow,oh);ctx.drawImage(srcImg,0,0,ow,oh);
+        cv.width=ow;cv.height=oh;fillBG(ctx,fmt,ow,oh);ctx.drawImage(renderSrc,0,0,ow,oh);
       }else if(mode==='fill'){
         cv.width=tw;cv.height=th;var s2=Math.max(tw/natW,th/natH),dw=natW*s2,dh=natH*s2;
-        fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,(tw-dw)/2,(th-dh)/2,dw,dh);
+        fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,(tw-dw)/2,(th-dh)/2,dw,dh);
       }else{
-        cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,0,0,tw,th);
+        cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,0,0,tw,th);
       }
       var out;
       var tkbVal=parseFloat(G('tkb').value);

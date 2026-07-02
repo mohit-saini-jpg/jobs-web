@@ -209,7 +209,61 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Width (px)</label><input type="number" placeholder="140" value="140"></div><div class="form-group"><label>Height (px)</label><input type="number" placeholder="60" value="60"></div><div class="form-group"><label>Target Size</label><select><option>Custom</option><option value="10">10 KB</option><option value="20">20 KB</option><option value="30">30 KB</option></select></div><div class="form-group"><label>Background</label><select><option>White</option><option>Transparent</option></select></div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Width</label><input type="number" id="w" placeholder="width" min="0" step="any"></div>
+      <div class="form-group"><label>Height</label><input type="number" id="h" placeholder="height" min="0" step="any"></div>
+      <div class="form-group"><label>Unit</label><select id="unit">
+        <option value="px">Pixels</option>
+        <option value="percent">Percent</option>
+        <option value="in">Inches</option>
+        <option value="cm">Centimeters</option>
+        <option value="mm">Millimeters</option>
+        <option value="pt">Points</option>
+        <option value="pc">Picas</option>
+      </select></div>
+      <div class="form-group"><label>Resolution (DPI)</label><input type="number" id="dpi" value="300" min="1" step="1"></div>
+      <div class="form-group"><label>Resize Mode</label><select id="mode"><option value="exact">Exact (Stretch)</option><option value="fit">Fit (Keep Ratio)</option><option value="fill">Fill (Crop to Fit)</option></select></div>
+      <div class="form-group"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+        <option value="avif">AVIF</option>
+        <option value="bmp">BMP</option>
+        <option value="gif">GIF</option>
+        <option value="tiff">TIFF</option>
+        <option value="ico">ICO</option>
+        <option value="pdf">PDF</option>
+      </select></div>
+      <div class="form-group"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="lockAR" style="width:auto;margin:0"> Lock Aspect Ratio</label></div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional</div>
+      <div id="tkbBody" style="margin-top:12px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-weight:600">Target Size:</span>
+          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
+        </div>
+        <input type="range" id="tkbRange" min="5" max="2000" value="50" style="width:100%">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button type="button" class="tkb-p" data-kb="20" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">20 KB</button>
+          <button type="button" class="tkb-p" data-kb="50" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">50 KB</button>
+          <button type="button" class="tkb-p" data-kb="100" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">100 KB</button>
+          <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
+          <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
+        </div>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → image bilkul us size ki banegi (JPG/WEBP/AVIF; quality auto-adjust). Khali chhodein → best quality. Doosra format select ho to JPG use hoga.</p>
+      </div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="bgRemove" style="width:auto;margin:0"> 🌫️ Background Remove (Optional)
+      </label>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Tick karein to AI image ka background hata dega (pehli baar model ~10-15 sec load hoga). <b>PNG</b> format choose karein to transparent background milega.</p>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,30 +305,261 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+  // ══════════════════════════════════════════════════════════
+  // REAL image resizer — 7 units + 10 output formats
+  // ══════════════════════════════════════════════════════════
+  function G(id){return document.getElementById(id);}
+  var srcImg=null,natW=0,natH=0;
+
+  function loadImageFromFile(f,cb){
+    var url=URL.createObjectURL(f);var img=new Image();
+    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;_bgCache=null;cb&&cb();};
+    img.onerror=function(){cb&&cb('load-fail');};
+    img.src=url;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
+  // unit <-> pixels (physical units use DPI)
+  function toPx(val,unit,dpi,orig){
+    val=parseFloat(val)||0;dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return Math.round(orig*val/100);
+    if(unit==='in')return Math.round(val*dpi);
+    if(unit==='cm')return Math.round(val*dpi/2.54);
+    if(unit==='mm')return Math.round(val*dpi/25.4);
+    if(unit==='pt')return Math.round(val*dpi/72);
+    if(unit==='pc')return Math.round(val*dpi/6);
+    return Math.round(val); // px
+  }
+  function fromPx(px,unit,dpi,orig){
+    dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return orig?+(px/orig*100).toFixed(2):100;
+    if(unit==='in')return +(px/dpi).toFixed(3);
+    if(unit==='cm')return +(px/dpi*2.54).toFixed(3);
+    if(unit==='mm')return +(px/dpi*25.4).toFixed(2);
+    if(unit==='pt')return +(px/dpi*72).toFixed(1);
+    if(unit==='pc')return +(px/dpi*6).toFixed(2);
+    return Math.round(px); // px
+  }
+  function prefill(){
+    if(!natW)return;var unit=G('unit').value,dpi=G('dpi').value;
+    G('w').value=fromPx(natW,unit,dpi,natW);G('h').value=fromPx(natH,unit,dpi,natH);
+  }
+  function syncAR(from){
+    if(!G('lockAR').checked||!natW||!natH)return;
+    var unit=G('unit').value,dpi=G('dpi').value;
+    if(unit==='percent'){ if(from==='w')G('h').value=G('w').value; else G('w').value=G('h').value; return; }
+    if(from==='w'){var wpx=toPx(G('w').value,unit,dpi,natW);if(wpx>0)G('h').value=fromPx(Math.round(wpx*natH/natW),unit,dpi,natH);}
+    else{var hpx=toPx(G('h').value,unit,dpi,natH);if(hpx>0)G('w').value=fromPx(Math.round(hpx*natW/natH),unit,dpi,natW);}
+  }
+
+  // ── Encoders ──────────────────────────────────────────────
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
+  function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('Library load fail'));};document.head.appendChild(s);});}
+  function canvasToBMP(cv){
+    var w=cv.width,h=cv.height,data=cv.getContext('2d').getImageData(0,0,w,h).data;
+    var rowSize=Math.floor((24*w+31)/32)*4,pix=rowSize*h,size=54+pix;
+    var buf=new ArrayBuffer(size),dv=new DataView(buf);
+    dv.setUint16(0,0x424D,false);dv.setUint32(2,size,true);dv.setUint32(10,54,true);
+    dv.setUint32(14,40,true);dv.setInt32(18,w,true);dv.setInt32(22,h,true);
+    dv.setUint16(26,1,true);dv.setUint16(28,24,true);dv.setUint32(34,pix,true);
+    var off=54;
+    for(var y=0;y<h;y++){var row=off+(h-1-y)*rowSize;for(var x=0;x<w;x++){var i=(y*w+x)*4,p=row+x*3;dv.setUint8(p,data[i+2]);dv.setUint8(p+1,data[i+1]);dv.setUint8(p+2,data[i]);}}
+    return new Blob([buf],{type:'image/bmp'});
+  }
+  function pngToICO(pngBuf,w,h){
+    var head=new ArrayBuffer(22),dv=new DataView(head);
+    dv.setUint16(0,0,true);dv.setUint16(2,1,true);dv.setUint16(4,1,true);
+    dv.setUint8(6,w>=256?0:w);dv.setUint8(7,h>=256?0:h);dv.setUint8(8,0);dv.setUint8(9,0);
+    dv.setUint16(10,1,true);dv.setUint16(12,32,true);
+    dv.setUint32(14,pngBuf.byteLength,true);dv.setUint32(18,22,true);
+    return new Blob([head,pngBuf],{type:'image/x-icon'});
+  }
+  async function encode(cv,fmt,quality){
+    var q=quality/100;
+    if(fmt==='png')return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+    if(fmt==='jpg'||fmt==='jpeg')return{blob:await canvasToBlobP(cv,'image/jpeg',q),ext:fmt};
+    if(fmt==='webp')return{blob:await canvasToBlobP(cv,'image/webp',q),ext:'webp'};
+    if(fmt==='avif'){try{return{blob:await canvasToBlobP(cv,'image/avif',q),ext:'avif'};}catch(e){throw new Error('AVIF is browser mein support nahi hai — WebP ya PNG choose karein.');}}
+    if(fmt==='bmp')return{blob:canvasToBMP(cv),ext:'bmp'};
+    if(fmt==='ico'){var pb=await canvasToBlobP(cv,'image/png');return{blob:pngToICO(await pb.arrayBuffer(),cv.width,cv.height),ext:'ico'};}
+    if(fmt==='gif'){
+      var m=await import('https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js');
+      var d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
+      var pal=m.quantize(d,256),idx=m.applyPalette(d,pal),enc=m.GIFEncoder();
+      enc.writeFrame(idx,cv.width,cv.height,{palette:pal});enc.finish();
+      return{blob:new Blob([enc.bytes()],{type:'image/gif'}),ext:'gif'};
+    }
+    if(fmt==='tiff'){
+      await loadScript('https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js');
+      var im=cv.getContext('2d').getImageData(0,0,cv.width,cv.height);
+      var tif=UTIF.encodeImage(im.data.buffer,cv.width,cv.height);
+      return{blob:new Blob([tif],{type:'image/tiff'}),ext:'tiff'};
+    }
+    if(fmt==='pdf'){
+      await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
+      var JsPDF=(window.jspdf||{}).jsPDF;
+      var durl=cv.toDataURL('image/jpeg',Math.max(0.5,q));
+      var pdf=new JsPDF({orientation:cv.width>=cv.height?'l':'p',unit:'px',format:[cv.width,cv.height]});
+      pdf.addImage(durl,'JPEG',0,0,cv.width,cv.height);
+      return{blob:pdf.output('blob'),ext:'pdf'};
+    }
+    return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+  }
+  function fillBG(ctx,fmt,w,h){if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}}
+
+  // Encode to a target FILE SIZE (KB) by binary-searching the quality — picks the
+  // highest quality whose output is <= target. Works for lossy formats only.
+  async function encodeToTargetKB(cv,fmt,targetKB){
+    var lossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
+    var useFmt=lossy?fmt:'jpg';
+    var mime=useFmt==='webp'?'image/webp':(useFmt==='avif'?'image/avif':'image/jpeg');
+    var ext=(useFmt==='webp')?'webp':(useFmt==='avif')?'avif':(useFmt==='jpeg'?'jpeg':'jpg');
+    var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null;
+    for(var i=0;i<9;i++){
+      var q=(lo+hi)/2,b;
+      try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' is browser mein support nahi — JPG ya WebP choose karein.');}
+      if(b.size<=target){best=b;lo=q;}else{hi=q;}
+    }
+    if(!best){try{best=await canvasToBlobP(cv,mime,0.05);}catch(e){throw new Error('Encode fail — chhota target ya doosra format try karein.');}}
+    // If the image is too small to NATURALLY reach the target (even max quality is
+    // under it — e.g. a 60 KB photo with a 500 KB target), pad the file to the exact
+    // target size. Trailing bytes are ignored by viewers, so the image looks the
+    // same but the FILE becomes exactly N KB — matching what the user selected.
+    if(best.size < target){
+      best=new Blob([best, new Uint8Array(Math.round(target - best.size))], {type:mime});
+    }
+    return{blob:best,ext:ext};
+  }
+
+  // ── Optional AI Background Remove (shared engine) ─────────────────────────
+  var _bgLib=null,_bgCache=null;
+  function _loadBgLib(){
+    return new Promise(function(res,rej){
+      if(_bgLib){res(_bgLib);return;}
+      var urls=['https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm','https://esm.sh/@imgly/background-removal@1.4.5'];
+      (function t(i){ if(i>=urls.length){rej(new Error('Background-removal module load nahi hua'));return;}
+        import(urls[i]).then(function(m){_bgLib=m;res(m);}).catch(function(){t(i+1);}); })(0);
+    });
+  }
+  function _refineCutout(canvas){
+    try{
+      var ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,n=w*h,i;
+      if(!w||!h)return canvas;
+      var img=ctx.getImageData(0,0,w,h),d=img.data,LO=0.15,HI=0.50;
+      var cls=new Uint8Array(n);
+      for(i=0;i<n;i++){var a=d[i*4+3];cls[i]=a>=HI*255?2:(a>=LO*255?1:0);}
+      var keep=new Uint8Array(n),stack=new Int32Array(n),sp=0,p,px,py,q;
+      for(i=0;i<n;i++)if(cls[i]===2){keep[i]=1;stack[sp++]=i;}
+      while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
+        if(px>0){q=p-1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+      }
+      var reach=new Uint8Array(n),x,y,e;sp=0;
+      for(x=0;x<w;x++){e=x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=(h-1)*w+x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      for(y=0;y<h;y++){e=y*w;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=y*w+w-1;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
+        if(px>0){q=p-1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+      }
+      for(i=0;i<n;i++)if(!keep[i]&&!reach[i])keep[i]=1;
+      var al=new Uint8ClampedArray(n);for(i=0;i<n;i++)al[i]=keep[i]?255:0;
+      var al2=new Uint8ClampedArray(n),s,cc,dy,dx,ny,nx;
+      for(y=0;y<h;y++)for(x=0;x<w;x++){s=0;cc=0;for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){ny=y+dy;nx=x+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;s+=al[ny*w+nx];cc++;}al2[y*w+x]=s/cc;}
+      for(i=0;i<n;i++)d[i*4+3]=al2[i];
+      ctx.putImageData(img,0,0);
+    }catch(e){}
+    return canvas;
+  }
+  async function removeBgToCanvas(imgOrCanvas){
+    if(_bgCache)return _bgCache;
+    var lib=await _loadBgLib();
+    var iw=imgOrCanvas.naturalWidth||imgOrCanvas.width, ih=imgOrCanvas.naturalHeight||imgOrCanvas.height;
+    var c0=document.createElement('canvas');c0.width=iw;c0.height=ih;c0.getContext('2d').drawImage(imgOrCanvas,0,0);
+    var blob=await new Promise(function(r){c0.toBlob(r,'image/png');});
+    var resBlob=await lib.removeBackground(blob,{publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'});
+    var rbmp=await createImageBitmap(resBlob);
+    var c=document.createElement('canvas');c.width=rbmp.width;c.height=rbmp.height;c.getContext('2d').drawImage(rbmp,0,0);
+    _refineCutout(c); _bgCache=c; return c;
+  }
+
+  async function runProcess(){
+    var inp=G('main-file');
+    if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
+    if(!natW||!srcImg){alert('Image abhi load ho rahi hai — 1 second baad Process karein.');return;}
+    var unit=G('unit').value,dpi=G('dpi').value;
+    var tw=toPx(G('w').value,unit,dpi,natW),th=toPx(G('h').value,unit,dpi,natH);
+    if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
+    if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
+    var mode=G('mode').value,fmt=G('fmt').value;
+    var pw=G('progress-wrap');pw.style.display='block';
+    var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
+    try{
+      var renderSrc=srcImg;
+      if(G('bgRemove')&&G('bgRemove').checked){
+        bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
+        renderSrc=await removeBgToCanvas(srcImg);
+      }
+      var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      if(mode==='fit'){
+        var s=Math.min(tw/natW,th/natH),ow=Math.max(1,Math.round(natW*s)),oh=Math.max(1,Math.round(natH*s));
+        cv.width=ow;cv.height=oh;fillBG(ctx,fmt,ow,oh);ctx.drawImage(renderSrc,0,0,ow,oh);
+      }else if(mode==='fill'){
+        cv.width=tw;cv.height=th;var s2=Math.max(tw/natW,th/natH),dw=natW*s2,dh=natH*s2;
+        fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,(tw-dw)/2,(th-dh)/2,dw,dh);
+      }else{
+        cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,0,0,tw,th);
+      }
+      var out;
+      var tkbVal=parseFloat(G('tkb').value);
+      if(tkbVal>0){
+        var isLossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
+        G('pmsg').textContent='Target '+tkbVal+' KB'+(isLossy?'':' (JPG)')+' ke liye adjust ho raha hai...';
+        out=await encodeToTargetKB(cv,fmt,tkbVal);
+      }else{
+        bar.style.width='65%';G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';
+        out=await encode(cv,fmt,92);
+      }
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(out.blob);
+      var rc=G('result-card'),holder=G('resz-img');
+      if(!holder){holder=document.createElement('img');holder.id='resz-img';holder.alt='Resized preview';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb';rc.insertBefore(holder,G('stat-row'));}
+      // formats that <img> can't render → show PNG preview of the canvas
+      if(['pdf','tiff','ico'].indexOf(fmt)>=0){try{holder.src=cv.toDataURL('image/png');}catch(_e){holder.removeAttribute('src');}}
+      else holder.src=url;
+      var tgtLbl = tkbVal>0 ? (tkbVal+' KB') : 'Best';
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+tgtLbl+'</div><div class="stat-lbl">Target</div></div>';
+      rc.classList.add('show');
+      var base=(inp.files[0].name||'image').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-'+cv.width+'x'+cv.height+'.'+out.ext;a.click();};
+    }catch(err){
+      pw.style.display='none';
+      alert('Resize/encode nahi ho paya. Dobara try karein.\n\n'+(err&&err.message?err.message:err));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    var mf=G('main-file');
+    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err)prefill();});});
+    if(G('unit'))G('unit').addEventListener('change',prefill);
+    if(G('dpi'))G('dpi').addEventListener('input',function(){if(natW)prefill();});
+    if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
+    if(G('h'))G('h').addEventListener('input',function(){syncAR('h');});
+    // Target file-size (KB) controls — always visible; empty = best quality
+    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
+    if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
+    document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
+      G('main-file').value='';srcImg=null;natW=0;natH=0;
+      var fp=G('file-preview');if(fp)fp.classList.remove('show');
+      G('progress-wrap').style.display='none';G('pbar').style.width='0%';
+      var rc=G('result-card');if(rc)rc.classList.remove('show');
+      var ri=G('resz-img');if(ri)ri.removeAttribute('src');
     });
   });
 </script>
