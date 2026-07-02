@@ -251,20 +251,63 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
+  // ── Real AI background removal (same engine as passport-photo) ────────────
+  // dist/index.mjs has BARE imports (lodash/ndarray/onnxruntime-web) a browser
+  // cannot resolve, so load the pre-bundled "+esm" build (esm.sh as fallback).
+  var bgLib=null,bgLoading=false,bgCbs=[];
+  function loadBgLib(cb){
+    if(bgLib){cb(null,bgLib);return;}
+    bgCbs.push(cb);
+    if(bgLoading)return;
+    bgLoading=true;
+    var urls=[
+      'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm',
+      'https://esm.sh/@imgly/background-removal@1.4.5'
+    ];
+    (function tryLoad(i){
+      if(i>=urls.length){bgLoading=false;var e=new Error('Background-removal module kisi bhi CDN se load nahi hua');bgCbs.forEach(function(fn){fn(e,null);});bgCbs=[];return;}
+      import(urls[i]).then(function(mod){bgLib=mod;bgLoading=false;bgCbs.forEach(function(fn){fn(null,mod);});bgCbs=[];})
+        .catch(function(err){console.warn('bg-removal CDN failed:',urls[i],err&&err.message);tryLoad(i+1);});
+    })(0);
+  }
+
   function runProcess(){
     const inp=document.getElementById('main-file');
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
     const f=inp.files[0];
+    if(!/^image\//.test(f.type)){alert('Sirf image file select karein.');return;}
     const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+    const bar=document.getElementById('pbar');const pmsg=document.getElementById('pmsg');
+    bar.style.width='8%';pmsg.textContent='AI model load ho raha hai (pehli baar ~10-15 sec)...';
+    loadBgLib(function(err,lib){
+      if(err){pw.style.display='none';alert('Background removal load nahi hua. Internet connection check karein aur dobara try karein.\n\nError: '+err.message);return;}
+      pmsg.textContent='Background remove ho raha hai...';
+      lib.removeBackground(f,{
+        // Model + WASM data live on the official @imgly data CDN (chunked/hashed).
+        publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
+        progress:function(key,current,total){var pct=total>0?Math.round(current/total*100):0;bar.style.width=Math.max(10,pct)+'%';pmsg.textContent='Processing: '+pct+'%';}
+      }).then(function(resultBlob){
+        bar.style.width='100%';pmsg.textContent='Done!';
+        const url=URL.createObjectURL(resultBlob);
+        const rc=document.getElementById('result-card');
+        // Show the transparent-PNG result on a checkered backdrop
+        let holder=document.getElementById('bg-result-img');
+        if(!holder){
+          holder=document.createElement('img');holder.id='bg-result-img';holder.alt='Background removed';
+          holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;background-image:linear-gradient(45deg,#ddd 25%,transparent 25%),linear-gradient(-45deg,#ddd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ddd 75%),linear-gradient(-45deg,transparent 75%,#ddd 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0';
+          rc.insertBefore(holder,document.getElementById('stat-row'));
+        }
+        holder.src=url;
+        document.getElementById('stat-row').innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input</div></div><div class="stat-box"><div class="stat-val">${formatBytes(resultBlob.size)}</div><div class="stat-lbl">Output PNG</div></div><div class="stat-box"><div class="stat-val">Transparent</div><div class="stat-lbl">Background</div></div>`;
+        rc.classList.add('show');
+        const base=(f.name||'image').replace(/\.[^.]+$/,'');
+        document.getElementById('dl-btn').textContent='⬇️ Download PNG';
+        document.getElementById('dl-btn').onclick=function(){const a=document.createElement('a');a.href=url;a.download=base+'-no-bg.png';a.click();};
+      }).catch(function(e2){
+        pw.style.display='none';
+        alert('Background remove nahi ho paya. Dobara try karein.\n\nError: '+(e2&&e2.message?e2.message:e2));
+      });
+    });
   }
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
