@@ -11,6 +11,8 @@
   <meta property="og:title" content="Image Resizer Free Online – Resize Photo to Exact Pixels | Top Sarkari Jobs"><meta property="og:description" content="Resize any image to exact pixel dimensions online for free. Perfect for government job form uploads, passport photos and social media. No signup required."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -207,6 +209,18 @@
     <input type="file" id="main-file" style="display:none" accept="image/*">
   </div>
 
+  <div class="card" id="crop-card" style="display:none">
+    <h3>✂️ Crop Karein</h3>
+    <div style="max-height:440px;background:#0f172a;border-radius:10px;overflow:hidden">
+      <img id="cropImg" style="max-width:100%;display:block">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
+    </div>
+    <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — Process karte hi sirf cropped part hi resize/save hoga.</p>
+  </div>
+
   <div class="card">
     <h3>⚙️ Settings</h3>
     <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
@@ -264,6 +278,13 @@
         </div>
         <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → image bilkul us size ki banegi (JPG/WEBP/AVIF; quality auto-adjust). Khali chhodein → best quality. Doosra format select ho to JPG use hoga.</p>
       </div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="cropEnable" style="width:auto;margin:0"> ✂️ Crop Image (Optional)
+      </label>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Enable karein to upar crop box aayega — box drag/resize karke area choose karein.</p>
     </div>
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
@@ -493,30 +514,47 @@
     _refineCutout(c); _bgCache=c; return c;
   }
 
+  var cropperInst=null;
+  function initCrop(){
+    var card=G('crop-card'),img=G('cropImg');
+    if(!G('cropEnable')||!G('cropEnable').checked||!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}return;}
+    card.style.display='';
+    if(cropperInst){cropperInst.destroy();cropperInst=null;}
+    img.onload=function(){
+      if(cropperInst)cropperInst.destroy();
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:0.9,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN});}catch(e){}
+      _bgCache=null;
+    };
+    img.src=srcImg.src;
+    if(img.complete&&img.naturalWidth>0)img.onload();
+  }
+
   async function runProcess(){
     var inp=G('main-file');
     if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
     if(!natW||!srcImg){alert('Image abhi load ho rahi hai — 1 second baad Process karein.');return;}
     var unit=G('unit').value,dpi=G('dpi').value;
-    var tw=toPx(G('w').value,unit,dpi,natW),th=toPx(G('h').value,unit,dpi,natH);
+    var renderSrc=srcImg, sw=natW, sh=natH;
+    if(G('cropEnable')&&G('cropEnable').checked&&cropperInst){var _cc=cropperInst.getCroppedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
+    var tw=toPx(G('w').value,unit,dpi,sw),th=toPx(G('h').value,unit,dpi,sh);
     if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
     if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
     var mode=G('mode').value,fmt=G('fmt').value;
     var pw=G('progress-wrap');pw.style.display='block';
     var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
     try{
-      var renderSrc=srcImg;
+      if(G('cropEnable')&&G('cropEnable').checked)_bgCache=null;
       if(G('bgRemove')&&G('bgRemove').checked){
         bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
-        renderSrc=await removeBgToCanvas(srcImg);
+        renderSrc=await removeBgToCanvas(renderSrc);sw=renderSrc.width;sh=renderSrc.height;
       }
       var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
       if(mode==='fit'){
-        var s=Math.min(tw/natW,th/natH),ow=Math.max(1,Math.round(natW*s)),oh=Math.max(1,Math.round(natH*s));
+        var s=Math.min(tw/sw,th/sh),ow=Math.max(1,Math.round(sw*s)),oh=Math.max(1,Math.round(sh*s));
         cv.width=ow;cv.height=oh;fillBG(ctx,fmt,ow,oh);ctx.drawImage(renderSrc,0,0,ow,oh);
       }else if(mode==='fill'){
-        cv.width=tw;cv.height=th;var s2=Math.max(tw/natW,th/natH),dw=natW*s2,dh=natH*s2;
+        cv.width=tw;cv.height=th;var s2=Math.max(tw/sw,th/sh),dw=sw*s2,dh=sh*s2;
         fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,(tw-dw)/2,(th-dh)/2,dw,dh);
       }else{
         cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(renderSrc,0,0,tw,th);
@@ -586,7 +624,7 @@
     bindFile('main-file','file-preview');
     populateJobPreset(JOB_PRESETS_PHOTO);
     var mf=G('main-file');
-    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err)prefill();});});
+    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err){prefill();initCrop();}});});
     if(G('unit'))G('unit').addEventListener('change',prefill);
     if(G('dpi'))G('dpi').addEventListener('input',function(){if(natW)prefill();});
     if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
@@ -595,9 +633,12 @@
     if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
+    if(G('cropEnable'))G('cropEnable').addEventListener('change',initCrop);
+    if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
-      G('main-file').value='';srcImg=null;natW=0;natH=0;
+      G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('cropEnable'))G('cropEnable').checked=false;if(G('crop-card'))G('crop-card').style.display='none';
       var fp=G('file-preview');if(fp)fp.classList.remove('show');
       G('progress-wrap').style.display='none';G('pbar').style.width='0%';
       var rc=G('result-card');if(rc)rc.classList.remove('show');
