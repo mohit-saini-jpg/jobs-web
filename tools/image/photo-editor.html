@@ -207,9 +207,49 @@
     <input type="file" id="main-file" style="display:none" accept="image/*">
   </div>
 
+  <div class="card" id="preview-card" style="display:none">
+    <h3>🖼️ Live Preview</h3>
+    <div style="text-align:center;background:#f1f5f9;border-radius:12px;padding:12px">
+      <canvas id="pcanvas" style="max-width:100%;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.12)"></canvas>
+    </div>
+    <p style="font-size:.78rem;color:#94a3b8;text-align:center;margin:8px 0 0">Slider / text change karte hi yahan turant live dikhega — download se pehle hi.</p>
+  </div>
+
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Brightness</label><input type="range" id="br" min="-100" max="100" value="0"><div class="range-val" id="br-val">0</div></div><div class="form-group"><label>Contrast</label><input type="range" id="con" min="-100" max="100" value="0"><div class="range-val" id="con-val">0</div></div><div class="form-group"><label>Saturation</label><input type="range" id="sat" min="-100" max="100" value="0"><div class="range-val" id="sat-val">0</div></div><div class="form-group"><label>Filter</label><select><option>None</option><option>Grayscale</option><option>Sepia</option><option>Warm</option><option>Cool</option><option>Vintage</option></select></div></div><script>["br","con","sat"].forEach(function(id){var el=document.getElementById(id);el&&el.addEventListener("input",function(){document.getElementById(id+"-val").textContent=this.value;});});</script>
+    <div class="form-grid">
+      <div class="form-group"><label>Brightness</label><input type="range" id="br" min="-100" max="100" value="0"><div class="range-val" id="br-val">0</div></div>
+      <div class="form-group"><label>Contrast</label><input type="range" id="con" min="-100" max="100" value="0"><div class="range-val" id="con-val">0</div></div>
+      <div class="form-group"><label>Saturation</label><input type="range" id="sat" min="-100" max="100" value="0"><div class="range-val" id="sat-val">0</div></div>
+      <div class="form-group"><label>Filter</label><select id="filterSel"><option value="none">None</option><option value="grayscale">Grayscale</option><option value="sepia">Sepia</option><option value="warm">Warm</option><option value="cool">Cool</option><option value="vintage">Vintage</option></select></div>
+    </div>
+
+    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
+      <label style="font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:1rem">
+        <input type="checkbox" id="addText" style="width:auto;margin:0"> 📝 Add Name &amp; Date on Image
+      </label>
+      <div id="textBody" style="display:none;margin-top:12px">
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;font-weight:600">
+          <input type="checkbox" id="whiteSpace" style="width:auto;margin:0"> Add Extra White Space On Bottom
+        </label>
+        <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">Name on Image</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="text" id="nameTxt" placeholder="Name" style="flex:1;min-width:120px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px">
+            <input type="number" id="nameSize" value="28" min="6" max="400" title="Font size (px)" style="width:70px;padding:8px;border:1px solid #cbd5e1;border-radius:8px">
+            <input type="color" id="nameColor" value="#000000" title="Text colour" style="width:40px;height:40px;border:none;background:none;cursor:pointer;padding:0">
+          </div>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px">
+          <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">Date on Image</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="text" id="dateTxt" placeholder="Date" style="flex:1;min-width:120px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px">
+            <input type="number" id="dateSize" value="22" min="6" max="400" title="Font size (px)" style="width:70px;padding:8px;border:1px solid #cbd5e1;border-radius:8px">
+            <input type="color" id="dateColor" value="#000000" title="Text colour" style="width:40px;height:40px;border:none;background:none;cursor:pointer;padding:0">
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,30 +291,110 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+  // ══════════════════════════════════════════════════════════
+  // REAL photo editor — LIVE preview (brightness/contrast/saturation/
+  // filter) + Name & Date overlay. Renders to a canvas so the user sees
+  // every change instantly, and downloads exactly what's shown.
+  // ══════════════════════════════════════════════════════════
+  function G(id){return document.getElementById(id);}
+  var srcImg=null,natW=0,natH=0,pcanvas=null,PREVIEW_MAX=560;
+
+  function buildFilter(){
+    var b=100+(+G('br').value),c=100+(+G('con').value),s=100+(+G('sat').value);
+    var f='brightness('+b+'%) contrast('+c+'%) saturate('+s+'%)';
+    var p=G('filterSel').value;
+    if(p==='grayscale')f+=' grayscale(100%)';
+    else if(p==='sepia')f+=' sepia(100%)';
+    else if(p==='warm')f+=' sepia(40%) saturate(150%)';
+    else if(p==='cool')f+=' contrast(108%) saturate(80%) brightness(105%)';
+    else if(p==='vintage')f+=' sepia(50%) contrast(85%) brightness(110%) saturate(80%)';
+    return f;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
+
+  function renderTo(canvas,scale){
+    if(!srcImg)return;
+    var addText=G('addText').checked, ws=addText&&G('whiteSpace').checked;
+    var iw=Math.max(1,Math.round(natW*scale)), ih=Math.max(1,Math.round(natH*scale));
+    var extra=ws?Math.round(ih*0.15):0;
+    canvas.width=iw; canvas.height=ih+extra;
+    var ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.filter=buildFilter();
+    ctx.drawImage(srcImg,0,0,iw,ih);
+    ctx.filter='none';
+    if(extra>0){ctx.fillStyle='#ffffff';ctx.fillRect(0,ih,iw,extra);}
+    if(addText){
+      var name=(G('nameTxt').value||'').trim(), dt=(G('dateTxt').value||'').trim();
+      var pad=Math.round(iw*0.03);
+      var yBase = extra>0 ? (ih+extra*0.66) : (ih-pad);
+      function put(txt,sizePx,color,align){
+        if(!txt)return;
+        var fs=Math.max(6,sizePx)*scale;
+        ctx.font='700 '+fs+'px Arial, sans-serif';
+        ctx.textAlign=align; ctx.textBaseline='alphabetic';
+        var xx = align==='left' ? pad : (iw-pad);
+        if(extra===0){ ctx.lineWidth=Math.max(2,fs*0.14); ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.lineJoin='round'; ctx.strokeText(txt,xx,yBase); }
+        ctx.fillStyle=color; ctx.fillText(txt,xx,yBase);
+      }
+      put(name,(+G('nameSize').value||28),G('nameColor').value,'left');
+      put(dt,(+G('dateSize').value||22),G('dateColor').value,'right');
+    }
+  }
+
+  function renderPreview(){ if(srcImg&&pcanvas) renderTo(pcanvas, Math.min(1,PREVIEW_MAX/natW)); }
+
+  function loadImageFromFile(f){
+    var url=URL.createObjectURL(f);var img=new Image();
+    img.onload=function(){
+      natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;
+      // sensible default font sizes proportional to the image
+      G('nameSize').value=Math.max(14,Math.round(natW*0.05));
+      G('dateSize').value=Math.max(12,Math.round(natW*0.04));
+      G('preview-card').style.display='';
+      renderPreview();
+    };
+    img.src=url;
+  }
+
+  function runProcess(){   // render at FULL resolution + download
+    if(!srcImg){alert('Pehle image select karein!');return;}
+    var pw=G('progress-wrap');pw.style.display='block';G('pbar').style.width='60%';G('pmsg').textContent='Final image ban raha hai...';
+    var out=document.createElement('canvas');
+    renderTo(out,1);
+    out.toBlob(function(blob){
+      G('pbar').style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(blob||new Blob());
+      var rc=G('result-card');rc.classList.add('show');
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+out.width+'×'+out.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(blob?blob.size:0)+'</div><div class="stat-lbl">JPG Size</div></div><div class="stat-box"><div class="stat-val">Edited</div><div class="stat-lbl">✓</div></div>';
+      var fn=G('main-file').files[0], base=(fn?fn.name:'photo').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download JPG';
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-edited.jpg';a.click();};
+    },'image/jpeg',0.92);
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    pcanvas=G('pcanvas');
+    var mf=G('main-file');
+    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
+    ['br','con','sat','filterSel','nameTxt','nameSize','nameColor','dateTxt','dateSize','dateColor','whiteSpace','addText'].forEach(function(id){
+      var el=G(id);if(!el)return;
+      var ev=(el.type==='checkbox'||el.tagName==='SELECT')?'change':'input';
+      el.addEventListener(ev,function(){
+        if(id==='br'||id==='con'||id==='sat')G(id+'-val').textContent=el.value;
+        if(id==='addText')G('textBody').style.display=el.checked?'block':'none';
+        renderPreview();
+      });
+    });
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
+      ['br','con','sat'].forEach(function(id){G(id).value=0;G(id+'-val').textContent='0';});
+      G('filterSel').value='none';
+      G('addText').checked=false;G('textBody').style.display='none';G('whiteSpace').checked=false;
+      G('nameTxt').value='';G('dateTxt').value='';
+      G('progress-wrap').style.display='none';G('pbar').style.width='0%';
+      var rc=G('result-card');if(rc)rc.classList.remove('show');
+      if(srcImg)renderPreview();
     });
   });
 </script>
