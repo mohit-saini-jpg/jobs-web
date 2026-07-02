@@ -209,7 +209,35 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Width (px)</label><input type="number" id="w" placeholder="e.g. 1920" min="1"></div><div class="form-group"><label>Height (px)</label><input type="number" id="h" placeholder="e.g. 1080" min="1"></div><div class="form-group"><label>Resize Mode</label><select><option>Exact (Stretch)</option><option>Fit (Keep Ratio)</option><option>Fill (Crop to Fit)</option></select></div><div class="form-group"><label>Output Format</label><select><option>Same as Input</option><option>JPEG</option><option>PNG</option><option>WebP</option></select></div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Width</label><input type="number" id="w" placeholder="width" min="0" step="any"></div>
+      <div class="form-group"><label>Height</label><input type="number" id="h" placeholder="height" min="0" step="any"></div>
+      <div class="form-group"><label>Unit</label><select id="unit">
+        <option value="px">Pixels</option>
+        <option value="percent">Percent</option>
+        <option value="in">Inches</option>
+        <option value="cm">Centimeters</option>
+        <option value="mm">Millimeters</option>
+        <option value="pt">Points</option>
+        <option value="pc">Picas</option>
+      </select></div>
+      <div class="form-group"><label>Resolution (DPI)</label><input type="number" id="dpi" value="300" min="1" step="1"></div>
+      <div class="form-group"><label>Resize Mode</label><select id="mode"><option value="exact">Exact (Stretch)</option><option value="fit">Fit (Keep Ratio)</option><option value="fill">Fill (Crop to Fit)</option></select></div>
+      <div class="form-group"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+        <option value="avif">AVIF</option>
+        <option value="bmp">BMP</option>
+        <option value="gif">GIF</option>
+        <option value="tiff">TIFF</option>
+        <option value="ico">ICO</option>
+        <option value="pdf">PDF</option>
+      </select></div>
+      <div class="form-group"><label>Quality (JPG/WebP/AVIF): <span id="qv">90%</span></label><input type="range" id="q" min="10" max="100" value="90" style="width:100%"></div>
+      <div class="form-group"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="lockAR" checked style="width:auto;margin:0"> Lock Aspect Ratio</label></div>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,30 +279,165 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+  // ══════════════════════════════════════════════════════════
+  // REAL image resizer — 7 units + 10 output formats
+  // ══════════════════════════════════════════════════════════
+  function G(id){return document.getElementById(id);}
+  var srcImg=null,natW=0,natH=0;
+
+  function loadImageFromFile(f,cb){
+    var url=URL.createObjectURL(f);var img=new Image();
+    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;cb&&cb();};
+    img.onerror=function(){cb&&cb('load-fail');};
+    img.src=url;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
+  // unit <-> pixels (physical units use DPI)
+  function toPx(val,unit,dpi,orig){
+    val=parseFloat(val)||0;dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return Math.round(orig*val/100);
+    if(unit==='in')return Math.round(val*dpi);
+    if(unit==='cm')return Math.round(val*dpi/2.54);
+    if(unit==='mm')return Math.round(val*dpi/25.4);
+    if(unit==='pt')return Math.round(val*dpi/72);
+    if(unit==='pc')return Math.round(val*dpi/6);
+    return Math.round(val); // px
+  }
+  function fromPx(px,unit,dpi,orig){
+    dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return orig?+(px/orig*100).toFixed(2):100;
+    if(unit==='in')return +(px/dpi).toFixed(3);
+    if(unit==='cm')return +(px/dpi*2.54).toFixed(3);
+    if(unit==='mm')return +(px/dpi*25.4).toFixed(2);
+    if(unit==='pt')return +(px/dpi*72).toFixed(1);
+    if(unit==='pc')return +(px/dpi*6).toFixed(2);
+    return Math.round(px); // px
+  }
+  function prefill(){
+    if(!natW)return;var unit=G('unit').value,dpi=G('dpi').value;
+    G('w').value=fromPx(natW,unit,dpi,natW);G('h').value=fromPx(natH,unit,dpi,natH);
+  }
+  function syncAR(from){
+    if(!G('lockAR').checked||!natW||!natH)return;
+    var unit=G('unit').value,dpi=G('dpi').value;
+    if(unit==='percent'){ if(from==='w')G('h').value=G('w').value; else G('w').value=G('h').value; return; }
+    if(from==='w'){var wpx=toPx(G('w').value,unit,dpi,natW);if(wpx>0)G('h').value=fromPx(Math.round(wpx*natH/natW),unit,dpi,natH);}
+    else{var hpx=toPx(G('h').value,unit,dpi,natH);if(hpx>0)G('w').value=fromPx(Math.round(hpx*natW/natH),unit,dpi,natW);}
+  }
+
+  // ── Encoders ──────────────────────────────────────────────
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
+  function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('Library load fail'));};document.head.appendChild(s);});}
+  function canvasToBMP(cv){
+    var w=cv.width,h=cv.height,data=cv.getContext('2d').getImageData(0,0,w,h).data;
+    var rowSize=Math.floor((24*w+31)/32)*4,pix=rowSize*h,size=54+pix;
+    var buf=new ArrayBuffer(size),dv=new DataView(buf);
+    dv.setUint16(0,0x424D,false);dv.setUint32(2,size,true);dv.setUint32(10,54,true);
+    dv.setUint32(14,40,true);dv.setInt32(18,w,true);dv.setInt32(22,h,true);
+    dv.setUint16(26,1,true);dv.setUint16(28,24,true);dv.setUint32(34,pix,true);
+    var off=54;
+    for(var y=0;y<h;y++){var row=off+(h-1-y)*rowSize;for(var x=0;x<w;x++){var i=(y*w+x)*4,p=row+x*3;dv.setUint8(p,data[i+2]);dv.setUint8(p+1,data[i+1]);dv.setUint8(p+2,data[i]);}}
+    return new Blob([buf],{type:'image/bmp'});
+  }
+  function pngToICO(pngBuf,w,h){
+    var head=new ArrayBuffer(22),dv=new DataView(head);
+    dv.setUint16(0,0,true);dv.setUint16(2,1,true);dv.setUint16(4,1,true);
+    dv.setUint8(6,w>=256?0:w);dv.setUint8(7,h>=256?0:h);dv.setUint8(8,0);dv.setUint8(9,0);
+    dv.setUint16(10,1,true);dv.setUint16(12,32,true);
+    dv.setUint32(14,pngBuf.byteLength,true);dv.setUint32(18,22,true);
+    return new Blob([head,pngBuf],{type:'image/x-icon'});
+  }
+  async function encode(cv,fmt,quality){
+    var q=quality/100;
+    if(fmt==='png')return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+    if(fmt==='jpg'||fmt==='jpeg')return{blob:await canvasToBlobP(cv,'image/jpeg',q),ext:fmt};
+    if(fmt==='webp')return{blob:await canvasToBlobP(cv,'image/webp',q),ext:'webp'};
+    if(fmt==='avif'){try{return{blob:await canvasToBlobP(cv,'image/avif',q),ext:'avif'};}catch(e){throw new Error('AVIF is browser mein support nahi hai — WebP ya PNG choose karein.');}}
+    if(fmt==='bmp')return{blob:canvasToBMP(cv),ext:'bmp'};
+    if(fmt==='ico'){var pb=await canvasToBlobP(cv,'image/png');return{blob:pngToICO(await pb.arrayBuffer(),cv.width,cv.height),ext:'ico'};}
+    if(fmt==='gif'){
+      var m=await import('https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js');
+      var d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
+      var pal=m.quantize(d,256),idx=m.applyPalette(d,pal),enc=m.GIFEncoder();
+      enc.writeFrame(idx,cv.width,cv.height,{palette:pal});enc.finish();
+      return{blob:new Blob([enc.bytes()],{type:'image/gif'}),ext:'gif'};
+    }
+    if(fmt==='tiff'){
+      await loadScript('https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js');
+      var im=cv.getContext('2d').getImageData(0,0,cv.width,cv.height);
+      var tif=UTIF.encodeImage(im.data.buffer,cv.width,cv.height);
+      return{blob:new Blob([tif],{type:'image/tiff'}),ext:'tiff'};
+    }
+    if(fmt==='pdf'){
+      await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
+      var JsPDF=(window.jspdf||{}).jsPDF;
+      var durl=cv.toDataURL('image/jpeg',Math.max(0.5,q));
+      var pdf=new JsPDF({orientation:cv.width>=cv.height?'l':'p',unit:'px',format:[cv.width,cv.height]});
+      pdf.addImage(durl,'JPEG',0,0,cv.width,cv.height);
+      return{blob:pdf.output('blob'),ext:'pdf'};
+    }
+    return{blob:await canvasToBlobP(cv,'image/png'),ext:'png'};
+  }
+  function fillBG(ctx,fmt,w,h){if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}}
+
+  async function runProcess(){
+    var inp=G('main-file');
+    if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
+    if(!natW||!srcImg){alert('Image abhi load ho rahi hai — 1 second baad Process karein.');return;}
+    var unit=G('unit').value,dpi=G('dpi').value;
+    var tw=toPx(G('w').value,unit,dpi,natW),th=toPx(G('h').value,unit,dpi,natH);
+    if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
+    if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
+    var mode=G('mode').value,fmt=G('fmt').value,quality=+G('q').value;
+    var pw=G('progress-wrap');pw.style.display='block';
+    var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
+    try{
+      var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      if(mode==='fit'){
+        var s=Math.min(tw/natW,th/natH),ow=Math.max(1,Math.round(natW*s)),oh=Math.max(1,Math.round(natH*s));
+        cv.width=ow;cv.height=oh;fillBG(ctx,fmt,ow,oh);ctx.drawImage(srcImg,0,0,ow,oh);
+      }else if(mode==='fill'){
+        cv.width=tw;cv.height=th;var s2=Math.max(tw/natW,th/natH),dw=natW*s2,dh=natH*s2;
+        fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,(tw-dw)/2,(th-dh)/2,dw,dh);
+      }else{
+        cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,0,0,tw,th);
+      }
+      bar.style.width='65%';G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';
+      var out=await encode(cv,fmt,quality);
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(out.blob);
+      var rc=G('result-card'),holder=G('resz-img');
+      if(!holder){holder=document.createElement('img');holder.id='resz-img';holder.alt='Resized preview';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb';rc.insertBefore(holder,G('stat-row'));}
+      // formats that <img> can't render → show PNG preview of the canvas
+      if(['pdf','tiff','ico'].indexOf(fmt)>=0){try{holder.src=cv.toDataURL('image/png');}catch(_e){holder.removeAttribute('src');}}
+      else holder.src=url;
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+G('q').value+'%</div><div class="stat-lbl">Quality</div></div>';
+      rc.classList.add('show');
+      var base=(inp.files[0].name||'image').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-'+cv.width+'x'+cv.height+'.'+out.ext;a.click();};
+    }catch(err){
+      pw.style.display='none';
+      alert('Resize/encode nahi ho paya. Dobara try karein.\n\n'+(err&&err.message?err.message:err));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    var mf=G('main-file');
+    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err)prefill();});});
+    if(G('unit'))G('unit').addEventListener('change',prefill);
+    if(G('dpi'))G('dpi').addEventListener('input',function(){if(natW)prefill();});
+    if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
+    if(G('h'))G('h').addEventListener('input',function(){syncAR('h');});
+    if(G('q'))G('q').addEventListener('input',function(){G('qv').textContent=G('q').value+'%';});
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
+      G('main-file').value='';srcImg=null;natW=0;natH=0;
+      var fp=G('file-preview');if(fp)fp.classList.remove('show');
+      G('progress-wrap').style.display='none';G('pbar').style.width='0%';
+      var rc=G('result-card');if(rc)rc.classList.remove('show');
+      var ri=G('resz-img');if(ri)ri.removeAttribute('src');
     });
   });
 </script>
