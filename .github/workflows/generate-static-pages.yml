@@ -73,6 +73,7 @@ jobs:
         run: |
           echo "Running unified generator..."
           python3 generate_all.py
+          python3 fix_education_schema.py
           python3 fix_jobposting_schema.py
           echo "Generation complete"
 

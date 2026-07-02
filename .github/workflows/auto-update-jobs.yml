@@ -92,6 +92,9 @@ jobs:
       - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
         run: python3 generate_all.py
 
+      - name: Education pages -> NewsArticle schema (admit card/result/answer key not JobPosting)
+        run: python3 fix_education_schema.py
+
       - name: Backfill JobPosting schema (streetAddress/addressRegion/postalCode/validThrough)
         run: python3 fix_jobposting_schema.py
 
