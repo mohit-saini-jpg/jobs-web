@@ -235,18 +235,15 @@
         <option value="ico">ICO</option>
         <option value="pdf">PDF</option>
       </select></div>
-      <div class="form-group"><label>Quality (JPG/WebP/AVIF): <span id="qv">90%</span></label><input type="range" id="q" min="10" max="100" value="90" style="width:100%"></div>
-      <div class="form-group"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="lockAR" checked style="width:auto;margin:0"> Lock Aspect Ratio</label></div>
+      <div class="form-group"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="lockAR" style="width:auto;margin:0"> Lock Aspect Ratio</label></div>
     </div>
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
-      <label style="font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:1rem">
-        <input type="checkbox" id="tkbEnable" style="width:auto;margin:0"> 🗜️ File Size (KB) — Optional
-      </label>
-      <div id="tkbBody" style="display:none;margin-top:12px">
+      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional</div>
+      <div id="tkbBody" style="margin-top:12px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span style="font-weight:600">Target Size:</span>
-          <input type="number" id="tkb" value="50" min="5" max="5000" style="width:90px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
+          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
         </div>
         <input type="range" id="tkbRange" min="5" max="2000" value="50" style="width:100%">
         <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
@@ -257,7 +254,7 @@
           <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
           <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
         </div>
-        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">File-size target JPG / WEBP / AVIF ke liye kaam karta hai (quality auto-adjust hoti hai). Doosre format select ho to JPG use hoga.</p>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → image bilkul us size ki banegi (JPG/WEBP/AVIF; quality auto-adjust). Khali chhodein → best quality. Doosra format select ho to JPG use hoga.</p>
       </div>
     </div>
 
@@ -416,6 +413,13 @@
       if(b.size<=target){best=b;lo=q;}else{hi=q;}
     }
     if(!best){try{best=await canvasToBlobP(cv,mime,0.05);}catch(e){throw new Error('Encode fail — chhota target ya doosra format try karein.');}}
+    // If the image is too small to NATURALLY reach the target (even max quality is
+    // under it — e.g. a 60 KB photo with a 500 KB target), pad the file to the exact
+    // target size. Trailing bytes are ignored by viewers, so the image looks the
+    // same but the FILE becomes exactly N KB — matching what the user selected.
+    if(best.size < target){
+      best=new Blob([best, new Uint8Array(Math.round(target - best.size))], {type:mime});
+    }
     return{blob:best,ext:ext};
   }
 
@@ -427,7 +431,7 @@
     var tw=toPx(G('w').value,unit,dpi,natW),th=toPx(G('h').value,unit,dpi,natH);
     if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
     if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
-    var mode=G('mode').value,fmt=G('fmt').value,quality=+G('q').value;
+    var mode=G('mode').value,fmt=G('fmt').value;
     var pw=G('progress-wrap');pw.style.display='block';
     var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
     try{
@@ -443,14 +447,14 @@
         cv.width=tw;cv.height=th;fillBG(ctx,fmt,tw,th);ctx.drawImage(srcImg,0,0,tw,th);
       }
       var out;
-      if(G('tkbEnable')&&G('tkbEnable').checked){
-        var tkb=Math.max(3,parseFloat(G('tkb').value)||50);
+      var tkbVal=parseFloat(G('tkb').value);
+      if(tkbVal>0){
         var isLossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
-        G('pmsg').textContent='Target '+tkb+' KB'+(isLossy?'':' (JPG)')+' ke liye adjust ho raha hai...';
-        out=await encodeToTargetKB(cv,fmt,tkb);
+        G('pmsg').textContent='Target '+tkbVal+' KB'+(isLossy?'':' (JPG)')+' ke liye adjust ho raha hai...';
+        out=await encodeToTargetKB(cv,fmt,tkbVal);
       }else{
         bar.style.width='65%';G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';
-        out=await encode(cv,fmt,quality);
+        out=await encode(cv,fmt,92);
       }
       bar.style.width='100%';G('pmsg').textContent='Done!';
       var url=URL.createObjectURL(out.blob);
@@ -459,7 +463,8 @@
       // formats that <img> can't render → show PNG preview of the canvas
       if(['pdf','tiff','ico'].indexOf(fmt)>=0){try{holder.src=cv.toDataURL('image/png');}catch(_e){holder.removeAttribute('src');}}
       else holder.src=url;
-      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+G('q').value+'%</div><div class="stat-lbl">Quality</div></div>';
+      var tgtLbl = tkbVal>0 ? (tkbVal+' KB') : 'Best';
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+tgtLbl+'</div><div class="stat-lbl">Target</div></div>';
       rc.classList.add('show');
       var base=(inp.files[0].name||'image').replace(/\.[^.]+$/,'');
       var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
@@ -478,10 +483,8 @@
     if(G('dpi'))G('dpi').addEventListener('input',function(){if(natW)prefill();});
     if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
     if(G('h'))G('h').addEventListener('input',function(){syncAR('h');});
-    if(G('q'))G('q').addEventListener('input',function(){G('qv').textContent=G('q').value+'%';});
-    // Target file-size (KB) controls
-    if(G('tkbEnable'))G('tkbEnable').addEventListener('change',function(){G('tkbBody').style.display=this.checked?'block':'none';});
-    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=Math.min(2000,Math.max(5,parseFloat(this.value)||50));G('tkbRange').value=v;});
+    // Target file-size (KB) controls — always visible; empty = best quality
+    if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
