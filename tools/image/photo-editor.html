@@ -357,7 +357,7 @@
       ctx.textAlign='center'; ctx.textBaseline='top';
       lines.forEach(function(L){
         ctx.font='700 '+L.fs+'px Arial,sans-serif';
-        if(!ws){ ctx.lineWidth=Math.max(2,L.fs*0.16); ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.lineJoin='round'; ctx.strokeText(L.txt, iw/2, y); }
+        // Pure chosen colour only — NO white outline / halo around the text.
         ctx.fillStyle=L.color; ctx.fillText(L.txt, iw/2, y);
         y += L.lineH;
       });
