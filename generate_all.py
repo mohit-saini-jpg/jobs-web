@@ -5115,9 +5115,9 @@ def _seo_listing_content(title, jobs, canon_url):
         p2 = (f"Har job ke liye yahan milega: required qualification, age limit, vacancies, pay scale, selection process aur application link.")
         p3 = (f"Central aur state dono level ki {_name} jobs yahan update hoti hain.")
     elif '/education/' in _url:
-        p1 = (f"{_name} {_yr}: Is page par {_name} se related entrance exams, admission notifications aur education sector ki latest updates milti hain.")
-        p2 = (f"Har notification ke saath complete information hai — important dates, eligibility criteria, application process aur official links.")
-        p3 = (f"Naye admission aur exam notifications ke liye yeh page regularly update hota hai.")
+        p1 = (f"{_name} {_yr}: Is page par {_name} se judi sabhi latest education updates milti hain — board exam results (10th, 12th), entrance exams, admit cards / hall tickets, counselling aur admission notifications. Dhyan dein: yeh government job vacancies nahi, balki education sector ki official updates (exams, results, admissions) hain.")
+        p2 = (f"Har update ke saath complete detail hoti hai — important dates, eligibility criteria, registration/application process, exam date, result link aur official website ka direct link. Students aur parents dono ke liye ek hi jagah puri jankari milti hai.")
+        p3 = (f"{_name} me aane wale naye admission forms, exam schedules, hall tickets aur result announcements ke liye yeh page rozana update hota hai. Bookmark karke regularly check karein taaki koi important education deadline miss na ho.")
     elif '/section/' in _url:
         p1 = (f"{_name} {_yr}: Is section me {_name} se judi sabhi latest updates aur notifications ek jagah milti hain.")
         p2 = (f"Har item ke liye complete details diye gaye hain — dates, eligibility aur direct links.")
@@ -5151,7 +5151,7 @@ def _page_exists_on_disk(slug):
                               for p in _g.glob(str(ROOT / 'jobs' / '*' / 'index.html')))
     return slug in _DISK_JOB_SLUGS
 
-def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''):
+def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html='', list_noun='Jobs'):
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
     # SEO FIX: latest-jobs page ka title differentiate karo homepage se
@@ -5313,7 +5313,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
   <div class="job-card-meta">
-    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} {"Posts" if _row_url.startswith("/jobs/") else "Jobs"}</span>' if jvac else ''}
+    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} {"Posts" if _row_url.startswith("/jobs/") else list_noun}</span>' if jvac else ''}
     {f'<span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>' if _row_url.startswith("/jobs/") else ''}
     {status_badge}
   </div>
@@ -7014,7 +7014,7 @@ for sec in EDU_SEC:
     # Listing page
     edu_jobs = [{'basic_details':{'job_title':safe(it.get('name') or it.get('examName','')),'organization_name':sec_title,'application_mode':'Online','job_location':sec_title,'last_updated':safe(it.get('postDate') or it.get('date',''))},'important_dates':{'notification_date':safe(it.get('date') or it.get('postDate',''))},'important_links':(it.get('detail') or {}).get('important_links') or {},'category':sec_title} for it in sec.get('items',[]) if it.get('name') or it.get('examName')]
     if edu_jobs:
-        write(str(ROOT/'education'/sec_id/'index.html'), build_listing_page(f"{sec_title} Education Updates", edu_jobs, f"{BASE_URL}/education/{sec_id}/", [('Education','/education/')]))
+        write(str(ROOT/'education'/sec_id/'index.html'), build_listing_page(f"{sec_title} Education Updates", edu_jobs, f"{BASE_URL}/education/{sec_id}/", [('Education','/education/')], list_noun='Updates'))
 
 print(f"  Education pages: {e_count}")
 
@@ -7025,18 +7025,21 @@ for sec in EDU_SEC:
     _etit  = safe(sec.get('title','') or _eid)
     if not _eid:
         continue
+    _edu_jt = (f"{_etit} Updates {YEAR}" if 'education' in _etit.lower()
+               else f"{_etit} Education Updates {YEAR}")
     _edu_landing_jobs.append({
-        'basic_details': {'job_title': f"{_etit} {YEAR}",
-                          'organization_name': _etit,
+        'basic_details': {'job_title': _edu_jt,
+                          'organization_name': f"{_etit} Education Board & Departments",
                           'total_vacancies': str(len(sec.get('items', []))) if sec.get('items') else ''},
         '_listing_url': f"/education/{_eid}/"})
 if _edu_landing_jobs:
     write(str(ROOT/'education'/'index.html'), build_listing_page(
-        f"State Wise Education Jobs {YEAR}",
+        f"State Wise Education Updates {YEAR}",
         _edu_landing_jobs,
         f"{BASE_URL}/education/",
         [('Home','/'),('Education','/education/')],
-        f"Browse latest education department jobs {YEAR} state-wise. Teaching and non-teaching sarkari naukri updated daily."))
+        f"State-wise education updates {YEAR}: board exam results, entrance exams, admit cards, counselling and admission notifications — updated daily. These are education updates (exams/results/admissions), not job vacancies.",
+        list_noun='Updates'))
     print(f"  /education/ landing: {len(_edu_landing_jobs)} states")
 
 # 5. CATEGORY/STUDY PAGES
