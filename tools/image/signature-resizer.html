@@ -284,7 +284,7 @@
       <label style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="bgRemove" style="width:auto;margin:0"> 🌫️ Background Remove (Optional)
       </label>
-      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Tick karein to AI image ka background hata dega (pehli baar model ~10-15 sec load hoga). <b>PNG</b> format choose karein to transparent background milega.</p>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Tick karein to signature ka <b>paper background hat jayega</b> — sirf ink strokes rahenge (strokes ke beech ka gap bhi saaf). Instant, koi AI wait nahi. <b>PNG</b> format choose karein to transparent background milega.</p>
     </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
@@ -496,14 +496,29 @@
   }
   async function removeBgToCanvas(imgOrCanvas){
     if(_bgCache)return _bgCache;
-    var lib=await _loadBgLib();
+    // ── SIGNATURE background removal (ink-extraction) ─────────────────────────
+    // Signatures are dark ink on light paper. An AI portrait model segments this
+    // poorly (leaves paper between strokes). Instead we estimate the PAPER colour
+    // from the border and make every pixel CLOSE to it transparent while keeping
+    // the ink — so gaps between strokes are correctly cleared too.
     var iw=imgOrCanvas.naturalWidth||imgOrCanvas.width, ih=imgOrCanvas.naturalHeight||imgOrCanvas.height;
-    var c0=document.createElement('canvas');c0.width=iw;c0.height=ih;c0.getContext('2d').drawImage(imgOrCanvas,0,0);
-    var blob=await new Promise(function(r){c0.toBlob(r,'image/png');});
-    var resBlob=await lib.removeBackground(blob,{publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'});
-    var rbmp=await createImageBitmap(resBlob);
-    var c=document.createElement('canvas');c.width=rbmp.width;c.height=rbmp.height;c.getContext('2d').drawImage(rbmp,0,0);
-    _refineCutout(c); _bgCache=c; return c;
+    var c=document.createElement('canvas');c.width=iw;c.height=ih;
+    var ctx=c.getContext('2d');ctx.drawImage(imgOrCanvas,0,0);
+    var img=ctx.getImageData(0,0,iw,ih),d=img.data,n=iw*ih,i,x,y,p;
+    // estimate paper colour = average of border pixels
+    var br=0,bg=0,bb=0,bc=0,sx=Math.max(1,(iw/60)|0),sy=Math.max(1,(ih/60)|0);
+    for(x=0;x<iw;x+=sx){p=x*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=((ih-1)*iw+x)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
+    for(y=0;y<ih;y+=sy){p=(y*iw)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=(y*iw+iw-1)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
+    br/=bc;bg/=bc;bb/=bc;
+    var LO=30,HI=95;   // colour-distance from paper -> alpha ramp
+    for(i=0;i<n;i++){
+      var r=d[i*4],g=d[i*4+1],b=d[i*4+2];
+      var dr=r-br,dg=g-bg,db=b-bb,dist=Math.sqrt(dr*dr+dg*dg+db*db),a;
+      if(dist<=LO)a=0;else if(dist>=HI)a=255;else a=(255*(dist-LO)/(HI-LO))|0;
+      d[i*4+3]=a;
+    }
+    ctx.putImageData(img,0,0);
+    _bgCache=c;return c;
   }
 
   var cropperInst=null;
@@ -536,7 +551,7 @@
     var bar=G('pbar');bar.style.width='30%';G('pmsg').textContent='Resize ho raha hai...';
     try{
       if(G('bgRemove')&&G('bgRemove').checked){
-        bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
+        bar.style.width='20%';G('pmsg').textContent='Signature background (paper) hata rahe hain...';
         renderSrc=await removeBgToCanvas(renderSrc);sw=renderSrc.width;sh=renderSrc.height;
       }
       var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
