@@ -206,9 +206,10 @@ document.addEventListener('keydown', function(e){
   window.addEventListener('touchstart',loadGT,{once:true,passive:true});
   window.addEventListener('keydown',loadGT,{once:true});
   window.addEventListener('click',loadGT,{once:true});
-  // Passive-user fallback during idle time, so it never blocks page load.
-  if('requestIdleCallback' in window){ requestIdleCallback(function(){ setTimeout(loadGT,3000); }); }
-  else { setTimeout(loadGT,4000); }
+  // Load reliably ~1.2s after page load (or sooner on interaction). A plain timeout
+  // is more reliable on mobile than requestIdleCallback (which can be starved), so
+  // the language dropdown shows quickly and consistently.
+  setTimeout(loadGT, 1200);
 })();
 
 window.googleTranslateElementInit=function(){
