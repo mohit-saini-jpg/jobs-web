@@ -1,0 +1,25 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://www.topsarkarijobs.com/",
+        "https://www.topsarkarijobs.com/section/latest-jobs/",
+        "https://www.topsarkarijobs.com/tools/image/image-resizer.html"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance":       ["warn", { "minScore": 0.90, "aggregationMethod": "median-run" }],
+        "categories:seo":               ["warn", { "minScore": 0.95, "aggregationMethod": "median-run" }],
+        "largest-contentful-paint":     ["warn", { "maxNumericValue": 3000, "aggregationMethod": "median-run" }],
+        "first-contentful-paint":       ["warn", { "maxNumericValue": 2000, "aggregationMethod": "median-run" }],
+        "cumulative-layout-shift":      ["warn", { "maxNumericValue": 0.10, "aggregationMethod": "median-run" }],
+        "total-blocking-time":          ["warn", { "maxNumericValue": 350,  "aggregationMethod": "median-run" }]
+      }
+    }
+  }
+}
