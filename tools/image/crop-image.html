@@ -11,6 +11,13 @@
   <meta property="og:title" content="Crop Image Free Online – Custom and Preset Ratios | Top Sarkari Jobs"><meta property="og:description" content="Crop any image online for free with custom dimensions or preset ratios (1:1, 16:9, 4:3). Fast, browser-based, no upload to server."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+  <style>
+    .ctool{padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700;color:#334155}
+    .ctool:hover{background:#eef2fb;border-color:#345de6;color:#345de6}
+    #crop-card .cropper-view-box,#crop-card .cropper-face{border-radius:0}
+  </style>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -207,9 +214,48 @@
     <input type="file" id="main-file" style="display:none" accept="image/*">
   </div>
 
+  <div class="card" id="crop-card" style="display:none">
+    <h3>✂️ Crop Karein (Live)</h3>
+    <div style="max-height:460px;background:#0f172a;border-radius:10px;overflow:hidden">
+      <img id="cropImg" style="max-width:100%;display:block">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button type="button" class="ctool" data-act="rotL"><i class="fa-solid fa-rotate-left"></i> Left</button>
+      <button type="button" class="ctool" data-act="rotR"><i class="fa-solid fa-rotate-right"></i> Right</button>
+      <button type="button" class="ctool" data-act="flipH"><i class="fa-solid fa-left-right"></i> Flip H</button>
+      <button type="button" class="ctool" data-act="flipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
+      <button type="button" class="ctool" data-act="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom</button>
+      <button type="button" class="ctool" data-act="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom</button>
+      <button type="button" class="ctool" data-act="reset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
+    </div>
+    <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Box ko drag / resize karke crop area choose karein. Aspect Ratio ya Size Preset se fixed ratio lagayen. Rotate/Flip/Zoom se adjust karein.</p>
+  </div>
+
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Aspect Ratio</label><select><option>Free Form</option><option>1:1 (Square)</option><option>16:9 (Widescreen)</option><option>4:3 (Standard)</option><option>3:2 (Photo)</option><option>9:16 (Portrait)</option></select></div><div class="form-group"><label>X Position (px)</label><input type="number" placeholder="0" min="0"></div><div class="form-group"><label>Y Position (px)</label><input type="number" placeholder="0" min="0"></div><div class="form-group"><label>Width (px)</label><input type="number" placeholder="auto" min="1"></div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Aspect Ratio</label><select id="aspect">
+        <option value="NaN">Free</option>
+        <option value="1">1:1 Square</option>
+        <option value="1.33333">4:3</option>
+        <option value="0.75">3:4</option>
+        <option value="1.77778">16:9</option>
+        <option value="0.5625">9:16</option>
+        <option value="1.5">3:2</option>
+        <option value="0.66667">2:3</option>
+        <option value="1.25">5:4</option>
+        <option value="0.77778">35:45 Passport</option>
+      </select></div>
+      <div class="form-group"><label>Size Preset (Passport / Social / Print)</label><select id="sizePreset">
+        <option value="">— Free crop (no fixed size) —</option>
+      </select></div>
+      <div class="form-group"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+      </select></div>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,31 +297,83 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
-  }
-  document.addEventListener('DOMContentLoaded',()=>{
-    bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+  // ══════ Full crop tool — Cropper.js live + aspect/size presets + rotate/flip/zoom ══════
+  function G(id){return document.getElementById(id);}
+  var srcImg=null, cropper=null, flipX=1, flipY=1;
+
+  var SIZE_PRESETS=[
+    {g:'Photo / ID',items:[['Passport Photo (413×531)',413,531],['Passport 35×45mm (413×531)',413,531],['Visa Photo (600×600)',600,600],['Stamp Size (236×295)',236,295],['PAN / ID (213×213)',213,213]]},
+    {g:'Social Media',items:[['Instagram Square (1080×1080)',1080,1080],['Instagram Portrait (1080×1350)',1080,1350],['Instagram Story (1080×1920)',1080,1920],['Facebook Post (1200×630)',1200,630],['Facebook Cover (851×315)',851,315],['Facebook Profile (170×170)',170,170],['Twitter / X Post (1600×900)',1600,900],['Twitter Header (1500×500)',1500,500],['YouTube Thumbnail (1280×720)',1280,720],['YouTube Banner (2560×1440)',2560,1440],['LinkedIn Post (1200×627)',1200,627],['LinkedIn Banner (1584×396)',1584,396],['WhatsApp DP (500×500)',500,500],['Pinterest Pin (1000×1500)',1000,1500]]},
+    {g:'Print',items:[['Postcard 6×4in (1800×1200)',1800,1200],['4×6 Photo (1200×1800)',1200,1800],['5×7 Photo (1500×2100)',1500,2100],['8×10 Photo (2400×3000)',2400,3000],['A4 (2480×3508)',2480,3508],['A5 (1748×2480)',1748,2480],['A6 (1240×1748)',1240,1748],['Letter (2550×3300)',2550,3300]]}
+  ];
+  function populatePresets(){
+    var sel=G('sizePreset');if(!sel)return;
+    SIZE_PRESETS.forEach(function(grp){
+      var og=document.createElement('optgroup');og.label=grp.g;
+      grp.items.forEach(function(it){var o=document.createElement('option');o.value=it[1]+'x'+it[2];o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);o.textContent=it[0];og.appendChild(o);});
+      sel.appendChild(og);
     });
+  }
+  function initCrop(){
+    var card=G('crop-card'),img=G('cropImg');
+    if(!srcImg){if(card)card.style.display='none';if(cropper){cropper.destroy();cropper=null;}return;}
+    card.style.display='';flipX=1;flipY=1;
+    if(cropper){cropper.destroy();cropper=null;}
+    img.onload=function(){
+      if(cropper)cropper.destroy();
+      var ar=parseFloat(G('aspect').value);
+      try{cropper=new Cropper(img,{viewMode:1,autoCropArea:0.9,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,scalable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:isNaN(ar)?NaN:ar});}catch(e){}
+    };
+    img.src=srcImg.src;
+    if(img.complete&&img.naturalWidth>0)img.onload();
+  }
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error('encode fail'));},mime,q);});}
+
+  async function runProcess(){
+    if(!cropper){alert('Pehle image upload karein!');return;}
+    var fmt=G('fmt').value, ps=G('sizePreset');
+    var opts={imageSmoothingEnabled:true,imageSmoothingQuality:'high'};
+    var po=ps&&ps.options[ps.selectedIndex];
+    if(po&&po.getAttribute('data-w')){opts.width=+po.getAttribute('data-w');opts.height=+po.getAttribute('data-h');}
+    var pw=G('progress-wrap');pw.style.display='block';var bar=G('pbar');bar.style.width='55%';G('pmsg').textContent='Crop ho raha hai...';
+    try{
+      var cv=cropper.getCroppedCanvas(opts);
+      if(!cv){throw new Error('Crop area select karein');}
+      if(['jpg','jpeg'].indexOf(fmt)>=0){var t=document.createElement('canvas');t.width=cv.width;t.height=cv.height;var tx=t.getContext('2d');tx.fillStyle='#fff';tx.fillRect(0,0,t.width,t.height);tx.drawImage(cv,0,0);cv=t;}
+      var mime=fmt==='png'?'image/png':(fmt==='webp'?'image/webp':'image/jpeg');
+      var ext=fmt==='png'?'png':(fmt==='webp'?'webp':(fmt==='jpeg'?'jpeg':'jpg'));
+      var blob=await canvasToBlobP(cv,mime,0.92);
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      var url=URL.createObjectURL(blob);
+      var rc=G('result-card'),holder=G('crop-out');
+      if(!holder){holder=document.createElement('img');holder.id='crop-out';holder.alt='Cropped';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb';rc.insertBefore(holder,G('stat-row'));}
+      holder.src=url;
+      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Cropped px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(blob.size)+'</div><div class="stat-lbl">'+ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">✓</div><div class="stat-lbl">Ready</div></div>';
+      rc.classList.add('show');
+      var base=(G('main-file').files[0]?G('main-file').files[0].name:'image').replace(/\.[^.]+$/,'');
+      var dl=G('dl-btn');dl.textContent='⬇️ Download '+ext.toUpperCase();
+      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-cropped.'+ext;a.click();};
+    }catch(err){pw.style.display='none';alert('Crop nahi ho paya. '+(err&&err.message?err.message:err));}
+  }
+  function loadImageFromFile(f){var url=URL.createObjectURL(f);var img=new Image();img.onload=function(){srcImg=img;initCrop();};img.src=url;}
+
+  document.addEventListener('DOMContentLoaded',function(){
+    bindFile('main-file','file-preview');
+    populatePresets();
+    var mf=G('main-file');if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
+    if(G('aspect'))G('aspect').addEventListener('change',function(){if(cropper){var ar=parseFloat(this.value);cropper.setAspectRatio(isNaN(ar)?NaN:ar);}});
+    if(G('sizePreset'))G('sizePreset').addEventListener('change',function(){var o=this.options[this.selectedIndex];if(cropper&&o&&o.getAttribute('data-w')){cropper.setAspectRatio((+o.getAttribute('data-w'))/(+o.getAttribute('data-h')));}});
+    document.querySelectorAll('.ctool').forEach(function(btn){btn.addEventListener('click',function(){if(!cropper)return;var a=this.getAttribute('data-act');
+      if(a==='rotL')cropper.rotate(-90);
+      else if(a==='rotR')cropper.rotate(90);
+      else if(a==='flipH'){flipX=-flipX;cropper.scaleX(flipX);}
+      else if(a==='flipV'){flipY=-flipY;cropper.scaleY(flipY);}
+      else if(a==='zoomIn')cropper.zoom(0.1);
+      else if(a==='zoomOut')cropper.zoom(-0.1);
+      else if(a==='reset'){flipX=1;flipY=1;cropper.reset();}
+    });});
+    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;if(cropper){cropper.destroy();cropper=null;}var cc=G('crop-card');if(cc)cc.style.display='none';var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var co=G('crop-out');if(co)co.removeAttribute('src');if(G('sizePreset'))G('sizePreset').selectedIndex=0;if(G('aspect'))G('aspect').selectedIndex=0;});
   });
 </script>
 
