@@ -1,21 +1,18 @@
 """
 social_autopost.py
 -------------------
-Free auto-posting module for X (Twitter) and Telegram.
+Free auto-posting module for Telegram.
 
-Designed to be imported and called at the END of generate_all.py, after
-new jobs have been written to Complete_Jobs_Full_Data.json.
+(X/Twitter posting was removed — as of Feb 2026, X's API has no free tier;
+every post costs money via their pay-per-use pricing. Telegram remains
+100% free, so that's the only channel this module posts to.)
 
 Install deps (one time):
-    pip install tweepy requests
+    pip install requests
 
-Usage from generate_all.py:
-
+Usage:
     from social_autopost import autopost_new_jobs
-
-    if __name__ == "__main__":
-        # ... existing site generation code ...
-        autopost_new_jobs(all_jobs)   # all_jobs = list of job dicts
+    autopost_new_jobs(all_jobs)   # all_jobs = list of job dicts
 
 Each job dict is expected to have at least:
     job["_canonical_slug"] (or "slug")  -> used to build OUR OWN site URL
@@ -34,26 +31,19 @@ import html
 import re
 import requests
 
-# ── Optional import: tweepy (only needed for X/Twitter posting) ─────────────
-try:
-    import tweepy
-    TWEEPY_AVAILABLE = True
-except ImportError:
-    TWEEPY_AVAILABLE = False
-
 
 # =============================================================================
 # CONFIG — fill these in (env vars recommended over hardcoding)
 # =============================================================================
 
-# ---- X (Twitter) — OAuth 1.0a User Context (Read + Write) ----
-X_CONSUMER_KEY = os.environ.get("X_CONSUMER_KEY", "YOUR_CONSUMER_KEY")
-X_CONSUMER_SECRET = os.environ.get("X_CONSUMER_SECRET", "YOUR_CONSUMER_SECRET")
-X_ACCESS_TOKEN = os.environ.get("X_ACCESS_TOKEN", "YOUR_ACCESS_TOKEN")
-X_ACCESS_TOKEN_SECRET = os.environ.get("X_ACCESS_TOKEN_SECRET", "YOUR_ACCESS_TOKEN_SECRET")
-
 # ---- Telegram ----
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "YOUR_BOT_TOKEN")
+
+# Can be either:
+#   - a public channel username, e.g. "@TopSarkariJobs" (channel must be Public)
+#   - a numeric chat ID, e.g. "-1001234567890" (works for Public AND Private
+#     channels — get this via https://api.telegram.org/bot<TOKEN>/getUpdates
+#     after posting a message in the channel). Numeric ID is the more reliable option.
 TELEGRAM_CHANNEL_USERNAME = os.environ.get("TELEGRAM_CHANNEL_USERNAME", "@TopSarkariJobs")
 
 # ---- Dedup tracking file ----
@@ -166,63 +156,6 @@ def _mark_as_posted(url):
 
 
 # =============================================================================
-# X (Twitter) posting
-# =============================================================================
-
-def _get_twitter_client():
-    """
-    Build a tweepy Client using OAuth 1.0a user context.
-    Returns None if tweepy isn't installed or keys are missing.
-    """
-    if not TWEEPY_AVAILABLE:
-        print("[X] tweepy not installed — skipping X posting. Run: pip install tweepy")
-        return None
-
-    if "YOUR_" in (X_CONSUMER_KEY + X_CONSUMER_SECRET + X_ACCESS_TOKEN + X_ACCESS_TOKEN_SECRET):
-        print("[X] Twitter keys not configured — skipping X posting.")
-        return None
-
-    try:
-        client = tweepy.Client(
-            consumer_key=X_CONSUMER_KEY,
-            consumer_secret=X_CONSUMER_SECRET,
-            access_token=X_ACCESS_TOKEN,
-            access_token_secret=X_ACCESS_TOKEN_SECRET,
-        )
-        return client
-    except Exception as e:
-        print(f"[X] Failed to initialize Twitter client: {e}")
-        return None
-
-
-def post_to_twitter(client, title, url):
-    """
-    Post a single job update to X. Returns True on success, False on failure.
-    Never raises — all errors are caught and logged so the main pipeline continues.
-    """
-    if client is None:
-        return False
-
-    tweet_text = f"🚨 {title}\n\nApply now 👇\n{url}\n\n#SarkariJobs #{SITE_NAME.replace(' ', '')}"
-    # Twitter's hard cap is 280 chars — trim the title if needed
-    if len(tweet_text) > 280:
-        overflow = len(tweet_text) - 280
-        title = title[: max(0, len(title) - overflow - 3)] + "..."
-        tweet_text = f"🚨 {title}\n\nApply now 👇\n{url}\n\n#SarkariJobs #{SITE_NAME.replace(' ', '')}"
-
-    try:
-        client.create_tweet(text=tweet_text)
-        print(f"[X] Posted: {title}")
-        return True
-    except Exception as e:
-        # 401 here almost always means the Access Token/Secret were generated
-        # BEFORE the app's permission was set to "Read and Write" — regenerate
-        # them from the X Developer Portal after confirming Read+Write is on.
-        print(f"[X] Failed to post '{title}': {e}")
-        return False
-
-
-# =============================================================================
 # Telegram posting
 # =============================================================================
 
@@ -274,22 +207,18 @@ def post_to_telegram(title, url):
 
 def autopost_new_jobs(jobs):
     """
-    Main function to call from generate_all.py.
+    Main function to call from generate_all.py (or run_social_autopost.py).
 
     jobs: list of job dicts (e.g. loaded from Complete_Jobs_Full_Data.json)
 
-    For every job not already in posted_jobs.txt:
-        - attempts to post to X
-        - attempts to post to Telegram
-        - if EITHER succeeds, marks the job URL as posted
-          (change to "if BOTH succeed" below if you want stricter dedupe)
+    For every job not already in posted_jobs.txt, attempts to post to
+    Telegram. On success, marks the job URL as posted.
     """
     if not jobs:
         print("[AutoPost] No jobs provided — nothing to post.")
         return
 
     posted_urls = _load_posted_urls()
-    twitter_client = _get_twitter_client()
 
     # Build (job, own_site_url) pairs, skipping jobs that have no usable slug
     # and jobs whose own-site URL has already been posted.
@@ -316,27 +245,16 @@ def autopost_new_jobs(jobs):
     for job, url in candidates:
         title = job.get(JOB_TITLE_FIELD, "New Sarkari Job Alert")
 
-        x_ok = False
         tg_ok = False
-
-        # --- X (Twitter) ---
-        try:
-            x_ok = post_to_twitter(twitter_client, title, url)
-        except Exception as e:
-            # extra safety net on top of the try/except already inside post_to_twitter
-            print(f"[AutoPost] Unexpected X error for '{title}': {e}")
-
-        # --- Telegram ---
         try:
             tg_ok = post_to_telegram(title, url)
         except Exception as e:
             print(f"[AutoPost] Unexpected Telegram error for '{title}': {e}")
 
-        # Mark as posted if at least one channel succeeded
-        if x_ok or tg_ok:
+        if tg_ok:
             _mark_as_posted(url)
         else:
-            print(f"[AutoPost] Both X and Telegram failed for '{title}' — will retry next run.")
+            print(f"[AutoPost] Telegram post failed for '{title}' — will retry next run.")
 
         time.sleep(DELAY_BETWEEN_POSTS_SECONDS)
 

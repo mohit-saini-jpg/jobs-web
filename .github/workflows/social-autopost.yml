@@ -1,11 +1,15 @@
 # ══════════════════════════════════════════════════════════════════════
-# WORKFLOW: social-autopost.yml — X (Twitter) + Telegram Auto-Posting
+# WORKFLOW: social-autopost.yml — Telegram Auto-Posting
 # Completely separate from the site-build pipeline (auto-update-jobs.yml).
 # Does NOT run on every code/JSON push — only on its own schedule or
 # when triggered manually.
+#
+# NOTE: X (Twitter) posting was removed. As of Feb 2026, X's official API
+# has no free tier — every post costs money (pay-per-use). Telegram is
+# still 100% free, so that's the only channel this workflow posts to.
 # ══════════════════════════════════════════════════════════════════════
 
-name: 📢 Social Auto-Post (X + Telegram)
+name: 📢 Social Auto-Post (Telegram)
 
 on:
   schedule:
@@ -39,15 +43,12 @@ jobs:
           python-version: '3.11'
 
       - name: 📦 Install dependencies
-        run: pip install --quiet tweepy requests
+        run: pip install --quiet requests
 
       - name: 📢 Run social auto-post
         env:
-          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
-          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_USERNAME: ${{ secrets.TELEGRAM_CHANNEL_USERNAME }}
         run: python3 run_social_autopost.py
 
       - name: 📤 Commit posted_jobs.txt (dedupe tracking)
