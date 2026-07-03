@@ -206,10 +206,19 @@ document.addEventListener('keydown', function(e){
   window.addEventListener('touchstart',loadGT,{once:true,passive:true});
   window.addEventListener('keydown',loadGT,{once:true});
   window.addEventListener('click',loadGT,{once:true});
-  // Load reliably ~1.2s after page load (or sooner on interaction). A plain timeout
-  // is more reliable on mobile than requestIdleCallback (which can be starved), so
-  // the language dropdown shows quickly and consistently.
-  setTimeout(loadGT, 1200);
+  // PERF: the Google Translate element.js + el_main.css used to sit on the initial
+  // critical request chain (loaded ~1.2s after navigation) and pushed back LCP.
+  // Now it loads instantly on the first user interaction, and otherwise only AFTER
+  // the page has fully loaded + gone idle — so it never competes with FCP/LCP.
+  function armIdleGT(){
+    if('requestIdleCallback' in window){
+      requestIdleCallback(function(){ setTimeout(loadGT, 1200); }, {timeout:4000});
+    } else {
+      setTimeout(loadGT, 2500);
+    }
+  }
+  if(document.readyState==='complete') armIdleGT();
+  else window.addEventListener('load', armIdleGT, {once:true});
 })();
 
 window.googleTranslateElementInit=function(){

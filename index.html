@@ -117,7 +117,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   window.__sectionsIndexPromise = fetch('sections-index.json?v=202607031548')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
-  </script>
+  // PERF: dailyupdates.json — single shared fetch. The section-cards script and the
+  // "Today Updates" sidebar both need it; without this they fired TWO separate
+  // network requests for the same file. Cache-busted hourly so new items still show.
+  window.__getDU = function(){
+    if(!window.__duPromise){
+      var _b = Math.floor(Date.now()/3600000);
+      window.__duPromise = fetch('/dailyupdates.json?v='+_b)
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .catch(function(){ return null; });
+    }
+    return window.__duPromise;
+  };
+</script>
 
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://www.topsarkarijobs.com/"/>
@@ -995,14 +1007,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
             }
           }catch(ignore){}
           function gj(u){return fetch(u,{cache:'default'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});}
-          // Cache-bust dailyupdates.json so newly-added items show within the hour
-          // (token changes every hour — fresh data without hammering the server).
-          var _duBust=Math.floor(Date.now()/3600000);
           // Phase 1: sections-index + dailyupdates se turant render karo (fast ~400KB)
-          // Use preloaded promise if available (avoids duplicate network request)
+          // Both reuse the shared preloaded promises (no duplicate network request).
           Promise.all([
             window.__sectionsIndexPromise || gj('/sections-index.json?v=202607031548'),
-            gj('/dailyupdates.json?v='+_duBust)
+            (window.__getDU ? window.__getDU() : gj('/dailyupdates.json?v='+Math.floor(Date.now()/3600000)))
           ]).then(function(r){
             var si=r[0],dl=r[1];
             // PERF-FIX: Only replace DOM if static HTML not present (first visit keeps static HTML)
@@ -1514,9 +1523,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     var list = document.getElementById('today-sidebar-list');
     if (!list) return;
 
-    fetch('dailyupdates.json')
-      .then(function(r) { return r.json(); })
+    (window.__getDU ? window.__getDU() : fetch('dailyupdates.json').then(function(r){return r.json();}))
       .then(function(data) {
+        if (!data) return;
         var items = [];
         // Try multiple formats
         if (Array.isArray(data)) {
