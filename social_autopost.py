@@ -30,6 +30,8 @@ See get_own_site_url() below.
 import os
 import json
 import time
+import html
+import re
 import requests
 
 # ── Optional import: tweepy (only needed for X/Twitter posting) ─────────────
@@ -89,23 +91,43 @@ MAX_JOBS_PER_RUN = 20             # safety cap so a huge new-jobs batch doesn't 
 #   Priority 3: job['filename']         (fallback, if present)
 # If none of these exist, the job is skipped (never falls back to a source URL).
 
+def _norm_slug(s):
+    """Mirrors _norm_slug() in generate_all.py EXACTLY — must stay in sync.
+    Lowercases, converts spaces/underscores to dashes, collapses repeated
+    dashes, strips leading/trailing dashes, and truncates to 80 chars (the
+    same limit generate_all.py uses when writing /jobs/{slug}/ folders)."""
+    if not s:
+        return ""
+    s = str(s).strip().lower()
+    s = re.sub(r"[\s_]+", "-", s)
+    s = re.sub(r"-+", "-", s)
+    return s.strip("-")[:80].strip("-")
+
+
 def get_own_site_url(job):
     """
     Build the canonical topsarkarijobs.com detail-page URL for a job,
     matching the /jobs/{slug}/ pattern used by generate_all.py.
     Returns None if no usable slug can be found (job is skipped, not posted).
     """
-    slug = (
+    raw_slug = (
         str(job.get("_canonical_slug") or "").strip()
         or str(job.get("slug") or "").strip()
         or str(job.get("filename") or "").strip()
     )
-    if not slug:
+    if not raw_slug:
         return None
 
-    # Basic safety cleanup — should already be clean coming from generate_all.py,
-    # but just in case this is called on raw scraper output.
-    slug = slug.strip("/").strip()
+    # Strip SR category prefix (sr_result-, sr_admit_card-, etc.) and a
+    # trailing hex hash — same cleanup generate_all.py applies to raw slugs
+    # (only relevant for Priority-2/3 fallback; _canonical_slug is already clean).
+    if not job.get("_canonical_slug"):
+        raw_slug = re.sub(r"^sr_[a-z_]+-", "", raw_slug)
+        _tail = re.search(r"-([0-9a-f]{6,8})$", raw_slug)
+        if _tail and not _tail.group(1).isdigit():
+            raw_slug = raw_slug[: -len(_tail.group(0))]
+
+    slug = _norm_slug(raw_slug)
     if not slug:
         return None
 
@@ -193,6 +215,9 @@ def post_to_twitter(client, title, url):
         print(f"[X] Posted: {title}")
         return True
     except Exception as e:
+        # 401 here almost always means the Access Token/Secret were generated
+        # BEFORE the app's permission was set to "Read and Write" — regenerate
+        # them from the X Developer Portal after confirming Read+Write is on.
         print(f"[X] Failed to post '{title}': {e}")
         return False
 
@@ -211,7 +236,10 @@ def post_to_telegram(title, url):
         return False
 
     api_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    message = f"🚨 <b>{title}</b>\n\nApply now: {url}"
+    # Telegram's HTML parse_mode requires <, >, & to be escaped or the whole
+    # request is rejected with 400 Bad Request: can't parse entities.
+    safe_title = html.escape(title)
+    message = f"🚨 <b>{safe_title}</b>\n\nApply now: {url}"
 
     payload = {
         "chat_id": TELEGRAM_CHANNEL_USERNAME,
@@ -222,7 +250,12 @@ def post_to_telegram(title, url):
 
     try:
         response = requests.post(api_url, data=payload, timeout=15)
-        response.raise_for_status()
+        if not response.ok:
+            # Print Telegram's actual error description (e.g. "chat not found",
+            # "bot was blocked", "not enough rights to post") — this is the
+            # single most useful line for debugging a failed post.
+            print(f"[Telegram] API error {response.status_code} for '{title}': {response.text}")
+            return False
         result = response.json()
         if result.get("ok"):
             print(f"[Telegram] Posted: {title}")
