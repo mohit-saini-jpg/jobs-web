@@ -3873,6 +3873,30 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             _postal_code = _ai_pin
 
         # ── H1: proper JobPosting only for real jobs ──
+        # Rich, specific streetAddress (org + city + state) instead of a bare
+        # "<Org> Head Office" — a fuller PostalAddress reads better in Google's
+        # job rich-result and satisfies the "streetAddress" enhancement field.
+        # Reject a messy locality (multi-state list, embeds the region, or too
+        # long) so we never emit "…Chhattisgarh, Chhattisgarh" style garbage.
+        _loc_raw = safe(loc)
+        _loc_city = _loc_raw if _loc_raw else ''
+        if (not _loc_city or ',' in _loc_city or len(_loc_city) > 28
+                or _loc_city.strip().lower() in ('india', '')
+                or _address_region.lower() in _loc_city.lower()):
+            _loc_city = ''
+        _org_l = safe(org).lower()
+        _addr_bits = [safe(org)] if safe(org) else []
+        if _loc_city and _loc_city.lower() not in _org_l:
+            _addr_bits.append(_loc_city)
+        if _address_region and _address_region.lower() not in _org_l:
+            _addr_bits.append(_address_region)
+        if not (_addr_bits and _addr_bits[-1].lower().endswith('india')):
+            _addr_bits.append('India')
+        _seen_ab = []
+        for _b in _addr_bits:
+            if _b and _b not in _seen_ab:
+                _seen_ab.append(_b)
+        _street_address = ', '.join(_seen_ab) or f"{org} Head Office"
         jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
               'description':desc,'datePosted':date_posted_iso,'url':canon_url,
               'employmentType':'FULL_TIME','directApply':False,
@@ -3880,8 +3904,8 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                             'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
               'hiringOrganization':_hiring_org,
               'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN',
-                  'addressLocality':loc,'addressRegion':_address_region,
-                  'postalCode':_postal_code,'streetAddress':f"{org} Head Office"}},
+                  'addressLocality':(_loc_city or _address_region),'addressRegion':_address_region,
+                  'postalCode':_postal_code,'streetAddress':_street_address}},
               'applicantLocationRequirements':{'@type':'Country','name':'India'}}
         # SECURE FALLBACK: baseSalary — use pay_scale if available, else Govt default range
         _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or

@@ -53,6 +53,52 @@ STATE_MAP = {
 DEFAULT_REGION, DEFAULT_PIN = 'Delhi', '110001'
 _LDJSON_RE = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
 
+# Govt pay Level 3–10 default range (same as generate_all.py) — used only when a
+# JobPosting has no baseSalary at all, so Google never sees the field missing.
+DEFAULT_SALARY = {'@type': 'MonetaryAmount', 'currency': 'INR',
+                  'value': {'@type': 'QuantitativeValue',
+                            'minValue': 21700, 'maxValue': 69100, 'unitText': 'MONTH'}}
+_GENERIC_STREET_RE = re.compile(r'head\s*office\s*$', re.I)
+
+
+def _clean_city(locality, region):
+    """A single, clean city token or '' — rejects multi-state strings
+    ('Jharkhand, Uttarakhand, …'), 'India', overly long values, and localities
+    that already are / contain the region (avoids '…Chhattisgarh, Chhattisgarh')."""
+    city = (locality or '').strip()
+    region = (region or '').strip()
+    if not city or ',' in city or len(city) > 28:
+        return ''
+    cl = city.lower()
+    if cl == 'india' or cl == region.lower() or region.lower() in cl:
+        return ''
+    return city
+
+
+def _street_for(org, locality, region):
+    """Rich streetAddress: '<Org>, <City>, <State>, India' (deduped, city optional),
+    so the PostalAddress is specific instead of a bare '<Org> Head Office'.
+    Skips a city/region that the org name already contains (avoids
+    'Bank of Maharashtra, Maharashtra' or '…Odisha, Odisha')."""
+    org = (org or '').strip()
+    region = (region or '').strip()
+    orgl = org.lower()
+    city = _clean_city(locality, region)
+    bits = []
+    if org:
+        bits.append(org)
+    if city and city.lower() not in orgl:
+        bits.append(city)
+    if region and region.lower() not in orgl:
+        bits.append(region)
+    if not (bits and bits[-1].lower().endswith('india')):
+        bits.append('India')
+    out = []
+    for b in bits:
+        if b and b not in out:
+            out.append(b)
+    return ', '.join(out) or (f"{org} Head Office".strip() or 'Head Office')
+
 
 def _region_for(path_rel, locality):
     """Best-effort region+pin from the URL path (education/<state>/ or state/<state>/)
@@ -96,21 +142,36 @@ def _patch_jobposting(o, path_rel):
         addr = {'@type': 'PostalAddress', 'addressCountry': 'IN'}
         jl['address'] = addr
     region, pin = _region_for(path_rel, addr.get('addressLocality', ''))
+    org = ''
+    ho = o.get('hiringOrganization')
+    if isinstance(ho, dict):
+        org = ho.get('name', '') or ''
     if not addr.get('addressCountry'):
         addr['addressCountry'] = 'IN'; changed = True
-    if not addr.get('addressLocality'):
+    # addressLocality: fill if missing OR generic 'India' → use the mapped region
+    if not addr.get('addressLocality') or str(addr.get('addressLocality')).strip().lower() == 'india':
         addr['addressLocality'] = region; changed = True
     if not addr.get('addressRegion'):
         addr['addressRegion'] = region; changed = True
     if not addr.get('postalCode'):
         addr['postalCode'] = pin; changed = True
-    if not addr.get('streetAddress'):
-        org = ''
-        ho = o.get('hiringOrganization')
-        if isinstance(ho, dict):
-            org = ho.get('name', '')
-        addr['streetAddress'] = (f"{org} Head Office".strip() or "Head Office")
-        changed = True
+    # streetAddress: fill if missing, upgrade the bare '<Org> Head Office' form,
+    # OR re-normalise any value we previously derived (ends in ', India') so a
+    # re-run fixes earlier redundant output. Hand-authored values (none exist)
+    # would not match these shapes and are left untouched.
+    _cur_street = str(addr.get('streetAddress') or '').strip()
+    if (not _cur_street or _GENERIC_STREET_RE.search(_cur_street)
+            or _cur_street.endswith(', India')):
+        _new_street = _street_for(org, addr.get('addressLocality', ''), addr.get('addressRegion', ''))
+        if _new_street != _cur_street:
+            addr['streetAddress'] = _new_street; changed = True
+    # employmentType — Google recommends it on every JobPosting
+    if not o.get('employmentType'):
+        o['employmentType'] = 'FULL_TIME'; changed = True
+    # baseSalary — never leave it missing (Govt default range when unknown)
+    _bs = o.get('baseSalary')
+    if not (isinstance(_bs, dict) and _bs.get('value')):
+        o['baseSalary'] = dict(DEFAULT_SALARY); changed = True
     if not o.get('validThrough'):
         o['validThrough'] = _valid_through(o); changed = True
     return changed
