@@ -1425,24 +1425,66 @@ def _il_label(v, fallback=''):
 _GENERIC_LINK_LABELS = {'click here','click','view','here','open','link','open link',
                         'official pdf document','official pdf','pdf','download','click_here'}
 
-def _smart_link_label(url, fallback=''):
-    """Resolve a human link label. Prefer a meaningful fallback; otherwise derive
-    one from the URL so we NEVER render the generic 'Click Here' as anchor text."""
+def _label_quality(label):
+    """Score how specific/useful a link label is (higher = better). Empty or
+    generic labels score 0 so a real label always wins in best-label dedup."""
+    l = (label or '').strip()
+    if not l or l.lower() in _GENERIC_LINK_LABELS:
+        return 0
+    return len(re.sub(r'\s+', ' ', l))
+
+# Exam / online-application portal hosts — links here are always an apply/register
+# page, never a document, so a bare CDN/portal URL still gets a meaningful label.
+_EXAM_PORTAL_HOSTS = ('digialm.com', 'ibpsonline.ibps.in', 'tcsion.com',
+                      'cdn3.digialm', 'onlineapplication', 'onlinereg',
+                      'apply.', 'recruitment.', 'onlineapp')
+
+def _derive_link_label(url, job_core=''):
+    """Derive a human, keyword-rich anchor label purely from a URL (optionally the
+    job-title core). NEVER returns a bare generic word like 'Click Here' — the
+    weakest fallback is 'Official Website' (for a bare domain)."""
+    u  = (url or '').strip()
+    ul = u.lower()
+    host = re.sub(r'^https?://', '', ul).split('/')[0]
+    path = re.sub(r'^https?://[^/]+', '', ul).split('?')[0].split('#')[0]
+    seg  = [s for s in path.split('/') if s]
+    stem = re.sub(r'\.(pdf|html?|aspx?|php|jsp)$', '', seg[-1]) if seg else ''
+    words = re.sub(r'[^a-z0-9]+', ' ', stem).strip()
+
+    def has(*ks): return any(k in ul for k in ks)
+
+    if any(h in host for h in _EXAM_PORTAL_HOSTS):  return 'Online Application Portal'
+    if has('corrigend'):                            return 'Corrigendum Notice PDF'
+    if has('addend'):                               return 'Addendum Notice PDF'
+    if has('admit', 'hallticket', 'hall-ticket', 'call-letter', 'callletter'): return 'Download Admit Card'
+    if has('answer', 'anskey', 'ans-key'):          return 'Answer Key'
+    if has('syllabus', 'curriculum'):               return 'Syllabus PDF'
+    if has('result', 'merit', 'scorecard', 'score-card'): return 'Result / Merit List'
+    if has('cutoff', 'cut-off'):                    return 'Cut Off Marks'
+    if has('login', 'signin', 'sign-in'):           return 'Login'
+    if has('register', 'signup', 'sign-up', 'registration', 'newreg'): return 'Register Now'
+    if has('apply', 'career', 'recruit', 'applic', 'vacan'): return 'Apply Online'
+    if has('advt', 'advertisement', 'notif', 'notice', 'circular', 'bharti'): return 'Notification PDF'
+    if has('brochure', 'prospectus'):               return 'Information Brochure PDF'
+    if ul.endswith('.pdf') or '.pdf?' in ul or '.pdf#' in ul:
+        # title-case a meaningful filename (>=3 real chars, not just digits)
+        if words and len(words.replace(' ', '')) >= 3 and not words.replace(' ', '').isdigit():
+            return ' '.join(w.capitalize() for w in words.split())[:56] + ' PDF'
+        return 'Download Notification PDF'
+    if seg:   # a real path (not a bare domain) but no recognised keyword
+        if words and len(words.replace(' ', '')) >= 4 and not words.replace(' ', '').isdigit():
+            return ' '.join(w.capitalize() for w in words.split())[:60]
+        if job_core:
+            return f'{job_core} — Official Link'[:70]
+    return 'Official Website'
+
+def _smart_link_label(url, fallback='', job_core=''):
+    """Resolve a human link label. Prefer a meaningful raw label; otherwise derive
+    one from the URL so we NEVER render a generic 'Click Here' as anchor text."""
     fb = (fallback or '').strip()
     if fb and fb.lower() not in _GENERIC_LINK_LABELS:
         return fb[:70]
-    u = (url or '').strip().lower()
-    if u.endswith('.pdf') or '.pdf?' in u or '.pdf#' in u: return 'Download Notification PDF'
-    if 'admit' in u or 'hallticket' in u: return 'Download Admit Card'
-    if 'answer' in u or 'anskey' in u:    return 'Answer Key'
-    if 'syllabus' in u:                   return 'Syllabus'
-    if 'result' in u or 'merit' in u:     return 'Result'
-    if 'login' in u or 'signin' in u:     return 'Login'
-    if 'register' in u or 'signup' in u or 'sign-up' in u: return 'Register Now'
-    if 'apply' in u or 'career' in u or 'recruit' in u or 'applic' in u: return 'Apply Online'
-    # bare domain (no real path) → Official Website
-    _after = re.sub(r'^https?://', '', u).rstrip('/')
-    return 'Official Website'
+    return _derive_link_label(url, job_core)
 
 def _prepare_il(job_obj):
     """Build a clean important_links dict from any job object.
@@ -1456,6 +1498,7 @@ def _prepare_il(job_obj):
     """
     raw_il = job_obj.get('important_links') or {}
     il = {}
+    job_core = _seo_heading_title(job_obj)   # keyword-rich prefix for URL-derived labels
     if isinstance(raw_il, dict):
         _labels = raw_il.get('_labels') or {}
         for k, v in raw_il.items():
@@ -1467,7 +1510,7 @@ def _prepare_il(job_obj):
             if isinstance(v, dict) and (v.get('url') or v.get('link')):
                 u = str(v.get('url') or v.get('link') or '').strip()
                 if not u.startswith('http') or is_blocked(u): continue
-                il[k] = {'url': u, 'label': _smart_link_label(u, safe(v.get('label') or _labels.get(k, '')))}
+                il[k] = {'url': u, 'label': _smart_link_label(u, safe(v.get('label') or _labels.get(k, '')), job_core)}
                 continue
             # a single key may map to ONE url string OR a LIST of urls (ESIC etc.)
             _urls = v if isinstance(v, list) else [v]
@@ -1476,7 +1519,7 @@ def _prepare_il(job_obj):
                 u = str(_uu or '').strip()
                 if not u.startswith('http') or is_blocked(u): continue
                 # first url uses the _labels value; extra urls get a URL-derived label
-                lbl = _smart_link_label(u, _base_lbl if _idx == 0 else '')
+                lbl = _smart_link_label(u, _base_lbl if _idx == 0 else '', job_core)
                 _key = k if _idx == 0 else f'{k}_{_idx+1}'
                 while _key in il: _key = f'{_key}_x'
                 il[_key] = {'url': u, 'label': lbl}
@@ -1503,16 +1546,39 @@ def _prepare_il(job_obj):
                 key = f'{base}_{n}'; n += 1
             il[key] = {'url': url, 'label': lbl}
 
-    # Merge all_official_links (deduped by URL, original label preserved)
+    # ── Best-label-wins dedup ───────────────────────────────────────────────
+    # url→key map for the entries already in `il`. When the SAME url reappears in
+    # all_official_links / all_links / useful_links carrying a MORE specific label,
+    # upgrade the existing entry instead of discarding the better label (this was
+    # the root cause of stale generic 'Click Here' anchors on merged links).
+    _url_key = {}
+    for _k, _v in il.items():
+        _uu = _il_url(_v)
+        if _uu.startswith('http') and _uu not in _url_key:
+            _url_key[_uu] = _k
+
+    def _merge_or_upgrade(u, raw_label, base_key):
+        if not u.startswith('http') or is_blocked(u):
+            return
+        new_lbl = _smart_link_label(u, raw_label, job_core)
+        if u in _url_key:                       # already present → maybe upgrade label
+            ek = _url_key[u]
+            if _label_quality(new_lbl) > _label_quality(_il_label(il.get(ek, {}))):
+                il[ek]['label'] = new_lbl
+            return
+        key = base_key; n = 2
+        while key in il:
+            key = f'{base_key}_{n}'; n += 1
+        il[key] = {'url': u, 'label': new_lbl}
+        _url_key[u] = key
+
+    # Merge all_official_links (best label wins on URL collision)
     _aol = job_obj.get('all_official_links') or []
     if isinstance(_aol, list) and _aol:
-        _seen = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
         for _item in _aol:
             if not isinstance(_item, dict): continue
             _u = str(_item.get('url') or '').strip()
             _l = str(_item.get('label') or '').strip()
-            if not _u.startswith('http') or is_blocked(_u) or _u in _seen: continue
-            _seen.add(_u)
             _ll = _l.lower()
             if 'apply' in _ll:   _ab = 'apply_online'
             elif any(x in _ll for x in ['notif','pdf','notice','advt']): _ab = 'notification_pdf'
@@ -1521,26 +1587,20 @@ def _prepare_il(job_obj):
             elif 'answer' in _ll:  _ab = 'answer_key'
             elif 'login' in _ll:   _ab = 'login_link'
             elif 'official' in _ll or 'website' in _ll: _ab = 'official_website'
-            else: _ab = re.sub(r'[^a-z0-9]+','_', _ll).strip('_')[:40] or 'link'
-            _ak = _ab; _an = 2
-            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
-            il[_ak] = {'url': _u, 'label': _l}
+            else: _ab = re.sub(r'[^a-z0-9]+','_', _ll).strip('_')[:40] or 'official_website'
+            _merge_or_upgrade(_u, _l, _ab)
 
-    # Merge all_links / useful_links arrays (SARK LATEST_JOBS NEW / OFFLINE_FORM format:
-    # [{label|title, url}]) so their official job links also render as buttons.
+    # Merge all_links / useful_links arrays (SARK LATEST_JOBS NEW / OFFLINE_FORM
+    # format: [{label|title, url}]) so their official links also render as buttons.
     for _src_key in ('all_links', 'useful_links'):
         _arr = job_obj.get(_src_key) or []
         if not isinstance(_arr, list) or not _arr: continue
-        _seen2 = {_il_url(v) for v in il.values() if _il_url(v).startswith('http')}
         for _item in _arr:
             if not isinstance(_item, dict): continue
             _u = str(_item.get('url') or _item.get('link') or (
                      (_item.get('links') or [''])[0] if isinstance(_item.get('links'), list)
                      else _item.get('links') or '')).strip()
             _l = str(_item.get('label') or _item.get('title') or _item.get('name') or '').strip()
-            if not _u.startswith('http') or is_blocked(_u) or _u in _seen2: continue
-            _seen2.add(_u)
-            _lbl = _smart_link_label(_u, _l)
             _ll = (_l + ' ' + _u).lower()
             if 'apply' in _ll or 'career' in _ll:   _ab = 'apply_online'
             elif any(x in _ll for x in ['notif','pdf','advt']): _ab = 'notification_pdf'
@@ -1549,10 +1609,8 @@ def _prepare_il(job_obj):
             elif 'answer' in _ll:  _ab = 'answer_key'
             elif 'login' in _ll:   _ab = 'login_link'
             elif 'official' in _ll or 'website' in _ll or 'visit' in _ll: _ab = 'official_website'
-            else: _ab = re.sub(r'[^a-z0-9]+','_', _lbl.lower()).strip('_')[:40] or 'link'
-            _ak = _ab; _an = 2
-            while _ak in il: _ak = f'{_ab}_{_an}'; _an += 1
-            il[_ak] = {'url': _u, 'label': _lbl}
+            else: _ab = re.sub(r'[^a-z0-9]+','_', (_l or _u).lower()).strip('_')[:40] or 'official_website'
+            _merge_or_upgrade(_u, _l, _ab)
     return il
 
 def render_links(il_obj):
@@ -2700,8 +2758,13 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','eligibility_section','course_details','vacancy_details','vacancy_breakdown','subject_wise_vacancy','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
-                 'tables','data_tables','text_sections','useful_links','all_links','details_page_content',
+                 'tables','data_tables','text_sections','details_page_content',
                  'how_to_apply','important_instructions','important_links','faq']
+# NOTE: 'useful_links' & 'all_links' are intentionally NOT in SECTION_ORDER.
+# _prepare_il() already merges those arrays into `important_links`, so rendering
+# them standalone produced (a) a duplicate "Useful Links" box and (b) literal
+# "Click Here" labels from the standalone all_links renderer. Every such link now
+# flows through render_links(), which resolves a real label via _smart_link_label().
 
 def _smart_render(val, depth=0):
     """UNIVERSAL SMART RENDERER — handles ANY JSON value type automatically.
