@@ -89,7 +89,16 @@ jobs:
             python3 .github/workflows/patch_generator.py
           fi
 
+      - name: 📦 Install social auto-post dependencies
+        run: pip install --quiet tweepy requests
+
       - name: UNIFIED generator - generate_all.py (one item = one URL = one layout)
+        env:
+          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
+          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: python3 generate_all.py
 
       - name: Education pages -> NewsArticle schema (admit card/result/answer key not JobPosting)
@@ -287,6 +296,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add version.json sw.js
+          git add posted_jobs.txt 2>/dev/null || true
           git add jobs/ state/ education/ category/ jobs-index.json sections-index.json 2>/dev/null || true
           git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true

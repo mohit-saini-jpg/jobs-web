@@ -8327,3 +8327,23 @@ print(f"\u2551  Schema patches        : {_schema_patched:<27}\u2551")
 print(f"\u2551  Schema patches        : {_schema_patched:<27}\u2551")
 print("\u255a" + "\u2550"*54 + "\u255d")
 print()
+
+# ══════════════════════════════════════════════════════════════════════════
+# SOCIAL AUTO-POSTING (X / Twitter + Telegram) — runs after all pages built
+# ══════════════════════════════════════════════════════════════════════════
+try:
+    _skip_autopost = os.environ.get("SKIP_AUTOPOST", "").strip().lower() in ("1", "true", "yes")
+    if _skip_autopost:
+        print("[AutoPost] Skipped — SKIP_AUTOPOST env var is set (manual full-regen run).")
+    else:
+        from social_autopost import autopost_new_jobs
+
+        _social_jobs = list(SARK)  # sarkari_data jobs (already deduped/filtered above)
+        for _cat_jobs in FJA.values():
+            _social_jobs.extend(_cat_jobs)
+
+        print(f"[AutoPost] Handing off {len(_social_jobs)} jobs for X/Telegram posting...")
+        autopost_new_jobs(_social_jobs)
+except Exception as _social_e:
+    # Never let a social-posting failure break the site build.
+    print(f"[AutoPost] Skipped due to error: {_social_e}")
