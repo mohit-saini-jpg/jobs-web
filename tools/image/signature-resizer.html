@@ -594,16 +594,19 @@
     }
   }
 
-  // Exam/Job → [name, width_px, height_px, max_KB]  (SIGNATURE — All India Exams master list)
+  // Exam/Job → [name, width_px, height_px, max_KB]  (SIGNATURE — All India Exams master list, verified)
   var JOB_PRESETS_SIG=[
     {g:'SSC (10–20 KB, 140×60)',items:[['SSC CGL',140,60,20],['SSC CHSL',140,60,20],['SSC MTS',140,60,20],['SSC GD Constable',140,60,20],['SSC JE',140,60,20],['SSC Stenographer',140,60,20]]},
+    {g:'IBPS / SBI / RBI — Banking (10–20 KB, 140×60)',items:[['IBPS PO',140,60,20],['IBPS Clerk',140,60,20],['IBPS SO',140,60,20],['SBI PO',140,60,20],['SBI Clerk',140,60,20],['SBI Specialist Officer',140,60,20],['RBI Assistant',140,60,20],['RBI Grade B',140,60,20],['LIC / GIC / Insurance',140,60,20]]},
     {g:'Railway / RRB (10–40 KB, 140×60)',items:[['Railway NTPC',140,60,40],['Railway Group D',140,60,40],['Railway ALP',140,60,40],['RPF SI / Constable',140,60,40]]},
-    {g:'Banking & Insurance (10–20 KB, 140×60)',items:[['IBPS PO',140,60,20],['IBPS Clerk',140,60,20],['IBPS SO',140,60,20],['SBI PO',140,60,20],['SBI Clerk',140,60,20],['RBI Assistant',140,60,20],['RBI Grade B',140,60,20],['LIC / GIC / Insurance',140,60,20]]},
-    {g:'UPSC (20–300 KB, 350×350, accepts 350×100)',items:[['UPSC Civil Services',350,100,300],['UPSC NDA',350,100,300],['UPSC CDS',350,100,300],['UPSC CAPF',350,100,300]]},
+    {g:'HSSC / Haryana Police (10–20 KB, 140×60)',items:[['HSSC / Haryana Police',140,60,20]]},
+    {g:'UPSC (20–300 KB, Min 350×350)',items:[['UPSC Civil Services',350,350,300],['UPSC NDA',350,350,300],['UPSC CDS',350,350,300],['UPSC CAPF',350,350,300]]},
     {g:'DSSSB (10–40 KB, 140×110)',items:[['DSSSB (All Posts)',140,110,40]]},
-    {g:'Police / State (10–20 KB, 140×60)',items:[['HSSC / Haryana Police',140,60,20],['Delhi Police',140,60,20],['UP Police',140,60,20],['Bihar Police',140,60,20],['Rajasthan Police',140,60,20],['MP Police',140,60,20],['State PSC (10–50 KB)',140,60,50]]},
+    {g:'KVS / NVS / NTA / CTET / NET (4–30 KB, 140×60)',items:[['KVS / NVS / NTA / CTET / NET',140,60,30]]},
+    {g:'Police — Delhi/UP/Bihar/Rajasthan/MP (10–20 KB, 140×60)',items:[['Delhi Police',140,60,20],['UP Police',140,60,20],['Bihar Police',140,60,20],['Rajasthan Police',140,60,20],['MP Police',140,60,20]]},
     {g:'Defence & Paramilitary (10–50 KB, 140×60)',items:[['Army Agniveer',140,60,50],['Navy Agniveer',140,60,50],['Air Force (IAF)',140,60,50],['BSF',140,60,50],['CRPF',140,60,50],['CISF',140,60,50],['ITBP',140,60,50],['SSB',140,60,50],['Assam Rifles',140,60,50]]},
-    {g:'Medical / Teaching / NTA',items:[['AIIMS / ESIC (10–20 KB)',140,60,20],['KVS / NVS / NTA / CTET / NET (4–30 KB)',140,60,30]]}
+    {g:'AIIMS / ESIC (10–20 KB, 140×60)',items:[['AIIMS',140,60,20],['ESIC',140,60,20]]},
+    {g:'State PSC — All States (10–50 KB, 140×60)',items:[['State PSC (All States)',140,60,50]]}
   ];
   function populateJobPreset(data){
     var sel=G('jobPreset');if(!sel)return;
