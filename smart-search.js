@@ -283,6 +283,18 @@
       .slice(0,80).replace(/-+$/,"");
   }
 
+  // Prefer the generator's disk-truth canonical slug (the exact /jobs/<dir>/ that
+  // was actually built). Slugifying the title as a fallback would invent URLs
+  // like /jobs/haryana-rte-admission-online-form-2026/ that 404 — the real page
+  // uses a trimmed canonical slug (haryana-rte-admission-2026). NEVER trust a raw
+  // `slug` field over `_canonical_slug`: legacy `slug` values can be stale.
+  function canonicalSlug(obj, title) {
+    var c = obj && (obj._canonical_slug || obj.canonical_slug || obj.canonicalSlug);
+    c = String(c || '').trim().replace(/^\/+|\/+$/g, '').replace(/^jobs\//, '').replace(/\/+$/, '');
+    if (c) return c;
+    return slugifyTitle(title || '');
+  }
+
   function getRecent() {
     try { return JSON.parse(localStorage.getItem(CFG.recentKey) || '[]'); } catch(e) { return []; }
   }
@@ -327,6 +339,8 @@
   function buildJobHref(job, secId) {
     var bd = job.basic_details || {};
     var rawTitle = job.title || job.post_name || bd.job_title || bd.post_name || '';
+    var canon = job._canonical_slug || job.canonical_slug || '';
+    if (canon) return '/jobs/' + String(canon).replace(/^\/+|\/+$/g,'').replace(/^jobs\//,'').replace(/\/+$/,'') + '/';
     var slug = job.slug || slugifyTitle(rawTitle);
     if (!slug || slug === 'official-link') return job.source_url || job.url || job.link || '#';
     var applyMode = (job.apply_mode || bd.application_mode || '').toLowerCase();
@@ -599,7 +613,7 @@
             var title = (bd.job_title || '').trim();
             if (!title) return;
             var org = (bd.organization_name || '').trim();
-            var slug = slugifyTitle(title);
+            var slug = canonicalSlug(job, title);
             var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
             if (!href) return;
             var dates = job.important_dates || {};
@@ -632,7 +646,7 @@
         sarkariJobs.forEach(function(job) {
           var title = (job.title || '').trim();
           if (!title) return;
-          var slug = slugifyTitle(title);
+          var slug = canonicalSlug(job, title);
           var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
           if (!href) return;
           var dates = job.important_dates || {};
@@ -665,7 +679,7 @@
             (Array.isArray(sec.items) ? sec.items : []).forEach(function(item) {
               var title = (item.name || item.title || '').trim();
               if (!title) return;
-              var slug = slugifyTitle(title);
+              var slug = canonicalSlug(item, title);
               var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
               if (!href) return;
               extra.push({
