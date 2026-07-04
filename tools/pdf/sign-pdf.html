@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/pdf/sign-pdf.html">
   <meta property="og:title" content="Sign PDF Free Online – Add Digital Signature | Top Sarkari Jobs"><meta property="og:description" content="Add a digital signature to PDF online for free. Draw, type or upload your signature for legally valid documents. No signup required."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Pacifico&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -104,6 +104,24 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .err-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: #991B1B; display:none; }
+    .err-box.show { display:block; }
+    .sig-pad-wrap { border: 2px dashed var(--line); border-radius: 10px; background: var(--mist); margin-top: 12px; }
+    #sig-pad { width:100%; height:180px; display:block; touch-action:none; cursor:crosshair; border-radius:10px; }
+    .sig-type-input { width:100%; padding:16px 14px; border:1.5px solid var(--line); border-radius:8px; font-size:2rem; text-align:center; background:white; color:var(--ink); margin-top:12px; }
+    .sig-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .sig-actions button { padding:8px 16px; border-radius:8px; border:1.5px solid var(--line); background:white; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; }
+    .sig-actions button:hover { border-color:var(--brand); color:var(--brand); }
+    .sig-upload-wrap { margin-top:12px; }
+    .checkbox-row { display:flex; align-items:center; gap:8px; }
+    .checkbox-row input { width:auto; accent-color:var(--brand); }
+    .checkbox-row label { text-transform:none !important; font-size:0.88rem !important; color:var(--ink) !important; font-weight:500 !important; margin:0 !important; }
+    .place-wrap { margin-top:16px; text-align:center; background:var(--mist); border-radius:10px; padding:14px; }
+    .place-canvas-holder { position:relative; display:inline-block; max-width:100%; }
+    .place-canvas-holder canvas { max-width:100%; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); background:white; display:block; }
+    .sig-drag-box { position:absolute; border:2px dashed var(--brand); background:rgba(52,93,230,0.08); cursor:move; display:flex; align-items:center; justify-content:center; touch-action:none; border-radius:4px; }
+    .sig-drag-box img { max-width:100%; max-height:100%; pointer-events:none; }
+    .sig-drag-box span { pointer-events:none; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -208,8 +226,58 @@
   </div>
 
   <div class="card">
-    <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Signature Type</label><select><option>Draw (Mouse/Touch)</option><option>Type Name</option><option>Upload Image</option></select></div><div class="form-group"><label>Ink Color</label><select><option>Black</option><option>Blue</option><option>Red</option></select></div><div class="form-group"><label>Position</label><select><option>Last Page Bottom</option><option>All Pages</option><option>Custom Position</option></select></div><div class="form-group"><label>Size</label><select><option>Medium</option><option>Small</option><option>Large</option></select></div></div><div class="info-box">✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.</div>
+    <h3>✍️ Signature Banayein</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Signature Type</label><select id="sig-type">
+        <option value="draw">Draw (Mouse/Touch)</option>
+        <option value="type">Type Name</option>
+        <option value="upload">Upload Image</option>
+      </select></div>
+      <div class="form-group" id="sig-color-wrap"><label>Ink Color</label><select id="sig-color">
+        <option value="#111111">Black</option>
+        <option value="#1d4ed8">Blue</option>
+        <option value="#dc2626">Red</option>
+      </select></div>
+      <div class="form-group" id="sig-font-wrap" style="display:none"><label>Signature Style</label><select id="sig-font">
+        <option value="'Dancing Script', cursive">Elegant Script</option>
+        <option value="'Pacifico', cursive">Bold Script</option>
+        <option value="'Caveat', cursive">Handwritten</option>
+      </select></div>
+    </div>
+
+    <div class="sig-pad-wrap" id="draw-wrap"><canvas id="sig-pad"></canvas></div>
+    <input type="text" id="sig-type-input" class="sig-type-input" placeholder="Apna naam type karein" style="display:none; font-family:'Dancing Script',cursive;">
+    <div class="sig-upload-wrap" id="upload-wrap" style="display:none"><input type="file" id="sig-upload-file" accept="image/png,image/jpeg"></div>
+    <div class="sig-actions">
+      <button type="button" id="sig-clear-btn">🗑️ Clear</button>
+      <button type="button" id="sig-build-btn">✅ Signature Set Karein</button>
+    </div>
+    <div class="info-box" id="sig-info">✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.</div>
+    <div class="err-box" id="err-box"></div>
+
+    <div class="form-grid" style="margin-top:18px">
+      <div class="form-group"><label>Position</label><select id="sig-pos">
+        <option value="last-br">Last Page – Bottom Right</option>
+        <option value="last-bl">Last Page – Bottom Left</option>
+        <option value="all-br">All Pages – Bottom Right</option>
+        <option value="custom">Custom (Drag on Preview)</option>
+      </select></div>
+      <div class="form-group"><label>Size</label><select id="sig-size">
+        <option value="0.7">Small</option>
+        <option value="1" selected>Medium</option>
+        <option value="1.5">Large</option>
+      </select></div>
+      <div class="form-group"><label class="checkbox-row"><input type="checkbox" id="sig-date" checked> Date Stamp bhi add karein</label></div>
+    </div>
+
+    <div class="place-wrap" id="place-wrap" style="display:none">
+      <div class="preview-label" style="font-size:0.76rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Preview — Drag signature to position karein</div>
+      <div class="place-canvas-holder" id="place-holder">
+        <canvas id="place-canvas"></canvas>
+        <div class="sig-drag-box" id="sig-drag-box" style="display:none"><span>✍️</span></div>
+      </div>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -223,7 +291,7 @@
   <div class="card result-card" id="result-card">
     <div class="result-ok">✅ Successfully Processed!</div>
     <div class="stat-row" id="stat-row"></div>
-    <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+    <button class="btn-dl" id="dl-btn" style="margin-top:14px">⬇️ Download File</button>
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Signature</h4><p>Draw ya type karein</p></div><div class="step"><div class="step-n">3</div><h4>Position</h4><p>Sign placement set karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Signed PDF download</p></div></div></div>
@@ -239,44 +307,309 @@
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const $=id=>document.getElementById(id);
+
   document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
+  function showErr(msg){ const eb=$('err-box'); eb.textContent=msg; eb.classList.add('show'); }
+  function hideErr(){ const eb=$('err-box'); eb.classList.remove('show'); eb.textContent=''; }
+
   function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
+    const inp=$(inputId),prev=$(previewId);
     if(!inp)return;
     function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
-    inp.addEventListener('change',()=>hf(inp.files[0]));
+    inp.addEventListener('change',()=>{hf(inp.files[0]); onMainFileChange();});
     const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
+    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);onMainFileChange();}});}
+    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');$('place-wrap').style.display='none';mainPdfDoc=null;});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
+
+  // ── state ──
+  let mainPdfDoc=null;
+  let signature=null; // { dataUrl, w, h }
+  let dragPos={xPct:70,yPct:82}; // percent, top-left anchor of signature box on preview canvas
+
+  // ── signature pad (draw) ──
+  const padCanvas = $('sig-pad');
+  let drawing=false, hasDrawn=false;
+  function resizePad(){
+    const rect = padCanvas.getBoundingClientRect();
+    padCanvas.width = rect.width * 2; padCanvas.height = rect.height * 2;
+    const ctx = padCanvas.getContext('2d'); ctx.scale(2,2);
+    ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=2.6;
+    ctx.strokeStyle = $('sig-color').value;
+  }
+  function padPos(e){
+    const rect = padCanvas.getBoundingClientRect();
+    const cx = (e.touches? e.touches[0].clientX : e.clientX) - rect.left;
+    const cy = (e.touches? e.touches[0].clientY : e.clientY) - rect.top;
+    return {x:cx,y:cy};
+  }
+  function startDraw(e){ e.preventDefault(); drawing=true; hasDrawn=true; const p=padPos(e); const ctx=padCanvas.getContext('2d'); ctx.strokeStyle=$('sig-color').value; ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function moveDraw(e){ if(!drawing) return; e.preventDefault(); const p=padPos(e); const ctx=padCanvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+  function endDraw(){ drawing=false; }
+  ['mousedown','touchstart'].forEach(ev=>padCanvas.addEventListener(ev,startDraw,{passive:false}));
+  ['mousemove','touchmove'].forEach(ev=>padCanvas.addEventListener(ev,moveDraw,{passive:false}));
+  ['mouseup','mouseleave','touchend'].forEach(ev=>padCanvas.addEventListener(ev,endDraw));
+
+  function trimCanvas(canvas){
+    const ctx = canvas.getContext('2d');
+    const {width:w,height:h} = canvas;
+    const data = ctx.getImageData(0,0,w,h).data;
+    let minX=w,minY=h,maxX=0,maxY=0,found=false;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const alpha = data[(y*w+x)*4+3];
+        if(alpha>10){ found=true; if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; }
+      }
+    }
+    if(!found) return canvas;
+    const pad=6;
+    minX=Math.max(0,minX-pad); minY=Math.max(0,minY-pad); maxX=Math.min(w,maxX+pad); maxY=Math.min(h,maxY+pad);
+    const cw=maxX-minX, ch=maxY-minY;
+    const out=document.createElement('canvas'); out.width=cw; out.height=ch;
+    out.getContext('2d').drawImage(canvas, minX,minY,cw,ch, 0,0,cw,ch);
+    return out;
+  }
+
+  function buildFromDraw(){
+    if(!hasDrawn){ showErr('❌ Pehle signature draw karein.'); return null; }
+    const trimmed = trimCanvas(padCanvas);
+    return { dataUrl: trimmed.toDataURL('image/png'), w:trimmed.width, h:trimmed.height };
+  }
+
+  function buildFromType(){
+    const name = $('sig-type-input').value.trim();
+    if(!name){ showErr('❌ Pehle apna naam type karein.'); return null; }
+    const font = $('sig-font').value;
+    const canvas = document.createElement('canvas');
+    canvas.width=900; canvas.height=260;
+    const ctx = canvas.getContext('2d');
+    ctx.font = `82px ${font}`;
+    ctx.fillStyle = $('sig-color').value;
+    ctx.textBaseline='middle'; ctx.textAlign='center';
+    ctx.fillText(name, canvas.width/2, canvas.height/2);
+    const trimmed = trimCanvas(canvas);
+    return { dataUrl: trimmed.toDataURL('image/png'), w:trimmed.width, h:trimmed.height };
+  }
+
+  function buildFromUpload(){
+    return new Promise((resolve)=>{
+      const inp=$('sig-upload-file');
+      if(!inp.files[0]){ showErr('❌ Pehle signature image upload karein.'); resolve(null); return; }
+      const img=new Image();
+      img.onload=()=>{ resolve({dataUrl:img.src, w:img.naturalWidth, h:img.naturalHeight}); };
+      img.onerror=()=>{ showErr('❌ Image load nahi ho payi.'); resolve(null); };
+      const reader=new FileReader();
+      reader.onload=()=>{ img.src=reader.result; };
+      reader.readAsDataURL(inp.files[0]);
+    });
+  }
+
+  async function buildSignature(){
+    hideErr();
+    const type = $('sig-type').value;
+    let sig=null;
+    if(type==='draw') sig = buildFromDraw();
+    else if(type==='type') sig = buildFromType();
+    else sig = await buildFromUpload();
+    if(!sig) return;
+    signature = sig;
+    $('sig-info').textContent = '✅ Signature set ho gaya! Ab neeche position choose karein aur PDF process karein.';
+    await refreshPlacementPreview();
+  }
+
+  function toggleSigTypeUI(){
+    const t = $('sig-type').value;
+    $('draw-wrap').style.display = t==='draw' ? 'block':'none';
+    $('sig-type-input').style.display = t==='type' ? 'block':'none';
+    $('upload-wrap').style.display = t==='upload' ? 'block':'none';
+    $('sig-font-wrap').style.display = t==='type' ? 'block':'none';
+    $('sig-color-wrap').style.display = t==='upload' ? 'none':'block';
+    if(t==='draw') setTimeout(resizePad,0);
+  }
+
+  // ── main file + placement preview ──
+  async function onMainFileChange(){
+    const inp=$('main-file'); if(!inp.files[0]){ mainPdfDoc=null; $('place-wrap').style.display='none'; return; }
+    hideErr();
+    try{
+      const bytes = new Uint8Array(await inp.files[0].arrayBuffer());
+      mainPdfDoc = await pdfjsLib.getDocument({data:bytes}).promise;
+      await refreshPlacementPreview();
+    }catch(e){ mainPdfDoc=null; showErr('❌ Yeh file valid PDF nahi lag rahi.'); }
+  }
+
+  async function refreshPlacementPreview(){
+    if(!mainPdfDoc || !signature){ $('place-wrap').style.display='none'; return; }
+    $('place-wrap').style.display='block';
+    const pageNum = mainPdfDoc.numPages; // preview shows last page (default target)
+    const page = await mainPdfDoc.getPage(pageNum);
+    const vp = page.getViewport({scale:1.1});
+    const canvas = $('place-canvas'); canvas.width=vp.width; canvas.height=vp.height;
+    await page.render({canvasContext:canvas.getContext('2d'), viewport:vp}).promise;
+
+    const box = $('sig-drag-box');
+    const sizeFactor = +$('sig-size').value || 1;
+    const boxW = Math.min(vp.width*0.32, 180) * sizeFactor;
+    const boxH = boxW * (signature.h/signature.w);
+    box.style.width = boxW+'px'; box.style.height = boxH+'px';
+    box.style.display='flex';
+    box.innerHTML = `<img src="${signature.dataUrl}" alt="signature preview">`;
+    positionDragBox();
+  }
+
+  function positionDragBox(){
+    const holder = $('place-holder'), canvas=$('place-canvas'), box=$('sig-drag-box');
+    if(!canvas.width) return;
+    const x = (dragPos.xPct/100) * canvas.width - box.offsetWidth/2;
+    const y = (dragPos.yPct/100) * canvas.height - box.offsetHeight/2;
+    box.style.left = Math.max(0, Math.min(canvas.width-box.offsetWidth, x)) + 'px';
+    box.style.top = Math.max(0, Math.min(canvas.height-box.offsetHeight, y)) + 'px';
+  }
+
+  function setupDrag(){
+    const box=$('sig-drag-box'), canvas=$('place-canvas');
+    let dragging=false;
+    function getXY(e){ const t=e.touches?e.touches[0]:e; return {x:t.clientX,y:t.clientY}; }
+    function down(e){ if($('sig-pos').value!=='custom') return; dragging=true; e.preventDefault(); }
+    function move(e){
+      if(!dragging) return; e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const p = getXY(e);
+      let x = p.x-rect.left, y=p.y-rect.top;
+      const scaleX = canvas.width/rect.width, scaleY = canvas.height/rect.height;
+      x*=scaleX; y*=scaleY;
+      dragPos.xPct = Math.max(0,Math.min(100, x/canvas.width*100));
+      dragPos.yPct = Math.max(0,Math.min(100, y/canvas.height*100));
+      positionDragBox();
+    }
+    function up(){ dragging=false; }
+    box.addEventListener('mousedown',down); box.addEventListener('touchstart',down,{passive:false});
+    window.addEventListener('mousemove',move); window.addEventListener('touchmove',move,{passive:false});
+    window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
+  }
+
+  // ── final processing ──
+  function pngOrJpgBase64ToBytes(dataUrl){
+    return Uint8Array.from(atob(dataUrl.split(',')[1]), c=>c.charCodeAt(0));
+  }
+
+  async function runProcess(){
+    hideErr();
+    const inp=$('main-file');
+    if(!inp||!inp.files[0]){ alert('Pehle PDF file select karein!'); return; }
+    if(!signature){ showErr('❌ Pehle "Signature Set Karein" button dabayein.'); return; }
     const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+    const rc=$('result-card'); rc.classList.remove('show');
+    const pw=$('progress-wrap'); pw.style.display='block';
+    $('pbar').style.width='6%'; $('pmsg').textContent='File load ho rahi hai...';
+    $('process-btn').disabled=true;
+
+    try{
+      const { PDFDocument, StandardFonts, rgb } = PDFLib;
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      const doc = await PDFDocument.load(bytes);
+      const pageCount = doc.getPageCount();
+
+      const sigImg = await doc.embedPng(pngOrJpgBase64ToBytes(signature.dataUrl));
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+      const sizeFactor = +$('sig-size').value || 1;
+      const posMode = $('sig-pos').value;
+      const addDate = $('sig-date').checked;
+      const dateStr = new Date().toLocaleDateString('en-IN');
+
+      const targetPages = posMode==='all-br' ? Array.from({length:pageCount},(_,i)=>i) : [pageCount-1];
+
+      for(let i=0;i<targetPages.length;i++){
+        const idx = targetPages[i];
+        const page = doc.getPage(idx);
+        const { width, height } = page.getSize();
+        const boxW = Math.min(width*0.28, 170) * sizeFactor;
+        const boxH = boxW * (sigImg.height/sigImg.width);
+
+        let x,y;
+        if(posMode==='custom'){
+          x = (dragPos.xPct/100)*width - boxW/2;
+          y = height - ((dragPos.yPct/100)*height) - boxH/2;
+        } else if(posMode==='last-bl'){
+          x = width*0.06; y = height*0.06;
+        } else { // last-br or all-br
+          x = width - boxW - width*0.06; y = height*0.06;
+        }
+        x = Math.max(4, Math.min(width-boxW-4, x));
+        y = Math.max(4, Math.min(height-boxH-4, y));
+
+        page.drawImage(sigImg, { x, y, width:boxW, height:boxH });
+        if(addDate){
+          page.drawText(`Signed: ${dateStr}`, { x, y: Math.max(2,y-12), size:8, font, color: rgb(0.42,0.45,0.5) });
+        }
+        $('pbar').style.width = Math.round((i+1)/targetPages.length*90)+'%';
+        $('pmsg').textContent = `Page ${idx+1} par signature laga rahe hain...`;
+      }
+
+      const outBytes = await doc.save();
+      $('pbar').style.width='100%'; $('pmsg').textContent='Done!';
+      const blob = new Blob([outBytes], {type:'application/pdf'});
+
+      $('result-card').classList.add('show');
+      $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${targetPages.length}</div><div class="stat-lbl">Pages Signed</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>`;
+      $('dl-btn').onclick=()=>{ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download='signed_'+f.name; a.click(); URL.revokeObjectURL(u); };
+    }catch(err){
+      showErr('❌ File process nahi ho payi. Ho sakta hai file corrupt ho ya password-protected ho (pehle Unlock PDF tool use karein).');
+    }finally{
+      $('process-btn').disabled=false;
+      setTimeout(()=>{ pw.style.display='none'; $('pbar').style.width='0%'; },600);
+    }
   }
+
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    toggleSigTypeUI();
+    setupDrag();
+
+    $('sig-type').addEventListener('change', toggleSigTypeUI);
+    $('sig-clear-btn').addEventListener('click', ()=>{
+      hasDrawn=false; resizePad();
+      $('sig-type-input').value='';
+      $('sig-upload-file').value='';
     });
+    $('sig-build-btn').addEventListener('click', buildSignature);
+    $('sig-size').addEventListener('change', refreshPlacementPreview);
+    $('sig-pos').addEventListener('change', function(){
+      const box=$('sig-drag-box');
+      box.style.cursor = this.value==='custom' ? 'move' : 'default';
+    });
+    $('sig-color').addEventListener('change', function(){ if($('sig-type').value==='draw'){ const ctx=padCanvas.getContext('2d'); ctx.strokeStyle=this.value; } });
+
+    const pb=$('process-btn'); if(pb) pb.addEventListener('click', runProcess);
+    const rb=$('reset-btn'); if(rb) rb.addEventListener('click', ()=>{
+      $('main-file').value='';
+      const fp=$('file-preview'); if(fp) fp.classList.remove('show');
+      $('place-wrap').style.display='none';
+      $('progress-wrap').style.display='none';
+      $('pbar').style.width='0%';
+      hideErr();
+      hasDrawn=false; resizePad();
+      $('sig-type-input').value=''; $('sig-upload-file').value='';
+      $('sig-info').textContent='✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.';
+      signature=null; mainPdfDoc=null;
+      const rc=$('result-card'); if(rc) rc.classList.remove('show');
+    });
+
+    setTimeout(resizePad,0);
+    window.addEventListener('resize', ()=>{ if($('sig-type').value==='draw') resizePad(); });
   });
+})();
 </script>
 
 </body></html>

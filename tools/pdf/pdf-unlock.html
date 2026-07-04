@@ -104,6 +104,11 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .err-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: #991B1B; display:none; }
+    .err-box.show { display:block; }
+    .method-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; background:var(--brand-light); color:var(--brand); margin-bottom:12px; }
+    .thumb-wrap { display:flex; gap:14px; align-items:flex-start; margin-top:14px; flex-wrap:wrap; }
+    .thumb-wrap canvas { max-width: 160px; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -209,7 +214,21 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Current Password</label><input type="password" placeholder="PDF ka current password"></div><div class="form-group"><label>Remove</label><select><option>All Restrictions</option><option>Open Password Only</option><option>Permissions Only</option></select></div></div><div class="warn-box">⚠️ Sirf apni khud ki files ka password remove karein. Doosron ki files bypass karna illegal hai.</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Current Password (agar hai)</label><input type="password" id="pw-input" placeholder="Chhod dein agar sirf permissions locked hain"></div>
+      <div class="form-group"><label>Output Quality</label><select id="quality-sel">
+        <option value="1.5">Small Size (Fast)</option>
+        <option value="2.2" selected>High Quality (Recommended)</option>
+        <option value="3">Maximum (Print Quality)</option>
+      </select></div>
+      <div class="form-group"><label>Pages</label><select id="page-range-sel">
+        <option value="all">All Pages</option>
+        <option value="custom">Custom Range</option>
+      </select></div>
+      <div class="form-group" id="custom-range-wrap" style="display:none"><label>Range (e.g. 1-5,8)</label><input type="text" id="range-input" placeholder="1-5,8"></div>
+    </div>
+    <div class="warn-box">⚠️ Sirf apni khud ki files ka password remove karein. Doosron ki files bypass karna illegal hai.</div>
+    <div class="err-box" id="err-box"></div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -222,8 +241,10 @@
 
   <div class="card result-card" id="result-card">
     <div class="result-ok">✅ Successfully Processed!</div>
+    <span class="method-tag" id="method-tag"></span>
     <div class="stat-row" id="stat-row"></div>
-    <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+    <div class="thumb-wrap" id="thumb-wrap"></div>
+    <button class="btn-dl" id="dl-btn" style="margin-top:14px">⬇️ Download File</button>
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>Password protected PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Password</h4><p>Current password enter karein</p></div><div class="step"><div class="step-n">3</div><h4>Unlock</h4><p>Process karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Unlocked PDF milegi</p></div></div></div>
@@ -239,11 +260,20 @@
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
-  document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var $=function(id){return document.getElementById(id);};
+
+  document.querySelectorAll('.faq-q').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
+
   function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
+    const inp=$(inputId),prev=$(previewId);
     if(!inp)return;
     function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
     inp.addEventListener('change',()=>hf(inp.files[0]));
@@ -251,32 +281,179 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
+
+  // Parse "1-5,8,10-12" into a 0-based sorted unique index array, clamped to totalPages
+  function parseRange(str,totalPages){
+    const set=new Set();
+    (str||'').split(',').forEach(function(part){
+      part=part.trim(); if(!part) return;
+      const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+      if(m){
+        let a=parseInt(m[1],10), b=parseInt(m[2],10);
+        if(a>b){ const t=a; a=b; b=t; }
+        for(let i=a;i<=b;i++){ if(i>=1 && i<=totalPages) set.add(i-1); }
+      } else {
+        const n=parseInt(part,10);
+        if(!isNaN(n) && n>=1 && n<=totalPages) set.add(n-1);
+      }
+    });
+    return Array.from(set).sort((a,b)=>a-b);
+  }
+
+  function setProgress(pct,msg){
+    const bar=$('pbar'); if(bar) bar.style.width=Math.min(pct,100)+'%';
+    const pm=$('pmsg'); if(pm && msg) pm.textContent=msg;
+  }
+  function showErr(msg){ const eb=$('err-box'); eb.textContent=msg; eb.classList.add('show'); }
+  function hideErr(){ const eb=$('err-box'); eb.classList.remove('show'); eb.textContent=''; }
+
+  let lastBlob=null, lastName='';
+
+  async function renderThumb(bytes){
+    try{
+      const task = pdfjsLib.getDocument({data:bytes.slice(0)});
+      const doc = await task.promise;
+      const page = await doc.getPage(1);
+      const vp = page.getViewport({scale:0.5});
+      const canvas=document.createElement('canvas');
+      canvas.width=vp.width; canvas.height=vp.height;
+      await page.render({canvasContext:canvas.getContext('2d'), viewport:vp}).promise;
+      const tw=$('thumb-wrap'); tw.innerHTML=''; tw.appendChild(canvas);
+      const cap=document.createElement('div'); cap.style.cssText='font-size:0.76rem;color:var(--muted);margin-top:6px;text-align:center;';
+      cap.textContent='Page 1 preview';
+      const wrap=document.createElement('div'); wrap.appendChild(canvas); wrap.appendChild(cap);
+      tw.innerHTML=''; tw.appendChild(wrap);
+    }catch(e){ /* preview optional, ignore failure */ }
+  }
+
+  async function runProcess(){
+    hideErr();
+    const inp=$('main-file');
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
     const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+    const rc=$('result-card'); rc.classList.remove('show');
+    const pwWrap=$('progress-wrap'); pwWrap.style.display='block';
+    setProgress(4,'File padhi ja rahi hai...');
+    $('process-btn').disabled=true;
+
+    try{
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      const pwVal = $('pw-input').value || '';
+      const rangeMode = $('page-range-sel').value;
+      let outBytes, method, pageCount;
+
+      // ---- Attempt 1: vector-preserving unlock (works for owner/permission-only locks, no crypto needed) ----
+      try{
+        setProgress(15,'Restrictions check ki ja rahi hain...');
+        const { PDFDocument } = PDFLib;
+        const doc = await PDFDocument.load(bytes, { ignoreEncryption:true, updateMetadata:false });
+        pageCount = doc.getPageCount();
+        let finalDoc = doc;
+        if(rangeMode==='custom'){
+          const idxs = parseRange($('range-input').value, pageCount);
+          if(!idxs.length) throw new Error('EMPTY_RANGE');
+          const newDoc = await PDFDocument.create();
+          const copied = await newDoc.copyPages(doc, idxs);
+          copied.forEach(p=>newDoc.addPage(p));
+          finalDoc = newDoc;
+        }
+        setProgress(70,'Password/restrictions hataye ja rahe hain...');
+        outBytes = await finalDoc.save();
+        // sanity check — re-parse the saved bytes to confirm it's a valid, readable PDF
+        await PDFDocument.load(outBytes);
+        method = 'vector';
+        pageCount = rangeMode==='custom' ? finalDoc.getPageCount() : pageCount;
+      } catch(e1){
+        if(String(e1.message)==='EMPTY_RANGE'){ throw new Error('EMPTY_RANGE'); }
+        // ---- Attempt 2: real encryption present — rasterize using pdf.js decryption ----
+        setProgress(10,'Password verify ho raha hai...');
+        let pdfDoc;
+        try{
+          pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice(0), password: pwVal || undefined }).promise;
+        }catch(e2){
+          if(e2 && e2.name==='PasswordException') throw new Error('WRONG_PASSWORD');
+          throw e2;
+        }
+        pageCount = pdfDoc.numPages;
+        let pageIdxs;
+        if(rangeMode==='custom'){
+          pageIdxs = parseRange($('range-input').value, pageCount);
+          if(!pageIdxs.length) throw new Error('EMPTY_RANGE');
+        } else {
+          pageIdxs = Array.from({length:pageCount},(_,i)=>i);
+        }
+        const scale = parseFloat($('quality-sel').value) || 2.2;
+        const { PDFDocument } = PDFLib;
+        const outDoc = await PDFDocument.create();
+        for(let i=0;i<pageIdxs.length;i++){
+          const pnum = pageIdxs[i]+1;
+          const page = await pdfDoc.getPage(pnum);
+          const viewport = page.getViewport({scale});
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height);
+          const ctx = canvas.getContext('2d');
+          await page.render({canvasContext:ctx, viewport}).promise;
+          const imgData = canvas.toDataURL('image/jpeg', 0.92);
+          const imgBytes = Uint8Array.from(atob(imgData.split(',')[1]), c=>c.charCodeAt(0));
+          const jpg = await outDoc.embedJpg(imgBytes);
+          const pg = outDoc.addPage([canvas.width, canvas.height]);
+          pg.drawImage(jpg, {x:0, y:0, width:canvas.width, height:canvas.height});
+          setProgress(10 + Math.round((i+1)/pageIdxs.length*80), `Page ${i+1}/${pageIdxs.length} unlock ho rahi hai...`);
+        }
+        outBytes = await outDoc.save();
+        method = 'raster';
+        pageCount = pageIdxs.length;
+      }
+
+      setProgress(100,'Done!');
+      const blob = new Blob([outBytes], {type:'application/pdf'});
+      lastBlob = blob;
+      lastName = 'unlocked_' + f.name.replace(/\.pdf$/i,'') + '.pdf';
+
+      const mt=$('method-tag');
+      mt.textContent = method==='vector' ? '⚡ Fast Mode — text & quality preserved' : '🖼️ Rendered Mode — password decrypted & rebuilt';
+
+      const sr=$('stat-row');
+      sr.innerHTML = `<div class="stat-box"><div class="stat-val">${pageCount}</div><div class="stat-lbl">Pages Unlocked</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>`;
+
+      await renderThumb(outBytes);
+
+      $('result-card').classList.add('show');
+      $('dl-btn').onclick=()=>{ const u=URL.createObjectURL(lastBlob); const a=document.createElement('a'); a.href=u; a.download=lastName; a.click(); URL.revokeObjectURL(u); };
+    }catch(err){
+      const msg = String(err && err.message || err);
+      if(msg==='WRONG_PASSWORD') showErr('❌ Galat password! Sahi current password daal kar dobara try karein.');
+      else if(msg==='EMPTY_RANGE') showErr('❌ Page range invalid hai — sahi format mein likhein, jaise 1-5,8');
+      else showErr('❌ File process nahi ho payi. Ho sakta hai file corrupt ho ya yeh ek valid PDF na ho.');
+    }finally{
+      $('process-btn').disabled=false;
+      setTimeout(()=>{ pwWrap.style.display='none'; setProgress(0,'Processing...'); }, 600);
+    }
   }
+
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    $('page-range-sel').addEventListener('change', function(){
+      $('custom-range-wrap').style.display = this.value==='custom' ? 'block' : 'none';
+    });
+    const pb=$('process-btn'); if(pb) pb.addEventListener('click', runProcess);
+    const rb=$('reset-btn'); if(rb) rb.addEventListener('click', ()=>{
+      $('main-file').value='';
+      const fp=$('file-preview'); if(fp) fp.classList.remove('show');
+      $('pw-input').value='';
+      $('range-input').value='';
+      $('page-range-sel').value='all';
+      $('custom-range-wrap').style.display='none';
+      $('progress-wrap').style.display='none';
+      $('pbar').style.width='0%';
+      hideErr();
+      const rc=$('result-card'); if(rc) rc.classList.remove('show');
+      lastBlob=null; lastName='';
     });
   });
+})();
 </script>
 
 </body></html>

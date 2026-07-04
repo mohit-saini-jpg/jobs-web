@@ -104,6 +104,12 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .err-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: #991B1B; display:none; }
+    .err-box.show { display:block; }
+    .form-group input[type=color] { width:100%; height:38px; padding:2px; border:1.5px solid var(--line); border-radius:8px; cursor:pointer; background:white; }
+    .preview-wrap { margin-top:16px; text-align:center; background:var(--mist); border-radius:10px; padding:14px; }
+    .preview-wrap canvas { max-width:100%; max-height:420px; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); background:white; }
+    .preview-label { font-size:0.76rem; color:var(--muted); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -209,7 +215,46 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Watermark Type</label><select><option>Text</option><option>Image</option></select></div><div class="form-group"><label>Text</label><input type="text" value="CONFIDENTIAL" placeholder="Watermark text"></div><div class="form-group"><label>Position</label><select><option>Diagonal (Center)</option><option>Top Center</option><option>Bottom Center</option><option>All Pages Tile</option></select></div><div class="form-group"><label>Opacity</label><input type="range" id="wop" min="10" max="100" value="30"><div class="range-val" id="wop-val">30%</div></div></div><script>document.getElementById&&document.getElementById("wop")&&document.getElementById("wop").addEventListener("input",function(){document.getElementById("wop-val").textContent=this.value+"%";})</script>
+    <div class="form-grid">
+      <div class="form-group"><label>Watermark Type</label><select id="wm-type">
+        <option value="text">Text</option>
+        <option value="image">Image</option>
+      </select></div>
+      <div class="form-group" id="wm-text-wrap"><label>Text</label><input type="text" id="wm-text" value="CONFIDENTIAL" placeholder="Watermark text"></div>
+      <div class="form-group" id="wm-image-wrap" style="display:none"><label>Image (PNG/JPG)</label><input type="file" id="wm-image-file" accept="image/png,image/jpeg"></div>
+      <div class="form-group"><label>Position</label><select id="wm-pos">
+        <option value="diagonal">Diagonal (Center)</option>
+        <option value="top">Top Center</option>
+        <option value="bottom">Bottom Center</option>
+        <option value="tl">Top Left</option>
+        <option value="tr">Top Right</option>
+        <option value="bl">Bottom Left</option>
+        <option value="br">Bottom Right</option>
+        <option value="tile">All Pages Tile</option>
+      </select></div>
+      <div class="form-group"><label>Opacity</label><input type="range" id="wop" min="10" max="100" value="30"><div class="range-val" id="wop-val">30%</div></div>
+      <div class="form-group" id="wm-fontsize-wrap"><label>Font Size</label><input type="number" id="wm-fontsize" value="42" min="8" max="200"></div>
+      <div class="form-group" id="wm-font-wrap"><label>Font</label><select id="wm-font">
+        <option value="Helvetica">Helvetica</option>
+        <option value="HelveticaBold">Helvetica Bold</option>
+        <option value="TimesRoman">Times Roman</option>
+        <option value="Courier">Courier</option>
+      </select></div>
+      <div class="form-group" id="wm-color-wrap"><label>Color</label><input type="color" id="wm-color" value="#345de6"></div>
+      <div class="form-group" id="wm-rotation-wrap"><label>Rotation</label><input type="range" id="wm-rot" min="0" max="90" value="45"><div class="range-val" id="wm-rot-val">45°</div></div>
+      <div class="form-group"><label>Pages</label><select id="wm-pages">
+        <option value="all">All Pages</option>
+        <option value="odd">Odd Pages</option>
+        <option value="even">Even Pages</option>
+        <option value="custom">Custom Range</option>
+      </select></div>
+      <div class="form-group" id="wm-range-wrap" style="display:none"><label>Range (e.g. 1-5,8)</label><input type="text" id="wm-range" placeholder="1-5,8"></div>
+    </div>
+    <div class="err-box" id="err-box"></div>
+    <div class="preview-wrap" id="preview-wrap" style="display:none">
+      <div class="preview-label">Live Preview — Page 1</div>
+      <canvas id="wm-preview-canvas"></canvas>
+    </div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -223,7 +268,7 @@
   <div class="card result-card" id="result-card">
     <div class="result-ok">✅ Successfully Processed!</div>
     <div class="stat-row" id="stat-row"></div>
-    <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+    <button class="btn-dl" id="dl-btn" style="margin-top:14px">⬇️ Download File</button>
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Watermark</h4><p>Text ya image set karein</p></div><div class="step"><div class="step-n">3</div><h4>Position</h4><p>Placement choose karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Watermarked PDF milegi</p></div></div></div>
@@ -239,44 +284,266 @@
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const $=id=>document.getElementById(id);
+
   document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
+
   function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
+    const inp=$(inputId),prev=$(previewId);
     if(!inp)return;
     function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
-    inp.addEventListener('change',()=>hf(inp.files[0]));
+    inp.addEventListener('change',()=>{hf(inp.files[0]); onMainFileChange();});
     const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
+    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);onMainFileChange();}});}
+    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');$('preview-wrap').style.display='none';});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
+
+  function parseRange(str,totalPages){
+    const set=new Set();
+    (str||'').split(',').forEach(part=>{
+      part=part.trim(); if(!part) return;
+      const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+      if(m){ let a=+m[1], b=+m[2]; if(a>b){const t=a;a=b;b=t;} for(let i=a;i<=b;i++){ if(i>=1&&i<=totalPages) set.add(i-1);} }
+      else { const n=parseInt(part,10); if(!isNaN(n)&&n>=1&&n<=totalPages) set.add(n-1); }
+    });
+    return Array.from(set).sort((a,b)=>a-b);
+  }
+  function pageIndexList(mode,total,rangeStr){
+    if(mode==='all') return Array.from({length:total},(_,i)=>i);
+    if(mode==='odd') return Array.from({length:total},(_,i)=>i).filter(i=>(i+1)%2===1);
+    if(mode==='even') return Array.from({length:total},(_,i)=>i).filter(i=>(i+1)%2===0);
+    return parseRange(rangeStr,total);
+  }
+  function hexToRgb01(hex){
+    const h=hex.replace('#','');
+    return { r:parseInt(h.substr(0,2),16)/255, g:parseInt(h.substr(2,2),16)/255, b:parseInt(h.substr(4,2),16)/255 };
+  }
+  function showErr(msg){ const eb=$('err-box'); eb.textContent=msg; eb.classList.add('show'); }
+  function hideErr(){ const eb=$('err-box'); eb.classList.remove('show'); eb.textContent=''; }
+
+  // Compute the list of {x,y} anchor points (in page px, origin top-left, for preview / pdf-lib bottom-left convention handled by caller)
+  function computeAnchors(pos, pageW, pageH, boxW, boxH, marginRatio){
+    const mx = pageW*marginRatio, my = pageH*marginRatio;
+    switch(pos){
+      case 'top':    return [{x:(pageW-boxW)/2, y:my}];
+      case 'bottom': return [{x:(pageW-boxW)/2, y:pageH-boxH-my}];
+      case 'tl':     return [{x:mx, y:my}];
+      case 'tr':     return [{x:pageW-boxW-mx, y:my}];
+      case 'bl':     return [{x:mx, y:pageH-boxH-my}];
+      case 'br':     return [{x:pageW-boxW-mx, y:pageH-boxH-my}];
+      case 'tile': {
+        const pts=[]; const stepX=boxW*1.8, stepY=boxH*2.4;
+        for(let y=boxH*0.3;y<pageH;y+=stepY){ for(let x=boxW*0.1;x<pageW;x+=stepX){ pts.push({x,y}); } }
+        return pts;
+      }
+      case 'diagonal':
+      default: return [{x:(pageW-boxW)/2, y:(pageH-boxH)/2}];
+    }
+  }
+
+  let mainPdfDoc=null, wmImageFile=null, previewTimer=null;
+
+  async function onMainFileChange(){
+    const inp=$('main-file'); if(!inp.files[0]){ $('preview-wrap').style.display='none'; mainPdfDoc=null; return; }
+    hideErr();
+    try{
+      const bytes = new Uint8Array(await inp.files[0].arrayBuffer());
+      mainPdfDoc = await pdfjsLib.getDocument({data:bytes}).promise;
+      $('preview-wrap').style.display='block';
+      schedulePreview();
+    }catch(e){ mainPdfDoc=null; $('preview-wrap').style.display='none'; showErr('❌ Yeh file valid PDF nahi lag rahi.'); }
+  }
+
+  function schedulePreview(){ clearTimeout(previewTimer); previewTimer=setTimeout(renderPreview, 180); }
+
+  async function renderPreview(){
+    if(!mainPdfDoc) return;
+    try{
+      const page = await mainPdfDoc.getPage(1);
+      const vp = page.getViewport({scale:1.1});
+      const canvas=$('wm-preview-canvas'); canvas.width=vp.width; canvas.height=vp.height;
+      const ctx=canvas.getContext('2d');
+      await page.render({canvasContext:ctx, viewport:vp}).promise;
+
+      const type = $('wm-type').value;
+      const opacity = (+$('wop').value)/100;
+      const pos = $('wm-pos').value;
+      ctx.save();
+      ctx.globalAlpha = opacity;
+
+      if(type==='text'){
+        const text = $('wm-text').value || 'CONFIDENTIAL';
+        const size = Math.max(8,+$('wm-fontsize').value||42) * (vp.width/ (page.getViewport({scale:1}).width) );
+        const rot = +$('wm-rot').value || 0;
+        const font = $('wm-font').value;
+        let cssFont = 'Helvetica, Arial, sans-serif';
+        let weight='normal';
+        if(font==='HelveticaBold'){weight='bold';}
+        if(font==='TimesRoman') cssFont='"Times New Roman", Times, serif';
+        if(font==='Courier') cssFont='"Courier New", monospace';
+        ctx.fillStyle = $('wm-color').value;
+        ctx.font = `${weight} ${size}px ${cssFont}`;
+        ctx.textBaseline='middle'; ctx.textAlign='center';
+        const metrics=ctx.measureText(text);
+        const boxW=metrics.width, boxH=size;
+        const anchors = computeAnchors(pos, canvas.width, canvas.height, boxW, boxH, 0.06);
+        anchors.forEach(a=>{
+          ctx.save();
+          ctx.translate(a.x+boxW/2, a.y+boxH/2);
+          const rotUse = pos==='tile' ? rot*0.4 : rot;
+          ctx.rotate(-rotUse*Math.PI/180);
+          ctx.fillText(text,0,0);
+          ctx.restore();
+        });
+      } else if(wmImageFile){
+        const img = await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=wmImageFile.dataUrl; });
+        const scaleW = canvas.width*0.28;
+        const boxW = scaleW, boxH = scaleW*(img.height/img.width);
+        const anchors = computeAnchors(pos, canvas.width, canvas.height, boxW, boxH, 0.06);
+        anchors.forEach(a=>{ ctx.drawImage(img, a.x, a.y, boxW, boxH); });
+      }
+      ctx.restore();
+    }catch(e){ /* preview best-effort */ }
+  }
+
+  function toggleTypeUI(){
+    const isText = $('wm-type').value==='text';
+    $('wm-text-wrap').style.display = isText? 'block':'none';
+    $('wm-image-wrap').style.display = isText? 'none':'block';
+    $('wm-fontsize-wrap').style.display = isText? 'block':'none';
+    $('wm-font-wrap').style.display = isText? 'block':'none';
+    $('wm-color-wrap').style.display = isText? 'block':'none';
+    $('wm-rotation-wrap').style.display = isText? 'block':'none';
+  }
+
+  async function runProcess(){
+    hideErr();
+    const inp=$('main-file');
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
+    if($('wm-type').value==='image' && !wmImageFile){ showErr('❌ Pehle watermark image select karein.'); return; }
     const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+    const rc=$('result-card'); rc.classList.remove('show');
+    const pw=$('progress-wrap'); pw.style.display='block';
+    $('pbar').style.width='4%'; $('pmsg').textContent='File load ho rahi hai...';
+    $('process-btn').disabled=true;
+
+    try{
+      const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      const doc = await PDFDocument.load(bytes);
+      const pageCount = doc.getPageCount();
+      const pagesToStamp = pageIndexList($('wm-pages').value, pageCount, $('wm-range').value);
+      if(!pagesToStamp.length) throw new Error('EMPTY_RANGE');
+
+      const opacity = (+$('wop').value)/100;
+      const pos = $('wm-pos').value;
+      const type = $('wm-type').value;
+
+      let font=null, image=null;
+      if(type==='text'){
+        const fontMap = { Helvetica:StandardFonts.Helvetica, HelveticaBold:StandardFonts.HelveticaBold, TimesRoman:StandardFonts.TimesRoman, Courier:StandardFonts.Courier };
+        font = await doc.embedFont(fontMap[$('wm-font').value] || StandardFonts.Helvetica);
+      } else {
+        const isPng = /png/i.test(wmImageFile.file.type) || /\.png$/i.test(wmImageFile.file.name);
+        const imgBytes = new Uint8Array(await wmImageFile.file.arrayBuffer());
+        image = isPng ? await doc.embedPng(imgBytes) : await doc.embedJpg(imgBytes);
+      }
+
+      const color = hexToRgb01($('wm-color').value);
+      const text = $('wm-text').value || 'CONFIDENTIAL';
+      const rot = +$('wm-rot').value || 0;
+      const fontSize = Math.max(8,+$('wm-fontsize').value||42);
+
+      for(let i=0;i<pagesToStamp.length;i++){
+        const idx = pagesToStamp[i];
+        const page = doc.getPage(idx);
+        const { width, height } = page.getSize();
+
+        if(type==='text'){
+          const textW = font.widthOfTextAtSize(text, fontSize);
+          const textH = fontSize;
+          const anchors = computeAnchors(pos, width, height, textW, textH, 0.06);
+          anchors.forEach(a=>{
+            const rotUse = pos==='tile' ? rot*0.4 : rot;
+            page.drawText(text, {
+              x: a.x, y: height - a.y - textH,
+              size: fontSize, font,
+              color: rgb(color.r,color.g,color.b),
+              opacity, rotate: degrees(rotUse)
+            });
+          });
+        } else {
+          const scaleW = width*0.28;
+          const boxW = scaleW, boxH = scaleW*(image.height/image.width);
+          const anchors = computeAnchors(pos, width, height, boxW, boxH, 0.06);
+          anchors.forEach(a=>{
+            page.drawImage(image, { x:a.x, y: height - a.y - boxH, width:boxW, height:boxH, opacity });
+          });
+        }
+        $('pbar').style.width = Math.round((i+1)/pagesToStamp.length*90)+'%';
+        $('pmsg').textContent = `Page ${i+1}/${pagesToStamp.length} par watermark lag raha hai...`;
+      }
+
+      const outBytes = await doc.save();
+      $('pbar').style.width='100%'; $('pmsg').textContent='Done!';
+      const blob = new Blob([outBytes], {type:'application/pdf'});
+
+      $('result-card').classList.add('show');
+      $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${pagesToStamp.length}/${pageCount}</div><div class="stat-lbl">Pages Watermarked</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>`;
+      $('dl-btn').onclick=()=>{ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download='watermarked_'+f.name; a.click(); URL.revokeObjectURL(u); };
+    }catch(err){
+      const msg = String(err && err.message || err);
+      if(msg==='EMPTY_RANGE') showErr('❌ Page range invalid hai — sahi format mein likhein, jaise 1-5,8');
+      else showErr('❌ File process nahi ho payi. Ho sakta hai file corrupt ho ya password-protected ho (pehle Unlock PDF tool use karein).');
+    }finally{
+      $('process-btn').disabled=false;
+      setTimeout(()=>{ pw.style.display='none'; $('pbar').style.width='0%'; },600);
+    }
   }
+
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+    toggleTypeUI();
+
+    $('wm-type').addEventListener('change',()=>{ toggleTypeUI(); schedulePreview(); });
+    $('wm-text').addEventListener('input', schedulePreview);
+    $('wm-pos').addEventListener('change', schedulePreview);
+    $('wm-fontsize').addEventListener('input', schedulePreview);
+    $('wm-font').addEventListener('change', schedulePreview);
+    $('wm-color').addEventListener('input', schedulePreview);
+    $('wop').addEventListener('input', function(){ $('wop-val').textContent=this.value+'%'; schedulePreview(); });
+    $('wm-rot').addEventListener('input', function(){ $('wm-rot-val').textContent=this.value+'°'; schedulePreview(); });
+    $('wm-pages').addEventListener('change', function(){ $('wm-range-wrap').style.display = this.value==='custom' ? 'block':'none'; });
+    $('wm-image-file').addEventListener('change', function(){
+      const f=this.files[0]; if(!f) return;
+      const reader=new FileReader();
+      reader.onload=()=>{ wmImageFile={file:f, dataUrl:reader.result}; schedulePreview(); };
+      reader.readAsDataURL(f);
+    });
+
+    const pb=$('process-btn'); if(pb) pb.addEventListener('click', runProcess);
+    const rb=$('reset-btn'); if(rb) rb.addEventListener('click', ()=>{
+      $('main-file').value='';
+      const fp=$('file-preview'); if(fp) fp.classList.remove('show');
+      $('preview-wrap').style.display='none';
+      $('progress-wrap').style.display='none';
+      $('pbar').style.width='0%';
+      hideErr();
+      const rc=$('result-card'); if(rc) rc.classList.remove('show');
+      mainPdfDoc=null; wmImageFile=null;
     });
   });
+})();
 </script>
 
 </body></html>
