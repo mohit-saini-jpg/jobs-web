@@ -104,7 +104,26 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    /* live preview page grid (jpg-to-pdf.html style, reused) */
+    .pages-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    .pages-head .cnt { font-size:.82rem; color:var(--muted); font-weight:600; }
+    .pg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px; }
+    .pg { border:1.5px solid var(--line); border-radius:10px; overflow:hidden; background:var(--mist); position:relative; transition:all .15s; }
+    .pg.del { opacity:.35; filter:grayscale(1); }
+    .pg.sel { border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-light); }
+    .pg canvas { width:100%; height:auto; display:block; background:#fff; }
+    .pg-bar { display:flex; align-items:center; justify-content:space-between; padding:4px 6px; background:#fff; border-top:1px solid var(--line); gap:4px; }
+    .pg-num { font-size:.7rem; font-weight:700; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:4px; }
+    .pg-btns { display:flex; gap:2px; flex-shrink:0; }
+    .pg-btn { border:none; background:var(--mist); border-radius:6px; width:22px; height:22px; cursor:pointer; font-size:.72rem; line-height:1; color:var(--ink); }
+    .pg-btn:hover { background:var(--brand-light); color:var(--brand); }
+    .pg-btn.rm:hover { background:#fee2e2; color:#ef4444; }
+    .pg-btn:disabled { opacity:.3; cursor:not-allowed; }
+    .hidden { display:none !important; }
+    .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#111827; color:#fff; padding:11px 18px; border-radius:10px; font-size:.85rem; z-index:9999; opacity:0; transition:opacity .25s; max-width:90%; text-align:center; }
+    .toast.show { opacity:1; }
     @media(max-width:640px){
+      .pg-grid { grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); }
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
@@ -192,24 +211,40 @@
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">📋</div>
   <h1>Reorder PDF Pages</h1><p>PDF ke pages ko apni marzi ke order mein arrange karein. Wrong order fix karein, unwanted pages hatayein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">Drag & Drop</span> <span class="badge">Delete Pages</span> <span class="badge">Preview</span></div>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Live Preview</span> <span class="badge">Delete Pages</span> <span class="badge">Rotate</span></div>
 </section>
 
 <div class="main-container">
   <div class="card">
     <h3>📂 File Upload Karein</h3>
-    <div class="upload-zone">
+    <div class="upload-zone" id="zone-pdf">
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
       <div class="upload-sub">Ya <b>Browse</b> karke select karein · .pdf</div>
     </div>
-    <div class="file-preview" id="file-preview"><span>📄</span><span class="file-name">—</span><span class="file-size">—</span><button class="file-remove">✕</button></div>
-    <input type="file" id="main-file" style="display:none" accept=".pdf">
+    <input type="file" id="file-pdf" style="display:none" accept="application/pdf,.pdf">
   </div>
 
-  <div class="card">
-    <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Action</label><select><option>Reorder Pages</option><option>Delete Specific Pages</option><option>Reverse All Pages</option></select></div><div class="form-group"><label>Pages to Delete</label><input type="text" placeholder="e.g. 2,5,8-10"></div></div><div class="info-box">💡 Upload ke baad pages thumbnail view mein dikhenge jinhein drag-drop se reorder kar sakte hain.</div>
+  <div class="card hidden" id="pdf-editor">
+    <div class="pages-head">
+      <h3 style="margin:0">🖼️ Live Preview — Pages</h3>
+      <span class="cnt" id="pg-count">0 pages</span>
+    </div>
+    <div class="pg-grid" id="pg-grid"></div>
+    <div class="info-box">Har page pe <b>← →</b> se order badlein, <b>↻ rotate</b> aur <b>✕ delete</b> kar sakte hain.</div>
+  </div>
+
+  <div class="card hidden" id="pdf-settings">
+    <h3>⚙️ Convert Settings</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Pages to Delete</label><input type="text" id="delpages" placeholder="e.g. 2,5,8-10"></div>
+      <div class="form-group"><label>Output Name</label><input type="text" id="outname" placeholder="reordered-document" value="reordered-document"></div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" id="reverse-btn">🔄 Reverse All Pages</button>
+      <button class="btn-secondary" id="delapply-btn">🗑️ Apply "Pages to Delete"</button>
+    </div>
+    <div class="info-box">💡 Upload ke baad pages thumbnail me dikhte hain — har page ke <b>←</b> / <b>→</b> buttons se drag-drop jaisa reorder kar sakte hain, koi bhi page delete/rotate kar sakte hain.</div>
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -238,45 +273,145 @@
   <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free</div>
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
+<div class="toast" id="toast"></div>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
-  document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
-  function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
-  function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
-    if(!inp)return;
-    function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
-    inp.addEventListener('change',()=>hf(inp.files[0]));
-    const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
-  }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
-  }
-  document.addEventListener('DOMContentLoaded',()=>{
-    bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var $ = function(id){ return document.getElementById(id); };
+  document.querySelectorAll('.faq-q').forEach(function(b){ b.addEventListener('click',function(){ b.classList.toggle('open'); b.nextElementSibling.classList.toggle('open'); }); });
+
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2600); }
+  function fmtBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(2)+' MB'; }
+  function download(blob,name){ var u=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(u);},4000); }
+  function esc(s){ return String(s==null?'':s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}); }
+  function baseName(){ var v=($('outname').value||'').trim().replace(/\.pdf$/i,'').replace(/[^\w\-]+/g,'_').slice(0,60); return v||'reordered-document'; }
+
+  var STATE = { name:'', bytes:null, doc:null, order:[] }; // order: array of {origNum,pageIndex,rotation,deleted}, in current display order
+
+  function parseSpecific(str, max){
+    var out={}; (str||'').split(',').forEach(function(part){
+      part=part.trim(); if(!part) return;
+      var m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+      if(m){ var a=+m[1], b=+m[2]; for(var i=Math.min(a,b); i<=Math.max(a,b); i++) if(i>=1&&i<=max) out[i]=true; }
+      else { var n=+part; if(n>=1 && n<=max) out[n]=true; }
     });
+    return out;
+  }
+
+  var zone=$('zone-pdf'), inp=$('file-pdf');
+  zone.addEventListener('click',function(){ inp.click(); });
+  zone.addEventListener('dragover',function(e){ e.preventDefault(); zone.style.borderColor='var(--brand)'; zone.style.background='var(--brand-light)'; });
+  zone.addEventListener('dragleave',function(){ zone.style.borderColor=''; zone.style.background=''; });
+  zone.addEventListener('drop',function(e){ e.preventDefault(); zone.style.borderColor=''; zone.style.background=''; if(e.dataTransfer.files[0]) loadPDF(e.dataTransfer.files[0]); });
+  inp.addEventListener('change',function(){ if(inp.files[0]) loadPDF(inp.files[0]); });
+
+  async function loadPDF(file){
+    if(!file || !(/pdf$/i.test(file.name) || file.type==='application/pdf')){ toast('PDF file select karein'); return; }
+    if(!window.pdfjsLib){ toast('Library load ho rahi hai, dobara try karein'); return; }
+    STATE.name=file.name;
+    $('pdf-editor').classList.remove('hidden'); $('pdf-settings').classList.remove('hidden');
+    $('pg-grid').innerHTML='<div style="padding:20px;color:var(--muted)">Loading pages…</div>';
+    try{
+      var buf=await file.arrayBuffer();
+      STATE.bytes=new Uint8Array(buf);
+      STATE.doc=await pdfjsLib.getDocument({data: STATE.bytes.slice(0)}).promise;
+      STATE.order=[];
+      var n=STATE.doc.numPages;
+      for(var i=1;i<=n;i++){ STATE.order.push({origNum:i, pageIndex:i-1, rotation:0, deleted:false}); }
+      await renderGrid();
+    }catch(e){ $('pg-grid').innerHTML='<div style="padding:20px;color:#ef4444">PDF load nahi hua: '+esc(e.message||e)+'</div>'; }
+  }
+
+  async function renderGrid(){
+    var g=$('pg-grid'); g.innerHTML='';
+    for(var i=0;i<STATE.order.length;i++){
+      (function(i){
+        var rec=STATE.order[i];
+        var wrap=document.createElement('div'); wrap.className='pg'+(rec.deleted?' del':'');
+        var cv=document.createElement('canvas'); wrap.appendChild(cv);
+        var bar=document.createElement('div'); bar.className='pg-bar';
+        bar.innerHTML='<span class="pg-num">#'+(i+1)+' (orig P'+rec.origNum+')</span>';
+        var btns=document.createElement('div'); btns.className='pg-btns';
+        var lft=document.createElement('button'); lft.className='pg-btn'; lft.title='Move Left'; lft.textContent='←'; lft.disabled=(i===0);
+        lft.onclick=function(){ if(i>0){ var t=STATE.order[i-1]; STATE.order[i-1]=STATE.order[i]; STATE.order[i]=t; renderGrid(); } };
+        var rgt=document.createElement('button'); rgt.className='pg-btn'; rgt.title='Move Right'; rgt.textContent='→'; rgt.disabled=(i===STATE.order.length-1);
+        rgt.onclick=function(){ if(i<STATE.order.length-1){ var t=STATE.order[i+1]; STATE.order[i+1]=STATE.order[i]; STATE.order[i]=t; renderGrid(); } };
+        var rot=document.createElement('button'); rot.className='pg-btn'; rot.title='Rotate'; rot.textContent='↻';
+        rot.onclick=function(){ rec.rotation=(rec.rotation+90)%360; cv.style.transform='rotate('+rec.rotation+'deg)'; };
+        var rm=document.createElement('button'); rm.className='pg-btn rm'; rm.title='Delete'; rm.textContent='✕';
+        rm.onclick=function(){ rec.deleted=!rec.deleted; wrap.classList.toggle('del',rec.deleted); };
+        btns.appendChild(lft); btns.appendChild(rot); btns.appendChild(rm); btns.appendChild(rgt);
+        bar.appendChild(btns); wrap.appendChild(bar); g.appendChild(wrap);
+        if(rec.rotation) cv.style.transform='rotate('+rec.rotation+'deg)';
+        (async function(){
+          try{ var page=await STATE.doc.getPage(rec.origNum); var vp=page.getViewport({scale:0.4}); cv.width=vp.width; cv.height=vp.height; await page.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise; }catch(e){}
+        })();
+      })(i);
+    }
+    $('pg-count').textContent = STATE.order.length+' pages';
+  }
+
+  $('reverse-btn').addEventListener('click',function(){
+    if(!STATE.order.length){ toast('Pehle PDF upload karein'); return; }
+    STATE.order.reverse(); renderGrid(); toast('Sab pages reverse ho gaye');
   });
+  $('delapply-btn').addEventListener('click',function(){
+    if(!STATE.order.length){ toast('Pehle PDF upload karein'); return; }
+    var specific=parseSpecific($('delpages').value, STATE.doc.numPages);
+    STATE.order.forEach(function(rec){ if(specific[rec.origNum]) rec.deleted=true; });
+    renderGrid(); toast('Selected pages delete ke liye mark ho gaye');
+  });
+
+  function setP(pct,text){ $('pbar').style.width=pct+'%'; if(text!=null)$('pmsg').textContent=text; }
+
+  async function processReorder(){
+    if(!STATE.order.length){ toast('Pehle PDF upload karein'); return; }
+    var keep = STATE.order.filter(function(p){return !p.deleted;});
+    if(!keep.length){ toast('Kam se kam 1 page rakhna zaroori hai'); return; }
+    $('progress-wrap').style.display='block'; $('process-btn').disabled=true; setP(10,'Loading…');
+    try{
+      var src=await PDFLib.PDFDocument.load(STATE.bytes);
+      var out=await PDFLib.PDFDocument.create();
+      setP(35,'Reordering pages…');
+      var indices=keep.map(function(p){return p.pageIndex;});
+      var copied=await out.copyPages(src, indices);
+      copied.forEach(function(pg, idx){
+        var rot=keep[idx].rotation;
+        if(rot) pg.setRotation(PDFLib.degrees(((pg.getRotation().angle||0)+rot)%360));
+        out.addPage(pg);
+      });
+      setP(80,'Saving…');
+      var bytes=await out.save();
+      var blob=new Blob([bytes],{type:'application/pdf'});
+      var name=baseName()+'.pdf';
+      setP(100,'Done!');
+      lastBlob=blob; lastName=name; download(blob,name); showResult(blob,keep.length);
+    }catch(e){ toast('Error: '+(e.message||e)); }
+    finally{ $('process-btn').disabled=false; setTimeout(function(){$('progress-wrap').style.display='none'; $('pbar').style.width='0%';},1000); }
+  }
+  var lastBlob=null, lastName='';
+
+  function showResult(blob,count){
+    $('result-card').classList.add('show');
+    $('stat-row').innerHTML =
+      '<div class="stat-box"><div class="stat-val">'+count+'</div><div class="stat-lbl">Pages</div></div>'+
+      '<div class="stat-box"><div class="stat-val">'+fmtBytes(blob.size)+'</div><div class="stat-lbl">Output Size</div></div>';
+    $('dl-btn').onclick=function(){ if(lastBlob) download(lastBlob,lastName); };
+    $('result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  $('process-btn').addEventListener('click', processReorder);
+  $('reset-btn').addEventListener('click',function(){
+    STATE={name:'',bytes:null,doc:null,order:[]}; $('file-pdf').value='';
+    $('pg-grid').innerHTML=''; $('pdf-editor').classList.add('hidden'); $('pdf-settings').classList.add('hidden');
+    $('result-card').classList.remove('show'); $('progress-wrap').style.display='none'; $('pbar').style.width='0%';
+  });
+})();
 </script>
 
 </body></html>

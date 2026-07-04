@@ -104,6 +104,33 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    /* file list (uploaded PDFs, reorderable) */
+    .file-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .file-chip { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--mist); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.85rem; }
+    .file-chip .fc-num { width: 24px; height: 24px; border-radius: 50%; background: var(--brand-light); color: var(--brand); font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .file-chip .fc-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-chip .fc-meta { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
+    .file-chip .fc-btns { display: flex; gap: 4px; flex-shrink: 0; }
+    .fc-btn { background: white; border: 1px solid var(--line); border-radius: 6px; width: 26px; height: 26px; cursor: pointer; font-size: 0.8rem; color: var(--ink); }
+    .fc-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .fc-btn.rm:hover { border-color: #ef4444; color: #ef4444; }
+    .fc-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    /* live preview page grid (jpg-to-pdf.html style, reused) */
+    .pages-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    .pages-head .cnt { font-size:.82rem; color:var(--muted); font-weight:600; }
+    .pg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px; }
+    .pg { border:1.5px solid var(--line); border-radius:10px; overflow:hidden; background:var(--mist); position:relative; transition:all .15s; }
+    .pg.del { opacity:.35; filter:grayscale(1); }
+    .pg canvas { width:100%; height:auto; display:block; background:#fff; }
+    .pg-bar { display:flex; align-items:center; justify-content:space-between; padding:4px 6px; background:#fff; border-top:1px solid var(--line); gap:4px; }
+    .pg-num { font-size:.66rem; font-weight:700; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pg-btns { display:flex; gap:2px; flex-shrink:0; }
+    .pg-btn { border:none; background:var(--mist); border-radius:6px; width:24px; height:22px; cursor:pointer; font-size:.75rem; line-height:1; color:var(--ink); }
+    .pg-btn:hover { background:var(--brand-light); color:var(--brand); }
+    .pg-btn.rm:hover { background:#fee2e2; color:#ef4444; }
+    .hidden { display:none !important; }
+    .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#111827; color:#fff; padding:11px 18px; border-radius:10px; font-size:.85rem; z-index:9999; opacity:0; transition:opacity .25s; max-width:90%; text-align:center; }
+    .toast.show { opacity:1; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -111,6 +138,7 @@
       .card { padding: 18px 14px; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
+      .pg-grid { grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); }
     }
 </style>
 
@@ -191,27 +219,47 @@
 
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">🔀</div>
-  <h1>Merge PDF</h1><p>Alag-alag PDF files ko ek document mein combine karein. Page order apni marzi se set karein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">Up to 20 Files</span> <span class="badge">Reorder</span> <span class="badge">No Signup</span></div>
+  <h1>Merge PDF</h1><p>Alag-alag PDF files ko ek document mein combine karein. Live preview me pages rotate/delete karein aur order apni marzi se set karein.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Up to 20 Files</span> <span class="badge">Live Preview</span> <span class="badge">Reorder</span> <span class="badge">No Signup</span></div>
 </section>
 
 <div class="main-container">
   <div class="card">
-    <h3>📂 File Upload Karein</h3>
-    <div class="upload-zone">
+    <h3>📂 Files Upload Karein</h3>
+    <div class="upload-zone" id="zone-pdf">
       <span class="upload-icon">⬆️</span>
-      <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein · .pdf</div>
+      <div class="upload-title">PDF Files Yahan Drop Karein (multiple)</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein · .pdf · up to 20 files</div>
     </div>
-    <div class="file-preview" id="file-preview"><span>📄</span><span class="file-name">—</span><span class="file-size">—</span><button class="file-remove">✕</button></div>
-    <input type="file" id="main-file" style="display:none" accept=".pdf">
+    <input type="file" id="file-pdf" style="display:none" accept="application/pdf,.pdf" multiple>
+    <div class="file-list" id="file-list"></div>
+    <div class="info-box">💡 Files ka order hi merge ka order hoga. Arrows se upar-neeche karein ya neeche "Page Order" se auto-sort karein.</div>
   </div>
 
-  <div class="card">
-    <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Page Order</label><select><option>As Uploaded</option><option>Alphabetical</option><option>Reverse</option></select></div><div class="form-group"><label>Output Name</label><input type="text" placeholder="merged-document" value="merged-document"></div></div><div class="info-box">💡 Multiple PDF ke liye Ctrl+Click (Windows) ya Cmd+Click (Mac) use karein.</div>
+  <div class="card hidden" id="pdf-editor">
+    <div class="pages-head">
+      <h3 style="margin:0">🖼️ Live Preview — Pages</h3>
+      <span class="cnt" id="pg-count">0 pages</span>
+    </div>
+    <div class="pg-grid" id="pg-grid"></div>
+    <div class="info-box">Har page pe <b>↻ rotate</b> aur <b>✕ delete</b> kar sakte hain (agar koi page merge me nahi chahiye). Neeche settings set karke Merge dabayein.</div>
+  </div>
+
+  <div class="card hidden" id="pdf-settings">
+    <h3>⚙️ Convert Settings</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Page Order (Files)</label>
+        <select id="fileorder"><option value="uploaded">As Uploaded</option><option value="az">Alphabetical (A-Z)</option><option value="reverse">Reverse</option></select>
+      </div>
+      <div class="form-group">
+        <label>Output Name</label>
+        <input type="text" id="outname" placeholder="merged-document" value="merged-document">
+      </div>
+    </div>
+    <div class="info-box">💡 Multiple PDF select karne ke liye Ctrl+Click (Windows) ya Cmd+Click (Mac) use karein, ya ek-ek karke add karein.</div>
     <div class="action-row">
-      <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
+      <button class="btn-primary" id="process-btn"><span>🚀</span> Merge Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
     </div>
     <div class="progress-wrap" id="progress-wrap">
@@ -221,14 +269,14 @@
   </div>
 
   <div class="card result-card" id="result-card">
-    <div class="result-ok">✅ Successfully Processed!</div>
+    <div class="result-ok">✅ Successfully Merged!</div>
     <div class="stat-row" id="stat-row"></div>
     <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
   </div>
 
-  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDFs Upload</h4><p>Multiple PDFs choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Order Set</h4><p>Drag-drop se arrange karein</p></div><div class="step"><div class="step-n">3</div><h4>Merge</h4><p>Process karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Merged PDF milegi</p></div></div></div>
-  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">📑</span><div><h4>20 Files</h4><p>Up to 20 PDFs</p></div></div><div class="feat"><span class="feat-icon">🔄</span><div><h4>Reorder</h4><p>Drag-drop</p></div></div><div class="feat"><span class="feat-icon">🏷️</span><div><h4>Rename</h4><p>Custom output name</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Local</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Quick merge</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Kitni files?<span class="fa">+</span></button><div class="faq-a">20 PDFs, total 100MB.</div></div><div class="faq-item"><button class="faq-q">Order change?<span class="fa">+</span></button><div class="faq-a">Drag-drop se.</div></div><div class="faq-item"><button class="faq-q">Bookmarks?<span class="fa">+</span></button><div class="faq-a">Preserve hote hain.</div></div><div class="faq-item"><button class="faq-q">Password PDF?<span class="fa">+</span></button><div class="faq-a">Pehle unlock karein.</div></div></div>
+  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDFs Upload</h4><p>Multiple PDFs choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Preview &amp; Edit</h4><p>Live preview me page rotate/delete karein</p></div><div class="step"><div class="step-n">3</div><h4>Order Set</h4><p>Arrows se files arrange karein</p></div><div class="step"><div class="step-n">4</div><h4>Merge &amp; Download</h4><p>Ek click me merged PDF milegi</p></div></div></div>
+  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">📑</span><div><h4>20 Files</h4><p>Up to 20 PDFs, 100MB total</p></div></div><div class="feat"><span class="feat-icon">🖼️</span><div><h4>Live Preview</h4><p>Har page ka thumbnail</p></div></div><div class="feat"><span class="feat-icon">↻</span><div><h4>Rotate/Delete</h4><p>Per-page edit before merge</p></div></div><div class="feat"><span class="feat-icon">🔄</span><div><h4>Reorder</h4><p>Files arrange karein</p></div></div><div class="feat"><span class="feat-icon">🏷️</span><div><h4>Rename</h4><p>Custom output name</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser me, no upload</p></div></div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Kitni files?<span class="fa">+</span></button><div class="faq-a">20 PDFs, total 100MB.</div></div><div class="faq-item"><button class="faq-q">Order change kaise karein?<span class="fa">+</span></button><div class="faq-a">Har file ke saamne ↑ / ↓ arrows se, ya "Page Order" dropdown se auto-sort (A-Z / Reverse) karein.</div></div><div class="faq-item"><button class="faq-q">Kisi PDF ka ek page skip kar sakte hain?<span class="fa">+</span></button><div class="faq-a">Haan — Live Preview me us page pe ✕ dabayein, wo merge me include nahi hoga. ↻ se rotate bhi kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Bookmarks?<span class="fa">+</span></button><div class="faq-a">Page content aur rotation preserve hota hai.</div></div><div class="faq-item"><button class="faq-q">Password PDF?<span class="fa">+</span></button><div class="faq-a">Pehle Unlock tool se unlock karein, phir merge karein.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split PDF</span></a><a href="/tools/pdf/compress-pdf.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/word-to-pdf.html" class="rel-item"><span class="ri">📄</span><span>Word to PDF</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>to JPG</span></a><a href="/tools/pdf/jpg-to-pdf.html" class="rel-item"><span class="ri">📸</span><span>JPG to PDF</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>Lock</span></a><a href="/tools/pdf/reorder-pdf.html" class="rel-item"><span class="ri">📋</span><span>Reorder</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
@@ -238,45 +286,181 @@
   <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free</div>
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
+<div class="toast" id="toast"></div>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
-  document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
-  function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
-  function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
-    if(!inp)return;
-    function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
-    inp.addEventListener('change',()=>hf(inp.files[0]));
-    const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var $ = function(id){ return document.getElementById(id); };
+  var MAX_FILES = 20, MAX_TOTAL_MB = 100;
+
+  document.querySelectorAll('.faq-q').forEach(function(b){ b.addEventListener('click',function(){ b.classList.toggle('open'); b.nextElementSibling.classList.toggle('open'); }); });
+
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2600); }
+  function fmtBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(2)+' MB'; }
+  function download(blob,name){ var u=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(u);},4000); }
+  function esc(s){ return String(s==null?'':s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}); }
+  function baseName(){ var v=($('outname').value||'').trim().replace(/\.pdf$/i,'').replace(/[^\w\-]+/g,'_').slice(0,60); return v||'merged-document'; }
+
+  var STATE = { files: [] }; // {file, name, size, bytes, doc(pdfjs), pages:[{pageIndex,rotation,deleted,thumb}]}
+  var lastBlob=null, lastName='';
+
+  function totalSizeMB(){ return STATE.files.reduce(function(s,f){return s+f.size;},0)/1048576; }
+
+  // ── upload zone wiring ──
+  var zone=$('zone-pdf'), inp=$('file-pdf');
+  zone.addEventListener('click',function(){ inp.click(); });
+  zone.addEventListener('dragover',function(e){ e.preventDefault(); zone.style.borderColor='var(--brand)'; zone.style.background='var(--brand-light)'; });
+  zone.addEventListener('dragleave',function(){ zone.style.borderColor=''; zone.style.background=''; });
+  zone.addEventListener('drop',function(e){ e.preventDefault(); zone.style.borderColor=''; zone.style.background=''; if(e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+  inp.addEventListener('change',function(){ if(inp.files.length) addFiles(inp.files); inp.value=''; });
+
+  async function addFiles(fileList){
+    var incoming = Array.prototype.filter.call(fileList, function(f){ return /pdf$/i.test(f.name) || f.type==='application/pdf'; });
+    if(!incoming.length){ toast('Sirf PDF files allowed hain'); return; }
+    if(STATE.files.length+incoming.length > MAX_FILES){ toast('Max '+MAX_FILES+' files allowed'); incoming = incoming.slice(0, MAX_FILES-STATE.files.length); }
+    if(!window.pdfjsLib){ toast('Library load ho rahi hai, dobara try karein'); return; }
+    for(var i=0;i<incoming.length;i++){
+      var f=incoming[i];
+      if((totalSizeMB()+f.size/1048576) > MAX_TOTAL_MB){ toast('Total size '+MAX_TOTAL_MB+'MB se zyada nahi ho sakta'); break; }
+      try{
+        var buf=await f.arrayBuffer();
+        var bytes=new Uint8Array(buf);
+        var doc=await pdfjsLib.getDocument({data: bytes.slice(0)}).promise;
+        var rec={ file:f, name:f.name, size:f.size, bytes:bytes, doc:doc, pages:[] };
+        for(var p=1;p<=doc.numPages;p++){ rec.pages.push({pageIndex:p-1, num:p, rotation:0, deleted:false, thumb:null}); }
+        STATE.files.push(rec);
+      }catch(e){ toast(f.name+' load nahi hui'); }
+    }
+    $('pdf-editor').classList.remove('hidden'); $('pdf-settings').classList.remove('hidden');
+    renderFileList(); await renderPageGrid();
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
-  }
-  document.addEventListener('DOMContentLoaded',()=>{
-    bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+
+  function renderFileList(){
+    var wrap=$('file-list'); wrap.innerHTML='';
+    STATE.files.forEach(function(rec,i){
+      var chip=document.createElement('div'); chip.className='file-chip';
+      chip.innerHTML =
+        '<span class="fc-num">'+(i+1)+'</span>'+
+        '<span class="fc-name">'+esc(rec.name)+'</span>'+
+        '<span class="fc-meta">'+rec.pages.length+' pg · '+fmtBytes(rec.size)+'</span>'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn up" title="Move Up">↑</button>'+
+          '<button class="fc-btn down" title="Move Down">↓</button>'+
+          '<button class="fc-btn rm" title="Remove">✕</button>'+
+        '</div>';
+      chip.querySelector('.up').disabled = (i===0);
+      chip.querySelector('.down').disabled = (i===STATE.files.length-1);
+      chip.querySelector('.up').onclick=function(){ if(i>0){ var t=STATE.files[i-1]; STATE.files[i-1]=STATE.files[i]; STATE.files[i]=t; renderFileList(); renderPageGrid(); } };
+      chip.querySelector('.down').onclick=function(){ if(i<STATE.files.length-1){ var t=STATE.files[i+1]; STATE.files[i+1]=STATE.files[i]; STATE.files[i]=t; renderFileList(); renderPageGrid(); } };
+      chip.querySelector('.rm').onclick=function(){ STATE.files.splice(i,1); renderFileList(); renderPageGrid(); if(!STATE.files.length){ $('pdf-editor').classList.add('hidden'); $('pdf-settings').classList.add('hidden'); $('result-card').classList.remove('show'); } };
+      wrap.appendChild(chip);
     });
+  }
+
+  async function renderPageGrid(){
+    var g=$('pg-grid'); g.innerHTML='';
+    var total=0;
+    for(var fi=0; fi<STATE.files.length; fi++){
+      var rec=STATE.files[fi];
+      for(var pi=0; pi<rec.pages.length; pi++){
+        var prec=rec.pages[pi]; total++;
+        var wrap=document.createElement('div'); wrap.className='pg'+(prec.deleted?' del':'');
+        var cv=document.createElement('canvas');
+        wrap.appendChild(cv);
+        var bar=document.createElement('div'); bar.className='pg-bar';
+        var shortName = rec.name.length>14 ? rec.name.slice(0,12)+'…' : rec.name;
+        bar.innerHTML='<span class="pg-num" title="'+esc(rec.name)+' — page '+prec.num+'">F'+(fi+1)+'·P'+prec.num+'</span>';
+        var btns=document.createElement('div'); btns.className='pg-btns';
+        var rot=document.createElement('button'); rot.className='pg-btn'; rot.title='Rotate'; rot.textContent='↻';
+        (function(prec,cv){ rot.onclick=function(){ prec.rotation=(prec.rotation+90)%360; cv.style.transform='rotate('+prec.rotation+'deg)'; }; })(prec,cv);
+        var rm=document.createElement('button'); rm.className='pg-btn rm'; rm.title='Delete'; rm.textContent='✕';
+        (function(prec,wrap){ rm.onclick=function(){ prec.deleted=!prec.deleted; wrap.classList.toggle('del',prec.deleted); }; })(prec,wrap);
+        btns.appendChild(rot); btns.appendChild(rm);
+        bar.appendChild(btns);
+        wrap.appendChild(bar);
+        g.appendChild(wrap);
+        if(prec.rotation) cv.style.transform='rotate('+prec.rotation+'deg)';
+        // render thumbnail
+        (async function(rec,prec,cv){
+          try{
+            var page=await rec.doc.getPage(prec.num);
+            var vp=page.getViewport({scale:0.4});
+            cv.width=vp.width; cv.height=vp.height;
+            await page.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+          }catch(e){}
+        })(rec,prec,cv);
+      }
+    }
+    $('pg-count').textContent = total+' pages · '+STATE.files.length+' files';
+  }
+
+  // ── file order select ──
+  $('fileorder').addEventListener('change',function(){
+    var v=this.value;
+    if(v==='az') STATE.files.sort(function(a,b){return a.name.localeCompare(b.name);});
+    else if(v==='reverse') STATE.files.reverse();
+    renderFileList(); renderPageGrid();
   });
+
+  function setP(pct,text){ $('pbar').style.width=pct+'%'; if(text!=null)$('pmsg').textContent=text; }
+
+  async function mergePDFs(){
+    if(!STATE.files.length){ toast('Kam se kam 1 PDF add karein'); return; }
+    var anyKept = STATE.files.some(function(rec){ return rec.pages.some(function(p){return !p.deleted;}); });
+    if(!anyKept){ toast('Kam se kam 1 page rakhna zaroori hai'); return; }
+    $('progress-wrap').style.display='block'; $('process-btn').disabled=true; setP(8,'Shuru ho raha hai…');
+    try{
+      var out = await PDFLib.PDFDocument.create();
+      for(var fi=0; fi<STATE.files.length; fi++){
+        var rec=STATE.files[fi];
+        setP(8+Math.round(fi/STATE.files.length*80),'Merging '+esc(rec.name)+'…');
+        var keepPages = rec.pages.filter(function(p){return !p.deleted;});
+        if(!keepPages.length) continue;
+        var srcDoc = await PDFLib.PDFDocument.load(rec.bytes);
+        var indices = keepPages.map(function(p){return p.pageIndex;});
+        var copied = await out.copyPages(srcDoc, indices);
+        copied.forEach(function(pg, idx){
+          var rot = keepPages[idx].rotation;
+          if(rot) pg.setRotation(PDFLib.degrees(((pg.getRotation().angle||0)+rot)%360));
+          out.addPage(pg);
+        });
+      }
+      setP(92,'Saving…');
+      var bytes = await out.save();
+      var blob = new Blob([bytes],{type:'application/pdf'});
+      var name = baseName()+'.pdf';
+      setP(100,'Done!');
+      lastBlob=blob; lastName=name;
+      download(blob,name);
+      showResult(blob,name);
+    }catch(e){ toast('Error: '+(e.message||e)); }
+    finally{ $('process-btn').disabled=false; setTimeout(function(){$('progress-wrap').style.display='none';$('pbar').style.width='0%';},1000); }
+  }
+
+  function showResult(blob,name){
+    $('result-card').classList.add('show');
+    var totalIn = STATE.files.reduce(function(s,f){return s+f.size;},0);
+    $('stat-row').innerHTML =
+      '<div class="stat-box"><div class="stat-val">'+STATE.files.length+'</div><div class="stat-lbl">Files Merged</div></div>'+
+      '<div class="stat-box"><div class="stat-val">'+fmtBytes(totalIn)+'</div><div class="stat-lbl">Input Size</div></div>'+
+      '<div class="stat-box"><div class="stat-val">'+fmtBytes(blob.size)+'</div><div class="stat-lbl">Output Size</div></div>';
+    $('dl-btn').onclick=function(){ if(lastBlob) download(lastBlob,lastName); };
+    $('result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  $('process-btn').addEventListener('click', mergePDFs);
+  $('reset-btn').addEventListener('click',function(){
+    STATE.files=[]; $('file-pdf').value='';
+    $('file-list').innerHTML=''; $('pg-grid').innerHTML='';
+    $('pdf-editor').classList.add('hidden'); $('pdf-settings').classList.add('hidden');
+    $('result-card').classList.remove('show'); $('progress-wrap').style.display='none'; $('pbar').style.width='0%';
+  });
+})();
 </script>
 
 </body></html>
