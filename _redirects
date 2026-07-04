@@ -4125,7 +4125,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/nabfins-business-strategist-recruitment-2026-apply-online-ca/  /jobs/nabfins-business-strategist-recruitment-2026-apply-online-latest-notifications/  301
 /jobs/nabfins-business-strategist/  /jobs/nabfins-business-strategist-recruitment-2026-apply-online-latest-notifications/  301
 /jobs/cusat-assistant-professor-1-posts/  /jobs/cusat-assistant-professor-recruitment-2026-apply-online-latest-notifications/  301
-/jobs/cusat-assistant-professor-recruitment-2026-apply-online/  /jobs/cusat-assistant-professor-recruitment-2026-apply-online-latest-notifications/  301
 /jobs/cusat-assistant-professor-recruitment-2026-apply-online-mphil-phd/  /jobs/cusat-assistant-professor-recruitment-2026-apply-online-latest-notifications/  301
 /jobs/pgimer-senior-demonstrator-1-posts/  /jobs/pgimer-senior-demonstrator-recruitment-2026-apply-online-mphil-phd/  301
 /jobs/pgimer-senior-demonstrator-recruitment-2026-apply-online-m-sc/  /jobs/pgimer-senior-demonstrator-recruitment-2026-apply-online-mphil-phd/  301
@@ -4395,7 +4394,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/dswo-etawah-subject-specialist-guest-faculty-21-posts/  /jobs/dswo-etawah-subject-specialist-recruitment-2026-apply-offline-for-21-posts-lates/  301
 /jobs/dswo-etawah-subject-specialist-recruitment-2026-apply-offline-for-21-posts-m-sc/  /jobs/dswo-etawah-subject-specialist-recruitment-2026-apply-offline-for-21-posts-lates/  301
 /jobs/nit-silchar-junior-research-fellow-recruitment-2026-apply-online-m-e-mtech/  /jobs/nit-silchar-junior-research-fellow-recruitment-2026-apply-online-latest-notifica/  301
-/jobs/nit-silchar-junior-research-fellow-recruitment-2026-apply-online/  /jobs/nit-silchar-junior-research-fellow-recruitment-2026-apply-online-latest-notifica/  301
 /jobs/aiims-bhopal-senior-residents-57-posts/  /jobs/aiims-bhopal-senior-resident-recruitment-2026-apply-online-for-57-posts-latest-n/  301
 /jobs/aiims-bhopal-senior-resident-recruitment-2026-apply-online-for-57-posts-ms-md/  /jobs/aiims-bhopal-senior-resident-recruitment-2026-apply-online-for-57-posts-latest-n/  301
 /jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-offline-m-sc/  /jobs/iiitdm-jabalpur-junior-research-fellow-recruitment-2026-apply-offline-latest-not/  301
@@ -5916,3 +5914,14 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/mpesb-2784-agri-extension-officer/  /jobs/mpesb-agriculture-extension-officer-recruitment-2026-apply-online-for-2784-posts/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/railway-rrb-technician-cen-02-2026-recruitment-2026/  /jobs/rrb-technician-cen-022026-recruitment-2026-notification-pdf-out-apply-online-f/  301
+/jobs/jk-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-14-anganwadi-worker-and-helper/  301
+/jobs/uppsc-food-safety-officer-vacancy-2026-check-posts-and-how-to-apply/  /jobs/uppsc-food-safety-officer-recruitment-2026-apply-online/  301
+/jobs/aiims-delhi-research-associate-iii-vacancy-2026-how-to-apply/  /jobs/aiims-delhi-research-associate-iii-recruitment-2026-apply-online/  301
+/jobs/up-anganwadi-vacancy-2026-anganwadi-worker-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-14-anganwadi-worker-and-helper/  301
+/jobs/ccrum-vacancy-2026-for-staff-nurse-mts-and-more-posts/  /jobs/icsil-recruitment-2026-apply-online-for-data-entry-operator-mts-and-driver-posts/  301
+/jobs/bpssc-150-sub-inspector-vacancy/  /jobs/bpssc-si-recruitment-2026-apply-online-for-150-bihar-police-sub-inspector-posts/  301
+/jobs/delhi-icsil-deo-mts-driver-2026/  /jobs/icsil-recruitment-2026-apply-online-for-data-entry-operator-mts-and-driver-posts/  301
+/jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-14-anganwadi-worker-and-helper/  301
