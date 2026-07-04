@@ -104,9 +104,6 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
-    .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-    .mode-tab { flex: 1; min-width: 160px; padding: 10px 14px; border: 1.5px solid var(--line); background: var(--white); border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; color: var(--muted); font-family: inherit; transition: all 0.2s; }
-    .mode-tab.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
     .target-size-block label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
     .target-input-row { display: flex; gap: 8px; max-width: 260px; margin-bottom: 12px; }
     .target-input-row input[type=number] { flex: 1; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.9rem; font-family: inherit; outline: none; }
@@ -118,6 +115,7 @@
     .chip { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--line); background: var(--white); font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--ink); font-family: inherit; transition: all 0.2s; }
     .chip:hover { border-color: var(--brand); color: var(--brand); }
     .chip.active { background: var(--brand); border-color: var(--brand); color: white; }
+    .target-live { text-transform: none; font-weight: 800; color: var(--brand); letter-spacing: 0; font-size: 0.95rem; margin-left: 6px; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -224,39 +222,44 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="mode-tabs">
-      <button type="button" class="mode-tab active" id="mode-tab-auto" data-mode="auto">🎚️ Compression Level</button>
-      <button type="button" class="mode-tab" id="mode-tab-target" data-mode="target">🎯 Target File Size</button>
+    <div class="form-grid">
+      <div class="form-group"><label>Image Quality (DPI)</label><select id="image-dpi">
+        <option value="72">72 (Low / Small Size)</option>
+        <option value="96">96 (Screen)</option>
+        <option value="150" selected>150 (Good)</option>
+        <option value="200">200 (High)</option>
+        <option value="300">300 (Print)</option>
+        <option value="400">400 (Print+)</option>
+        <option value="600">600 (Ultra HD)</option>
+        <option value="900">900 (Scan Quality)</option>
+        <option value="1200">1200 (Maximum)</option>
+        <option value="custom">Custom DPI...</option>
+      </select></div>
+      <div class="form-group" id="custom-dpi-wrap" style="display:none"><label>Custom DPI</label><input type="number" id="custom-dpi-val" min="10" max="2400" value="150"></div>
     </div>
 
-    <div class="mode-panel" id="panel-auto">
-      <div class="form-grid"><div class="form-group"><label>Compression Level</label><select id="compression-level"><option value="low">Low (Best Quality)</option><option value="medium" selected>Medium (Recommended)</option><option value="high">High (Smallest Size)</option></select></div><div class="form-group"><label>Image DPI</label><select id="image-dpi"><option value="150">150 DPI (Web)</option><option value="96">96 DPI (Screen)</option><option value="72">72 DPI (Max Compression)</option></select></div></div>
-    </div>
-
-    <div class="mode-panel" id="panel-target" style="display:none">
-      <div class="target-size-block">
-        <label>🎯 Target File Size</label>
-        <div class="target-input-row">
-          <input type="number" id="target-size-val" placeholder="e.g. 100" min="1">
-          <select id="target-size-unit"><option value="KB">KB</option><option value="MB" selected>MB</option></select>
-        </div>
-        <input type="range" id="target-size-slider" min="0" max="1000" value="570">
-        <div class="slider-range-labels"><span>1 KB</span><span>100 MB</span></div>
-        <div class="preset-chips">
-          <button type="button" class="chip" data-kb="20">20 KB</button>
-          <button type="button" class="chip" data-kb="50">50 KB</button>
-          <button type="button" class="chip" data-kb="100">100 KB</button>
-          <button type="button" class="chip" data-kb="200">200 KB</button>
-          <button type="button" class="chip" data-kb="500">500 KB</button>
-          <button type="button" class="chip" data-kb="1024">1 MB</button>
-          <button type="button" class="chip" data-kb="5120">5 MB</button>
-          <button type="button" class="chip" data-kb="10240">10 MB</button>
-          <button type="button" class="chip" data-kb="20480">20 MB</button>
-          <button type="button" class="chip" data-kb="51200">50 MB</button>
-          <button type="button" class="chip" data-kb="102400">100 MB</button>
-        </div>
-        <div class="info-box">ℹ️ Target Size mode mein PDF ke pages images ki tarah re-encode hote hain taaki exact size target hit ho sake. Isse file ka size sahi control hota hai, par text select/copy nahi ho payega (scanned-jaisa output). Agar text selectable rakhna hai to <b>Compression Level</b> mode use karein.</div>
+    <div class="target-size-block" style="margin-top:18px">
+      <label>🎯 Target File Size<span class="target-live" id="target-size-live">— 570 KB</span></label>
+      <div class="target-input-row">
+        <input type="number" id="target-size-val" placeholder="e.g. 100" min="1">
+        <select id="target-size-unit"><option value="KB">KB</option><option value="MB" selected>MB</option></select>
       </div>
+      <input type="range" id="target-size-slider" min="0" max="1000" value="570">
+      <div class="slider-range-labels"><span>1 KB</span><span>100 MB</span></div>
+      <div class="preset-chips">
+        <button type="button" class="chip" data-kb="20">20 KB</button>
+        <button type="button" class="chip" data-kb="50">50 KB</button>
+        <button type="button" class="chip" data-kb="100">100 KB</button>
+        <button type="button" class="chip" data-kb="200">200 KB</button>
+        <button type="button" class="chip" data-kb="500">500 KB</button>
+        <button type="button" class="chip" data-kb="1024">1 MB</button>
+        <button type="button" class="chip" data-kb="5120">5 MB</button>
+        <button type="button" class="chip" data-kb="10240">10 MB</button>
+        <button type="button" class="chip" data-kb="20480">20 MB</button>
+        <button type="button" class="chip" data-kb="51200">50 MB</button>
+        <button type="button" class="chip" data-kb="102400">100 MB</button>
+      </div>
+      <div class="info-box">ℹ️ Chuni gayi <b>Image Quality (DPI)</b> par PDF pages render hote hain, phir <b>Target File Size</b> ke jitna close pahunchne ke liye size fit kiya jaata hai. Output image-based hota hai (text copy-paste nahi hoga).</div>
     </div>
 
     <div class="action-row">
@@ -275,9 +278,9 @@
     <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
   </div>
 
-  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF file choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Level Set</h4><p>Compression level choose karein</p></div><div class="step"><div class="step-n">3</div><h4>Compress</h4><p>Process button dabayen</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Compressed PDF download</p></div></div></div>
+  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF file choose karein</p></div><div class="step"><div class="step-n">2</div><h4>DPI aur Size Set</h4><p>Image Quality aur Target Size set karein</p></div><div class="step"><div class="step-n">3</div><h4>Compress</h4><p>Process button dabayen</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Compressed PDF download</p></div></div></div>
   <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">📉</span><div><h4>Size Reduction</h4><p>Up to 90% size kam</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser mein process</p></div></div><div class="feat"><span class="feat-icon">📊</span><div><h4>Stats</h4><p>Before/after size</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Seconds mein</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Hamesha free</p></div></div><div class="feat"><span class="feat-icon">📱</span><div><h4>Mobile</h4><p>Sab devices</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">PDF compress se text readable rahega?<span class="fa">+</span></button><div class="faq-a">Haan, text compress nahi hota — sirf embedded images compress hoti hain.</div></div><div class="faq-item"><button class="faq-q">Password PDF compress ho sakti hai?<span class="fa">+</span></button><div class="faq-a">Nahi, pehle PDF Unlock tool use karein.</div></div><div class="faq-item"><button class="faq-q">Maximum file size?<span class="fa">+</span></button><div class="faq-a">150MB+ tak support hai. Bahut badi files mein browser thoda time le sakta hai.</div></div><div class="faq-item"><button class="faq-q">Konsa level choose karein?<span class="fa">+</span></button><div class="faq-a">Medium recommended hai — size aur quality ka balance. Agar exact KB/MB size chahiye to "Target File Size" mode use karein.</div></div><div class="faq-item"><button class="faq-q">Target File Size mode kaise kaam karta hai?<span class="fa">+</span></button><div class="faq-a">Aap 1 KB se 100 MB tak koi bhi target size set kar sakte hain. Tool pages ko re-encode karke us size ke jitna close pahunchne ki koshish karta hai. Is mode mein output image-based hota hai (text copy-paste nahi hoga).</div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">PDF compress se text readable rahega?<span class="fa">+</span></button><div class="faq-a">Compression ke baad output image-based hota hai, isliye text dikhega lekin select/copy nahi hoga — scanned-jaisa output milta hai.</div></div><div class="faq-item"><button class="faq-q">Password PDF compress ho sakti hai?<span class="fa">+</span></button><div class="faq-a">Nahi, pehle PDF Unlock tool use karein.</div></div><div class="faq-item"><button class="faq-q">Maximum file size?<span class="fa">+</span></button><div class="faq-a">150MB+ tak support hai. Bahut badi files mein browser thoda time le sakta hai.</div></div><div class="faq-item"><button class="faq-q">Konsi DPI choose karein?<span class="fa">+</span></button><div class="faq-a">150 DPI (Good) zyadatar documents ke liye best balance hai. Print/scan quality chahiye to 300+ DPI use karein, WhatsApp/email ke liye chhoti size chahiye to 72-96 DPI. Final size hamesha aapke set kiye <b>Target File Size</b> ke hisaab se adjust hoti hai.</div></div><div class="faq-item"><button class="faq-q">Target File Size kaise kaam karta hai?<span class="fa">+</span></button><div class="faq-a">Aap 1 KB se 100 MB tak koi bhi target size set kar sakte hain. Tool chuni gayi DPI par pages render karke unhe re-encode karta hai taaki us size ke jitna close pahunchne ki koshish ho sake.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split PDF</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>PDF Lock</span></a><a href="/tools/pdf/pdf-unlock.html" class="rel-item"><span class="ri">🗝️</span><span>PDF Unlock</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>PDF to JPG</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/rotate-pdf.html" class="rel-item"><span class="ri">🔄</span><span>Rotate PDF</span></a><a href="/tools/pdf/reorder-pdf.html" class="rel-item"><span class="ri">📋</span><span>Reorder PDF</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
@@ -319,6 +322,8 @@
     if(kb>=1024){if(val)val.value=(kb/1024).toFixed(kb%1024===0?0:1);if(unit)unit.value='MB';}
     else{if(val)val.value=kb;if(unit)unit.value='KB';}
     document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', parseInt(c.dataset.kb,10)===kb));
+    const live=document.getElementById('target-size-live');
+    if(live) live.textContent = '— ' + formatBytes(kb*1024);
   }
   function getTargetKb(){
     const val=parseFloat(document.getElementById('target-size-val').value);
@@ -427,20 +432,12 @@
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
     if(!window.pdfjsLib||!window.jspdf){alert('Compression library load nahi ho payi. Internet check karke page reload karein.');return;}
     const f=inp.files[0];
-    const activeTab=document.querySelector('.mode-tab.active');
-    const mode=activeTab?activeTab.dataset.mode:'auto';
-    let opts;
-    if(mode==='target'){
-      const kb=getTargetKb();
-      if(!kb){alert('Target size sahi se enter karein (1 KB - 100 MB)!');return;}
-      opts={mode:'target', targetBytes:Math.round(kb*1024), scale: kb<200?0.9:(kb<2048?1.3:1.8)};
-    } else {
-      const level=document.getElementById('compression-level').value;
-      const dpi=parseInt(document.getElementById('image-dpi').value,10)||150;
-      const scale=dpi/72;
-      const quality=level==='low'?0.85:(level==='high'?0.45:0.68);
-      opts={mode:'auto', scale, quality};
-    }
+    const kb=getTargetKb();
+    if(!kb){alert('Target size sahi se enter karein (1 KB - 100 MB)!');return;}
+    const dpiSel=document.getElementById('image-dpi').value;
+    const dpi = dpiSel==='custom' ? (parseInt(document.getElementById('custom-dpi-val').value,10)||150) : (parseInt(dpiSel,10)||150);
+    const scale = Math.max(0.3, dpi/72);
+    const opts={mode:'target', targetBytes:Math.round(kb*1024), scale, dpi};
     const pw=document.getElementById('progress-wrap');pw.style.display='block';
     setProgress(2,'PDF load ho raha hai...');
     const pb=document.getElementById('process-btn');if(pb)pb.disabled=true;
@@ -449,10 +446,7 @@
       const rc=document.getElementById('result-card');rc.classList.add('show');
       const sr=document.getElementById('stat-row');
       const savedPct=Math.max(0,Math.round((1-outBlob.size/f.size)*100));
-      let extraStat='';
-      if(mode==='target'){
-        extraStat=`<div class="stat-box"><div class="stat-val">${formatBytes(opts.targetBytes)}</div><div class="stat-lbl">Target Size</div></div>`;
-      }
+      const extraStat=`<div class="stat-box"><div class="stat-val">${formatBytes(opts.targetBytes)}</div><div class="stat-lbl">Target Size</div></div><div class="stat-box"><div class="stat-val">${dpi} DPI</div><div class="stat-lbl">Image Quality</div></div>`;
       sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>${extraStat}<div class="stat-box"><div class="stat-val">${formatBytes(outBlob.size)}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">${savedPct}%</div><div class="stat-lbl">Saved</div></div>`;
       document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(outBlob);const a=document.createElement('a');a.href=u;a.download='compressed_'+f.name;a.click();URL.revokeObjectURL(u);};
     }catch(err){
@@ -465,19 +459,14 @@
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
     setTargetFromKb(1024);
-    document.querySelectorAll('.mode-tab').forEach(tab=>{
-      tab.addEventListener('click',()=>{
-        document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('panel-auto').style.display=tab.dataset.mode==='auto'?'block':'none';
-        document.getElementById('panel-target').style.display=tab.dataset.mode==='target'?'block':'none';
-      });
+    document.getElementById('image-dpi').addEventListener('change', function(){
+      document.getElementById('custom-dpi-wrap').style.display = this.value==='custom' ? 'block' : 'none';
     });
     const slider=document.getElementById('target-size-slider');
     if(slider)slider.addEventListener('input',()=>setTargetFromKb(sliderToKb(parseInt(slider.value,10))));
     const tval=document.getElementById('target-size-val'), tunit=document.getElementById('target-size-unit');
     function onManualChange(){const kb=getTargetKb();if(kb)setTargetFromKb(kb);}
-    if(tval)tval.addEventListener('change',onManualChange);
+    if(tval)tval.addEventListener('input',onManualChange);
     if(tunit)tunit.addEventListener('change',onManualChange);
     document.querySelectorAll('.chip').forEach(chip=>{
       chip.addEventListener('click',()=>setTargetFromKb(parseInt(chip.dataset.kb,10)));
@@ -490,6 +479,9 @@
       document.getElementById('pbar').style.width='0%';
       const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
       const wb=document.getElementById('size-warn-box');if(wb)wb.style.display='none';
+      document.getElementById('image-dpi').value='150';
+      document.getElementById('custom-dpi-wrap').style.display='none';
+      setTargetFromKb(1024);
     });
   });
 </script>
