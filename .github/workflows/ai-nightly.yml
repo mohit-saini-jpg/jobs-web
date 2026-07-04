@@ -103,8 +103,29 @@ jobs:
           PATCHED=$(git diff --staged --name-only | grep "index.html" | wc -l || echo "0")
           DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
           git commit -m "🤖 AI enriched: ${PATCHED} HTML pages | ${DATE_IST} IST"
-          git push origin main
-          echo "✅ ${PATCHED} pages pushed"
+
+          # Robust push: another workflow (regen / sitemap / version bump) may have
+          # pushed to main while we ran, causing a non-fast-forward rejection.
+          # Rebase our commit onto the latest origin and retry; on a same-file
+          # conflict fall back to a merge where our enriched version wins — remote's
+          # other work is still merged in, nothing is lost.
+          push_ok=0
+          for i in 1 2 3 4 5; do
+            if git push origin main; then push_ok=1; break; fi
+            echo "push rejected (attempt $i/5) — syncing with origin/main…"
+            git fetch origin main || true
+            if ! git rebase origin/main; then
+              echo "rebase conflict — falling back to merge (enriched version wins)"
+              git rebase --abort 2>/dev/null || true
+              git merge -X ours --no-edit origin/main || true
+            fi
+            sleep 4
+          done
+          if [ "$push_ok" = "1" ]; then
+            echo "✅ ${PATCHED} pages pushed"
+          else
+            echo "❌ push failed after 5 attempts"; exit 1
+          fi
 
       - name: 📊 Summary
         run: |

@@ -73,8 +73,26 @@ jobs:
           PATCHED=$(git diff --staged --name-only | grep "index.html" | wc -l)
           DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
           git commit -m "🤖 AI patched: ${PATCHED} HTML pages updated | ${DATE_IST} IST [skip ci]"
-          git push origin main
-          echo "✅ ${PATCHED} pages committed and pushed"
+
+          # Robust push: rebase onto latest origin/main and retry if another
+          # workflow pushed meanwhile; on same-file conflict our patched version
+          # wins while remote's other work is still merged in.
+          push_ok=0
+          for i in 1 2 3 4 5; do
+            if git push origin main; then push_ok=1; break; fi
+            echo "push rejected (attempt $i/5) — syncing with origin/main…"
+            git fetch origin main || true
+            if ! git rebase origin/main; then
+              git rebase --abort 2>/dev/null || true
+              git merge -X ours --no-edit origin/main || true
+            fi
+            sleep 4
+          done
+          if [ "$push_ok" = "1" ]; then
+            echo "✅ ${PATCHED} pages committed and pushed"
+          else
+            echo "❌ push failed after 5 attempts"; exit 1
+          fi
 
       - name: 📊 Summary
         run: |
