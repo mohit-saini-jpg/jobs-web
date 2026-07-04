@@ -104,6 +104,20 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .mode-tab { flex: 1; min-width: 160px; padding: 10px 14px; border: 1.5px solid var(--line); background: var(--white); border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; color: var(--muted); font-family: inherit; transition: all 0.2s; }
+    .mode-tab.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+    .target-size-block label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .target-input-row { display: flex; gap: 8px; max-width: 260px; margin-bottom: 12px; }
+    .target-input-row input[type=number] { flex: 1; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.9rem; font-family: inherit; outline: none; }
+    .target-input-row input[type=number]:focus { border-color: var(--brand); }
+    .target-input-row select { padding: 9px 10px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.9rem; font-family: inherit; background: white; }
+    .target-size-block input[type=range] { width: 100%; accent-color: var(--brand); margin-bottom: 4px; }
+    .slider-range-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 14px; }
+    .preset-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .chip { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--line); background: var(--white); font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--ink); font-family: inherit; transition: all 0.2s; }
+    .chip:hover { border-color: var(--brand); color: var(--brand); }
+    .chip.active { background: var(--brand); border-color: var(--brand); color: white; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -192,7 +206,7 @@
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#f5576c,#f093fb)">🗜️</div>
   <h1>Compress PDF</h1><p>Bade PDF files ko instantly chhota karein. Email attachments, portal uploads, WhatsApp — sab ke liye.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">No Signup</span> <span class="badge">Up to 50MB</span> <span class="badge">Secure</span></div>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">No Signup</span> <span class="badge">Up to 150MB+</span> <span class="badge">Target Size Option</span> <span class="badge">Secure</span></div>
 </section>
 
 <div class="main-container">
@@ -201,15 +215,50 @@
     <div class="upload-zone">
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein · .pdf</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein · .pdf · Max ~150MB+</div>
     </div>
     <div class="file-preview" id="file-preview"><span>📄</span><span class="file-name">—</span><span class="file-size">—</span><button class="file-remove">✕</button></div>
     <input type="file" id="main-file" style="display:none" accept=".pdf">
+    <div class="info-box" id="size-warn-box" style="display:none">⚠️ Bade file hai (100MB+). Browser thoda slow ho sakta hai processing ke time — patience rakhein, tab band na karein.</div>
   </div>
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Compression Level</label><select><option>Low (Best Quality)</option><option>Medium (Recommended)</option><option>High (Smallest Size)</option></select></div><div class="form-group"><label>Image DPI</label><select><option>150 DPI (Web)</option><option>96 DPI (Screen)</option><option>72 DPI (Max Compression)</option><option>Keep Original</option></select></div></div>
+    <div class="mode-tabs">
+      <button type="button" class="mode-tab active" id="mode-tab-auto" data-mode="auto">🎚️ Compression Level</button>
+      <button type="button" class="mode-tab" id="mode-tab-target" data-mode="target">🎯 Target File Size</button>
+    </div>
+
+    <div class="mode-panel" id="panel-auto">
+      <div class="form-grid"><div class="form-group"><label>Compression Level</label><select id="compression-level"><option value="low">Low (Best Quality)</option><option value="medium" selected>Medium (Recommended)</option><option value="high">High (Smallest Size)</option></select></div><div class="form-group"><label>Image DPI</label><select id="image-dpi"><option value="150">150 DPI (Web)</option><option value="96">96 DPI (Screen)</option><option value="72">72 DPI (Max Compression)</option></select></div></div>
+    </div>
+
+    <div class="mode-panel" id="panel-target" style="display:none">
+      <div class="target-size-block">
+        <label>🎯 Target File Size</label>
+        <div class="target-input-row">
+          <input type="number" id="target-size-val" placeholder="e.g. 100" min="1">
+          <select id="target-size-unit"><option value="KB">KB</option><option value="MB" selected>MB</option></select>
+        </div>
+        <input type="range" id="target-size-slider" min="0" max="1000" value="570">
+        <div class="slider-range-labels"><span>1 KB</span><span>100 MB</span></div>
+        <div class="preset-chips">
+          <button type="button" class="chip" data-kb="20">20 KB</button>
+          <button type="button" class="chip" data-kb="50">50 KB</button>
+          <button type="button" class="chip" data-kb="100">100 KB</button>
+          <button type="button" class="chip" data-kb="200">200 KB</button>
+          <button type="button" class="chip" data-kb="500">500 KB</button>
+          <button type="button" class="chip" data-kb="1024">1 MB</button>
+          <button type="button" class="chip" data-kb="5120">5 MB</button>
+          <button type="button" class="chip" data-kb="10240">10 MB</button>
+          <button type="button" class="chip" data-kb="20480">20 MB</button>
+          <button type="button" class="chip" data-kb="51200">50 MB</button>
+          <button type="button" class="chip" data-kb="102400">100 MB</button>
+        </div>
+        <div class="info-box">ℹ️ Target Size mode mein PDF ke pages images ki tarah re-encode hote hain taaki exact size target hit ho sake. Isse file ka size sahi control hota hai, par text select/copy nahi ho payega (scanned-jaisa output). Agar text selectable rakhna hai to <b>Compression Level</b> mode use karein.</div>
+      </div>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -228,8 +277,8 @@
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF file choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Level Set</h4><p>Compression level choose karein</p></div><div class="step"><div class="step-n">3</div><h4>Compress</h4><p>Process button dabayen</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Compressed PDF download</p></div></div></div>
   <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">📉</span><div><h4>Size Reduction</h4><p>Up to 90% size kam</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser mein process</p></div></div><div class="feat"><span class="feat-icon">📊</span><div><h4>Stats</h4><p>Before/after size</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Seconds mein</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Hamesha free</p></div></div><div class="feat"><span class="feat-icon">📱</span><div><h4>Mobile</h4><p>Sab devices</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">PDF compress se text readable rahega?<span class="fa">+</span></button><div class="faq-a">Haan, text compress nahi hota — sirf embedded images compress hoti hain.</div></div><div class="faq-item"><button class="faq-q">Password PDF compress ho sakti hai?<span class="fa">+</span></button><div class="faq-a">Nahi, pehle PDF Unlock tool use karein.</div></div><div class="faq-item"><button class="faq-q">Maximum file size?<span class="fa">+</span></button><div class="faq-a">50MB tak support hai.</div></div><div class="faq-item"><button class="faq-q">Konsa level choose karein?<span class="fa">+</span></button><div class="faq-a">Medium recommended hai — size aur quality ka balance.</div></div></div>
-  <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/any-file-to-pdf.html" class="rel-item"><span class="ri">🗂️</span><span>Any File to PDF</span></a><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split PDF</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>PDF Lock</span></a><a href="/tools/pdf/pdf-unlock.html" class="rel-item"><span class="ri">🗝️</span><span>PDF Unlock</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>PDF to JPG</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/rotate-pdf.html" class="rel-item"><span class="ri">🔄</span><span>Rotate PDF</span></a><a href="/tools/pdf/reorder-pdf.html" class="rel-item"><span class="ri">📋</span><span>Reorder PDF</span></a></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">PDF compress se text readable rahega?<span class="fa">+</span></button><div class="faq-a">Haan, text compress nahi hota — sirf embedded images compress hoti hain.</div></div><div class="faq-item"><button class="faq-q">Password PDF compress ho sakti hai?<span class="fa">+</span></button><div class="faq-a">Nahi, pehle PDF Unlock tool use karein.</div></div><div class="faq-item"><button class="faq-q">Maximum file size?<span class="fa">+</span></button><div class="faq-a">150MB+ tak support hai. Bahut badi files mein browser thoda time le sakta hai.</div></div><div class="faq-item"><button class="faq-q">Konsa level choose karein?<span class="fa">+</span></button><div class="faq-a">Medium recommended hai — size aur quality ka balance. Agar exact KB/MB size chahiye to "Target File Size" mode use karein.</div></div><div class="faq-item"><button class="faq-q">Target File Size mode kaise kaam karta hai?<span class="fa">+</span></button><div class="faq-a">Aap 1 KB se 100 MB tak koi bhi target size set kar sakte hain. Tool pages ko re-encode karke us size ke jitna close pahunchne ki koshish karta hai. Is mode mein output image-based hota hai (text copy-paste nahi hoga).</div></div></div>
+  <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split PDF</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>PDF Lock</span></a><a href="/tools/pdf/pdf-unlock.html" class="rel-item"><span class="ri">🗝️</span><span>PDF Unlock</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>PDF to JPG</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/rotate-pdf.html" class="rel-item"><span class="ri">🔄</span><span>Rotate PDF</span></a><a href="/tools/pdf/reorder-pdf.html" class="rel-item"><span class="ri">📋</span><span>Reorder PDF</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
 </div>
@@ -239,35 +288,200 @@
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+  if (window['pdfjsLib']) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
   document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
   function bindFile(inputId,previewId){
     const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
     if(!inp)return;
-    function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
+    function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}const wb=document.getElementById('size-warn-box');if(wb)wb.style.display=(f.size>100*1024*1024)?'flex':'none';}
     inp.addEventListener('change',()=>hf(inp.files[0]));
     const zone=document.querySelector('.upload-zone');
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
+  /* ===== Target-size slider (log scale: 1 KB - 100 MB) ===== */
+  const KB_MIN=1, KB_MAX=102400; // 100MB in KB
+  const LOG_MIN=Math.log10(KB_MIN), LOG_MAX=Math.log10(KB_MAX);
+  function kbToSlider(kb){kb=Math.max(KB_MIN,Math.min(KB_MAX,kb));return Math.round(1000*(Math.log10(kb)-LOG_MIN)/(LOG_MAX-LOG_MIN));}
+  function sliderToKb(v){return Math.round(Math.pow(10, LOG_MIN + (LOG_MAX-LOG_MIN)*v/1000));}
+  function setTargetFromKb(kb){
+    kb=Math.max(KB_MIN,Math.min(KB_MAX,Math.round(kb)));
+    const slider=document.getElementById('target-size-slider');
+    const val=document.getElementById('target-size-val');
+    const unit=document.getElementById('target-size-unit');
+    if(slider)slider.value=kbToSlider(kb);
+    if(kb>=1024){if(val)val.value=(kb/1024).toFixed(kb%1024===0?0:1);if(unit)unit.value='MB';}
+    else{if(val)val.value=kb;if(unit)unit.value='KB';}
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', parseInt(c.dataset.kb,10)===kb));
+  }
+  function getTargetKb(){
+    const val=parseFloat(document.getElementById('target-size-val').value);
+    const unit=document.getElementById('target-size-unit').value;
+    if(!val||val<=0)return null;
+    return unit==='MB'?val*1024:val;
+  }
+  /* ===== Core PDF compression engine (pdf.js render -> JPEG re-encode -> jsPDF rebuild) ===== */
+  async function renderPageToCanvas(pdfProxy, pageNum, scale){
+    const page=await pdfProxy.getPage(pageNum);
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(viewport.width));
+    canvas.height=Math.max(1,Math.round(viewport.height));
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+    await page.render({canvasContext:ctx, viewport}).promise;
+    const baseViewport=page.getViewport({scale:1});
+    return {canvas, widthPt:baseViewport.width, heightPt:baseViewport.height};
+  }
+  function canvasToJpegBlob(canvas, quality){
+    return new Promise(res=>canvas.toBlob(b=>res(b), 'image/jpeg', quality));
+  }
+  async function buildPdfFromPages(pages, quality){
+    let doc=null;
+    let total=0;
+    const blobs=[];
+    for(let i=0;i<pages.length;i++){
+      const {canvas}=pages[i];
+      const blob=await canvasToJpegBlob(canvas, quality);
+      blobs.push(blob);
+      total+=blob.size;
+    }
+    for(let i=0;i<pages.length;i++){
+      const {widthPt,heightPt}=pages[i];
+      const orientation=widthPt>heightPt?'l':'p';
+      if(!doc){
+        doc=new window.jspdf.jsPDF({orientation, unit:'pt', format:[widthPt,heightPt]});
+      }else{
+        doc.addPage([widthPt,heightPt], orientation);
+      }
+      const dataUrl=await blobToDataUrl(blobs[i]);
+      doc.addImage(dataUrl,'JPEG',0,0,widthPt,heightPt);
+    }
+    const outBlob=doc.output('blob');
+    return {blob:outBlob, approxSize:total};
+  }
+  function blobToDataUrl(blob){
+    return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(blob);});
+  }
+  function setProgress(pct,msg){
+    const bar=document.getElementById('pbar');if(bar)bar.style.width=Math.min(100,Math.max(0,pct))+'%';
+    const pm=document.getElementById('pmsg');if(pm&&msg)pm.textContent=msg;
+  }
+  async function compressPdf(file, opts, onProgress){
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const numPages=pdf.numPages;
+    let scale=opts.scale;
+    let pages=null;
+    async function renderAll(sc){
+      const arr=[];
+      for(let i=1;i<=numPages;i++){
+        arr.push(await renderPageToCanvas(pdf,i,sc));
+        onProgress(5 + (i/numPages)*45, `Page ${i}/${numPages} render ho raha hai...`);
+      }
+      return arr;
+    }
+    pages=await renderAll(scale);
+
+    if(opts.mode==='auto'){
+      onProgress(60,'Compress ho raha hai...');
+      const result=await buildPdfFromPages(pages, opts.quality);
+      onProgress(100,'Done!');
+      return result.blob;
+    }
+
+    // target mode: binary search quality at current scale, drop scale if floor quality still too big
+    const targetBytes=opts.targetBytes;
+    let lo=0.05, hi=0.92, bestBlob=null, bestDiff=Infinity, scaleRounds=0;
+    while(scaleRounds<3){
+      lo=0.05; hi=0.92;
+      let localBest=null, localBestDiff=Infinity;
+      for(let iter=0;iter<6;iter++){
+        const q=(lo+hi)/2;
+        const {blob}=await buildPdfFromPages(pages, q);
+        onProgress(60 + iter*5, `Size adjust kar rahe hain (try ${iter+1}/6)...`);
+        const diff=Math.abs(blob.size-targetBytes);
+        if(diff<localBestDiff){localBestDiff=diff;localBest=blob;}
+        if(blob.size>targetBytes){hi=q;} else {lo=q;}
+      }
+      if(localBestDiff<bestDiff){bestDiff=localBestDiff;bestBlob=localBest;}
+      // if even lowest quality render is still much bigger than target, shrink scale and retry
+      const {blob:floorBlob}=await buildPdfFromPages(pages, 0.05);
+      if(floorBlob.size> targetBytes*1.25 && scale>0.4){
+        scale=scale*0.6;
+        pages=await renderAll(scale);
+        scaleRounds++;
+      } else break;
+    }
+    onProgress(100,'Done!');
+    return bestBlob;
+  }
+  async function runProcess(){
     const inp=document.getElementById('main-file');
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
+    if(!window.pdfjsLib||!window.jspdf){alert('Compression library load nahi ho payi. Internet check karke page reload karein.');return;}
     const f=inp.files[0];
+    const activeTab=document.querySelector('.mode-tab.active');
+    const mode=activeTab?activeTab.dataset.mode:'auto';
+    let opts;
+    if(mode==='target'){
+      const kb=getTargetKb();
+      if(!kb){alert('Target size sahi se enter karein (1 KB - 100 MB)!');return;}
+      opts={mode:'target', targetBytes:Math.round(kb*1024), scale: kb<200?0.9:(kb<2048?1.3:1.8)};
+    } else {
+      const level=document.getElementById('compression-level').value;
+      const dpi=parseInt(document.getElementById('image-dpi').value,10)||150;
+      const scale=dpi/72;
+      const quality=level==='low'?0.85:(level==='high'?0.45:0.68);
+      opts={mode:'auto', scale, quality};
+    }
     const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
+    setProgress(2,'PDF load ho raha hai...');
+    const pb=document.getElementById('process-btn');if(pb)pb.disabled=true;
+    try{
+      const outBlob=await compressPdf(f, opts, setProgress);
       const rc=document.getElementById('result-card');rc.classList.add('show');
       const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+      const savedPct=Math.max(0,Math.round((1-outBlob.size/f.size)*100));
+      let extraStat='';
+      if(mode==='target'){
+        extraStat=`<div class="stat-box"><div class="stat-val">${formatBytes(opts.targetBytes)}</div><div class="stat-lbl">Target Size</div></div>`;
+      }
+      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>${extraStat}<div class="stat-box"><div class="stat-val">${formatBytes(outBlob.size)}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">${savedPct}%</div><div class="stat-lbl">Saved</div></div>`;
+      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(outBlob);const a=document.createElement('a');a.href=u;a.download='compressed_'+f.name;a.click();URL.revokeObjectURL(u);};
+    }catch(err){
+      console.error(err);
+      alert('Compress karne mein error aayi: '+(err&&err.message?err.message:'unknown error')+'. Kya file password-protected hai?');
+    }finally{
+      if(pb)pb.disabled=false;
+    }
   }
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
+    setTargetFromKb(1024);
+    document.querySelectorAll('.mode-tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-auto').style.display=tab.dataset.mode==='auto'?'block':'none';
+        document.getElementById('panel-target').style.display=tab.dataset.mode==='target'?'block':'none';
+      });
+    });
+    const slider=document.getElementById('target-size-slider');
+    if(slider)slider.addEventListener('input',()=>setTargetFromKb(sliderToKb(parseInt(slider.value,10))));
+    const tval=document.getElementById('target-size-val'), tunit=document.getElementById('target-size-unit');
+    function onManualChange(){const kb=getTargetKb();if(kb)setTargetFromKb(kb);}
+    if(tval)tval.addEventListener('change',onManualChange);
+    if(tunit)tunit.addEventListener('change',onManualChange);
+    document.querySelectorAll('.chip').forEach(chip=>{
+      chip.addEventListener('click',()=>setTargetFromKb(parseInt(chip.dataset.kb,10)));
+    });
     const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
     const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
       document.getElementById('main-file').value='';
@@ -275,6 +489,7 @@
       document.getElementById('progress-wrap').style.display='none';
       document.getElementById('pbar').style.width='0%';
       const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+      const wb=document.getElementById('size-warn-box');if(wb)wb.style.display='none';
     });
   });
 </script>
