@@ -303,8 +303,25 @@ def call_groq(facts: dict):
     return None
 
 # ── HTML Patcher ──────────────────────────────────────────────────────────────
-def patch_html(original: str, result: dict) -> str:
+# Heading templates — job title AI cards ke heading mein bhi aaye, exact pattern
+# jo user ne diya (kuch mein title pehle, "Who Should Apply" mein title baad mein)
+HEADING_TEMPLATES = {
+    "ai_overview":             "{t} Overview",
+    "ai_expert_analysis":      "{t} Expert Analysis",
+    "ai_who_should_apply":     "Who Should Apply {t}",
+    "ai_preparation_tips":     "{t} Preparation Tips",
+    "ai_salary_insights":      "{t} Salary Insights",
+    "ai_job_profile_analysis": "{t} Job Profile",
+    "ai_selection_strategy":   "{t} Selection Strategy",
+}
+
+def patch_html(original: str, result: dict, facts: dict | None = None) -> str:
     html = original
+    facts = facts or {}
+
+    # Job title for heading prefixes/suffixes — <title> tag se nikla hua clean
+    # title (brand-name hata hua), AI ka ai_h1 ho toh usse fallback.
+    job_title = (facts.get("title") or striptags(result.get("ai_h1") or "")).strip()
 
     # Remove old AI block if present (full re-patch on --force)
     if AI_MARKER in html:
@@ -312,29 +329,52 @@ def patch_html(original: str, result: dict) -> str:
             re.escape(AI_MARKER) + r".*?" + re.escape(AI_MARKER),
             "", html, flags=re.DOTALL)
 
-    # 1. Build AI sections HTML
+    # ── Duplicate Overview / FAQ guard ─────────────────────────────────────
+    # generate_all.py (JSON → HTML) already bakes in its OWN "... Overview"
+    # table-section aur ek pura "... Frequently Asked Questions (FAQ)"
+    # section for most job pages. Agar hum apna Overview/FAQ card upar se
+    # add kar dete hain to page pe 2 Overview / 2 FAQ ho jaate hain (bad for
+    # SEO — duplicate/near-duplicate content). Fix: base content check karo,
+    # agar wahan pehle se Overview ya FAQ heading maujood hai to AI apna
+    # wala skip kar de — sirf wahi cards add ho jo base mein missing hain.
+    # (HTML se unhe hata ke fix karna galat hota — wo JSON se dobara
+    # generate ho ke wapas aa jaate, kyunki source JSON mein hain, HTML
+    # mein nahi.)
+    existing_headings = " ".join(re.findall(r"<h2[^>]*>(.*?)</h2>", html, re.I | re.S))
+    base_has_overview = bool(re.search(r"\boverview\b", existing_headings, re.I))
+    base_has_faq = bool(re.search(r"\bfaq\b|\bfrequently\s+asked\s+questions\b", existing_headings, re.I))
+
+    # 1. Build AI sections HTML (FAQ alag rakha jaayega — wo hamesha page ke
+    #    sabse last mein jaata hai, baaki cards ke saath nahi)
     ai_cards = [
-        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
-        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
-        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0f766e,#0891b2"),
-        ("ai_preparation_tips",     "Preparation Tips",   "fa-list-check",         "047857,#10b981"),
-        ("ai_salary_insights",      "Salary Insights",    "fa-indian-rupee-sign",  "b45309,#f59e0b"),
-        ("ai_job_profile_analysis", "Job Profile",        "fa-briefcase",          "475569,#334155"),
-        ("ai_selection_strategy",   "Selection Strategy", "fa-bullseye",           "be123c,#f43f5e"),
+        ("ai_overview",             "fa-circle-info",        "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis",      "fa-lightbulb",          "7c3aed,#a855f7"),
+        ("ai_who_should_apply",     "fa-user-check",         "0f766e,#0891b2"),
+        ("ai_preparation_tips",     "fa-list-check",         "047857,#10b981"),
+        ("ai_salary_insights",      "fa-indian-rupee-sign",  "b45309,#f59e0b"),
+        ("ai_job_profile_analysis", "fa-briefcase",          "475569,#334155"),
+        ("ai_selection_strategy",   "fa-bullseye",           "be123c,#f43f5e"),
     ]
     ai_html = ""
-    for key, heading, icon, color in ai_cards:
+    for key, icon, color in ai_cards:
+        if key == "ai_overview" and base_has_overview:
+            continue   # base page mein already Overview section hai — skip, duplicate mat banao
         val = striptags(result.get(key) or "").strip()
         if val and len(val) > 20:
+            heading = HEADING_TEMPLATES[key].format(t=job_title) if job_title else key.replace("ai_", "").replace("_", " ").title()
             body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
             ai_html += sec_card(heading, icon, color, body)
 
-    # FAQ
+    # FAQ — banaya yahin, insert baad mein alag se page ke end mein hoga.
+    # Agar base page mein already ek FAQ section hai (JSON se generated),
+    # to AI ka apna FAQ card skip — duplicate FAQ block SEO ke liye bura hai.
     faqs = result.get("ai_expanded_faqs") or []
-    faq_html = render_faq(faqs) if faqs else ""
+    faq_html = render_faq(faqs) if (faqs and not base_has_faq) else ""
+    faq_block = ""
     if faq_html:
-        ai_html += sec_card("FAQs", "fa-circle-question", "0f172a,#1e293b",
-                            f'<div class="faq-wrap">{faq_html}</div>')
+        faq_heading = f"{job_title} FAQs" if job_title else "FAQs"
+        faq_block = sec_card(faq_heading, "fa-circle-question", "0f172a,#1e293b",
+                              f'<div class="faq-wrap">{faq_html}</div>')
 
     if ai_html:
         # Wrap in markers so we can find/replace on next run
@@ -349,6 +389,20 @@ def patch_html(original: str, result: dict) -> str:
                 if pos != -1:
                     html = html[:pos] + ai_block + html[pos:]
                     break
+
+    if faq_block:
+        # FAQ hamesha page content ka sabse last section hona chahiye (SEO/UX
+        # ke hisab se) — isliye ye alag se </article>/</main>/</body> ke
+        # theek pehle jaata hai, na ki doosre AI cards ke saath beech mein.
+        faq_wrapped = f"\n{AI_MARKER}\n{faq_block}{AI_MARKER}\n"
+        for tag in ["</article>", "</main>", "</body>"]:
+            pos = html.rfind(tag)
+            if pos != -1:
+                html = html[:pos] + faq_wrapped + html[pos:]
+                break
+        else:
+            html += faq_wrapped
+
 
     # 2. Title tag
     ai_title = striptags(result.get("ai_title") or "").strip()
@@ -376,6 +430,46 @@ def patch_html(original: str, result: dict) -> str:
             lambda m: m.group(1) + e(ai_h1) + m.group(3),
             html, count=1, flags=re.DOTALL|re.IGNORECASE)
 
+    # 5. Final safety net — same de-dup pass generate_all.py already runs on
+    #    its own output. Base_has_overview/base_has_faq already stop us from
+    #    generating a duplicate Overview/FAQ in the first place; ye sirf ek
+    #    extra catch-all hai for any other heading collision that slips
+    #    through (matches generate_all.py's own logic exactly, keeps the
+    #    FIRST occurrence of a heading and drops later repeats).
+    html = _dedup_section_cards(html)
+
+    return html
+
+def _dedup_section_cards(html):
+    """Remove duplicate sec-card blocks that share the same <h2> heading,
+    keeping the first occurrence. Ported as-is from generate_all.py's own
+    safety net so both generation paths behave identically."""
+    if not html or 'sec-card' not in html:
+        return html
+    parts = re.split(r'(?=<(?:div|section) class="sec-card")', html)
+    seen = set()
+    out = []
+    for p in parts:
+        m = re.search(r'<h2>([^<]+)</h2>', p)
+        if m:
+            key = re.sub(r'\s+', ' ', m.group(1)).strip().lower()
+            if key in seen and key not in ('additional details',):
+                continue
+            seen.add(key)
+        out.append(p)
+    html = ''.join(out)
+    # Also drop EXACT-duplicate <table> blocks anywhere on the page.
+    _seen_tbl = set()
+    def _dedup_tbl(mt):
+        block = mt.group(0)
+        sig = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', block)).strip().lower()
+        if len(sig) < 20:
+            return block
+        if sig in _seen_tbl:
+            return ''
+        _seen_tbl.add(sig)
+        return block
+    html = re.sub(r'<table\b.*?</table>', _dedup_tbl, html, flags=re.S)
     return html
 
 # ── Progress tracking ─────────────────────────────────────────────────────────
@@ -549,7 +643,7 @@ def main():
             continue
 
         # Patch HTML
-        new_html = patch_html(original, result)
+        new_html = patch_html(original, result, facts)
 
         # Atomic write
         tmp = html_path.with_suffix(".tmp")
