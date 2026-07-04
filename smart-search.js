@@ -295,6 +295,55 @@
     return slugifyTitle(title || '');
   }
 
+  /* ══════════════════════════════════════════════════════════
+   * DISK-TRUTH URL RESOLVER — never emit a /jobs/ URL that 404s.
+   * jobs-index.json is keyed by the EXACT on-disk slug of every built job page.
+   * We resolve each result to a REAL key via: canonical → slugified-title →
+   * exact-title → fuzzy-title. If nothing matches, the item has no page and is
+   * skipped (so the hero search only ever opens pages that actually exist).
+   * ══════════════════════════════════════════════════════════ */
+  var JOB_INDEX = { slugs: null, title2slug: null, ready: false };
+  function normTitle(t) {
+    return String(t || '').toLowerCase().replace(/&amp;/g, '&')
+      .replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+  }
+  var jobIndexPromise = fetch('/jobs-index.json', { cache: 'default' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(idx) {
+      if (!idx || typeof idx !== 'object') return;
+      JOB_INDEX.slugs = Object.create(null);
+      JOB_INDEX.title2slug = Object.create(null);
+      Object.keys(idx).forEach(function(slug) {
+        JOB_INDEX.slugs[slug] = 1;
+        var t = normTitle(idx[slug] && idx[slug].title);
+        if (t && !JOB_INDEX.title2slug[t]) JOB_INDEX.title2slug[t] = slug;
+      });
+      JOB_INDEX.ready = true;
+    })
+    .catch(function() {});
+
+  // Return a REAL '/jobs/<slug>/' URL for this item, or '' if no page exists.
+  // Only RELIABLE matches are used (canonical slug → slugified title → exact
+  // normalized title, all checked against the disk-truth index). Fuzzy matching
+  // was deliberately dropped — it linked near-duplicate titles to the WRONG job
+  // (e.g. "Technician CEN 02" → "Section Controller CEN 03"). An item that
+  // matches none of these has no built page and is skipped (never a 404, never
+  // a wrong page).
+  function resolveJobUrl(canonical, title) {
+    var S = JOB_INDEX.slugs;
+    canonical = String(canonical || '').trim().replace(/^\/+|\/+$/g, '').replace(/^jobs\//, '').replace(/\/+$/, '');
+    if (!S) {                                  // index not loaded yet — best effort
+      var f = canonical || slugifyTitle(title);
+      return f ? '/jobs/' + f + '/' : '';
+    }
+    if (canonical && S[canonical]) return '/jobs/' + canonical + '/';
+    var sfy = slugifyTitle(title);
+    if (sfy && S[sfy]) return '/jobs/' + sfy + '/';
+    var nt = normTitle(title);
+    if (JOB_INDEX.title2slug[nt]) return '/jobs/' + JOB_INDEX.title2slug[nt] + '/';
+    return '';
+  }
+
   function getRecent() {
     try { return JSON.parse(localStorage.getItem(CFG.recentKey) || '[]'); } catch(e) { return []; }
   }
@@ -613,9 +662,8 @@
             var title = (bd.job_title || '').trim();
             if (!title) return;
             var org = (bd.organization_name || '').trim();
-            var slug = canonicalSlug(job, title);
-            var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
-            if (!href) return;
+            var href = resolveJobUrl(job._canonical_slug || job.canonical_slug || '', title);
+            if (!href) return;   // no real page on disk → skip (never emit a 404)
             var dates = job.important_dates || {};
             var lastDate = String(
               dates.last_date_to_apply || dates.last_date || dates['Last Date to Apply'] || ''
@@ -646,9 +694,8 @@
         sarkariJobs.forEach(function(job) {
           var title = (job.title || '').trim();
           if (!title) return;
-          var slug = canonicalSlug(job, title);
-          var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
-          if (!href) return;
+          var href = resolveJobUrl(job._canonical_slug || job.canonical_slug || '', title);
+          if (!href) return;   // no real page on disk → skip (never emit a 404)
           var dates = job.important_dates || {};
           var lastDate = String(dates['Last Date'] || dates.last_date || '').trim();
           extra.push({
@@ -679,9 +726,8 @@
             (Array.isArray(sec.items) ? sec.items : []).forEach(function(item) {
               var title = (item.name || item.title || '').trim();
               if (!title) return;
-              var slug = canonicalSlug(item, title);
-              var href = slug && slug !== 'official-link' ? '/jobs/' + slug + '/' : '';
-              if (!href) return;
+              var href = resolveJobUrl(item._canonical_slug || item.canonical_slug || '', title);
+              if (!href) return;   // no real page on disk → skip (never emit a 404)
               extra.push({
                 title:         title,
                 slug:          href,
@@ -863,9 +909,12 @@
         function loadHeavy() {
           if (heavyLoaded) return;
           heavyLoaded = true;
-          fetchAndIndex('/data/Complete_Jobs_Full_Data.json').then(function() {
-            refreshOpenDropdown();
-            
+          // Wait for the disk-truth slug index so every job URL resolves to a
+          // page that actually exists (no 404s), then index the main data file.
+          jobIndexPromise.then(function() {
+            fetchAndIndex('/data/Complete_Jobs_Full_Data.json').then(function() {
+              refreshOpenDropdown();
+            });
           });
         }
 
