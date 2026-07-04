@@ -173,62 +173,114 @@ Generate EXACTLY this JSON (no extra text, no markdown):
   ]
 }}"""
 
-def call_groq(facts: dict) -> dict | None:
+# Sentinel: a persistent rate/quota limit was hit — the caller should stop the
+# run CLEANLY (and still print the final report) rather than kill the process.
+RATE_LIMITED = object()
+
+
+def _extract_json(content: str):
+    """Parse the model's reply into a dict. With JSON mode this is a direct
+    json.loads; the repair steps are a safety net for stray control chars /
+    trailing commas that occasionally slip through with non-ASCII (Hindi) text."""
+    content = (content or "").strip()
+    content = re.sub(r"^```(?:json)?\s*", "", content, flags=re.I)
+    content = re.sub(r"\s*```$", "", content).strip()
+    try:
+        return json.loads(content)
+    except Exception:
+        pass
+    i, j = content.find("{"), content.rfind("}")
+    if i != -1 and j != -1 and j > i:
+        frag = content[i:j + 1]
+        no_trail = re.sub(r",\s*([}\]])", r"\1", frag)   # kill trailing commas
+        no_ctrl  = re.sub(r"[\x00-\x1f]", " ", no_trail)  # literal control chars/newlines in strings
+        for f in (frag, no_trail, no_ctrl):
+            try:
+                return json.loads(f)
+            except Exception:
+                continue
+    return None
+
+
+def _retry_after_secs(ex) -> float | None:
+    try:
+        ra = ex.headers.get("retry-after") or ex.headers.get("Retry-After")
+        return float(ra) if ra else None
+    except Exception:
+        return None
+
+
+def call_groq(facts: dict):
+    """Returns a dict on success, None on a soft failure (skip this page), or the
+    RATE_LIMITED sentinel when the daily quota is genuinely exhausted."""
     if not GROQ_KEY:
         print("  ❌ GROQ_API_KEY missing")
         return None
 
-    facts_json = json.dumps(facts, ensure_ascii=False, indent=2)
-    prompt = PROMPT_TEMPLATE.format(facts_json=facts_json)
-
+    prompt = PROMPT_TEMPLATE.format(facts_json=json.dumps(facts, ensure_ascii=False, indent=2))
     body = {
         "model": MODEL,
-        "max_tokens": 900,
-        "temperature": 0.7,
-        "messages": [{"role": "user", "content": prompt}]
+        "max_tokens": 800,
+        "temperature": 0.2,                          # low temp → stable, valid JSON
+        "response_format": {"type": "json_object"},  # JSON mode → no more malformed replies
+        "messages": [{"role": "user", "content": prompt}],
     }
 
-    for attempt in range(2):   # max 2 attempts only
+    rate_waits = 0
+    for attempt in range(6):
         try:
             req = urllib.request.Request(
                 "https://api.groq.com/openai/v1/chat/completions",
                 data=json.dumps(body).encode(),
-                headers={"Content-Type":"application/json","Authorization":f"Bearer {GROQ_KEY}","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+                headers={"Content-Type": "application/json",
+                         "Authorization": f"Bearer {GROQ_KEY}"},
             )
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=45) as resp:
                 raw = json.loads(resp.read().decode())
-                content = raw["choices"][0]["message"]["content"].strip()
-                content = re.sub(r"^```json\s*","", content, flags=re.I)
-                content = re.sub(r"```$","", content).strip()
-                return json.loads(content)
+            content = raw["choices"][0]["message"]["content"]
+            parsed = _extract_json(content)
+            if parsed is not None:
+                return parsed
+            # JSON mode should prevent this; if it still happens, retry cold once
+            print(f"  ⚠️  JSON parse fail (attempt {attempt+1}) — retrying deterministically")
+            body["temperature"] = 0.0
+            time.sleep(3)
+            continue
 
         except urllib.error.HTTPError as ex:
-            body_err = ex.read().decode(errors="replace")
+            try:
+                body_err = ex.read().decode(errors="replace")
+            except Exception:
+                body_err = ""
             if ex.code == 429:
-                if attempt == 0:
-                    print(f"  ⏳ Rate limit 429 — waiting 30s...")
-                    time.sleep(30)
-                else:
-                    # Quota exhausted — stop wasting time, exit gracefully
-                    print(f"  🔴 Quota exhausted (429 x2) — stopping run, resume kal")
-                    sys.exit(0)
-            elif ex.code == 400:
-                if "rate_limit" in body_err.lower() or "tokens" in body_err.lower():
-                    print(f"  ⏳ TPM overflow — waiting 30s...")
-                    time.sleep(30)
-                else:
-                    print(f"  ❌ Bad request: {body_err[:120]}")
-                    return None
-            elif ex.code in (401, 403):
-                print(f"  ❌ Auth error {ex.code} — Groq response: {body_err[:300]}")
-                print(f"  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
+                ra = _retry_after_secs(ex)
+                # Groq's TPM (tokens-per-minute) 429 resets in seconds — just wait
+                # the header amount and retry. Only a large retry-after means the
+                # DAILY quota is done → stop cleanly and resume next run.
+                if ra is not None and ra > 150:
+                    print(f"  🔴 Daily quota reached (retry-after ~{int(ra)}s) — resume next run")
+                    return RATE_LIMITED
+                rate_waits += 1
+                if rate_waits > 10:
+                    print("  🔴 Persistent rate limit — pausing run (report below)")
+                    return RATE_LIMITED
+                wait = ra if ra else min(8 * rate_waits, 45)
+                print(f"  ⏳ Rate limit — waiting {wait:.0f}s then retrying (page NOT skipped)…")
+                time.sleep(wait)
+                continue
+            if ex.code in (401, 403):
+                print(f"  ❌ Auth error {ex.code}: {body_err[:220]}")
+                print("  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
                 sys.exit(1)
-            else:
-                print(f"  ❌ HTTP {ex.code}: {body_err[:80]}")
-                return None
+            if ex.code == 400 and ("rate" in body_err.lower() or "token" in body_err.lower()):
+                print("  ⏳ Token overflow — waiting 20s…")
+                time.sleep(20)
+                continue
+            print(f"  ❌ HTTP {ex.code}: {body_err[:120]}")
+            return None
         except Exception as ex:
             print(f"  ❌ Error attempt {attempt+1}: {ex}")
-            time.sleep(10)
+            time.sleep(6)
 
     return None
 
@@ -404,6 +456,8 @@ def main():
     skipped_done = 0
     skipped_ai = 0
     errors = 0
+    failed_slugs = []          # pages the API couldn't enrich → retried next run
+    rate_stopped = False       # True if we stopped early due to daily quota
 
     for html_path in html_files:
         if processed >= RUN_LIMIT:
@@ -464,10 +518,16 @@ def main():
 
         # Call Groq
         result = call_groq(facts)
+        if result is RATE_LIMITED:
+            # Daily quota done — stop THIS run cleanly. Progress is saved, the
+            # final report still prints, and remaining pages resume next run.
+            print("   ⏸️  Daily quota reached — stopping this run cleanly (report below)")
+            rate_stopped = True
+            break
         if not result:
             errors += 1
-            print(f"   ⚠️  API returned nothing — skipping")
-            time.sleep(DELAY_SEC)
+            failed_slugs.append(slug)      # not marked done → retried next run
+            print(f"   ⚠️  API returned nothing — will retry next run")
             continue
 
         # Patch HTML
@@ -499,23 +559,54 @@ def main():
     if processed > 0 and not DRY_RUN:
         git_commit(processed, calls_today)
 
-    print()
-    print("=" * 60)
-    print(f"  ✅ Patched    : {processed}")
-    print(f"  ⏭️  Already AI : {skipped_ai}")
-    print(f"  ⏭️  Done today : {skipped_done}")
-    print(f"  ❌ Errors     : {errors}")
     enr1, tot1 = site_progress(JOBS_DIR)
     remaining = tot1 - enr1
     days_left = (remaining + DAILY_LIMIT - 1) // max(1, DAILY_LIMIT)
-    print(f"  📊 Site total : {enr1}/{tot1} enriched  |  {remaining} remaining  (~{days_left} days @ {DAILY_LIMIT}/day)")
+    pct = (enr1 * 100.0 / tot1) if tot1 else 0.0
+    stop_reason = ("Daily quota reached" if rate_stopped else
+                   "RUN_LIMIT reached" if processed >= RUN_LIMIT else
+                   "Daily API budget used" if calls_today >= DAILY_LIMIT else
+                   "All targeted pages processed")
+
+    print()
     print("=" * 60)
+    print("  📋 AI ENRICHMENT — FINAL REPORT")
+    print("=" * 60)
+    print(f"  ✅ Enriched this run : {processed}")
+    print(f"  ⏭️  Already had AI    : {skipped_ai}")
+    print(f"  ⏭️  Skipped (no data) : {skipped_done}")
+    print(f"  ❌ Failed (retry)    : {errors}" + (f"  e.g. {', '.join(failed_slugs[:3])}" if failed_slugs else ""))
+    print(f"  🔢 API calls today   : {calls_today}/{DAILY_LIMIT}")
+    print(f"  ⏹️  Stopped because   : {stop_reason}")
+    print("  " + "-" * 56)
+    print(f"  📊 SITE COVERAGE     : {enr1}/{tot1} pages enriched ({pct:.1f}%)")
+    print(f"  📄 REMAINING         : {remaining} pages  (~{days_left} more day(s) @ {DAILY_LIMIT}/day)")
+    print("=" * 60)
+
+    # Save the failed list so we can see what needs a retry (naturally re-tried
+    # next run since failures are never marked done).
+    try:
+        progress["last_failed"] = failed_slugs[:50]
+        progress["last_run"] = datetime.now().isoformat(timespec="seconds")
+        save_progress(progress)
+    except Exception:
+        pass
+
+    bar_done = int(pct / 5)
+    bar = "█" * bar_done + "░" * (20 - bar_done)
     write_summary([
-        "### 🤖 AI Content Enrichment Progress",
-        f"- **Patched this run:** {processed}",
-        f"- **Site coverage:** {enr1}/{tot1} job pages enriched",
-        f"- **Remaining:** {remaining}",
-        f"- **Est. days left:** ~{days_left} (at {DAILY_LIMIT}/day)",
+        "### 🤖 AI Content Enrichment — Nightly Report",
+        "",
+        f"**Coverage:** `{bar}` **{pct:.1f}%**  ({enr1}/{tot1} pages)",
+        "",
+        "| Metric | Value |",
+        "|---|---|",
+        f"| ✅ Enriched this run | **{processed}** |",
+        f"| 📄 Remaining | **{remaining}** |",
+        f"| ❌ Failed (auto-retry next run) | {errors} |",
+        f"| 🔢 API calls today | {calls_today}/{DAILY_LIMIT} |",
+        f"| ⏱️ Est. days to 100% | ~{days_left} (at {DAILY_LIMIT}/day) |",
+        f"| ⏹️ Stopped because | {stop_reason} |",
     ])
 
 # ══════════════════════════════════════════════════════════════════

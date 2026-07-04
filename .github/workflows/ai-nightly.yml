@@ -31,7 +31,7 @@ concurrency:
 jobs:
   enrich:
     runs-on: ubuntu-latest
-    timeout-minutes: 120       # 2 hours — 200 pages @ 3 RPM = ~67 min max
+    timeout-minutes: 170       # room for 300 pages @ 3 RPM (~100 min) + 429 waits
     permissions:
       contents: write
 
@@ -75,7 +75,10 @@ jobs:
         env:
           GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL:    'llama-3.1-8b-instant'
-          GROQ_SAFE_RPM: '5'
+          # 3 RPM (20s) keeps us under the free-tier tokens-per-minute limit so we
+          # don't burn the budget in a 429 storm. The script also reads Retry-After
+          # on any 429 and waits exactly, then continues (never skips/stops early).
+          GROQ_SAFE_RPM: '3'
           RUN_LIMIT:     ${{ github.event.inputs.run_limit || '300' }}
           DAILY_LIMIT:   '300'
           FORCE_REGEN:   ${{ github.event.inputs.force || 'false' }}
