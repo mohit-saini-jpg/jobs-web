@@ -78,7 +78,8 @@ def _job_sort_key(job):
     """Sort key: last_date_to_apply DESC, then last_updated DESC."""
     imp = job.get('important_dates', {}) or {}
     bd  = job.get('basic_details', {}) or {}
-    ld  = (imp.get('last_date_to_apply') or imp.get('last_date') or '').strip()
+    ld  = (imp.get('extended_last_date') or imp.get('date_extended')
+           or imp.get('last_date_to_apply') or imp.get('last_date') or '').strip()
     lu  = (bd.get('last_updated') or '').strip()
     return (_parse_date_str(ld), _parse_date_str(lu))
 
@@ -1172,8 +1173,10 @@ def render_dates(obj):
     if not obj or not isinstance(obj, dict): return ''
     PRIO = ['application_start_date','application_begin','start_date','date_of_notification',
             'notification_date','last_date_to_apply','last_date','application_last_date',
-            'fee_payment_last_date','exam_date','written_exam_date','online_exam_date',
-            'omr_exam_date','interview_date','admit_card_date','result_date','event',
+            'extended_last_date','date_extended','extended_fee_payment_date',
+            'fee_payment_last_date','exam_date','revised_exam_date','written_exam_date','online_exam_date',
+            'omr_exam_date','interview_date','revised_interview_date','admit_card_date',
+            'revised_admit_card_date','extended_correction_date','result_date','event',
             'आवेदन शुरू','अंतिम तिथि','परीक्षा तिथि','महत्वपूर्ण तिथि','अधिसूचना']
     rows = ''; seen = set()
     for k in PRIO:
@@ -3774,7 +3777,8 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                       or dates.get('exam_date','') or dates.get('last_date_apply_online','')
                       or dates.get('last_date_to_apply','') or dates.get('last_date',''))
     else:
-        last_d = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
+        last_d = safe(dates.get('extended_last_date','') or dates.get('date_extended','')
+                      or dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
                       or dates.get('last_date','') or dates.get('exam_date','') or dates.get('written_exam_date',''))
     vacancies = safe(bd.get('total_vacancies','') or job_obj.get('total_post','') or job_obj.get('total_vacancy',''))
     # SECURE FALLBACK: ai_extracted_structured_data for missing fields
@@ -4385,7 +4389,8 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if not vacancies:
         _vm = re.search(r'([\d,]+)\s*(?:posts?|vacanc)', title, re.I)
         if _vm: vacancies = _vm.group(1)
-    last_d    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
+    last_d    = safe(dates.get('extended_last_date','') or dates.get('date_extended','')
+                     or dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
                      or dates.get('last_date','') or dates.get('last_date_pay_fee','')
                      or job_obj.get('last_date','') or job_obj.get('lastDate',''))
     # If no explicit last date, fall back to the most relevant date present
