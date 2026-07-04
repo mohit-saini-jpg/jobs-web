@@ -233,7 +233,16 @@ def call_groq(facts: dict):
                 "https://api.groq.com/openai/v1/chat/completions",
                 data=json.dumps(body).encode(),
                 headers={"Content-Type": "application/json",
-                         "Authorization": f"Bearer {GROQ_KEY}"},
+                         "Authorization": f"Bearer {GROQ_KEY}",
+                         # Groq Cloudflare ke peeche hai, jo default urllib UA
+                         # ("Python-urllib/3.x") ko bot samajh ke 403 + CF
+                         # error 1010 de deta hai — isse galti se "auth
+                         # error" lagta hai aur script abort ho jaati hai,
+                         # jabki key valid hoti hai. Browser jaisa UA bhejne
+                         # se CF ka bot-block bypass ho jaata hai.
+                         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
+                                       "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                       "Chrome/124.0.0.0 Safari/537.36"},
             )
             with urllib.request.urlopen(req, timeout=45) as resp:
                 raw = json.loads(resp.read().decode())
@@ -269,6 +278,15 @@ def call_groq(facts: dict):
                 time.sleep(wait)
                 continue
             if ex.code in (401, 403):
+                # Cloudflare (jo Groq ke aage baitha hai) kabhi-kabhi bot-jaisi
+                # requests ko 403 + "error code: 1010" jaisa HTML/text de deta
+                # hai — ye Groq ka real auth error nahi hai, isliye key ko
+                # turant "invalid" maan ke abort nahi karna. Sirf tabhi abort
+                # karo jab Groq khud auth reject bata raha ho.
+                if "cloudflare" in body_err.lower() or "1010" in body_err or "1015" in body_err:
+                    print(f"  ⏳ Cloudflare block {ex.code} (not a real auth error) — waiting 15s, retrying…")
+                    time.sleep(15)
+                    continue
                 print(f"  ❌ Auth error {ex.code}: {body_err[:220]}")
                 print("  🛑 ABORTING — fix GROQ_API_KEY secret and retry")
                 sys.exit(1)

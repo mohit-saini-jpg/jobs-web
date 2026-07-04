@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
     inputs:
       run_limit:
-        description: 'Pages per run (default: 200)'
-        default: '200'
+        description: 'Pages per run (default: 300)'
+        default: '300'
         required: false
       force:
         description: 'Force re-enrich already done pages'
