@@ -207,7 +207,7 @@
       <div class="form-group"><label>Image Fit</label><select id="s-imgfit"><option value="fit">Fit to Page Size</option><option value="actual">Actual Image Size</option></select></div>
       <div class="form-group"><label>Render Quality</label><select id="s-quality"><option value="1.4">Standard</option><option value="2" selected>High</option></select></div>
     </div>
-    <div class="toggle-row"><label>📑 Cover Page add karein (file list ke saath)</label><label class="switch"><input type="checkbox" id="s-cover" checked><span class="slider-tg"></span></label></div>
+    <div class="toggle-row"><label>📑 Cover Page add karein (file list ke saath) — sirf multiple files par</label><label class="switch"><input type="checkbox" id="s-cover"><span class="slider-tg"></span></label></div>
     <div class="toggle-row"><label>🔢 Page numbers add karein (footer)</label><label class="switch"><input type="checkbox" id="s-pagenum" checked><span class="slider-tg"></span></label></div>
     <div class="action-row">
       <button class="btn-primary" id="convert-btn"><span>🚀</span> Convert to PDF</button>
@@ -664,7 +664,7 @@
       if(opts.mergeMode==='single'){
         var pdfDoc=await PDFLib.PDFDocument.create();
         var fonts=await loadFonts(pdfDoc);
-        if(opts.coverPage) addCoverPage(pdfDoc,opts,fonts,QUEUE);
+        if(opts.coverPage && QUEUE.length>1) addCoverPage(pdfDoc,opts,fonts,QUEUE);
         for(var i=0;i<QUEUE.length;i++){
           setP(10+Math.round(i/QUEUE.length*75),'Processing '+(i+1)+'/'+QUEUE.length+': '+QUEUE[i].file.name);
           try{ await convertFileToPDFPages(pdfDoc,QUEUE[i],opts,fonts); QUEUE[i].status='done'; }
@@ -684,7 +684,6 @@
           setP(10+Math.round(j/QUEUE.length*80),'Converting '+(j+1)+'/'+QUEUE.length+': '+QUEUE[j].file.name);
           var doc=await PDFLib.PDFDocument.create();
           var fnts=await loadFonts(doc);
-          if(opts.coverPage) addCoverPage(doc,opts,fnts,[QUEUE[j]]);
           try{ await convertFileToPDFPages(doc,QUEUE[j],opts,fnts); QUEUE[j].status='done'; }
           catch(e){ QUEUE[j].status='error'; try{ await addErrorPage(doc,QUEUE[j],e,fnts,opts); }catch(e2){} }
           if(opts.pageNumbers) addPageNumbers(doc,fnts);
