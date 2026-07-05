@@ -1,0 +1,72 @@
+# ══════════════════════════════════════════════════════════════════════
+# SEO Guardian — Weekly FULL-SCAN heal (MANUAL trigger only)
+# Runs seo_guardian.py over the ENTIRE jobs/state/education/category/section/
+# qualification tree (not just git-changed files) and commits the heals.
+#
+# NOTE: intentionally workflow_dispatch ONLY — no cron yet. We first watch the
+# daily --changed-only Guardian (in auto-update-jobs.yml, Step 8b) run stably in
+# production for a week or two; a cron schedule is added later once proven.
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🛡️ SEO Guardian — Weekly Full Scan
+
+on:
+  workflow_dispatch:
+
+# Share the data-pipeline concurrency group so a full-scan never runs at the same
+# time as the 7 AM auto-update job (avoids two jobs pushing main at once).
+concurrency:
+  group: data-pipeline
+  cancel-in-progress: false
+
+jobs:
+  fullscan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Full-scan heal (NOT --dry-run): fixes structural/SEO metadata across the
+      # whole tree and regenerates sitemaps from disk. Never blocks (exit 0);
+      # SEO_CLEAN is written to $GITHUB_ENV for the summary below.
+      - name: 🛡️ SEO Guardian — full-scan heal
+        continue-on-error: true
+        run: python3 seo_guardian.py --full-scan
+
+      - name: 📤 Commit & push heals (if any)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "✅ Nothing to heal — tree already clean"
+            echo "### 🛡️ SEO Guardian full-scan: tree already clean" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
+          git commit -m "🛡️ SEO Guardian weekly full-scan heal — ${DATE_IST} IST [skip ci]"
+          # merge-safe push (never rebase), same pattern as auto-update-jobs.yml
+          git fetch origin main
+          git merge origin/main -X ours --no-edit 2>/dev/null || true
+          git push origin main
+          echo "✅ Pushed full-scan heals"
+          echo "### 🛡️ SEO Guardian full-scan heal pushed — ${DATE_IST} IST" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📊 Report summary
+        if: always()
+        run: |
+          if [ -f seo_guardian_report.json ]; then
+            python3 -c "import json;r=json.load(open('seo_guardian_report.json'));print('files_scanned:',r['files_scanned']);print('auto_fixed:',r['issues_auto_fixed']);print('critical_unfixable:',r['critical_unfixable']);print('seo_clean:',r['seo_clean'])" >> $GITHUB_STEP_SUMMARY || true
+          fi

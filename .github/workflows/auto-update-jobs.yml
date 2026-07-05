@@ -280,6 +280,17 @@ jobs:
             echo "ℹ️ scripts/fix_seo.py not found — skipping"
           fi
 
+      # ── STEP 8b: SEO Guardian — validate & auto-heal before ping ──
+      # Runs AFTER all content/SEO fixes, BEFORE the commit, so its heals + report
+      # are part of the same atomic commit. Writes SEO_CLEAN=true/false to
+      # $GITHUB_ENV; only a CRITICAL unfixable issue (malformed JSON-LD, missing
+      # required schema, a sitemap URL that would 404) sets it false. Non-critical
+      # issues never block. continue-on-error: a Guardian crash must not fail the
+      # pipeline — if SEO_CLEAN is left unset, the ping simply skips (fail-safe).
+      - name: 🛡️ SEO Guardian — Validate & Auto-Heal
+        continue-on-error: true
+        run: python3 seo_guardian.py --changed-only
+
       # ── STEP 9: ONE commit for everything ────────────────────────
       - name: 📤 Commit ALL changes (one atomic commit)
         run: |
@@ -292,6 +303,7 @@ jobs:
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
           git add _redirects 2>/dev/null || true
+          git add seo_guardian_report.json 2>/dev/null || true
           git add education/ 2>/dev/null || true
           git add haryana/ andhra-pradesh/ arunachal-pradesh/ assam/ bihar/ 2>/dev/null || true
           git add chhattisgarh/ delhi/ goa/ gujarat/ himachal-pradesh/ 2>/dev/null || true
@@ -336,8 +348,9 @@ jobs:
           git push origin main
           echo "✅ Pushed successfully"
 
-      # ── STEP 11: Ping Google + Bing sitemaps ─────────────────────
+      # ── STEP 11: Ping Google + Bing sitemaps (GATED by SEO Guardian) ──
       - name: 📡 Ping Google & Bing sitemaps
+        if: env.SEO_CLEAN == 'true'
         continue-on-error: true
         run: |
           curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
@@ -345,12 +358,21 @@ jobs:
           curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
             -o /dev/null -w "Bing:   %{http_code}\n" || true
 
-      # ── STEP 12: IndexNow ping ────────────────────────────────────
+      # ── STEP 12: IndexNow ping (GATED by SEO Guardian) ────────────
       - name: 📡 IndexNow ping
+        if: env.SEO_CLEAN == 'true'
         continue-on-error: true
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: node .github/workflows/indexnow-ping.js
+
+      # ── STEP 12b: Guardian gate warning (only when ping was skipped) ──
+      - name: ⚠️ SEO Guardian gate — ping skipped
+        if: env.SEO_CLEAN != 'true'
+        run: |
+          echo "### ⚠️ SEO Guardian: sitemap ping SKIPPED" >> $GITHUB_STEP_SUMMARY
+          echo "A CRITICAL, unfixable SEO issue remains, so Google/Bing/IndexNow were NOT pinged this run (deploy still committed & pushed)." >> $GITHUB_STEP_SUMMARY
+          echo "See **seo_guardian_report.json** (\`critical_unfixable\`) in this commit. Ping resumes automatically on the next clean run." >> $GITHUB_STEP_SUMMARY
 
       # ── STEP 13: Summary ─────────────────────────────────────────
       - name: 📊 Summary
