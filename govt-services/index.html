@@ -354,7 +354,7 @@
       <p class="csc-page-sub">सरकारी सेवाएं — service choose करें, request submit करें। हम जल्दी contact करेंगे।</p>
       <div id="cscGrid" class="csc-grid">
         <div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">
-          <i class="fas fa-spinner fa-spin" style="font-size:1.5rem"></i>
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
           <p>Loading services…</p>
         </div>
       </div>
@@ -385,7 +385,7 @@
           <div class="csc-modal-title">Service Request</div>
           <div class="csc-modal-service-name" id="modalServiceName"></div>
         </div>
-        <button class="csc-modal-close" onclick="closeCscModal()"><i class="fas fa-times"></i></button>
+        <button class="csc-modal-close" onclick="closeCscModal()"><i class="fa-solid fa-times"></i></button>
       </div>
       <div class="csc-modal-body" id="modalBody">
         <!-- Filled by JS -->
@@ -424,7 +424,7 @@
 
     grid.innerHTML = services.map((s, i) => {
       const name = (s.name || s.service || "").trim();
-      const icon = s.icon || "fas fa-file-alt";
+      const icon = s.icon || "fa-solid fa-file-alt";
       const docs = Array.isArray(s.documents) ? s.documents : [];
       const color = COLORS[i % COLORS.length];
       return `
@@ -437,7 +437,7 @@
           <div class="csc-card-body">
             ${docs.length ? `<div class="csc-card-docs"><strong>Required docs:</strong> ${docs.join(", ")}</div>` : ""}
             <button class="csc-req-btn" onclick="event.stopPropagation();openCscModal(${i})">
-              <i class="fas fa-paper-plane"></i> Request करें
+              <i class="fa-solid fa-paper-plane"></i> Request करें
             </button>
           </div>
         </div>`;
@@ -483,7 +483,7 @@
         <div class="csc-modal-actions">
           <button type="button" class="csc-btn-cancel" onclick="closeCscModal()">Cancel</button>
           <button type="submit" class="csc-btn-submit" id="cscSubmitBtn">
-            <i class="fas fa-paper-plane"></i>&nbsp; Submit Request
+            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Request
           </button>
         </div>
       </form>`;
@@ -514,7 +514,7 @@
 
     const btn = document.getElementById("cscSubmitBtn");
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Submitting…';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Submitting…';
 
     const serviceText = [
       currentService?.name || currentService?.service || "Unknown",
@@ -543,21 +543,21 @@
       // Success screen
       document.getElementById("modalBody").innerHTML = `
         <div class="csc-success-msg">
-          <div class="csc-success-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="csc-success-icon"><i class="fa-solid fa-check-circle"></i></div>
           <div class="csc-success-title">Request Submitted! ✅</div>
           <p class="csc-success-sub">
             <strong>${name}</strong> जी, आपकी request मिल गई।<br/>
             हम जल्द ही <strong>${phone}</strong> पर contact करेंगे।
           </p>
           <button class="csc-req-btn" style="margin:18px auto 0;display:flex" onclick="closeCscModal()">
-            <i class="fas fa-times"></i>&nbsp; Close
+            <i class="fa-solid fa-times"></i>&nbsp; Close
           </button>
         </div>`;
 
     } catch(err) {
       console.error("Submit error:", err);
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-paper-plane"></i>&nbsp; Submit Request';
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Request';
       alert("Request submit नहीं हो सकी। Internet check करें और फिर try करें।");
     }
   };
