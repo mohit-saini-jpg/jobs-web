@@ -1,0 +1,1219 @@
+{
+  "timestamp": "2026-07-05T10:26:49.575945+00:00",
+  "mode": "full-scan",
+  "dry_run": false,
+  "files_scanned": 5596,
+  "issues_found_by_check": {
+    "lang_hreflang": 1647,
+    "sitemap_sync": 200
+  },
+  "issues_auto_fixed": 1647,
+  "unfixable": [
+    {
+      "file": "state\\andhra-pradesh\\aaiclas-assistant-62-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aaiclas-assistant-62-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\aiims-mangalagiri-doctor-social-worker-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-doctor-social-worker-2-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\aiims-mangalagiri-research-scientist-and-laboratory-technician-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-research-scientist-and-laboratory-technician-2-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\aiims-mangalagiri-senior-resident-senior-demonstrator-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-senior-resident-senior-demonstrator-3-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\angrau-young-professionals-ii-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/angrau-young-professionals-ii-3-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\ap-power-sector-assistant-executive-engineer-629-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/ap-power-sector-assistant-executive-engineer-629-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\apmsrb-staff-nurse-pharmacist-and-more-529-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/apmsrb-staff-nurse-pharmacist-and-more-529-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\dchs-chittoor-civil-assistant-surgeon-19-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-chittoor-civil-assistant-surgeon-19-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\dchs-kakinada-civil-asst-surgeon-general-and-specialists-34-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-kakinada-civil-asst-surgeon-general-and-specialists-34-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\dchs-vizianagaram-civil-assistant-surgeon-11-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-vizianagaram-civil-assistant-surgeon-11-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\dcil-fleet-personnel-trainees-45-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dcil-fleet-personnel-trainees-45-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\dsh-hospitals-kurnool-civil-assistant-surgeon-specialists-civil-assistant-surgeo\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dsh-hospitals-kurnool-civil-assistant-surgeon-specialists-civil-assistant-surgeo/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\hsl-manager-dy-project-officer-and-more-34-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/hsl-manager-dy-project-officer-and-more-34-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\konkan-railway-project-engineer-technician-and-more-36-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/konkan-railway-project-engineer-technician-and-more-36-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\nabfins-customer-service-officer\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/nabfins-customer-service-officer/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\nalco-non-executive-268-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/nalco-non-executive-268-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\prakasam-district-civil-assistant-surgeon-specialists-and-general-23-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/prakasam-district-civil-assistant-surgeon-specialists-and-general-23-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\sainik-school-kalikiri-art-master-pti-cum-matron-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/sainik-school-kalikiri-art-master-pti-cum-matron-2-posts/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\secondary-health-hospital-krishna-civil-assistant-surgeon-specialist-civil-assis\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/secondary-health-hospital-krishna-civil-assistant-surgeon-specialist-civil-assis/"
+    },
+    {
+      "file": "state\\andhra-pradesh\\wcd-sri-satya-sai-anganwadi-worker-helper-230-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/wcd-sri-satya-sai-anganwadi-worker-helper-230-posts/"
+    },
+    {
+      "file": "state\\arunachal-pradesh\\apssb-chsle-group-c-207-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/apssb-chsle-group-c-207-posts/"
+    },
+    {
+      "file": "state\\arunachal-pradesh\\echs-likabali-dental-officer-dental-ath-and-driver-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/echs-likabali-dental-officer-dental-ath-and-driver-3-posts/"
+    },
+    {
+      "file": "state\\arunachal-pradesh\\neiafmr-project-consultant-senior-project-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/neiafmr-project-consultant-senior-project-consultant-1-posts/"
+    },
+    {
+      "file": "state\\arunachal-pradesh\\rari-yoga-therapist-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/rari-yoga-therapist-1-posts/"
+    },
+    {
+      "file": "state\\assam\\apsc-assistant-mining-engineer-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/apsc-assistant-mining-engineer-1-posts/"
+    },
+    {
+      "file": "state\\assam\\assam-university-teaching-123-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/assam-university-teaching-123-posts/"
+    },
+    {
+      "file": "state\\assam\\cari-guwahati-senior-research-fellow-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/cari-guwahati-senior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state\\assam\\dswo-majuli-case-worker-mpw-and-more-7-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/dswo-majuli-case-worker-mpw-and-more-7-posts/"
+    },
+    {
+      "file": "state\\assam\\echs-likabali-dental-officer-dental-ath-and-driver-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/echs-likabali-dental-officer-dental-ath-and-driver-3-posts/"
+    },
+    {
+      "file": "state\\assam\\iic-director\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/iic-director/"
+    },
+    {
+      "file": "state\\assam\\iit-guwahati-project-engineer-and-associate-project-engineer-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/iit-guwahati-project-engineer-and-associate-project-engineer-5-posts/"
+    },
+    {
+      "file": "state\\assam\\iit-guwahati-research-associate-graphic-design-and-more-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/iit-guwahati-research-associate-graphic-design-and-more-3-posts/"
+    },
+    {
+      "file": "state\\assam\\iit-guwahati-sports-instructors-26-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/iit-guwahati-sports-instructors-26-posts/"
+    },
+    {
+      "file": "state\\assam\\lnipe-guwahati-non-teaching-30-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/lnipe-guwahati-non-teaching-30-posts/"
+    },
+    {
+      "file": "state\\assam\\nalco-non-executive-268-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/nalco-non-executive-268-posts/"
+    },
+    {
+      "file": "state\\assam\\nit-silchar-executive-engineer-technical-assistant-and-more-07-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/nit-silchar-executive-engineer-technical-assistant-and-more-07-posts/"
+    },
+    {
+      "file": "state\\assam\\nit-silchar-research-associate-i-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/nit-silchar-research-associate-i-1-posts/"
+    },
+    {
+      "file": "state\\assam\\oil-india-economist-deputy-chief-engineer-and-more-10-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/oil-india-economist-deputy-chief-engineer-and-more-10-posts/"
+    },
+    {
+      "file": "state\\assam\\punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts/"
+    },
+    {
+      "file": "state\\assam\\rbi-banks-medical-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/rbi-banks-medical-consultant-1-posts/"
+    },
+    {
+      "file": "state\\assam\\sainik-school-goalpara-coaches-and-teachers-13-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/sainik-school-goalpara-coaches-and-teachers-13-posts/"
+    },
+    {
+      "file": "state\\assam\\sainik-school-goalpara-teaching-and-non-teaching-17-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/sainik-school-goalpara-teaching-and-non-teaching-17-posts/"
+    },
+    {
+      "file": "state\\assam\\ssa-quality-expert-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/ssa-quality-expert-1-posts/"
+    },
+    {
+      "file": "state\\assam\\stpinext-chief-operating-officer-coo\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/stpinext-chief-operating-officer-coo/"
+    },
+    {
+      "file": "state\\assam\\tezpur-university-junior-research-fellow-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/tezpur-university-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state\\assam\\tezpur-university-project-assistant\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/tezpur-university-project-assistant/"
+    },
+    {
+      "file": "state\\assam\\tezpur-university-project-associate-and-field-assistant-6-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/tezpur-university-project-associate-and-field-assistant-6-posts/"
+    },
+    {
+      "file": "state\\assam\\tinsukia-judiciary-peon-and-cleaner-safai-karmachari-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/assam/tinsukia-judiciary-peon-and-cleaner-safai-karmachari-5-posts/"
+    },
+    {
+      "file": "state\\bihar\\aiims-patna-head-and-coordinator-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/aiims-patna-head-and-coordinator-2-posts/"
+    },
+    {
+      "file": "state\\bihar\\atma-arwal-computer-operator-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/atma-arwal-computer-operator-1-posts/"
+    },
+    {
+      "file": "state\\bihar\\bpssc-assistant-sub-inspector-22-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/bpssc-assistant-sub-inspector-22-posts/"
+    },
+    {
+      "file": "state\\bihar\\bssa-doctor-yoga-instructor-and-more-17-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/bssa-doctor-yoga-instructor-and-more-17-posts/"
+    },
+    {
+      "file": "state\\bihar\\btsc-food-analyst-11-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/btsc-food-analyst-11-posts/"
+    },
+    {
+      "file": "state\\bihar\\central-bank-of-india-apprentice-4500-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/central-bank-of-india-apprentice-4500-posts/"
+    },
+    {
+      "file": "state\\bihar\\dcpu-banka-support-person-20-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-banka-support-person-20-posts/"
+    },
+    {
+      "file": "state\\bihar\\dcpu-bhagalpur-cook-house-keeper-and-more-17-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-bhagalpur-cook-house-keeper-and-more-17-posts/"
+    },
+    {
+      "file": "state\\bihar\\dcpu-madhepura-support-person-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-madhepura-support-person-5-posts/"
+    },
+    {
+      "file": "state\\bihar\\dcpu-munger-support-person-10-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-munger-support-person-10-posts/"
+    },
+    {
+      "file": "state\\bihar\\esic-model-hospital-phulwarisharif-specialists-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/esic-model-hospital-phulwarisharif-specialists-5-posts/"
+    },
+    {
+      "file": "state\\bihar\\icds-gaya-district-project-assistant-and-block-coordinator-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/icds-gaya-district-project-assistant-and-block-coordinator-3-posts/"
+    },
+    {
+      "file": "state\\bihar\\iim-bodh-gaya-non-faculty-positions-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/iim-bodh-gaya-non-faculty-positions-15-posts/"
+    },
+    {
+      "file": "state\\bihar\\niper-hajipur-civil-engineer-internal-auditor-and-more-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/niper-hajipur-civil-engineer-internal-auditor-and-more-5-posts/"
+    },
+    {
+      "file": "state\\bihar\\sainik-school-gopalganj-tgt-and-librarian-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/sainik-school-gopalganj-tgt-and-librarian-2-posts/"
+    },
+    {
+      "file": "state\\bihar\\siwan-district-court-temporary-attender-10-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/siwan-district-court-temporary-attender-10-posts/"
+    },
+    {
+      "file": "state\\bihar\\tmc-housekeeping-supervisor-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/tmc-housekeeping-supervisor-1-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\irctc-hospitality-monitor-92-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/irctc-hospitality-monitor-92-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\nhm-chandigarh-budget-finance-officer-and-consultant-iec-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/nhm-chandigarh-budget-finance-officer-and-consultant-iec-2-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\nhm-chandigarh-specialist-doctors\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/nhm-chandigarh-specialist-doctors/"
+    },
+    {
+      "file": "state\\chandigarh\\panjab-university-guest-faculty-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/panjab-university-guest-faculty-2-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\panjab-university-junior-research-fellow-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/panjab-university-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\panjab-university-junior-research-fellow-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/panjab-university-junior-research-fellow-2-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\pgimer-senior-demonstrator-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/pgimer-senior-demonstrator-1-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\punjab-and-haryana-high-court-clerk-1265-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/punjab-and-haryana-high-court-clerk-1265-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\punjab-and-haryana-high-court-safai-sewak-mali-167-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/punjab-and-haryana-high-court-safai-sewak-mali-167-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\rbi-bank-medical-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/rbi-bank-medical-consultant-1-posts/"
+    },
+    {
+      "file": "state\\chandigarh\\scdrc-chandigarh-steno-typist-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chandigarh/scdrc-chandigarh-steno-typist-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\cg-vyapam-ot-technician-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/cg-vyapam-ot-technician-15-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\cmho-bijapur-staff-nurse-support-staff-and-more-33-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/cmho-bijapur-staff-nurse-support-staff-and-more-33-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\cmho-korea-community-health-officer-cleaner-and-more-140-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/cmho-korea-community-health-officer-cleaner-and-more-140-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\cmho-mungeli-attendant-staff-nurse-and-more-106-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/cmho-mungeli-attendant-staff-nurse-and-more-106-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\cmho-raigarh-dresser-pharmacist-and-more\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/cmho-raigarh-dresser-pharmacist-and-more/"
+    },
+    {
+      "file": "state\\chhattisgarh\\dantewada-district-assistant-veterinary-field-officer-4-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/dantewada-district-assistant-veterinary-field-officer-4-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\district-panchayat-bastar-assistant-programmer-block-coordinator-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/district-panchayat-bastar-assistant-programmer-block-coordinator-3-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\district-panchayat-narayanpur-gram-panchayat-secretary-14-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/district-panchayat-narayanpur-gram-panchayat-secretary-14-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\ggv-research-associate-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/ggv-research-associate-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\govt-iti-balod-guest-lecturer-8-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/govt-iti-balod-guest-lecturer-8-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\iit-bhilai-project-associate-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/iit-bhilai-project-associate-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\isro-sac-apprentice\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/isro-sac-apprentice/"
+    },
+    {
+      "file": "state\\chhattisgarh\\iti-mahasamund-surveyor-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/iti-mahasamund-surveyor-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\nit-raipur-junior-research-fellow-jrf-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/nit-raipur-junior-research-fellow-jrf-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\north-bastar-kanker-district-guest-lecturer-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/north-bastar-kanker-district-guest-lecturer-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\primary-forest-produce-cooperative-society-bilaspur-manager-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/primary-forest-produce-cooperative-society-bilaspur-manager-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\sankalp-shikshan-sansthan-jashpur-faculty-4-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/sankalp-shikshan-sansthan-jashpur-faculty-4-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\secl-tele-comradio-mechanic-ts-65-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/secl-tele-comradio-mechanic-ts-65-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\sports-and-youth-welfare-dantewada-peon-cook-and-more-11-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/sports-and-youth-welfare-dantewada-peon-cook-and-more-11-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\surguja-district-assistant-veterinary-field-officer-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/surguja-district-assistant-veterinary-field-officer-15-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\wcd-kabirdham-it-assistant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/wcd-kabirdham-it-assistant-1-posts/"
+    },
+    {
+      "file": "state\\chhattisgarh\\wcd-sukma-it-assistant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/chhattisgarh/wcd-sukma-it-assistant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\acms-delhi-cantt-lower-division-clerk-and-dissection-hall-attendant-6-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/acms-delhi-cantt-lower-division-clerk-and-dissection-hall-attendant-6-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiia-project-associate-i-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiia-project-associate-i-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiims-delhi-consultant-scientist-and-more-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-consultant-scientist-and-more-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiims-delhi-project-assistant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-project-assistant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiims-delhi-project-scientist-b\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-project-scientist-b/"
+    },
+    {
+      "file": "state\\delhi\\aiims-delhi-project-technical-support-ii-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-project-technical-support-ii-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiims-delhi-senior-research-fellow-and-administrative-assistant-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-senior-research-fellow-and-administrative-assistant-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\aiims-group-b-group-c-1484-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-group-b-group-c-1484-posts/"
+    },
+    {
+      "file": "state\\delhi\\air-force-school-panchwati-teaching-and-non-teaching-staff\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/air-force-school-panchwati-teaching-and-non-teaching-staff/"
+    },
+    {
+      "file": "state\\delhi\\apeda-assistant-manager-assistant-general-manager-4-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/apeda-assistant-manager-assistant-general-manager-4-posts/"
+    },
+    {
+      "file": "state\\delhi\\becil-je-mts-and-more-33-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/becil-je-mts-and-more-33-posts/"
+    },
+    {
+      "file": "state\\delhi\\bedf-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bedf-consultant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\bel-project-officer-i-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bel-project-officer-i-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\birac-officer-manager-and-more-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/birac-officer-manager-and-more-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\bis-section-officer-20-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bis-section-officer-20-posts/"
+    },
+    {
+      "file": "state\\delhi\\bro-electrician-draughtsman-and-more-899-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bro-electrician-draughtsman-and-more-899-posts/"
+    },
+    {
+      "file": "state\\delhi\\bsnl-general-manager-in-finance-accounts-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bsnl-general-manager-in-finance-accounts-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\bsnl-junior-telecom-officer-100-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/bsnl-junior-telecom-officer-100-posts/"
+    },
+    {
+      "file": "state\\delhi\\cabinet-secretariat-senior-field-officer-25-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cabinet-secretariat-senior-field-officer-25-posts/"
+    },
+    {
+      "file": "state\\delhi\\cat-junior-accountant-accounts-officer-and-more-82-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cat-junior-accountant-accounts-officer-and-more-82-posts/"
+    },
+    {
+      "file": "state\\delhi\\ccrum-staff-nurse-mts-and-more-176-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ccrum-staff-nurse-mts-and-more-176-posts/"
+    },
+    {
+      "file": "state\\delhi\\cdac-project-engineer-project-manager-and-more-951-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cdac-project-engineer-project-manager-and-more-951-posts/"
+    },
+    {
+      "file": "state\\delhi\\central-sanskrit-university-teaching-90-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/central-sanskrit-university-teaching-90-posts/"
+    },
+    {
+      "file": "state\\delhi\\cerc-technical-officer-d-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cerc-technical-officer-d-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\chacha-nehru-bal-chikitsalaya-teaching-faculty-and-medical-officers-19-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/chacha-nehru-bal-chikitsalaya-teaching-faculty-and-medical-officers-19-posts/"
+    },
+    {
+      "file": "state\\delhi\\cisf-asi-paramedical-staff-24-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cisf-asi-paramedical-staff-24-posts/"
+    },
+    {
+      "file": "state\\delhi\\crpf-commandant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/crpf-commandant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\csir-igib-technician-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/csir-igib-technician-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\csir-niscpr-project-assistant-project-scientist-and-more-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/csir-niscpr-project-assistant-project-scientist-and-more-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\csir-niscpr-project-associate-i-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/csir-niscpr-project-associate-i-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\csir-npl-technician-20-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/csir-npl-technician-20-posts/"
+    },
+    {
+      "file": "state\\delhi\\cvc-technical-examiner-assistant-technical-examiner-assistant-technical-examiner\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/cvc-technical-examiner-assistant-technical-examiner-assistant-technical-examiner/"
+    },
+    {
+      "file": "state\\delhi\\dduc-counselor-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dduc-counselor-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\delhi-university-assistant-professor-20-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/delhi-university-assistant-professor-20-posts/"
+    },
+    {
+      "file": "state\\delhi\\delhi-university-south-campus-junior-research-fellow-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/delhi-university-south-campus-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\dfpd-joint-director-and-deputy-director-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dfpd-joint-director-and-deputy-director-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\dmrc-assistant-manager-manager-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dmrc-assistant-manager-manager-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\dphcl-technical-and-non-technical-23-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dphcl-technical-and-non-technical-23-posts/"
+    },
+    {
+      "file": "state\\delhi\\drdo-desidoc-apprentice-20-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/drdo-desidoc-apprentice-20-posts/"
+    },
+    {
+      "file": "state\\delhi\\drdo-rac-scientist-33-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/drdo-rac-scientist-33-posts/"
+    },
+    {
+      "file": "state\\delhi\\dsssb-assistant-trained-graduate-teacher-and-more-1979-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dsssb-assistant-trained-graduate-teacher-and-more-1979-posts/"
+    },
+    {
+      "file": "state\\delhi\\ecil-project-engineer-technical-officer-and-more-21-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ecil-project-engineer-technical-officer-and-more-21-posts/"
+    },
+    {
+      "file": "state\\delhi\\edcil-aai-senior-consultant-associate-consultant-and-more-16-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/edcil-aai-senior-consultant-associate-consultant-and-more-16-posts/"
+    },
+    {
+      "file": "state\\delhi\\eil-associate-engineer-41-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/eil-associate-engineer-41-posts/"
+    },
+    {
+      "file": "state\\delhi\\esic-teaching-faculty-118-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/esic-teaching-faculty-118-posts/"
+    },
+    {
+      "file": "state\\delhi\\exim-bank-management-trainee-05-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/exim-bank-management-trainee-05-posts/"
+    },
+    {
+      "file": "state\\delhi\\fssai-group-b-c-11-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/fssai-group-b-c-11-posts/"
+    },
+    {
+      "file": "state\\delhi\\fssai-joint-director-manager-it-junior-assistant-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/fssai-joint-director-manager-it-junior-assistant-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\grih-kalyan-kendra-delhi-peon-office-assistant-and-more\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/grih-kalyan-kendra-delhi-peon-office-assistant-and-more/"
+    },
+    {
+      "file": "state\\delhi\\hsl-manager-dy-project-officer-and-more-34-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/hsl-manager-dy-project-officer-and-more-34-posts/"
+    },
+    {
+      "file": "state\\delhi\\iaf-commissioned-officer-379-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iaf-commissioned-officer-379-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-field-workers-04-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-field-workers-04-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-part-time-medical-officer-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-part-time-medical-officer-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-research-associate-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-research-associate-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-research-associate-young-professional-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-research-associate-young-professional-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-senior-research-fellow-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-senior-research-fellow-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-young-professional-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-young-professional-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-iari-young-professional-ii-and-field-assistant-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-young-professional-ii-and-field-assistant-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\icar-nbpgr-project-associate-i-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-nbpgr-project-associate-i-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\icmr-nichr-senior-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icmr-nichr-senior-consultant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\icmr-scientist-d-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icmr-scientist-d-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\icsi-director-executive-and-more-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icsi-director-executive-and-more-5-posts/"
+    },
+    {
+      "file": "state\\delhi\\icssr-consultant-3-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icssr-consultant-3-posts/"
+    },
+    {
+      "file": "state\\delhi\\iifcl-chief-compliance-officer-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iifcl-chief-compliance-officer-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\iimc-graduate-apprentice-10-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iimc-graduate-apprentice-10-posts/"
+    },
+    {
+      "file": "state\\delhi\\iit-delhi-faculty\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iit-delhi-faculty/"
+    },
+    {
+      "file": "state\\delhi\\iit-delhi-jr-research-fellow-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iit-delhi-jr-research-fellow-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\iit-delhi-project-manager-program-coordinator-and-more-5-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/iit-delhi-project-manager-program-coordinator-and-more-5-posts/"
+    },
+    {
+      "file": "state\\delhi\\imd-administrative-and-scientific-consultants-12-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/imd-administrative-and-scientific-consultants-12-posts/"
+    },
+    {
+      "file": "state\\delhi\\indian-navy-102-btech-cadet-entry-scheme-60-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/indian-navy-102-btech-cadet-entry-scheme-60-posts/"
+    },
+    {
+      "file": "state\\delhi\\indian-navy-agniveer-apprentice\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/indian-navy-agniveer-apprentice/"
+    },
+    {
+      "file": "state\\delhi\\irctc-hospitality-monitor-92-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/irctc-hospitality-monitor-92-posts/"
+    },
+    {
+      "file": "state\\delhi\\issa-paid-internship-25-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/issa-paid-internship-25-posts/"
+    },
+    {
+      "file": "state\\delhi\\jssh-faculty-and-specialist-gr-iii-25-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/jssh-faculty-and-specialist-gr-iii-25-posts/"
+    },
+    {
+      "file": "state\\delhi\\karmayogi-bharat-database-administrator-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/karmayogi-bharat-database-administrator-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\lakshmibai-college-delhi-non-teaching-staff-24-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/lakshmibai-college-delhi-non-teaching-staff-24-posts/"
+    },
+    {
+      "file": "state\\delhi\\mea-section-officer-60-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/mea-section-officer-60-posts/"
+    },
+    {
+      "file": "state\\delhi\\ministry-of-civil-aviation-young-professional-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ministry-of-civil-aviation-young-professional-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nabcons-consultant-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nabcons-consultant-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nalco-non-executive-268-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nalco-non-executive-268-posts/"
+    },
+    {
+      "file": "state\\delhi\\national-book-trust-executive-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/national-book-trust-executive-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nbems-stenographer-junior-accountant-and-more-53-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nbems-stenographer-junior-accountant-and-more-53-posts/"
+    },
+    {
+      "file": "state\\delhi\\ncdc-chief-director-4-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ncdc-chief-director-4-posts/"
+    },
+    {
+      "file": "state\\delhi\\nclt-staff-car-driver-udc-and-more-106-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nclt-staff-car-driver-udc-and-more-106-posts/"
+    },
+    {
+      "file": "state\\delhi\\ncrtc-additional-general-manager-01-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ncrtc-additional-general-manager-01-posts/"
+    },
+    {
+      "file": "state\\delhi\\ncrtc-assistant-manager-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ncrtc-assistant-manager-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\ncrtc-assistant-manager-2-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ncrtc-assistant-manager-2-posts/"
+    },
+    {
+      "file": "state\\delhi\\negd-delivery-manager-aiml-engineer-and-more-9-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/negd-delivery-manager-aiml-engineer-and-more-9-posts/"
+    },
+    {
+      "file": "state\\delhi\\netra-chief-executive-officer-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/netra-chief-executive-officer-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nhsrc-consultant-principal-team-lead\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nhsrc-consultant-principal-team-lead/"
+    },
+    {
+      "file": "state\\delhi\\nhsrc-principal-team-lead\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nhsrc-principal-team-lead/"
+    },
+    {
+      "file": "state\\delhi\\nhsrcl-deputy-engineer-junior-engineer-209-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nhsrcl-deputy-engineer-junior-engineer-209-posts/"
+    },
+    {
+      "file": "state\\delhi\\nhsrcl-dgm-assistant-manager-and-more-15-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nhsrcl-dgm-assistant-manager-and-more-15-posts/"
+    },
+    {
+      "file": "state\\delhi\\nii-senior-research-fellow-junior-research-fellow-project-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nii-senior-research-fellow-junior-research-fellow-project-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nilerd-joint-director-deputy-and-assistant-director-13-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nilerd-joint-director-deputy-and-assistant-director-13-posts/"
+    },
+    {
+      "file": "state\\delhi\\nit-delhi-project-associate-project-fellow-and-more-18-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nit-delhi-project-associate-project-fellow-and-more-18-posts/"
+    },
+    {
+      "file": "state\\delhi\\nmb-technical-expert-1-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nmb-technical-expert-1-posts/"
+    },
+    {
+      "file": "state\\delhi\\nmpb-accountant-research-officer-and-more-6-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nmpb-accountant-research-officer-and-more-6-posts/"
+    },
+    {
+      "file": "state\\delhi\\nsut-teaching-and-non-teaching-61-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/nsut-teaching-and-non-teaching-61-posts/"
+    },
+    {
+      "file": "state\\delhi\\ntpc-senior-executive-and-executive-4-posts\\index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/ntpc-senior-executive-and-executive-4-posts/"
+    }
+  ],
+  "critical_unfixable": 0,
+  "seo_clean": true,
+  "notes": [
+    "build_sitemaps:   sitemap.xml                      64 urls [ok]"
+  ],
+  "duration_sec": 82.5
+}
