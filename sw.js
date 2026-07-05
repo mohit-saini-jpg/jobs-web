@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20260705105902'; // auto-updated by generate_version.js
+const SW_VERSION = '20260705214500'; // auto-updated by generate_version.js (manual bump: FA CSS fix — purge stale corrupt cache)
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
@@ -70,7 +70,7 @@ const PRECACHE_STATIC = [
   '/offline.html',
   '/og-jobs.svg',       // R4/R11: OG images
   // FIX-006: FontAwesome + search/seo engines
-  '/fonts/fa/all.min.css',
+  '/fonts/fa/all.min.css?v=20260705fix',
   '/smart-search.min.js',
   '/seo-engine.min.js',
 ];
