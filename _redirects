@@ -5928,3 +5928,9 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # Auto-fixed broken links (1) — 2026-07-04
 /jobs/nit-calicut-recruitment-2026-apply-online-junior-research-fellow-project-assoc/  /jobs/nit-calicut-recruitment-2026-apply-online-for-junior-research-fellow-project-a/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/pgi-chandigarh-mts-vacancy-2026-check-posts-and-how-to-apply/  /jobs/icsil-recruitment-2026-apply-online-for-data-entry-operator-mts-and-driver-posts/  301
+/jobs/jk-chadoora-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-14-anganwadi-worker-and-helper/  301
+/jobs/mp-anganwadi-2548-worker-helper-recruitment-2026/  /jobs/mp-anganwadi-worker-helper-recruitment-2026-notification-out-apply-online-for/  301
+/jobs/delhi-icsil-deo-mts-driver-vacancy-2026-check-eligibility-criteria-how-to-apply/  /jobs/icsil-recruitment-2026-apply-online-for-data-entry-operator-mts-and-driver-posts/  301
