@@ -342,7 +342,7 @@ def patch_html(original: str, result: dict, facts: dict | None = None) -> str:
     # mein nahi.)
     existing_headings = " ".join(re.findall(r"<h2[^>]*>(.*?)</h2>", html, re.I | re.S))
     base_has_overview = bool(re.search(r"\boverview\b", existing_headings, re.I))
-    base_has_faq = bool(re.search(r"\bfaq\b|\bfrequently\s+asked\s+questions\b", existing_headings, re.I))
+    base_has_faq = bool(re.search(r"\bfaqs?\b|\bfrequently\s+asked\s+questions\b", existing_headings, re.I))
 
     # 1. Build AI sections HTML (FAQ alag rakha jaayega — wo hamesha page ke
     #    sabse last mein jaata hai, baaki cards ke saath nahi)

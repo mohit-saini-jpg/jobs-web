@@ -1,0 +1,70 @@
+# ══════════════════════════════════════════════════════════════════
+# FILE: .github/workflows/fix-duplicates-onetime.yml
+# PURPOSE: One-time cleanup — duplicate Overview/FAQ hataana + title add
+# karna already-live pages mein. Koi Groq API nahi lagti, pure local script.
+# Kaam hone ke baad ye workflow file delete kar sakte ho (ya rehne do,
+# dobara "Run workflow" se manual re-run bhi kar sakte ho).
+# ══════════════════════════════════════════════════════════════════
+name: 🧹 Fix Duplicate Overview/FAQ (One-time)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (true = sirf report, kuch likhega nahi)'
+        type: boolean
+        default: true
+      slug:
+        description: 'Single slug test (blank = sab pages)'
+        required: false
+        default: ''
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: 🐍 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🧹 Run cleanup script
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          SLUG="${{ github.event.inputs.slug }}"
+          if [ -n "$SLUG" ]; then
+            ARGS="$ARGS --slug $SLUG"
+          fi
+          python3 fix_duplicate_overview_faq.py $ARGS
+
+      - name: 💾 Commit changes
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add jobs/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          DATE_IST=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')
+          git commit -m "🧹 One-time: duplicate Overview/FAQ fix + titles | ${DATE_IST} IST"
+          git push origin main
+
+      - name: 📊 Summary
+        run: |
+          echo "### 🧹 Duplicate Overview/FAQ Cleanup" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode:** ${{ github.event.inputs.dry_run == 'true' && 'DRY RUN (no changes written)' || 'LIVE (files updated + pushed)' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
