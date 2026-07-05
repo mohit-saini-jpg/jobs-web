@@ -85,7 +85,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- ISSUE-020 FIX: Supabase preconnect removed from homepage — only used by tsj-push.js which lazy-loads after interaction. Saves 200-400ms wasted RTT. -->
   <!-- Preload critical JSON data for faster card rendering -->
   <!-- Data served from /data/Complete_Jobs_Full_Data.json -->
-  <link rel="preload" href="script.min.js?v=20260630130529edgefix" as="script"/>
+  <link rel="preload" href="script.min.js?v=20260705perf1" as="script"/>
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
@@ -1301,7 +1301,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
 
   <!-- ISSUE-017 FIX: Correct script loading priority order -->
   <!-- Priority 1: Critical — preloaded in <head>, defer keeps it non-blocking -->
-  <script src="script.min.js?v=20260630130529edgefix" defer></script>
+  <script src="script.min.js?v=20260705perf1" defer></script>
 
   <!-- Priority 2: SEO Engine — defer (needed for push notif, breadcrumb, trending) -->
   <script src="seo-engine.min.js?v=20260630130529" defer></script>

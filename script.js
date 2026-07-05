@@ -323,17 +323,16 @@
           // Always continue to merge merged_sarkari_data.json sections
           // even when Complete_Jobs categories are all covered
 
-          // Missing categories ke liye Complete_Jobs_Full_Data.json fetch karo
-          let extraSections = [];
-          try {
-            const raw = await getBigJSON();
-            if (raw) {
-              const fullResult = convertJobsDataToSections(raw);
-              // Sirf missing categories rakhon
-              const missingIds = new Set(missingKeys.map(k => JOBS_CAT_META[k].id));
-              extraSections = fullResult.sections.filter(s => missingIds.has(s.id));
-            }
-          } catch(_) { /* big JSON fail — fast sections hi return karo */ }
+          // PERF FIX (permanent): the legacy 8MB Complete_Jobs_Full_Data.json
+          // fetch used to run here to fill "missing" category cards. It added
+          // ~8MB to the homepage (LCP ~44s, TBT ~3s on Slow-4G) for ZERO benefit —
+          // sections-index.json now already carries ALL 54 homepage categories
+          // (small slug/name/date items) and freejobalert_categories is empty, so
+          // the big file could not fill anything anyway. The fetch is intentionally
+          // removed. If a category is ever genuinely missing from the cards, FIX
+          // THE INDEX BUILD (pipeline sections-index.json) — do NOT re-add the big
+          // fetch here (that regresses homepage performance).
+          const extraSections = [];
 
           // Merge: sections-index + extraSections from big JSON only
           // NOTE: SR_* categories (Latest Jobs, Result, Admit Card etc.) are already shown
