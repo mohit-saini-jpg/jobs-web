@@ -842,31 +842,26 @@ def build_microdata_block(jd: dict) -> str:
 
 def inject_missing_microdata(html: str) -> tuple[str, bool]:
     """
-    Agar page mein JobPosting JSON-LD hai aur microdata nahi →
-    microdata block inject karo </body> se pehle.
-    Returns (new_html, was_changed)
+    DISABLED (2026-07) — microdata injection permanently turned off.
+
+    Why: this injector mirrored the page's JobPosting JSON-LD into a second,
+    hidden <div itemscope itemtype="schema.org/JobPosting"> microdata block. That
+    caused TWO problems Google flagged in the Rich Results Test:
+      1. Duplicate JobPosting declarations on one page (JSON-LD + microdata) — a
+         duplicate-schema anti-pattern; Google could read the stale copy.
+      2. `directApply content="False"` — a capitalised microdata string is not a
+         valid boolean, so Google parsed it as the URI http://schema.org/False,
+         and the block also lacked streetAddress (the "1 non-critical issue").
+
+    The JSON-LD block emitted by generate_all.build_schemas() is already complete
+    and correct (real boolean directApply, full PostalAddress). Google reads
+    JSON-LD natively, so the microdata copy adds only risk, never value.
+
+    This function is now a no-op so no NEW pages get the block, and
+    heal_jobposting_schema.py --fix removes the block from existing pages.
+    Kept as a stub (not deleted) so the call site in main() stays valid.
     """
-    # Already injected?
-    if MICRODATA_MARKER in html:
-        return html, False
-
-    # Page mein JobPosting JSON-LD hai?
-    jd = extract_jsonld(html, "JobPosting")
-    if not jd:
-        return html, False
-
-    # Build microdata block from JSON-LD values
-    microdata = build_microdata_block(jd)
-    if not microdata:
-        return html, False
-
-    # Inject before </body>
-    pos = html.rfind("</body>")
-    if pos == -1:
-        return html, False
-
-    new_html = html[:pos] + microdata + html[pos:]
-    return new_html, True
+    return html, False
 
 if __name__ == "__main__":
     main()
