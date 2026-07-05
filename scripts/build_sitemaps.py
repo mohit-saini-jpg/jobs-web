@@ -129,6 +129,17 @@ def main():
     counts["sitemap-sections.xml"] = write_urlset(
         "sitemap-sections.xml", urls_from_dir("section"), "daily", "0.7")
 
+    # Districts (recursive: state -> district). urls_from_dir(recursive=True) skips
+    # the hub root, so add /district/ itself explicitly (mirrors how /education/ is
+    # added via core). Without this the whole /district/ tree was absent from the
+    # sitemap (698 indexable pages) and a regen dropped the /district/ hub too.
+    district_dir = os.path.join(ROOT, "district")
+    district_urls = urls_from_dir("district", recursive=True)
+    if os.path.isdir(district_dir) and has_index(district_dir):
+        district_urls = [f"{BASE}/district/"] + district_urls
+    counts["sitemap-districts.xml"] = write_urlset(
+        "sitemap-districts.xml", district_urls, "weekly", "0.6")
+
     # Qualification (extra hub, fold into sections file if desired) -> own optional file
     qual_urls = urls_from_dir("qualification")
 
@@ -151,7 +162,8 @@ def main():
     # THE ONLY INDEX — references child urlsets ONLY (never another index)
     children = ["sitemap.xml", "sitemap-pages.xml", "sitemap-sections.xml",
                 "sitemap-jobs.xml", "sitemap-categories.xml",
-                "sitemap-states.xml", "sitemap-education.xml"]
+                "sitemap-states.xml", "sitemap-education.xml",
+                "sitemap-districts.xml"]
     write_index("sitemap-index.xml", children)
 
     print("Sitemap rebuild complete:")
