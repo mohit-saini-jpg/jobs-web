@@ -160,7 +160,7 @@
 
       <!-- SECTION 1: Convert to PDF -->
       <div class="ts">
-        <div class="ts-hd"><div class="ts-hd-icon"><i class="fa-solid fa-file-pdf"></i></div><span class="ts-hd-text">Convert to PDF</span><span class="ts-hd-count">6 Tools</span></div>
+        <div class="ts-hd"><div class="ts-hd-icon"><i class="fa-solid fa-file-pdf"></i></div><span class="ts-hd-text">Convert to / from PDF</span><span class="ts-hd-count">8 Tools</span></div>
         <div class="tg" id="g-convert"></div>
       </div>
 
@@ -172,7 +172,7 @@
 
       <!-- SECTION 3: Compress, Unlock, Edit -->
       <div class="ts">
-        <div class="ts-hd"><div class="ts-hd-icon"><i class="fa-solid fa-file-zipper"></i></div><span class="ts-hd-text">Compress, Unlock &amp; Edit</span><span class="ts-hd-count">5 Tools</span></div>
+        <div class="ts-hd"><div class="ts-hd-icon"><i class="fa-solid fa-file-zipper"></i></div><span class="ts-hd-text">Compress, Unlock &amp; Edit</span><span class="ts-hd-count">4 Tools</span></div>
         <div class="tg" id="g-edit"></div>
       </div>
 
@@ -190,12 +190,14 @@
   <script>
   var DATA={
     convert:[
+      {name:'Any File to PDF',   desc:'Word, Excel, PPT, JPG, HTML, TXT & 20+ formats \u2192 1 PDF', url:'/tools/pdf/any-file-to-pdf.html',    icon:'fa-file-circle-check', b:'badge-hot', bl:'All-in-One'},
+      {name:'PDF to Any Format', desc:'PDF \u2192 JPG, Word, Excel, PPT & 24+ formats, DPI up to 1200', url:'/tools/pdf/pdf-to-any-format.html', icon:'fa-file-export',       b:'badge-hot', bl:'All-in-One'},
       {name:'JPG to PDF',       desc:'Convert JPG/PNG images to PDF',          url:'/tools/pdf/jpg-to-pdf.html',          icon:'fa-file-pdf',          b:'badge-hot',  bl:'Most Used'},
+      {name:'PDF to JPG',       desc:'Convert PDF pages to JPG/PNG images',    url:'/tools/pdf/pdf-to-jpg.html',          icon:'fa-image',             b:'badge-hot',  bl:'Most Used'},
       {name:'Word to PDF',      desc:'Convert DOCX Word file to PDF',          url:'/tools/pdf/word-to-pdf.html',         icon:'fa-file-word',         b:'badge-pop',  bl:'Popular'},
       {name:'Excel to PDF',     desc:'Convert Excel spreadsheet to PDF',       url:'/tools/pdf/excel-to-pdf.html',        icon:'fa-file-excel',        b:'badge-free', bl:'Free'},
       {name:'PPT to PDF',       desc:'Convert PowerPoint to PDF',              url:'/tools/pdf/ppt-to-pdf.html',          icon:'fa-file-powerpoint',   b:'badge-free', bl:'Free'},
       {name:'HTML to PDF',      desc:'Convert web page HTML to PDF',           url:'/tools/pdf/html-to-pdf.html',         icon:'fa-code',              b:'badge-free', bl:'Free'},
-      {name:'Any File to PDF',  desc:'Convert almost any file type to PDF',    url:'/tools/pdf/any-file-to-pdf.html',     icon:'fa-file-circle-check', b:'badge-hot',  bl:'New'},
     ],
     organize:[
       {name:'Merge PDF',        desc:'Combine multiple PDFs into one file',    url:'/tools/pdf/merge-pdf.html',           icon:'fa-file-circle-plus',  b:'badge-hot',  bl:'Most Used'},
@@ -206,8 +208,6 @@
     edit:[
       {name:'Compress PDF',     desc:'Reduce PDF file size for upload',        url:'/tools/pdf/compress-pdf.html',        icon:'fa-file-zipper',       b:'badge-hot',  bl:'Must Use'},
       {name:'Unlock PDF',       desc:'Remove PDF password protection',         url:'/tools/pdf/pdf-unlock.html',          icon:'fa-lock-open',         b:'badge-pop',  bl:'Popular'},
-      {name:'PDF to JPG',       desc:'Convert PDF pages to images',            url:'/tools/pdf/pdf-to-jpg.html',          icon:'fa-image',             b:'badge-free', bl:'Free'},
-      {name:'PDF to Any Format',desc:'PDF to 24+ formats, DPI up to 1200',      url:'/tools/pdf/pdf-to-any-format.html',  icon:'fa-file-export',       b:'badge-hot',  bl:'New'},
       {name:'Add Watermark',    desc:'Add text/image watermark to PDF',        url:'/tools/pdf/add-watermark.html',       icon:'fa-stamp',             b:'badge-free', bl:'Free'},
       {name:'Sign PDF',         desc:'Add digital signature to PDF',           url:'/tools/pdf/sign-pdf.html',            icon:'fa-pen-nib',           b:'badge-free', bl:'Free'},
     ]
