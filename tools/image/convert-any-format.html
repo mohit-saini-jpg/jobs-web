@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-  <title>Image Format Converter Free Online – JPG PNG WebP | Top Sarkari Jobs</title>
-  <meta name="description" content="Convert any image format online for free — JPG to PNG, WebP to JPG, BMP to GIF, HEIC to JPG and more. Fast, browser-based converter.">
-  <meta name="keywords" content="Convert Any Image Format, free convert any image format, online convert any image format tool, convert any image format india">
+  <title>Image Format Converter Free Online – Batch Convert + Photo Adjust | Top Sarkari Jobs</title>
+  <meta name="description" content="Convert multiple images at once — JPG, PNG, WebP, BMP, GIF, TIFF, AVIF, ICO, PDF. Batch convert karein, Brightness/Contrast/Saturation/Sharpness se Photo Adjust karein, live preview dekhein. 100% free, browser-based, no upload.">
+  <meta name="keywords" content="convert any image format, batch image converter, multiple image converter, jpg png webp converter, photo adjust brightness contrast saturation, bulk image convert free">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/image/convert-any-format.html">
-  <meta property="og:title" content="Image Format Converter Free Online – JPG PNG WebP | Top Sarkari Jobs"><meta property="og:description" content="Convert any image format online for free — JPG to PNG, WebP to JPG, BMP to GIF, HEIC to JPG and more. Fast, browser-based converter."><meta property="og:type" content="website">
+  <meta property="og:title" content="Image Format Converter Free Online – Batch Convert + Photo Adjust | Top Sarkari Jobs"><meta property="og:description" content="Convert multiple images at once with live preview and Photo Adjust (Brightness/Contrast/Saturation/Sharpness). 100% free, browser-based."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -104,6 +104,30 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .hidden { display: none !important; }
+    .card-hd-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .card-hd-row .btn-secondary { padding: 7px 14px; font-size: 0.78rem; }
+    .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; }
+    .thumb-card { position: relative; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--white); }
+    .thumb-img-wrap { width: 100%; aspect-ratio: 1/1; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .thumb-img { width: 100%; height: 100%; object-fit: contain; transition: filter .12s linear; }
+    .thumb-meta { padding: 6px 7px; }
+    .thumb-name { font-size: 0.66rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .thumb-size { font-size: 0.64rem; color: var(--muted); }
+    .thumb-actions { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; }
+    .thumb-btn { width: 22px; height: 22px; border-radius: 6px; border: none; background: rgba(15,23,42,0.55); color: #fff; font-size: 0.68rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .thumb-btn:hover { background: rgba(15,23,42,0.85); }
+    .thumb-err { position: absolute; inset: 0; background: rgba(239,68,68,0.85); color: #fff; font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; }
+    .adj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; }
+    .adj-label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 7px; }
+    .adj-label .adj-val { color: var(--brand); font-weight: 800; }
+    .adj-slider { width: 100%; accent-color: var(--brand); }
+    .adj-presets { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+    .adj-preset { padding: 5px 13px; border: 1.5px solid var(--line); border-radius: 20px; background: #fff; font-size: 0.76rem; font-weight: 700; cursor: pointer; color: var(--ink); font-family: inherit; transition: all 0.15s; }
+    .adj-preset:hover { border-color: var(--brand); }
+    .adj-preset.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 11px 22px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; max-width: 90vw; text-align: center; }
+    .toast.show { opacity: 1; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -111,6 +135,8 @@
       .card { padding: 18px 14px; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
+      .thumb-grid { grid-template-columns: repeat(3, 1fr); }
+      .adj-grid { grid-template-columns: 1fr 1fr; }
     }
 </style>
 
@@ -151,8 +177,8 @@
   <meta property="og:image:width" content="512"/>
   <meta property="og:image:height" content="512"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Image Format Converter Free Online – JPG PNG WebP | Top Sarkari Jobs"/>
-  <meta name="twitter:description" content="Convert any image format online for free — JPG to PNG, WebP to JPG, BMP to GIF, HEIC to JPG and more. Fast, browser-based converter."/>
+  <meta name="twitter:title" content="Image Format Converter Free Online – Batch Convert + Photo Adjust | Top Sarkari Jobs"/>
+  <meta name="twitter:description" content="Convert multiple images at once with live preview and Photo Adjust. 100% free, browser-based."/>
   <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/image/convert-any-format.html"/>
   <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/image/convert-any-format.html"/>
   <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/image/convert-any-format.html"/>
@@ -164,7 +190,7 @@
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Any",
     "url": "https://www.topsarkarijobs.com/tools/image/convert-any-format.html",
-    "description": "Image ko kisi bhi format mein convert karein — JPG to PNG, WebP to JPG, BMP to GIF, HEIC to JPG aur bahut kuch free.",
+    "description": "Multiple images ko ek saath kisi bhi format mein convert karein — JPG, PNG, WebP, BMP, GIF, TIFF, AVIF, PDF. Batch convert, live preview, Brightness/Contrast/Saturation/Sharpness Photo Adjust — free, browser-based.",
     "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
     "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
   }
@@ -191,32 +217,79 @@
 
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#fc4a1a,#f7b733)">🔀</div>
-  <h1>Convert Any Image Format</h1><p>Ek tool — sab image formats. JPG, PNG, WebP, BMP, GIF, HEIC, TIFF — koi bhi to koi bhi convert karein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">All Formats</span> <span class="badge">New Tool</span> <span class="badge">JPG PNG WebP BMP GIF</span></div>
+  <h1>Convert Any Image Format</h1><p>Ek saath 2, 5, 10 ya jitni chahen utni images upload karein — JPG, PNG, WebP, BMP, GIF, TIFF, AVIF, PDF me batch convert karein. Live preview dekhein, Brightness/Contrast/Saturation/Sharpness se Photo Adjust karein, rotate/flip karein — sab ek hi jagah, 100% free.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Batch Convert</span> <span class="badge">Photo Adjust</span> <span class="badge">Live Preview</span> <span class="badge">10+ Formats</span></div>
 </section>
 
 <div class="main-container">
   <div class="card">
-    <h3>📂 File Upload Karein</h3>
-    <div class="upload-zone">
+    <h3>📂 Images Upload Karein</h3>
+    <div class="upload-zone" id="zone-main">
       <span class="upload-icon">⬆️</span>
-      <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein · image/*</div>
+      <div class="upload-title">Images Yahan Drop Karein (multiple allowed)</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein · JPG, PNG, WebP, BMP, GIF, TIFF, SVG · ek saath jitni chahen utni images (max 60)</div>
     </div>
-    <div class="file-preview" id="file-preview"><span>📄</span><span class="file-name">—</span><span class="file-size">—</span><button class="file-remove">✕</button></div>
-    <input type="file" id="main-file" style="display:none" accept="image/*">
+    <input type="file" id="file-main" accept="image/*" multiple style="display:none">
   </div>
 
-  <div class="card">
-    <h3>⚙️ Settings</h3>
+  <div class="card hidden" id="queue-card">
+    <div class="card-hd-row" style="margin-bottom:14px">
+      <h3 style="margin-bottom:0">🖼️ Uploaded Images (<span id="q-count">0</span>)</h3>
+      <button class="btn-secondary" id="add-more-btn" style="margin-left:auto">+ Aur Add Karein</button>
+      <button class="btn-secondary" id="clear-all-btn">🗑️ Sab Clear Karein</button>
+    </div>
+    <div class="thumb-grid" id="thumb-grid"></div>
+  </div>
+
+  <div class="card hidden" id="adjust-card">
+    <h3>🌟 Photo Adjust Karein</h3>
+    <div class="adj-grid">
+      <div class="adj-group">
+        <label class="adj-label"><span>Brightness</span><span class="adj-val" id="v-bright">100%</span></label>
+        <input type="range" class="adj-slider" id="s-bright" min="40" max="180" value="100">
+        <div class="adj-presets">
+          <button type="button" class="adj-preset" data-target="bright" data-val="70">Dark</button>
+          <button type="button" class="adj-preset active" data-target="bright" data-val="100">Normal</button>
+          <button type="button" class="adj-preset" data-target="bright" data-val="130">Bright</button>
+        </div>
+      </div>
+      <div class="adj-group">
+        <label class="adj-label"><span>Contrast</span><span class="adj-val" id="v-contrast">100%</span></label>
+        <input type="range" class="adj-slider" id="s-contrast" min="40" max="180" value="100">
+        <div class="adj-presets">
+          <button type="button" class="adj-preset" data-target="contrast" data-val="75">Low</button>
+          <button type="button" class="adj-preset active" data-target="contrast" data-val="100">Normal</button>
+          <button type="button" class="adj-preset" data-target="contrast" data-val="135">High</button>
+        </div>
+      </div>
+      <div class="adj-group">
+        <label class="adj-label"><span>Saturation</span><span class="adj-val" id="v-sat">100%</span></label>
+        <input type="range" class="adj-slider" id="s-sat" min="0" max="200" value="100">
+        <div class="adj-presets">
+          <button type="button" class="adj-preset" data-target="sat" data-val="0">B&W</button>
+          <button type="button" class="adj-preset active" data-target="sat" data-val="100">Normal</button>
+          <button type="button" class="adj-preset" data-target="sat" data-val="160">Vivid</button>
+        </div>
+      </div>
+      <div class="adj-group">
+        <label class="adj-label"><span>Sharpness</span><span class="adj-val" id="v-sharp">0</span></label>
+        <input type="range" class="adj-slider" id="s-sharp" min="0" max="100" value="0">
+        <div class="adj-presets">
+          <button type="button" class="adj-preset active" data-target="sharp" data-val="0">None</button>
+          <button type="button" class="adj-preset" data-target="sharp" data-val="35">Light</button>
+          <button type="button" class="adj-preset" data-target="sharp" data-val="75">Sharp</button>
+        </div>
+      </div>
+    </div>
+    <div class="action-row" style="margin-top:16px">
+      <button class="btn-secondary" id="adjust-reset-btn">↺ Adjustments Reset Karein</button>
+    </div>
+    <p style="font-size:.76rem;color:var(--muted);margin-top:10px">Brightness/Contrast/Saturation ka live preview upar thumbnails me turant dikhta hai. Sharpness ka effect final download par apply hota hai (sab images par ek saath).</p>
+  </div>
+
+  <div class="card hidden" id="settings-card">
+    <h3>⚙️ Output Settings</h3>
     <div class="form-grid">
-      <div class="form-group"><label>Input Format (auto)</label><select id="inFmt" disabled>
-        <option value="">— Upload karein —</option>
-        <option value="jpg">JPG</option><option value="jpeg">JPEG</option><option value="png">PNG</option>
-        <option value="webp">WEBP</option><option value="avif">AVIF</option><option value="gif">GIF</option>
-        <option value="bmp">BMP</option><option value="ico">ICO</option><option value="svg">SVG</option>
-        <option value="tiff">TIFF</option><option value="heic">HEIC</option>
-      </select></div>
       <div class="form-group"><label>Output Format</label><select id="fmt">
         <option value="jpg">JPG</option>
         <option value="jpeg">JPEG</option>
@@ -229,13 +302,13 @@
         <option value="ico">ICO</option>
         <option value="pdf">PDF</option>
       </select></div>
-      <div class="form-group"><label>Rotate</label><select id="rot">
+      <div class="form-group"><label>Rotate (sab images par)</label><select id="rot">
         <option value="0">0° (None)</option>
         <option value="90">90° ↻ Right</option>
         <option value="180">180° Flip</option>
         <option value="270">270° ↺ Left</option>
       </select></div>
-      <div class="form-group"><label>Flip / Mirror</label><select id="flip">
+      <div class="form-group"><label>Flip / Mirror (sab par)</label><select id="flip">
         <option value="none">None</option>
         <option value="h">Horizontal ⇋</option>
         <option value="v">Vertical ⇅</option>
@@ -243,7 +316,7 @@
     </div>
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
-      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional</div>
+      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional, sab images par apply hoga</div>
       <div id="tkbBody" style="margin-top:12px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span style="font-weight:600">Target Size:</span>
@@ -258,12 +331,12 @@
           <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
           <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
         </div>
-        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → output us size ka banega (JPG/WEBP/AVIF). Khali chhodein → best quality.</p>
+        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → har image us size ki banegi (JPG/WEBP/AVIF). Khali chhodein → best quality.</p>
       </div>
     </div>
     <div class="action-row">
-      <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
-      <button class="btn-secondary" id="reset-btn">↺ Reset</button>
+      <button class="btn-primary" id="process-btn"><span>🚀</span> Convert Karein</button>
+      <button class="btn-secondary" id="reset-btn">↺ Sab Reset Karein</button>
     </div>
     <div class="progress-wrap" id="progress-wrap">
       <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
@@ -272,15 +345,24 @@
   </div>
 
   <div class="card result-card" id="result-card">
-    <div class="result-ok">✅ Successfully Processed!</div>
+    <div class="result-ok">✅ Successfully Converted!</div>
     <div class="stat-row" id="stat-row"></div>
-    <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+    <button class="btn-dl" id="dl-btn">⬇️ Download</button>
   </div>
 
-  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Koi bhi format ki image</p></div><div class="step"><div class="step-n">2</div><h4>Format</h4><p>Output format choose karein</p></div><div class="step"><div class="step-n">3</div><h4>Quality</h4><p>Quality adjust karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Converted image milegi</p></div></div></div>
-  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">🔀</span><div><h4>All Formats</h4><p>7+ formats support</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Instant</h4><p>Real-time</p></div></div><div class="feat"><span class="feat-icon">🎨</span><div><h4>Quality</h4><p>JPEG quality control</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser only</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Hamesha free</p></div></div><div class="feat"><span class="feat-icon">📱</span><div><h4>Mobile</h4><p>Sab devices</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Kaunse formats support?<span class="fa">+</span></button><div class="faq-a">JPG, PNG, WebP, BMP, GIF, HEIC, TIFF sab.</div></div><div class="faq-item"><button class="faq-q">HEIC to JPG?<span class="fa">+</span></button><div class="faq-a">Haan, directly is tool se convert kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Animated GIF?<span class="fa">+</span></button><div class="faq-a">Static frame convert hogi.</div></div><div class="faq-item"><button class="faq-q">Batch convert?<span class="fa">+</span></button><div class="faq-a">Abhi single file — batch coming soon.</div></div></div>
+  <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Ek ya multiple images ek saath</p></div><div class="step"><div class="step-n">2</div><h4>Adjust</h4><p>Brightness/Contrast/Saturation set karein</p></div><div class="step"><div class="step-n">3</div><h4>Format</h4><p>Output format aur quality choose karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Ek image ho to direct, multiple ho to ZIP</p></div></div></div>
+  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">🗂️</span><div><h4>Batch Convert</h4><p>Ek saath 60 images tak</p></div></div><div class="feat"><span class="feat-icon">👁️</span><div><h4>Live Preview</h4><p>Adjust ka effect turant thumbnail me</p></div></div><div class="feat"><span class="feat-icon">🌟</span><div><h4>Photo Adjust</h4><p>Brightness/Contrast/Saturation/Sharpness</p></div></div><div class="feat"><span class="feat-icon">🔀</span><div><h4>10 Formats</h4><p>JPG, PNG, WebP, AVIF, BMP, GIF, TIFF, ICO, PDF</p></div></div><div class="feat"><span class="feat-icon">🗜️</span><div><h4>Target Size</h4><p>Exact KB size set karein</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% Browser me, no upload</p></div></div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Ek saath kitni images upload kar sakte hain?<span class="fa">+</span></button><div class="faq-a">Ek baar me maximum 60 images upload kar sakte hain. 2, 5, 10 ya usse zyada — jitni chahen utni ek saath select ya drag-drop karein.</div></div><div class="faq-item"><button class="faq-q">Photo Adjust (Brightness/Contrast/Saturation/Sharpness) kaise use karein?<span class="fa">+</span></button><div class="faq-a">Upload karte hi "Photo Adjust Karein" panel dikhta hai. Sliders move karein ya quick preset buttons (Dark/Normal/Bright, Low/Normal/High, B&W/Normal/Vivid, None/Light/Sharp) use karein — Brightness/Contrast/Saturation ka effect turant thumbnail preview me dikh jaata hai. Ye adjustment sabhi uploaded images par ek saath apply hota hai.</div></div><div class="faq-item"><button class="faq-q">Kaunse formats support hain?<span class="fa">+</span></button><div class="faq-a">JPG, JPEG, PNG, WebP, AVIF, BMP, GIF, TIFF, ICO aur PDF — koi bhi image in sab formats me convert ho sakti hai.</div></div><div class="faq-item"><button class="faq-q">Multiple images convert karne par download kaise milega?<span class="fa">+</span></button><div class="faq-a">Agar ek hi image hai to converted file direct download hoti hai. Agar 2 ya usse zyada images hain, to sabhi converted images ek ZIP file me mil jaati hain.</div></div><div class="faq-item"><button class="faq-q">HEIC to JPG?<span class="fa">+</span></button><div class="faq-a">HEIC upload try kar sakte hain — agar browser support karta hai to convert ho jaayegi, warna JPG/PNG me pehle convert karke upload karein.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/image/jpg-to-png.html" class="rel-item"><span class="ri">🔄</span><span>JPG to PNG</span></a><a href="/tools/image/png-to-jpg.html" class="rel-item"><span class="ri">🔁</span><span>PNG to JPG</span></a><a href="/tools/image/webp-to-jpg.html" class="rel-item"><span class="ri">🔄</span><span>WebP to JPG</span></a><a href="/tools/image/heic-to-jpg.html" class="rel-item"><span class="ri">📱</span><span>HEIC to JPG</span></a><a href="/tools/image/image-to-pdf.html" class="rel-item"><span class="ri">📄</span><span>Img to PDF</span></a><a href="/tools/image/image-resizer.html" class="rel-item"><span class="ri">↔️</span><span>Resizer</span></a><a href="/tools/image/compress-image.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a><a href="/tools/image/background-remove.html" class="rel-item"><span class="ri">🌊</span><span>BG Remove</span></a></div></div>
+
+  <div class="card"><h3>📝 Image Format Converter — Batch + Photo Adjust, Free Online</h3>
+    <div style="font-size:.87rem;color:var(--muted);line-height:1.8">
+      <p><b>Convert Any Image Format</b> ek free online tool hai jo ek saath <b>2, 5, 10 ya jitni chahen utni images</b> (max 60) ko <b>JPG, PNG, WebP, AVIF, BMP, GIF, TIFF, ICO ya PDF</b> me batch convert kar deta hai. Upload karte hi har image ka <b>live thumbnail preview</b> dikhta hai, aur poora conversion aapke browser ke andar hi hota hai — koi file server par upload nahi hoti, isliye <b>100% private aur secure</b>, na koi signup, na watermark.</p>
+      <p style="margin-top:12px"><b>Photo Adjust — full feature:</b> <b>Brightness</b> (Dark/Normal/Bright), <b>Contrast</b> (Low/Normal/High), <b>Saturation</b> (B&W/Normal/Vivid) aur <b>Sharpness</b> (None/Light/Sharp) — chaaron sliders + quick preset buttons ke saath. Brightness/Contrast/Saturation ka asar turant sabhi thumbnail images me <b>live dikh</b> jaata hai, taaki final download se pehle hi result confirm kar sakein. Ye adjustment ek saath sabhi uploaded images par apply hota hai — alag-alag har photo par manually edit karne ki zaroorat nahi.</p>
+      <p style="margin-top:12px"><b>Government / Sarkari form ke liye kaam ka:</b> SSC, Railway, IBPS/SBI, State PSC, Police, Army Agniveer, UPSC jaisi recruitment applications me photo/signature/documents scan karke upload karne padte hain — aksar scan dark ya dhundhla aata hai. Yahan Brightness/Contrast/Sharpness adjust karke scan clear kar sakte hain, sahi format me convert kar sakte hain, aur <b>exact KB/MB size</b> set karke seedhe upload-ready bana sakte hain — sab documents ek saath, batch me.</p>
+      <p style="margin-top:12px">Iske alawa <b>Rotate aur Flip/Mirror</b> bhi sabhi images par ek saath apply hote hain. Ek image convert karne par file directly download hoti hai; multiple images ho to sab ek <b>ZIP</b> me mil jaati hain. Ye tool <b>mobile aur desktop</b> dono par bilkul free chalta hai — sarkari naukri documents se le kar daily photo editing tak, ek hi jagah batch conversion aur photo adjustment.</p>
+    </div>
+  </div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
 </div>
@@ -289,32 +371,129 @@
   <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free</div>
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
+<div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-  document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
-  function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
-  function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
-    if(!inp)return;
-    function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
-    inp.addEventListener('change',()=>hf(inp.files[0]));
-    const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
-  }
-  // ══════ Real converter: any image → 10 formats + rotate/flip + File Size (KB) ══════
+  document.querySelectorAll('.faq-q').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function G(id){return document.getElementById(id);}
-  var srcImg=null,natW=0,natH=0;
-  var _EXT_MAP={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif','image/gif':'gif','image/bmp':'bmp','image/x-icon':'ico','image/vnd.microsoft.icon':'ico','image/svg+xml':'svg','image/tiff':'tiff','image/heic':'heic','image/heif':'heic'};
-  function loadImageFromFile(f){
-    var url=URL.createObjectURL(f);var img=new Image();
-    img.onload=function(){natW=img.naturalWidth;natH=img.naturalHeight;srcImg=img;
-      var ext=_EXT_MAP[f.type]||((f.name||'').split('.').pop()||'').toLowerCase();
-      var sel=G('inFmt');if(sel){sel.selectedIndex=0;for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===ext){sel.selectedIndex=i;break;}}}
-    };
-    img.onerror=function(){alert('Ye file browser mein open nahi hui. HEIC/TIFF/SVG kuch browsers support nahi karte — JPG/PNG try karein.');};
-    img.src=url;
+  function esc(s){return String(s==null?'':s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});}
+  function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(2)+' MB';}
+  function baseNameOf(name){return (name||'image').replace(/\.[^.]+$/,'').replace(/[^\w\-]+/g,'_').slice(0,50)||'image';}
+  function download(blob,name){var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},5000);}
+  var toastEl=G('toast');
+  function toast(m){if(!toastEl)return;toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(function(){toastEl.classList.remove('show');},3200);}
+
+  var MAX_FILES=60;
+
+  /* ══════════════ Queue (multi-file) ══════════════ */
+  var QUEUE=[]; var QID=0;
+  var zone=G('zone-main'), inp=G('file-main');
+  zone.addEventListener('click',function(){inp.click();});
+  zone.addEventListener('dragover',function(e){e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});
+  zone.addEventListener('dragleave',function(){zone.style.borderColor='';zone.style.background='';});
+  zone.addEventListener('drop',function(e){e.preventDefault();zone.style.borderColor='';zone.style.background='';if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files);});
+  inp.addEventListener('change',function(){if(inp.files.length)addFiles(inp.files);inp.value='';});
+  var addMoreBtn=G('add-more-btn');if(addMoreBtn)addMoreBtn.addEventListener('click',function(){inp.click();});
+  var clearAllBtn=G('clear-all-btn');if(clearAllBtn)clearAllBtn.addEventListener('click',clearAll);
+
+  function addFiles(fileList){
+    var incoming=Array.prototype.filter.call(fileList,function(f){return f.type.indexOf('image/')===0 || /\.(jpe?g|png|webp|avif|gif|bmp|ico|svg|tiff?|heic|heif)$/i.test(f.name);});
+    var skipped=fileList.length-incoming.length;
+    if(QUEUE.length+incoming.length>MAX_FILES){
+      var allowed=Math.max(0,MAX_FILES-QUEUE.length);
+      toast('Maximum '+MAX_FILES+' images allowed — sirf pehli '+allowed+' add ki gayi.');
+      incoming=incoming.slice(0,allowed);
+    }
+    if(skipped>0)toast(skipped+' file(s) skip ki gayi (image nahi thi).');
+    if(!incoming.length)return;
+    incoming.forEach(function(f){
+      var item={id:++QID,file:f,url:URL.createObjectURL(f),img:null,natW:0,natH:0,error:false,loading:true};
+      QUEUE.push(item);
+      loadImageForItem(item);
+    });
+    G('queue-card').classList.remove('hidden');
+    G('adjust-card').classList.remove('hidden');
+    G('settings-card').classList.remove('hidden');
+    renderThumbs();
   }
+
+  function loadImageForItem(item){
+    var img=new Image();
+    img.onload=function(){item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;renderThumbs();};
+    img.onerror=function(){item.error=true;item.loading=false;renderThumbs();};
+    img.src=item.url;
+  }
+
+  function filterCss(){return 'brightness('+ST.bright+'%) contrast('+ST.contrast+'%) saturate('+ST.sat+'%)';}
+
+  function renderThumbs(){
+    var grid=G('thumb-grid');
+    G('q-count').textContent=QUEUE.length;
+    grid.innerHTML='';
+    var f=filterCss();
+    QUEUE.forEach(function(item,idx){
+      var card=document.createElement('div');card.className='thumb-card';
+      var errBadge=item.error?'<div class="thumb-err">Load nahi hui</div>':'';
+      card.innerHTML=
+        '<div class="thumb-img-wrap"><img class="thumb-img" src="'+item.url+'" style="filter:'+f+'" alt=""></div>'+
+        '<div class="thumb-meta"><div class="thumb-name">'+esc(item.file.name)+'</div><div class="thumb-size">'+fmtBytes(item.file.size)+(item.natW?' · '+item.natW+'×'+item.natH:'')+'</div></div>'+
+        '<div class="thumb-actions">'+
+          (idx>0?'<button class="thumb-btn" data-act="up" title="Up">↑</button>':'')+
+          (idx<QUEUE.length-1?'<button class="thumb-btn" data-act="down" title="Down">↓</button>':'')+
+          '<button class="thumb-btn" data-act="rm" title="Remove">✕</button>'+
+        '</div>'+errBadge;
+      var upBtn=card.querySelector('[data-act="up"]');if(upBtn)upBtn.onclick=function(){var t=QUEUE[idx-1];QUEUE[idx-1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
+      var downBtn=card.querySelector('[data-act="down"]');if(downBtn)downBtn.onclick=function(){var t=QUEUE[idx+1];QUEUE[idx+1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
+      card.querySelector('[data-act="rm"]').onclick=function(){QUEUE.splice(idx,1);renderThumbs();if(!QUEUE.length){G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');}};
+      grid.appendChild(card);
+    });
+  }
+
+  function clearAll(){
+    QUEUE.forEach(function(it){try{URL.revokeObjectURL(it.url);}catch(e){}});
+    QUEUE=[];renderThumbs();
+    G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');
+    G('result-card').classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';
+  }
+
+  /* ══════════════ Photo Adjust ══════════════ */
+  var ST={bright:100,contrast:100,sat:100,sharp:0};
+  function applyLiveFilter(){var f=filterCss();document.querySelectorAll('.thumb-img').forEach(function(im){im.style.filter=f;});}
+  function clearActive(target){document.querySelectorAll('.adj-preset[data-target="'+target+'"]').forEach(function(b){b.classList.remove('active');});}
+
+  G('s-bright').addEventListener('input',function(){ST.bright=+this.value;G('v-bright').textContent=ST.bright+'%';clearActive('bright');applyLiveFilter();});
+  G('s-contrast').addEventListener('input',function(){ST.contrast=+this.value;G('v-contrast').textContent=ST.contrast+'%';clearActive('contrast');applyLiveFilter();});
+  G('s-sat').addEventListener('input',function(){ST.sat=+this.value;G('v-sat').textContent=ST.sat+'%';clearActive('sat');applyLiveFilter();});
+  G('s-sharp').addEventListener('input',function(){ST.sharp=+this.value;G('v-sharp').textContent=ST.sharp;clearActive('sharp');});
+
+  document.querySelectorAll('.adj-preset').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var target=btn.getAttribute('data-target'),val=+btn.getAttribute('data-val');
+      ST[target]=val;
+      if(target==='bright'){G('s-bright').value=val;G('v-bright').textContent=val+'%';}
+      if(target==='contrast'){G('s-contrast').value=val;G('v-contrast').textContent=val+'%';}
+      if(target==='sat'){G('s-sat').value=val;G('v-sat').textContent=val+'%';}
+      if(target==='sharp'){G('s-sharp').value=val;G('v-sharp').textContent=val;}
+      clearActive(target);btn.classList.add('active');
+      applyLiveFilter();
+    });
+  });
+
+  var adjResetBtn=G('adjust-reset-btn');
+  if(adjResetBtn)adjResetBtn.addEventListener('click',function(){
+    ST={bright:100,contrast:100,sat:100,sharp:0};
+    G('s-bright').value=100;G('v-bright').textContent='100%';
+    G('s-contrast').value=100;G('v-contrast').textContent='100%';
+    G('s-sat').value=100;G('v-sat').textContent='100%';
+    G('s-sharp').value=0;G('v-sharp').textContent='0';
+    document.querySelectorAll('.adj-preset').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.adj-preset[data-val="100"]').forEach(function(b){if(b.getAttribute('data-target')!=='sharp')b.classList.add('active');});
+    document.querySelectorAll('.adj-preset[data-target="sharp"][data-val="0"]').forEach(function(b){b.classList.add('active');});
+    applyLiveFilter();
+  });
+
+  /* ══════════════ Encoders (reused) ══════════════ */
   function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
   function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('Library load fail'));};document.head.appendChild(s);});}
   function canvasToBMP(cv){var w=cv.width,h=cv.height,data=cv.getContext('2d').getImageData(0,0,w,h).data;var rowSize=Math.floor((24*w+31)/32)*4,pix=rowSize*h,size=54+pix;var buf=new ArrayBuffer(size),dv=new DataView(buf);dv.setUint16(0,0x424D,false);dv.setUint32(2,size,true);dv.setUint32(10,54,true);dv.setUint32(14,40,true);dv.setInt32(18,w,true);dv.setInt32(22,h,true);dv.setUint16(26,1,true);dv.setUint16(28,24,true);dv.setUint32(34,pix,true);var off=54;for(var y=0;y<h;y++){var row=off+(h-1-y)*rowSize;for(var x=0;x<w;x++){var i=(y*w+x)*4,p=row+x*3;dv.setUint8(p,data[i+2]);dv.setUint8(p+1,data[i+1]);dv.setUint8(p+2,data[i]);}}return new Blob([buf],{type:'image/bmp'});}
@@ -333,47 +512,101 @@
   }
   async function encodeToTargetKB(cv,fmt,targetKB){var lossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0,useFmt=lossy?fmt:'jpg';var mime=useFmt==='webp'?'image/webp':(useFmt==='avif'?'image/avif':'image/jpeg');var ext=(useFmt==='webp')?'webp':(useFmt==='avif')?'avif':(useFmt==='jpeg'?'jpeg':'jpg');var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null,i,b,q;for(i=0;i<10;i++){q=(lo+hi)/2;try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' support nahi.');}if(b.size<=target){best=b;lo=q;}else{hi=q;}}if(!best){best=await canvasToBlobP(cv,mime,0.05);}if(best.size<target){best=new Blob([best,new Uint8Array(Math.round(target-best.size))],{type:mime});}return{blob:best,ext:ext};}
   function fillBG(ctx,fmt,w,h){if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}}
-  function renderCanvas(fmt){
-    var rot=(+G('rot').value)||0, flip=G('flip').value, swap=(rot===90||rot===270);
-    var cw=swap?natH:natW, ch=swap?natW:natH;
+
+  /* ══════════════ Sharpen (unsharp-mask convolution) ══════════════ */
+  function applySharpen(ctx,w,h,amount){
+    if(amount<=0)return;
+    var k=Math.min(1,amount/100)*1.6;
+    var weights=[0,-k,0, -k,1+4*k,-k, 0,-k,0];
+    var srcData=ctx.getImageData(0,0,w,h),src=srcData.data;
+    var out=ctx.createImageData(w,h),dst=out.data;
+    for(var y=0;y<h;y++){
+      for(var x=0;x<w;x++){
+        var dstOff=(y*w+x)*4,r=0,g=0,bl=0;
+        for(var cy=0;cy<3;cy++){
+          for(var cx=0;cx<3;cx++){
+            var scy=Math.min(h-1,Math.max(0,y+cy-1)),scx=Math.min(w-1,Math.max(0,x+cx-1));
+            var srcOff=(scy*w+scx)*4,wt=weights[cy*3+cx];
+            r+=src[srcOff]*wt;g+=src[srcOff+1]*wt;bl+=src[srcOff+2]*wt;
+          }
+        }
+        dst[dstOff]=Math.min(255,Math.max(0,r));dst[dstOff+1]=Math.min(255,Math.max(0,g));dst[dstOff+2]=Math.min(255,Math.max(0,bl));dst[dstOff+3]=src[dstOff+3];
+      }
+    }
+    ctx.putImageData(out,0,0);
+  }
+
+  /* ══════════════ Render canvas per item (rotate/flip + Photo Adjust) ══════════════ */
+  function renderCanvasForItem(item,fmt){
+    var rot=(+G('rot').value)||0,flip=G('flip').value,swap=(rot===90||rot===270);
+    var cw=swap?item.natH:item.natW, ch=swap?item.natW:item.natH;
     var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;var ctx=cv.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    fillBG(ctx,fmt,cw,ch);
+    ctx.filter='none';fillBG(ctx,fmt,cw,ch);
+    ctx.filter=filterCss();
     ctx.translate(cw/2,ch/2);ctx.rotate(rot*Math.PI/180);
     if(flip==='h')ctx.scale(-1,1);if(flip==='v')ctx.scale(1,-1);
-    ctx.drawImage(srcImg,-natW/2,-natH/2,natW,natH);
+    ctx.drawImage(item.img,-item.natW/2,-item.natH/2,item.natW,item.natH);
+    ctx.setTransform(1,0,0,1,0,0);ctx.filter='none';
+    if(ST.sharp>0)applySharpen(ctx,cw,ch,ST.sharp);
     return cv;
   }
-  async function runProcess(){
-    if(!srcImg){alert('Pehle image select karein!');return;}
-    var fmt=G('fmt').value, tkbVal=parseFloat(G('tkb').value);
-    var pw=G('progress-wrap');pw.style.display='block';var bar=G('pbar');bar.style.width='45%';G('pmsg').textContent='Convert ho raha hai...';
+
+  /* ══════════════ Convert orchestrator ══════════════ */
+  function setP(pct,text){G('pbar').style.width=pct+'%';if(text!=null)G('pmsg').textContent=text;}
+
+  async function convertAll(){
+    if(!QUEUE.length){toast('Pehle images add karein!');return;}
+    var fmt=G('fmt').value,tkbVal=parseFloat(G('tkb').value);
+    var pw=G('progress-wrap');pw.style.display='block';G('result-card').classList.remove('show');
+    var pb=G('process-btn');pb.disabled=true;
+    setP(4,'Shuru ho raha hai...');
+    var outputs=[];
     try{
-      var cv=renderCanvas(fmt);
-      var out;
-      if(tkbVal>0){G('pmsg').textContent='Target '+tkbVal+' KB ke liye adjust...';out=await encodeToTargetKB(cv,fmt,tkbVal);}
-      else{G('pmsg').textContent='Encoding '+fmt.toUpperCase()+'...';out=await encode(cv,fmt,92);}
-      bar.style.width='100%';G('pmsg').textContent='Done!';
-      var url=URL.createObjectURL(out.blob);
-      var rc=G('result-card'),holder=G('conv-img');
-      if(!holder){holder=document.createElement('img');holder.id='conv-img';holder.alt='Converted';holder.style.cssText='display:block;max-width:100%;margin:10px auto;border-radius:12px;border:1px solid #e5e7eb;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 50%/20px 20px';rc.insertBefore(holder,G('stat-row'));}
-      if(['pdf','tiff','ico'].indexOf(fmt)>=0){try{holder.src=cv.toDataURL('image/png');}catch(_e){holder.removeAttribute('src');}}else holder.src=url;
-      var inF=(G('inFmt')&&G('inFmt').value?G('inFmt').value.toUpperCase():'IMG');
-      G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+inF+' → '+out.ext.toUpperCase()+'</div><div class="stat-lbl">Converted</div></div><div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">Output</div></div>';
-      rc.classList.add('show');
-      var base=(G('main-file').files[0]?G('main-file').files[0].name:'image').replace(/\.[^.]+$/,'');
-      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
-      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'.'+out.ext;a.click();};
-    }catch(err){pw.style.display='none';alert('Convert nahi ho paya. Dobara try karein.\n\n'+(err&&err.message?err.message:err));}
+      for(var i=0;i<QUEUE.length;i++){
+        var item=QUEUE[i];
+        setP(8+Math.round(i/QUEUE.length*82),'Processing '+(i+1)+'/'+QUEUE.length+': '+item.file.name);
+        if(item.loading){await new Promise(function(res){var iv=setInterval(function(){if(!item.loading){clearInterval(iv);res();}},80);});}
+        if(item.error||!item.img)continue;
+        var cv=renderCanvasForItem(item,fmt);
+        var out;
+        if(tkbVal>0)out=await encodeToTargetKB(cv,fmt,tkbVal);
+        else out=await encode(cv,fmt,92);
+        outputs.push({name:baseNameOf(item.file.name)+'.'+out.ext,blob:out.blob,ext:out.ext,w:cv.width,h:cv.height});
+      }
+      setP(95,'Finalizing...');
+      if(!outputs.length)throw new Error('Koi bhi image process nahi ho payi.');
+      var totalSize=outputs.reduce(function(s,o){return s+o.blob.size;},0);
+      if(outputs.length===1){
+        var o=outputs[0];
+        G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">1</div><div class="stat-lbl">Image Converted</div></div><div class="stat-box"><div class="stat-val">'+o.w+'×'+o.h+'</div><div class="stat-lbl">px</div></div><div class="stat-box"><div class="stat-val">'+fmtBytes(o.blob.size)+'</div><div class="stat-lbl">Output Size</div></div>';
+        G('dl-btn').textContent='⬇️ Download '+o.ext.toUpperCase();
+        G('dl-btn').onclick=function(){download(o.blob,o.name);};
+      }else{
+        var zip=new JSZip();
+        outputs.forEach(function(o){zip.file(o.name,o.blob);});
+        var zblob=await zip.generateAsync({type:'blob'});
+        G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+outputs.length+'</div><div class="stat-lbl">Images Converted</div></div><div class="stat-box"><div class="stat-val">'+fmtBytes(totalSize)+'</div><div class="stat-lbl">Total Output</div></div><div class="stat-box"><div class="stat-val">ZIP</div><div class="stat-lbl">Download Format</div></div>';
+        G('dl-btn').textContent='⬇️ Download ZIP ('+outputs.length+' files)';
+        G('dl-btn').onclick=function(){download(zblob,'converted_images.zip');};
+      }
+      setP(100,'Done!');
+      G('result-card').classList.add('show');
+      G('result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+    }catch(err){
+      pw.style.display='none';
+      toast('Convert nahi ho paya: '+(err&&err.message?err.message:err));
+    }finally{
+      pb.disabled=false;
+    }
   }
+
   document.addEventListener('DOMContentLoaded',function(){
-    bindFile('main-file','file-preview');
-    var mf=G('main-file');if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
     if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
-    var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;natW=0;natH=0;var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var ci=G('conv-img');if(ci)ci.removeAttribute('src');if(G('inFmt'))G('inFmt').selectedIndex=0;});
+    var pbtn=G('process-btn');if(pbtn)pbtn.addEventListener('click',convertAll);
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',clearAll);
   });
 </script>
 
