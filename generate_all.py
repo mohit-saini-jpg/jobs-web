@@ -3707,6 +3707,11 @@ def build_all_sections(job_obj):
         'totalpost', 'post_date', 'name', 'breadcrumbs', 'course_name',
         'how_to_apply', 'physical_eligibility', 'result_url', 'answer_key_url',
         'resulturl', 'answerkeyurl', '_ad_derived_keys',
+        # brand_seo enrichment blocks — NEVER render visibly. Ye JSON-LD/attribution
+        # blocks the-page pe tables ban ke layout tod rahe the. Site apna khud ka
+        # proper invisible JSON-LD (build_schemas) + footer branding deti hai, isliye
+        # ye visible render bekaar tha. (JSON se bhi hata rahe hain — ye safety net.)
+        'seo', 'publishedBy', 'attribution', 'published_by',
     }
     for key, val in job_obj.items():
         # Skip internal/AI/already-rendered keys
