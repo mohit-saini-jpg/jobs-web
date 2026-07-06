@@ -279,46 +279,46 @@
       var ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,n=w*h,i;
       if(!w||!h)return canvas;
       var img=ctx.getImageData(0,0,w,h),d=img.data;
-      var LO=0.15,HI=0.50;               // weak / strong alpha thresholds
-      var cls=new Uint8Array(n);
-      for(i=0;i<n;i++){var a=d[i*4+3];cls[i]=a>=HI*255?2:(a>=LO*255?1:0);}
-      // HYSTERESIS: keep every 'maybe' pixel connected to a confident subject
-      // pixel — whole person (hair, dupatta, shoulders, clothes) stays; disconnected
-      // faint ghost/noise is dropped.
-      var keep=new Uint8Array(n),stack=new Int32Array(n),sp=0,p,px,py,q;
-      for(i=0;i<n;i++)if(cls[i]===2){keep[i]=1;stack[sp++]=i;}
+      // Keep the AI's own soft alpha as-is (hair/dupatta edges are DELIBERATELY
+      // semi-transparent) — do NOT binarize it, that's what was chopping off
+      // hair/edge pixels. Only drop background clutter that isn't even weakly
+      // connected to the subject, and fill holes.
+      var HI=0.55*255;                   // confident-subject alpha threshold
+      var conf=new Uint8Array(n);
+      for(i=0;i<n;i++)conf[i]=d[i*4+3]>=HI?1:0;
+      // "belongs to subject" = reachable from a confident pixel through ANY
+      // non-zero alpha — keeps faint hair wisps attached to the subject no
+      // matter how low their alpha, as long as they're contiguous with it.
+      var belongs=new Uint8Array(n),stack=new Int32Array(n),sp=0,p,px,py,q;
+      for(i=0;i<n;i++)if(conf[i]){belongs[i]=1;stack[sp++]=i;}
       while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
-        if(px>0){q=p-1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
-        if(px<w-1){q=p+1;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
-        if(py>0){q=p-w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
-        if(py<h-1){q=p+w;if(!keep[q]&&cls[q]){keep[q]=1;stack[sp++]=q;}}
+        if(px>0){q=p-1;if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;}}
       }
       // FILL HOLES: bg not reachable from the border is inside the subject.
       var reach=new Uint8Array(n),x,y,e;sp=0;
-      for(x=0;x<w;x++){e=x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=(h-1)*w+x;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
-      for(y=0;y<h;y++){e=y*w;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=y*w+w-1;if(!keep[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      for(x=0;x<w;x++){e=x;if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=(h-1)*w+x;if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
+      for(y=0;y<h;y++){e=y*w;if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}e=y*w+w-1;if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}}
       while(sp>0){p=stack[--sp];py=(p/w)|0;px=p-py*w;
-        if(px>0){q=p-1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
-        if(px<w-1){q=p+1;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
-        if(py>0){q=p-w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
-        if(py<h-1){q=p+w;if(!keep[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(px>0){q=p-1;if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(px<w-1){q=p+1;if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py>0){q=p-w;if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
+        if(py<h-1){q=p+w;if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;}}
       }
-      for(i=0;i<n;i++)if(!keep[i]&&!reach[i])keep[i]=1;
-      // hard mask → 1px feather (clean anti-aliased edge)
-      var al=new Uint8ClampedArray(n);for(i=0;i<n;i++)al[i]=keep[i]?255:0;
-      var al2=new Uint8ClampedArray(n),s,cc,dy,dx,ny,nx;
-      for(y=0;y<h;y++)for(x=0;x<w;x++){s=0;cc=0;
-        for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){ny=y+dy;nx=x+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;s+=al[ny*w+nx];cc++;}
-        al2[y*w+x]=s/cc;
-      }
-      for(i=0;i<n;i++)d[i*4+3]=al2[i];
-      // de-fringe rim colour so no old-bg tint remains
-      for(var pass=0;pass<2;pass++){var src=new Uint8ClampedArray(d),idx,av,r,g,b,c,nidx;
-        for(y=0;y<h;y++)for(x=0;x<w;x++){idx=(y*w+x)*4;av=src[idx+3];
-          if(av>4&&av<250){r=0;g=0;b=0;c=0;
-            for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){ny=y+dy;nx=x+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;nidx=(ny*w+nx)*4;if(src[nidx+3]>=250){r+=src[nidx];g+=src[nidx+1];b+=src[nidx+2];c++;}}
-            if(c>0){d[idx]=r/c;d[idx+1]=g/c;d[idx+2]=b/c;}
-          }
+      for(i=0;i<n;i++)if(!belongs[i]&&!reach[i])belongs[i]=1;
+      // drop only pixels that are truly disconnected clutter — the alpha of
+      // everything that belongs is left exactly as the AI produced it.
+      for(i=0;i<n;i++)if(!belongs[i])d[i*4+3]=0;
+      // de-fringe: neutralise leftover old-bg colour tint on semi-transparent
+      // edge pixels using nearby confident colour — alpha is left untouched,
+      // so this cleans halo colour without eating into hair/soft edges.
+      var src=new Uint8ClampedArray(d),idx,av,r,g,b,c,nidx,dy,dx,ny,nx;
+      for(y=0;y<h;y++)for(x=0;x<w;x++){idx=(y*w+x)*4;av=src[idx+3];
+        if(av>0&&av<235){r=0;g=0;b=0;c=0;
+          for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){ny=y+dy;nx=x+dx;if(ny<0||nx<0||ny>=h||nx>=w)continue;nidx=(ny*w+nx)*4;if(src[nidx+3]>=235){r+=src[nidx];g+=src[nidx+1];b+=src[nidx+2];c++;}}
+          if(c>0){d[idx]=(d[idx]+r/c)/2;d[idx+1]=(d[idx+1]+g/c)/2;d[idx+2]=(d[idx+2]+b/c)/2;}
         }
       }
       ctx.putImageData(img,0,0);
