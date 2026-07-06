@@ -4891,7 +4891,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/pspcl-alm-vacancy-2026-apply-for-3289-posts/  /  301
 /jobs/sies-college-merit-list-2026/  /  301
 /jobs/jnv-bhiwani-recruitment-2026-dance-instructor-yoga-teacher-sports-coach-matron-o/  /  301
-/jobs/join-indian-air-force-agniveer-vayu-intake-022027-recruitment-2026/  /  301
 /jobs/uppsc-up-pre-examination-2024-final-result-marks-2026/  /  301
 /jobs/magadh-university-ug-admission-2026-30/  /  301
 /jobs/iiser-iat-2026-admit-cards-out/  /  301
@@ -5937,3 +5936,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/apssb-chsl-12th-level-207-posts/  /jobs/apssb-chsle-recruitment-2026-207-group-c-vacancies-apply-online-20-july-to-10-au/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/bihar-bsusc-assistant-professor-recruitment-2026/  /jobs/bihar-assistant-professor-recruitment-2026-notification-out-apply-online-for-3/  301
