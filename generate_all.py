@@ -939,6 +939,39 @@ def _page_content_hash(job_obj):
     raw = TEMPLATE_VERSION + '\x00' + json.dumps(_clean(job_obj), sort_keys=True, ensure_ascii=False, default=str)
     return hashlib.md5(raw.encode('utf-8')).hexdigest()[:16]
 
+_AI_MARKER = '<!-- tsj-ai-enriched -->'
+
+def _preserve_ai_blocks(old_html, new_html):
+    """Rewrite pe existing AI-injected CARDS blocks (Expert Analysis, Overview,
+    Who Should Apply, Preparation Tips, Salary Insights, Job Profile, Selection
+    Strategy) ko naye HTML me carry-over karo — taaki data-update ya
+    TEMPLATE_VERSION change AI content ko WIPE na kare (jaisa version-bump pe hua tha).
+
+    - Sirf CARDS blocks preserve karo. FAQ blocks (class="faq-wrap") SKIP: base ab
+      khud FAQ banata hai (brand_help_faq + auto_generate_faqs) — warna duplicate FAQ.
+    - AI_MARKER wrapping bani rehti hai taaki nightly enricher inhe pehchane
+      (already-enriched maan ke skip kare) aur agar naya content ho to update kare.
+    - Anchor patch_html jaisa hi: pehle <section class="sec-card"> se pehle, warna
+      </main>/</article>/</body> se pehle.
+    """
+    if _AI_MARKER not in old_html or _AI_MARKER in new_html:
+        return new_html
+    blocks = re.findall(re.escape(_AI_MARKER) + r'(.*?)' + re.escape(_AI_MARKER),
+                        old_html, re.DOTALL)
+    # sirf card blocks (jinme FAQ-wrap nahi) — FAQ base khud deta hai
+    cards = [b for b in blocks if 'class="faq-wrap"' not in b and b.strip()]
+    if not cards:
+        return new_html
+    inject = ''.join(f'\n{_AI_MARKER}\n{b}{_AI_MARKER}\n' for b in cards)
+    pos = new_html.find('<section class="sec-card">')
+    if pos != -1:
+        return new_html[:pos] + inject + new_html[pos:]
+    for _tag in ('</main>', '</article>', '</body>'):
+        pos = new_html.rfind(_tag)
+        if pos != -1:
+            return new_html[:pos] + inject + new_html[pos:]
+    return new_html
+
 def write(path, html_content, skip_if_exists=False):
     """Write HTML to disk.
     skip_if_exists=True  -> job detail pages: skip if content hash unchanged
@@ -962,7 +995,14 @@ def write(path, html_content, skip_if_exists=False):
             if existing_m and existing_m.group(1) == new_m.group(1):
                 _patch_jsonld(p, html_content)
                 return  # content hash unchanged; JSON-LD patch only
-            # Hash differs (or old page had no hash) → fall through and rewrite
+            # Hash differs → rewrite. But FIRST carry over any AI-injected CARDS
+            # blocks (Expert Analysis / Overview / Salary Insights etc.) so the
+            # rewrite doesn't WIPE them. Warna har data-update / TEMPLATE_VERSION
+            # change AI content uda deta hai (jise nightly enricher ko API-cost pe
+            # dobara banana padta). FAQ blocks skip — base khud FAQ banata hai.
+            if b'tsj-ai-enriched' in existing_bytes:
+                html_content = _preserve_ai_blocks(
+                    existing_bytes.decode('utf-8', errors='replace'), html_content)
         else:
             # New HTML has no TSJ_HASH (shouldn't happen for detail pages) — legacy heuristic:
             # only skip if old page ALSO has AI content (avoid wiping enriched pages)
