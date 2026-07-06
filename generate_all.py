@@ -921,7 +921,11 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              also get the new isolated breakdown tables.
 # 20260701.4 — vacancy_breakdown skips buckets already shown above (dedup parity)
 #              so duplicate data no longer leaves an orphan empty card.
-TEMPLATE_VERSION = '20260701.7-cs'
+# 20260706.1 — added brand_help_faq() branded category-tailored Q&A to every page's
+#              FAQ (visible + FAQPage schema). BUMP forces re-render of ALL existing
+#              ~6,246 pages so old A-Z posts also get the branded FAQ (warna
+#              hash-unchanged pages skip ho jaati aur branding sirf nayi pages pe aata).
+TEMPLATE_VERSION = '20260706.1-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1690,6 +1694,59 @@ def render_links(il_obj):
                 ('fa-link','lk-default')
         rows += _row(_smart_link_label(u, lbl)[:60], u, cl, ic)
     return f'<div class="links-rows">{rows}</div>' if rows else ''
+
+def brand_help_faq(job_obj):
+    """EK brand-attributed, category-tailored, page-specific Q&A jo HAR listing ke
+    FAQ me add hota hai (full-build + AI-patch dono flow me — dono jagah identical).
+
+    Design (penalty-safe + truthful):
+      • TRUTHFUL: candidate application / result / admit-card OFFICIAL portal pe hoti
+        hai — TopSarkariJobs verified link deta hai (isliye "apply on TSJ" jaisa
+        overclaim NAHI). Real timeline: project 2020 me (offline) shuru, online 2025.
+      • PAGE-SPECIFIC: har answer me real {title} → unique per page, isliye ye
+        "scaled/boilerplate content" nahi, genuine page-specific FAQ ke saath sits.
+      • Category auto-detect (job / admit card / result / answer key / syllabus-
+        admission-yojana etc.) — har item ke liye tailored question."""
+    if not isinstance(job_obj, dict):
+        return None
+    bd = job_obj.get('basic_details') or {}
+    title = safe(bd.get('job_title', '') or job_obj.get('title', '')
+                 or job_obj.get('post_name', '') or 'this notification')
+    if not title:
+        return None
+    cat = (job_obj.get('category', '') or '').upper()
+    tl = title.lower()
+
+    def hit(*words):
+        return any(w in cat or w in tl for w in words)
+
+    SITE = "www.topsarkarijobs.com"
+    if hit('ANSWER', 'answer key'):
+        q = f"Where can I download the official Answer Key for {title}?"
+        a = (f"Ans: The official answer key and question-paper solutions for {title} "
+             f"can be downloaded through the verified link listed on {SITE}.")
+    elif hit('ADMIT', 'admit card', 'hall ticket', 'call letter'):
+        q = f"How can I download the Admit Card for {title}?"
+        a = (f"Ans: The admit card / hall ticket for {title} can be downloaded from "
+             f"the official portal using the direct link provided on {SITE}.")
+    elif hit('RESULT', 'merit list', 'score card', 'cut off', 'cutoff'):
+        q = f"How can I check the result for {title}?"
+        a = (f"Ans: You can check the marks, merit list and cut-off for {title} "
+             f"through the official result link provided on {SITE}.")
+    elif hit('ADMISSION', 'SYLLABUS', 'YOJANA', 'SCHEME', 'SCHOLARSHIP',
+             'syllabus', 'admission', 'yojana', 'scheme', 'scholarship'):
+        q = f"Where can I get the latest official updates for {title}?"
+        a = (f"Ans: All official PDFs, notifications and step-by-step guides for "
+             f"{title} are available on {SITE}.")
+    else:
+        q = f"How can I apply for {title}?"
+        a = (f"Ans: You can apply online through the official recruitment link "
+             f"provided for {title} on {SITE}. Read the full notification and check "
+             f"your eligibility before applying on the official portal.")
+    a += (" TopSarkariJobs began compiling verified government-job updates in 2020 "
+          "and launched online in 2025.")
+    return {"question": q, "answer": a}
+
 
 def auto_generate_faqs(job_obj):
     """Generate 5-10 FAQs from ACTUAL page data when JSON has no FAQ.
@@ -3607,9 +3664,15 @@ def build_all_sections(job_obj):
         elif key == 'faq':
             # AI LAYER: prefer AI-expanded FAQs; wrap in sentinel so patch_ai_html.py
             # can update in-place without re-injecting (idempotent).
+            # BRAND: har page pe ek category-tailored, page-specific branded Q&A
+            # (dono flow me — AI aur non-AI). render_faq dedupes; idempotent.
+            _brand_qa = brand_help_faq(job_obj)
             _ai_faqs = job_obj.get('ai_expanded_faqs') or []
             if _ai_faqs:
-                body = f'<!-- TSJ_AI_FAQ_START -->{render_faq(_ai_faqs)}<!-- TSJ_AI_FAQ_END -->'
+                _merged = list(_ai_faqs)
+                if _brand_qa and _brand_qa not in _merged:
+                    _merged.append(_brand_qa)
+                body = f'<!-- TSJ_AI_FAQ_START -->{render_faq(_merged)}<!-- TSJ_AI_FAQ_END -->'
             else:
                 _json_faqs = [f for f in (val if isinstance(val, list) else [])
                               if isinstance(f, dict) and safe(f.get('question')) and safe(f.get('answer'))]
@@ -3622,6 +3685,8 @@ def build_all_sections(job_obj):
                     _merged = (_json_faqs + _extra)[:12]
                 else:
                     _merged = _json_faqs
+                if _brand_qa and _brand_qa not in _merged:
+                    _merged.append(_brand_qa)
                 body = render_faq(_merged)
         elif key == 'sections':
             body = render_edu_sections(val) if isinstance(val,list) else ''
@@ -4077,6 +4142,15 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         _auto = auto_generate_faqs(job_obj)
         if len(_auto) >= 2:
             valid_faqs = _auto
+    # BRAND: wahi branded category-tailored Q&A jo visible FAQ section me add hoti
+    # hai — FAQPage schema me bhi rakho taaki structured data on-page content se
+    # match kare (Google FAQ rich-result requirement). Dedup by question.
+    _bqa = brand_help_faq(job_obj)
+    if _bqa:
+        _bk = re.sub(r'\s+', ' ', _bqa['question'].lower()).strip()
+        if _bk and _bk not in _seen_q:
+            _seen_q.add(_bk)
+            valid_faqs.append(_bqa)
     if valid_faqs:
         faq_schema = {'@context':'https://schema.org','@type':'FAQPage',
             'mainEntity':[{'@type':'Question','name':f['question'],'acceptedAnswer':{'@type':'Answer','text':f['answer']}} for f in valid_faqs]}

@@ -39,6 +39,50 @@ def safe(v, maxlen=0):
     s = str(v).strip()
     return s[:maxlen] if maxlen else s
 
+def brand_help_faq(job_obj):
+    """Same as generate_all.brand_help_faq() — ek brand-attributed, category-tailored,
+    page-specific Q&A. AI-patch flow me bhi add hota hai taaki har page pe branded
+    Q&A rahe (sentinel replace ke baad bhi survive kare). Truthful + page-specific."""
+    if not isinstance(job_obj, dict):
+        return None
+    bd = job_obj.get('basic_details') or {}
+    title = safe(bd.get('job_title', '') or job_obj.get('title', '')
+                 or job_obj.get('post_name', '') or 'this notification')
+    if not title:
+        return None
+    cat = (job_obj.get('category', '') or '').upper()
+    tl = title.lower()
+
+    def hit(*words):
+        return any(w in cat or w in tl for w in words)
+
+    SITE = "www.topsarkarijobs.com"
+    if hit('ANSWER', 'answer key'):
+        q = f"Where can I download the official Answer Key for {title}?"
+        a = (f"Ans: The official answer key and question-paper solutions for {title} "
+             f"can be downloaded through the verified link listed on {SITE}.")
+    elif hit('ADMIT', 'admit card', 'hall ticket', 'call letter'):
+        q = f"How can I download the Admit Card for {title}?"
+        a = (f"Ans: The admit card / hall ticket for {title} can be downloaded from "
+             f"the official portal using the direct link provided on {SITE}.")
+    elif hit('RESULT', 'merit list', 'score card', 'cut off', 'cutoff'):
+        q = f"How can I check the result for {title}?"
+        a = (f"Ans: You can check the marks, merit list and cut-off for {title} "
+             f"through the official result link provided on {SITE}.")
+    elif hit('ADMISSION', 'SYLLABUS', 'YOJANA', 'SCHEME', 'SCHOLARSHIP',
+             'syllabus', 'admission', 'yojana', 'scheme', 'scholarship'):
+        q = f"Where can I get the latest official updates for {title}?"
+        a = (f"Ans: All official PDFs, notifications and step-by-step guides for "
+             f"{title} are available on {SITE}.")
+    else:
+        q = f"How can I apply for {title}?"
+        a = (f"Ans: You can apply online through the official recruitment link "
+             f"provided for {title} on {SITE}. Read the full notification and check "
+             f"your eligibility before applying on the official portal.")
+    a += (" TopSarkariJobs began compiling verified government-job updates in 2020 "
+          "and launched online in 2025.")
+    return {"question": q, "answer": a}
+
 def sec_card(heading, icon, grad, body):
     """Exact same HTML as generate_all.py sec_card()"""
     return (
@@ -184,6 +228,13 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
 
     # ── 5. FAQ section update ─────────────────────────────────────────────────
     ai_faqs = job.get("ai_expanded_faqs") or []
+    # BRAND: branded category-tailored Q&A yahan bhi add karo, warna sentinel
+    # replace hone pe wo gir jaata (generate_all.py se consistent rahe).
+    _brand_qa = brand_help_faq(job)
+    if isinstance(ai_faqs, list):
+        ai_faqs = list(ai_faqs)
+        if _brand_qa and _brand_qa not in ai_faqs:
+            ai_faqs.append(_brand_qa)
     if isinstance(ai_faqs, list) and ai_faqs:
         faq_html = render_faq(ai_faqs)
         if faq_html:
