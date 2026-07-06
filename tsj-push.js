@@ -71,9 +71,11 @@
       if (window.firebase && window.firebase.messaging) return res(window.firebase);
       var s1 = document.createElement('script');
       s1.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
+      s1.async = true;   // non-blocking (this whole loader runs lazily via tsj-push)
       s1.onload = function() {
         var s2 = document.createElement('script');
         s2.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js';
+        s2.async = true;  // order guaranteed: s2 loaded inside s1.onload
         s2.onload  = function() { res(window.firebase); };
         s2.onerror = function() { rej(new Error('FCM load failed')); };
         document.head.appendChild(s2);

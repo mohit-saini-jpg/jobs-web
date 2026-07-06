@@ -1818,7 +1818,7 @@
 
       a.href = href;
       if (it.external) { a.target = "_blank"; a.rel = "noopener"; }
-      a.innerHTML = `<div class="t">${safe(it.name)}</div><div class="d">Open official link</div>`;
+      a.innerHTML = `<div class="t">${safe(it.name)}</div>`;
       gridEl.appendChild(a);
     });
 

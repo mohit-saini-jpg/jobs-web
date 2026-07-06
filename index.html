@@ -77,7 +77,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <meta name="language" content="en-IN"/>
   <meta name="geo.region" content="IN"/>
   <link rel="canonical" href="https://www.topsarkarijobs.com/"/>
-  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/"/>
+  <link id="hreflang-in" rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/"/>
   <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/"/>
   <link rel="icon" type="image/x-icon" href="image.ico"/>
   
@@ -109,9 +109,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     }
     // Load on scroll (most common trigger)
     window.addEventListener('scroll', function h(){ window.removeEventListener('scroll',h); loadNow(); }, {once:true,passive:true});
-    // Or idle fallback (5 second)
-    if ('requestIdleCallback' in window) { requestIdleCallback(loadNow, {timeout:5000}); }
-    else { setTimeout(loadNow, 8000); }
+    // Or idle fallback — lowered so no-scroll crawlers trigger data render sooner
+    if ('requestIdleCallback' in window) { requestIdleCallback(loadNow, {timeout:3000}); }
+    else { setTimeout(loadNow, 3500); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
   window.__sectionsIndexPromise = fetch('sections-index.json?v=202607061131')
@@ -1310,34 +1310,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   }
   </script>
 
-  <!-- Remove "Open official link" from dynamic cards after render -->
-  <script>
-  (function removeOpenLink() {
-    function cleanLinks() {
-      document.querySelectorAll('.section-link .d').forEach(function(el) {
-        if (el.textContent.trim() === 'Open official link' || el.textContent.trim() === 'Open') {
-          el.style.display = 'none';
-        }
-      });
-    }
-    // Run after script.js renders dynamic sections (observe DOM changes)
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        cleanLinks();
-        var obs = new MutationObserver(cleanLinks);
-        var target = document.getElementById('dynamic-sections');
-        if (target) obs.observe(target, { childList: true, subtree: true });
-        setTimeout(cleanLinks, 1500);
-      });
-    } else {
-      cleanLinks();
-      var obs = new MutationObserver(cleanLinks);
-      var target = document.getElementById('dynamic-sections');
-      if (target) obs.observe(target, { childList: true, subtree: true });
-      setTimeout(cleanLinks, 1500);
-    }
-  })();
-  </script>
+  <!-- "Open official link" badge ab source (script.js/script.min.js) se hi nahi
+       banta — isliye render-then-hide JS-hack hata diya (SEO: no render-then-hide). -->
 
   <!-- ISSUE-017 FIX: Priority 3 — Non-critical scripts lazy-loaded after window.load -->
   <script>
