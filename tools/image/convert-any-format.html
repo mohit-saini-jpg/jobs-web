@@ -302,6 +302,10 @@
         <option value="ico">ICO</option>
         <option value="pdf">PDF</option>
       </select></div>
+      <div class="form-group hidden" id="pdf-mode-item"><label>PDF Output Mode</label><select id="pdfMode">
+        <option value="single">1 Combined PDF (sab images ek hi PDF me)</option>
+        <option value="separate">Alag-Alag PDF (ZIP me, har image ki apni PDF)</option>
+      </select></div>
       <div class="form-group"><label>Rotate (sab images par)</label><select id="rot">
         <option value="0">0° (None)</option>
         <option value="90">90° ↻ Right</option>
@@ -416,6 +420,13 @@
     G('adjust-card').classList.remove('hidden');
     G('settings-card').classList.remove('hidden');
     renderThumbs();
+    updatePdfModeVisibility();
+  }
+
+  function updatePdfModeVisibility(){
+    var w=G('pdf-mode-item');
+    if(!w)return;
+    if(G('fmt').value==='pdf' && QUEUE.length>1)w.classList.remove('hidden');else w.classList.add('hidden');
   }
 
   function loadImageForItem(item){
@@ -445,7 +456,7 @@
         '</div>'+errBadge;
       var upBtn=card.querySelector('[data-act="up"]');if(upBtn)upBtn.onclick=function(){var t=QUEUE[idx-1];QUEUE[idx-1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
       var downBtn=card.querySelector('[data-act="down"]');if(downBtn)downBtn.onclick=function(){var t=QUEUE[idx+1];QUEUE[idx+1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
-      card.querySelector('[data-act="rm"]').onclick=function(){QUEUE.splice(idx,1);renderThumbs();if(!QUEUE.length){G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');}};
+      card.querySelector('[data-act="rm"]').onclick=function(){QUEUE.splice(idx,1);renderThumbs();updatePdfModeVisibility();if(!QUEUE.length){G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');}};
       grid.appendChild(card);
     });
   }
@@ -558,10 +569,12 @@
   async function convertAll(){
     if(!QUEUE.length){toast('Pehle images add karein!');return;}
     var fmt=G('fmt').value,tkbVal=parseFloat(G('tkb').value);
+    var combinePdf=(fmt==='pdf' && QUEUE.length>1 && G('pdfMode') && G('pdfMode').value==='single');
     var pw=G('progress-wrap');pw.style.display='block';G('result-card').classList.remove('show');
     var pb=G('process-btn');pb.disabled=true;
     setP(4,'Shuru ho raha hai...');
     var outputs=[];
+    var pdfCanvases=[];
     try{
       for(var i=0;i<QUEUE.length;i++){
         var item=QUEUE[i];
@@ -569,12 +582,35 @@
         if(item.loading){await new Promise(function(res){var iv=setInterval(function(){if(!item.loading){clearInterval(iv);res();}},80);});}
         if(item.error||!item.img)continue;
         var cv=renderCanvasForItem(item,fmt);
+        if(combinePdf){pdfCanvases.push(cv);continue;}
         var out;
         if(tkbVal>0)out=await encodeToTargetKB(cv,fmt,tkbVal);
         else out=await encode(cv,fmt,92);
         outputs.push({name:baseNameOf(item.file.name)+'.'+out.ext,blob:out.blob,ext:out.ext,w:cv.width,h:cv.height});
       }
       setP(95,'Finalizing...');
+      if(combinePdf){
+        if(!pdfCanvases.length)throw new Error('Koi bhi image process nahi ho payi.');
+        await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
+        var JsPDF=(window.jspdf||{}).jsPDF;
+        var cq=tkbVal>0?0.8:0.92;
+        var pdfDoc=null;
+        pdfCanvases.forEach(function(cvi,idx){
+          var durl=cvi.toDataURL('image/jpeg',cq);
+          var orient=cvi.width>=cvi.height?'l':'p';
+          if(idx===0){pdfDoc=new JsPDF({orientation:orient,unit:'px',format:[cvi.width,cvi.height]});}
+          else{pdfDoc.addPage([cvi.width,cvi.height],orient);}
+          pdfDoc.addImage(durl,'JPEG',0,0,cvi.width,cvi.height);
+        });
+        var pdfBlob=pdfDoc.output('blob');
+        G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+pdfCanvases.length+'</div><div class="stat-lbl">Pages (Images)</div></div><div class="stat-box"><div class="stat-val">'+fmtBytes(pdfBlob.size)+'</div><div class="stat-lbl">PDF Size</div></div><div class="stat-box"><div class="stat-val">1 File</div><div class="stat-lbl">Combined PDF</div></div>';
+        G('dl-btn').textContent='⬇️ Download Combined PDF';
+        G('dl-btn').onclick=function(){download(pdfBlob,'combined_images.pdf');};
+        setP(100,'Done!');
+        G('result-card').classList.add('show');
+        G('result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+        return;
+      }
       if(!outputs.length)throw new Error('Koi bhi image process nahi ho payi.');
       var totalSize=outputs.reduce(function(s,o){return s+o.blob.size;},0);
       if(outputs.length===1){
@@ -607,6 +643,7 @@
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     var pbtn=G('process-btn');if(pbtn)pbtn.addEventListener('click',convertAll);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',clearAll);
+    if(G('fmt'))G('fmt').addEventListener('change',updatePdfModeVisibility);
   });
 </script>
 
