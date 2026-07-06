@@ -2818,7 +2818,7 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
 SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
                  'qualification','eligibility_section','course_details','vacancy_details','vacancy_breakdown','subject_wise_vacancy','category_wise_vacancy','salary_details',
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
-                 'tables','data_tables','text_sections','details_page_content',
+                 'tables','data_tables','text_sections',
                  'how_to_apply','important_instructions','important_links','faq']
 # NOTE: 'useful_links' & 'all_links' are intentionally NOT in SECTION_ORDER.
 # _prepare_il() already merges those arrays into `important_links`, so rendering
@@ -3712,6 +3712,15 @@ def build_all_sections(job_obj):
         # proper invisible JSON-LD (build_schemas) + footer branding deti hai, isliye
         # ye visible render bekaar tha. (JSON se bhi hata rahe hain — ye safety net.)
         'seo', 'publishedBy', 'attribution', 'published_by',
+        # LATEST_JOBS NEW / OFFLINE_FORM / UPCOMING_JOBS / ADMISSIONS (shine/network
+        # source) me ye extra fields page ke bottom pe DUPLICATE sections ban rahe the:
+        #   all_links → already important_links me merge hai (standalone duplicate)
+        #   details_page_content → raw scraped content ("Scholarship Details")
+        #   faqs → site khud auto_generate_faqs banati hai (scraped faqs redundant)
+        #   age_relaxation_notes / salary_stipend / age_reference_date → fallback dump
+        # Inhe kabhi render mat karo. Links important_links section me safe rahenge.
+        'all_links', 'details_page_content', 'faqs',
+        'age_relaxation_notes', 'salary_stipend', 'age_reference_date',
     }
     for key, val in job_obj.items():
         # Skip internal/AI/already-rendered keys
