@@ -102,13 +102,17 @@
     .crop-editor-card{display:none;margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--line)}
     .crop-editor-card.show{display:block}
     .crop-editor-title{font-size:.92rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-    .crop-editor-imgwrap{max-height:min(55vh,480px);background:#0f172a;border-radius:10px;overflow:hidden}
-    .crop-editor-imgwrap img{max-width:100%;display:block}
+    .crop-editor-imgwrap{max-height:min(62vh,540px);background:#0f172a;border-radius:10px;overflow:hidden;position:relative;touch-action:none;-webkit-user-select:none;user-select:none}
+    .crop-editor-imgwrap img{max-width:100%;display:block;touch-action:none}
     .crop-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
     .crop-editor-btn{padding:8px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:700;color:var(--ink);font-family:inherit}
     .crop-editor-btn:hover{border-color:var(--brand);color:var(--brand)}
     .crop-editor-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    .crop-editor-btn.zoom-btn{padding:8px 12px}
     .crop-editor-hint{font-size:.74rem;color:#94a3b8;margin-top:6px}
+    .output-adjust-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start}
+    .output-adjust-grid .card{margin-bottom:0}
+    @media(max-width:800px){.output-adjust-grid{grid-template-columns:1fr}}
     .slot-move { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
     .slot-move button { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line); background: white; cursor: pointer; font-size: 0.7rem; line-height: 1; color: var(--muted); }
     .slot-move button:hover { border-color: var(--brand); color: var(--brand); }
@@ -327,36 +331,60 @@
     <h3>✂️ Har Image Crop Karein (Live)</h3>
     <p style="font-size:.78rem;color:#94a3b8;margin-bottom:6px">Box drag/resize karke area choose karein — jaisa adjust karenge, merge preview turant niche update hoga. Har image ka crop bilkul independent hai.</p>
     <div class="crop-editor-card" id="cropCard-0">
-      <div class="crop-editor-title">1️⃣ First Image</div>
+      <div class="crop-editor-title">1️⃣ First Image <span id="rotateVal-0" style="color:var(--brand);font-weight:800">0°</span></div>
       <div class="crop-editor-imgwrap" id="cropWrap-0"><img id="cropImg-0" alt="First image crop"></div>
       <div class="crop-editor-actions">
         <button type="button" class="crop-editor-btn" id="cropResetBtn-0">↺ Reset Crop</button>
         <button type="button" class="crop-editor-btn" id="freeSelBtn-0">🔓 Free Select (kisi bhi angle)</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomOutBtn-0">➖ Zoom Out</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomInBtn-0">➕ Zoom In</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomResetBtn-0">🔍 Reset Zoom</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotLeftBtn-0">↺ Rotate Left</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotRightBtn-0">↻ Rotate Right</button>
       </div>
+      <p class="crop-editor-hint">📱 2 finger se pinch karke bhi zoom kar sakte hain — zoom karke crop area ko precise select karna aasaan ho jaata hai.</p>
     </div>
     <div class="crop-editor-card" id="cropCard-1">
-      <div class="crop-editor-title">2️⃣ Second Image</div>
+      <div class="crop-editor-title">2️⃣ Second Image <span id="rotateVal-1" style="color:var(--brand);font-weight:800">0°</span></div>
       <div class="crop-editor-imgwrap" id="cropWrap-1"><img id="cropImg-1" alt="Second image crop"></div>
       <div class="crop-editor-actions">
         <button type="button" class="crop-editor-btn" id="cropResetBtn-1">↺ Reset Crop</button>
         <button type="button" class="crop-editor-btn" id="freeSelBtn-1">🔓 Free Select (kisi bhi angle)</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomOutBtn-1">➖ Zoom Out</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomInBtn-1">➕ Zoom In</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomResetBtn-1">🔍 Reset Zoom</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotLeftBtn-1">↺ Rotate Left</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotRightBtn-1">↻ Rotate Right</button>
       </div>
+      <p class="crop-editor-hint">📱 2 finger se pinch karke bhi zoom kar sakte hain — zoom karke crop area ko precise select karna aasaan ho jaata hai.</p>
     </div>
     <div class="crop-editor-card" id="cropCard-2">
-      <div class="crop-editor-title">3️⃣ Third Image</div>
+      <div class="crop-editor-title">3️⃣ Third Image <span id="rotateVal-2" style="color:var(--brand);font-weight:800">0°</span></div>
       <div class="crop-editor-imgwrap" id="cropWrap-2"><img id="cropImg-2" alt="Third image crop"></div>
       <div class="crop-editor-actions">
         <button type="button" class="crop-editor-btn" id="cropResetBtn-2">↺ Reset Crop</button>
         <button type="button" class="crop-editor-btn" id="freeSelBtn-2">🔓 Free Select (kisi bhi angle)</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomOutBtn-2">➖ Zoom Out</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomInBtn-2">➕ Zoom In</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomResetBtn-2">🔍 Reset Zoom</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotLeftBtn-2">↺ Rotate Left</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotRightBtn-2">↻ Rotate Right</button>
       </div>
+      <p class="crop-editor-hint">📱 2 finger se pinch karke bhi zoom kar sakte hain — zoom karke crop area ko precise select karna aasaan ho jaata hai.</p>
     </div>
     <div class="crop-editor-card" id="cropCard-3">
-      <div class="crop-editor-title">4️⃣ Fourth Image</div>
+      <div class="crop-editor-title">4️⃣ Fourth Image <span id="rotateVal-3" style="color:var(--brand);font-weight:800">0°</span></div>
       <div class="crop-editor-imgwrap" id="cropWrap-3"><img id="cropImg-3" alt="Fourth image crop"></div>
       <div class="crop-editor-actions">
         <button type="button" class="crop-editor-btn" id="cropResetBtn-3">↺ Reset Crop</button>
         <button type="button" class="crop-editor-btn" id="freeSelBtn-3">🔓 Free Select (kisi bhi angle)</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomOutBtn-3">➖ Zoom Out</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomInBtn-3">➕ Zoom In</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="zoomResetBtn-3">🔍 Reset Zoom</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotLeftBtn-3">↺ Rotate Left</button>
+        <button type="button" class="crop-editor-btn zoom-btn" id="rotRightBtn-3">↻ Rotate Right</button>
       </div>
+      <p class="crop-editor-hint">📱 2 finger se pinch karke bhi zoom kar sakte hain — zoom karke crop area ko precise select karna aasaan ho jaata hai.</p>
     </div>
   </div>
 
@@ -371,57 +399,6 @@
     <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
       <label style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:10px">↕️ Reorder Images</label>
       <div id="orderList" style="display:flex;flex-direction:column;gap:6px"></div>
-    </div>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
-      <h3 style="margin-bottom:14px">✨ Photo Adjust Karein</h3>
-      <div class="adjust-grid">
-        <div class="adjust-col">
-          <label class="at">Brightness <span id="briVal">100%</span></label>
-          <input type="range" id="briRange" min="40" max="180" value="100">
-          <div class="chip-row">
-            <button type="button" class="chip" data-target="briRange" data-val="70">Dark</button>
-            <button type="button" class="chip active" data-target="briRange" data-val="100">Normal</button>
-            <button type="button" class="chip" data-target="briRange" data-val="135">Bright</button>
-          </div>
-        </div>
-        <div class="adjust-col">
-          <label class="at">Contrast <span id="conVal">100%</span></label>
-          <input type="range" id="conRange" min="40" max="180" value="100">
-          <div class="chip-row">
-            <button type="button" class="chip" data-target="conRange" data-val="75">Low</button>
-            <button type="button" class="chip active" data-target="conRange" data-val="100">Normal</button>
-            <button type="button" class="chip" data-target="conRange" data-val="135">High</button>
-          </div>
-        </div>
-        <div class="adjust-col">
-          <label class="at">Saturation <span id="satVal">100%</span></label>
-          <input type="range" id="satRange" min="0" max="200" value="100">
-          <div class="chip-row">
-            <button type="button" class="chip" data-target="satRange" data-val="0">B&amp;W</button>
-            <button type="button" class="chip active" data-target="satRange" data-val="100">Normal</button>
-            <button type="button" class="chip" data-target="satRange" data-val="150">Vivid</button>
-          </div>
-        </div>
-        <div class="adjust-col">
-          <label class="at">Sharpness <span id="shpVal">0</span></label>
-          <input type="range" id="shpRange" min="0" max="100" value="0">
-          <div class="chip-row">
-            <button type="button" class="chip active" data-target="shpRange" data-val="0">None</button>
-            <button type="button" class="chip" data-target="shpRange" data-val="35">Light</button>
-            <button type="button" class="chip" data-target="shpRange" data-val="70">Sharp</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
-      <label style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between">Distance Between Image <span id="gapVal" style="color:var(--brand)">0 px</span></label>
-      <div style="display:flex;align-items:center;gap:14px;margin-top:8px">
-        <input type="color" id="gapColor" value="#ffffff" style="width:44px;height:38px;border:1.5px solid var(--line);border-radius:8px;padding:2px;cursor:pointer">
-        <input type="range" id="gapRange" min="0" max="150" value="0" style="flex:1">
-      </div>
-      <p style="font-size:.74rem;color:#94a3b8;margin-top:6px">Gap ka colour box se choose karein (default white).</p>
     </div>
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
@@ -484,13 +461,63 @@
     </div>
   </div>
 
-  <div class="card">
-    <h3>🖼️ Output Image</h3>
-    <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
-    <div class="result-card" id="result-card" style="margin-top:14px">
-      <div class="result-ok">✅ Successfully Merged!</div>
-      <div class="stat-row" id="stat-row"></div>
-      <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+  <div class="output-adjust-grid">
+    <div class="card">
+      <label style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between">📏 Distance Between Image <span id="gapVal" style="color:var(--brand)">0 px</span></label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:8px">
+        <input type="color" id="gapColor" value="#ffffff" style="width:44px;height:38px;border:1.5px solid var(--line);border-radius:8px;padding:2px;cursor:pointer">
+        <input type="range" id="gapRange" min="0" max="500" value="0" style="flex:1">
+      </div>
+      <p style="font-size:.74rem;color:#94a3b8;margin:6px 0 14px">Gap ka colour box se choose karein (default white).</p>
+      <h3>🖼️ Output Image</h3>
+      <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
+      <div class="result-card" id="result-card" style="margin-top:14px">
+        <div class="result-ok">✅ Successfully Merged!</div>
+        <div class="stat-row" id="stat-row"></div>
+        <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:14px">✨ Photo Adjust Karein</h3>
+      <div class="adjust-grid" style="grid-template-columns:1fr">
+        <div class="adjust-col">
+          <label class="at">Brightness <span id="briVal">100%</span></label>
+          <input type="range" id="briRange" min="40" max="180" value="100">
+          <div class="chip-row">
+            <button type="button" class="chip" data-target="briRange" data-val="70">Dark</button>
+            <button type="button" class="chip active" data-target="briRange" data-val="100">Normal</button>
+            <button type="button" class="chip" data-target="briRange" data-val="135">Bright</button>
+          </div>
+        </div>
+        <div class="adjust-col">
+          <label class="at">Contrast <span id="conVal">100%</span></label>
+          <input type="range" id="conRange" min="40" max="180" value="100">
+          <div class="chip-row">
+            <button type="button" class="chip" data-target="conRange" data-val="75">Low</button>
+            <button type="button" class="chip active" data-target="conRange" data-val="100">Normal</button>
+            <button type="button" class="chip" data-target="conRange" data-val="135">High</button>
+          </div>
+        </div>
+        <div class="adjust-col">
+          <label class="at">Saturation <span id="satVal">100%</span></label>
+          <input type="range" id="satRange" min="0" max="200" value="100">
+          <div class="chip-row">
+            <button type="button" class="chip" data-target="satRange" data-val="0">B&amp;W</button>
+            <button type="button" class="chip active" data-target="satRange" data-val="100">Normal</button>
+            <button type="button" class="chip" data-target="satRange" data-val="150">Vivid</button>
+          </div>
+        </div>
+        <div class="adjust-col">
+          <label class="at">Sharpness <span id="shpVal">0</span></label>
+          <input type="range" id="shpRange" min="0" max="100" value="0">
+          <div class="chip-row">
+            <button type="button" class="chip active" data-target="shpRange" data-val="0">None</button>
+            <button type="button" class="chip" data-target="shpRange" data-val="35">Light</button>
+            <button type="button" class="chip" data-target="shpRange" data-val="70">Sharp</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -556,10 +583,15 @@
     drawTri([0,2,3],[0,2,3]);
     return cnv;
   }
+  // Free Select ab pinch-zoom + pan support karta hai — image ko zoom karke
+  // corners ko bahut precisely place kiya ja sakta hai (mobile-friendly).
   function QuadCropUI(containerEl,imgEl,onChange){
     var svgNS='http://www.w3.org/2000/svg';
     var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
     var origImgStyle=imgEl.getAttribute('style')||'';
+    var baseW=0,baseH=0,scale=1,panX=0,panY=0,MINZ=1,MAXZ=4;
+    var pointers={},panDrag=false,panStart=null,pinchStartDist=0,pinchStartScale=1,pinchStartPan=null;
+
     function fitImageToBox(){
       // Replicate Cropper.js-style "contain" scaling so small/large images always
       // fill the available box consistently (fixes empty dark-space bug).
@@ -570,30 +602,58 @@
       var ar=natW/natH;
       var w=maxW,h=w/ar;
       if(h>maxH){h=maxH;w=h*ar;}
-      imgEl.style.width=Math.round(w)+'px';
-      imgEl.style.height=Math.round(h)+'px';
-      imgEl.style.maxWidth='none';
-      imgEl.style.display='block';
-      imgEl.style.margin='0 auto';
+      baseW=Math.round(w);baseH=Math.round(h);
+    }
+    function toScreen(p){return {x:panX+p.x*scale,y:panY+p.y*scale};}
+    function toBase(sx,sy){return {x:(sx-panX)/scale,y:(sy-panY)/scale};}
+    function applyTransform(){
+      imgEl.style.position='absolute';
+      imgEl.style.left=panX+'px';imgEl.style.top=panY+'px';
+      imgEl.style.width=Math.round(baseW*scale)+'px';
+      imgEl.style.height=Math.round(baseH*scale)+'px';
+      imgEl.style.maxWidth='none';imgEl.style.display='block';
     }
     function render(){
-      var w=imgEl.clientWidth,h=imgEl.clientHeight;
-      var d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
+      var cw=containerEl.clientWidth,ch=containerEl.clientHeight;
+      var sp=pts.map(toScreen);
+      var d='M0,0 H'+cw+' V'+ch+' H0 Z M'+sp[0].x+','+sp[0].y+' L'+sp[1].x+','+sp[1].y+' L'+sp[2].x+','+sp[2].y+' L'+sp[3].x+','+sp[3].y+' Z';
       mask.setAttribute('d',d);
-      poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
-      handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+      poly.setAttribute('points',sp.map(function(p){return p.x+','+p.y;}).join(' '));
+      handles.forEach(function(hd,i){hd.setAttribute('cx',sp[i].x);hd.setAttribute('cy',sp[i].y);});
       if(typeof onChange==='function')onChange();
     }
+    function zoomTo(newScale,anchorSx,anchorSy){
+      newScale=Math.max(MINZ,Math.min(MAXZ,newScale));
+      var anchorBase=toBase(anchorSx,anchorSy);
+      scale=newScale;
+      panX=anchorSx-anchorBase.x*scale;
+      panY=anchorSy-anchorBase.y*scale;
+      applyTransform();render();
+    }
+    this.zoomBy=function(delta){
+      if(!active)return;
+      var cw=containerEl.clientWidth,ch=containerEl.clientHeight;
+      zoomTo(scale+delta,cw/2,ch/2);
+    };
+    this.resetZoom=function(){
+      if(!active)return;
+      scale=1;panX=(containerEl.clientWidth-baseW)/2;panY=0;
+      applyTransform();render();
+    };
     this.activate=function(){
       if(active)return;
       active=true;
       containerEl.style.position='relative';
       fitImageToBox();
-      var w=imgEl.clientWidth,h=imgEl.clientHeight;
-      var mx=w*0.12,my=h*0.12;
-      pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
+      containerEl.style.height=baseH+'px';
+      scale=1;panX=(containerEl.clientWidth-baseW)/2;panY=0;
+      applyTransform();
+      var mx=baseW*0.12,my=baseH*0.12;
+      pts=[{x:mx,y:my},{x:baseW-mx,y:my},{x:baseW-mx,y:baseH-my},{x:mx,y:baseH-my}];
       svg=document.createElementNS(svgNS,'svg');
-      svg.style.cssText='position:absolute;left:'+imgEl.offsetLeft+'px;top:'+imgEl.offsetTop+'px;width:'+w+'px;height:'+h+'px;touch-action:none;z-index:5;';
+      var cw=containerEl.clientWidth,ch=containerEl.clientHeight;
+      svg.setAttribute('width',cw);svg.setAttribute('height',ch);
+      svg.style.cssText='position:absolute;left:0;top:0;width:'+cw+'px;height:'+ch+'px;touch-action:none;z-index:5;';
       mask=document.createElementNS(svgNS,'path');
       mask.setAttribute('fill','rgba(0,0,0,.5)');mask.setAttribute('fill-rule','evenodd');
       svg.appendChild(mask);
@@ -615,10 +675,12 @@
           circle.addEventListener('pointermove',function(ev){
             if(dragIdx!==idx)return;
             ev.preventDefault();
-            var r=imgEl.getBoundingClientRect();
-            var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
-            var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
-            pts[idx]={x:x,y:y};
+            var r=containerEl.getBoundingClientRect();
+            var sx=ev.clientX-r.left,sy=ev.clientY-r.top;
+            var b=toBase(sx,sy);
+            b.x=Math.max(0,Math.min(baseW,b.x));
+            b.y=Math.max(0,Math.min(baseH,b.y));
+            pts[idx]=b;
             render();
           });
           function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
@@ -628,6 +690,55 @@
         svg.appendChild(c);
         handles.push(c);
       }
+      // ── Pan (1-finger drag on background) + Pinch-zoom (2-finger) ──
+      pointers={};panDrag=false;
+      svg.addEventListener('pointerdown',function(ev){
+        pointers[ev.pointerId]={x:ev.clientX,y:ev.clientY};
+        var ids=Object.keys(pointers);
+        if(ids.length===1){
+          panDrag=true;
+          panStart={x:ev.clientX,y:ev.clientY,panX:panX,panY:panY};
+          try{svg.setPointerCapture(ev.pointerId);}catch(e){}
+        }else if(ids.length===2){
+          panDrag=false;
+          var p=ids.map(function(k){return pointers[k];});
+          pinchStartDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)||1;
+          pinchStartScale=scale;
+          pinchStartPan={x:panX,y:panY};
+        }
+      });
+      svg.addEventListener('pointermove',function(ev){
+        if(!(ev.pointerId in pointers))return;
+        pointers[ev.pointerId]={x:ev.clientX,y:ev.clientY};
+        var ids=Object.keys(pointers);
+        var r=containerEl.getBoundingClientRect();
+        if(ids.length===2){
+          ev.preventDefault();
+          var p=ids.map(function(k){return pointers[k];});
+          var dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)||1;
+          var midX=(p[0].x+p[1].x)/2-r.left, midY=(p[0].y+p[1].y)/2-r.top;
+          var newScale=Math.max(MINZ,Math.min(MAXZ,pinchStartScale*(dist/pinchStartDist)));
+          var midBaseAtStart={x:(midX-pinchStartPan.x)/pinchStartScale,y:(midY-pinchStartPan.y)/pinchStartScale};
+          scale=newScale;
+          panX=midX-midBaseAtStart.x*scale;
+          panY=midY-midBaseAtStart.y*scale;
+          applyTransform();render();
+        }else if(ids.length===1&&panDrag&&dragIdx===-1){
+          ev.preventDefault();
+          panX=panStart.panX+(ev.clientX-panStart.x);
+          panY=panStart.panY+(ev.clientY-panStart.y);
+          applyTransform();render();
+        }
+      });
+      function endPointer(ev){
+        delete pointers[ev.pointerId];
+        var left=Object.keys(pointers).length;
+        if(left<2)pinchStartDist=0;
+        if(left===0)panDrag=false;
+        try{svg.releasePointerCapture(ev.pointerId);}catch(e){}
+      }
+      svg.addEventListener('pointerup',endPointer);
+      svg.addEventListener('pointercancel',endPointer);
       containerEl.appendChild(svg);
       render();
     };
@@ -636,13 +747,14 @@
       active=false;
       if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
       svg=null;
+      containerEl.style.height='';
       imgEl.setAttribute('style',origImgStyle);
     };
     this.isActive=function(){return active;};
     this.getWarpedCanvas=function(outW,outH){
       if(!active)return null;
-      var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
-      var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+      var scaleX=imgEl.naturalWidth/baseW;
+      var scaleY=imgEl.naturalHeight/baseH;
       var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
       if(!outW||!outH){
         var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
@@ -670,6 +782,7 @@
     loadImg(file,function(err,img){
       if(err){alert('Image load nahi hui, dobara try karein.');return;}
       slots[idx]={file:file,img:img,natW:img.naturalWidth,natH:img.naturalHeight};
+      slotRotate[idx]=0;
       var thumb=G('thumb-'+idx),meta=G('meta-'+idx),wrap=G('slot-wrap-'+idx);
       thumb.src=img.src;thumb.style.display='block';
       meta.textContent=img.naturalWidth+'×'+img.naturalHeight+' · '+formatBytes(file.size);
@@ -677,6 +790,7 @@
       wrap.classList.add('filled');
       buildOrderList();
       initSlotCropEditor(idx,img.src);
+      updateRotateLabel(idx);
       updateCropSectionVisibility();
       scheduleLivePreview();
     });
@@ -689,6 +803,7 @@
   // ══════════════════════════════════════════════════════════
   var cropInst=[null,null,null,null];
   var quadInst=[null,null,null,null];
+  var slotRotate=[0,0,0,0]; // har image ka apna independent rotation (0/90/180/270)
 
   function updateCropSectionVisibility(){
     var any=slots.some(function(s){return !!s;});
@@ -707,7 +822,8 @@
     try{
       cropInst[idx]=new Cropper(img,{
         viewMode:1,autoCropArea:.9,guides:true,center:true,highlight:true,
-        background:true,responsive:true,movable:true,zoomable:true,rotatable:false,scalable:false,
+        background:true,responsive:true,movable:true,zoomable:true,zoomOnTouch:true,zoomOnWheel:true,
+        wheelZoomRatio:.1,rotatable:false,scalable:false,
         cropBoxMovable:true,cropBoxResizable:true,aspectRatio:NaN,
         minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200,
         crop:function(){scheduleLivePreview();}
@@ -769,9 +885,32 @@
     return slots[idx]?slots[idx].img:null;
   }
 
+  function zoomSlot(idx,delta){
+    if(quadInst[idx]&&quadInst[idx].isActive()){quadInst[idx].zoomBy(delta);}
+    else if(cropInst[idx]){cropInst[idx].zoom(delta>0?0.15:-0.15);}
+  }
+  function zoomSlotReset(idx){
+    if(quadInst[idx]&&quadInst[idx].isActive()){quadInst[idx].resetZoom();}
+    else if(cropInst[idx]){cropInst[idx].reset();}
+  }
+  function updateRotateLabel(idx){
+    var lbl=G('rotateVal-'+idx);if(lbl)lbl.textContent=(slotRotate[idx]||0)+'°';
+  }
+  function rotateSlot(idx,deg){
+    slotRotate[idx]=((slotRotate[idx]||0)+deg+360)%360;
+    updateRotateLabel(idx);
+    scheduleLivePreview();
+  }
   [0,1,2,3].forEach(function(idx){
     var rb=G('cropResetBtn-'+idx);if(rb)rb.addEventListener('click',function(){resetSlotCrop(idx);});
     var fb=G('freeSelBtn-'+idx);if(fb)fb.addEventListener('click',function(){toggleSlotFreeSelect(idx);});
+    var zi=G('zoomInBtn-'+idx),zo=G('zoomOutBtn-'+idx),zr=G('zoomResetBtn-'+idx);
+    if(zi)zi.addEventListener('click',function(){zoomSlot(idx,0.4);});
+    if(zo)zo.addEventListener('click',function(){zoomSlot(idx,-0.4);});
+    if(zr)zr.addEventListener('click',function(){zoomSlotReset(idx);});
+    var rl=G('rotLeftBtn-'+idx),rr=G('rotRightBtn-'+idx);
+    if(rl)rl.addEventListener('click',function(){rotateSlot(idx,-90);});
+    if(rr)rr.addEventListener('click',function(){rotateSlot(idx,90);});
   });
 
   // ── Toggle Third/Fourth image slots ──────────────────────────
@@ -1004,7 +1143,12 @@
     var flip=G('flipSel').value;
     var gap=parseInt(G('gapRange').value)||0;
     var gapColor=G('gapColor').value||'#ffffff';
-    var pieces=activeIdx.map(function(i){return transformImage(getSlotRenderSource(i),rotate,flip);});
+    var pieces=activeIdx.map(function(i){
+      var src=getSlotRenderSource(i);
+      var ir=slotRotate[i]||0;
+      if(ir)src=transformImage(src,ir,'none');
+      return transformImage(src,rotate,flip);
+    });
     var cv,ctx;
     if(posVal==='v'){
       var maxW=Math.max.apply(null,pieces.map(function(p){return p.width;}));
@@ -1084,11 +1228,13 @@
   G('process-btn').addEventListener('click',runProcess);
   G('reset-btn').addEventListener('click',function(){
     slots=[null,null,null,null];
+    slotRotate=[0,0,0,0];
     [0,1,2,3].forEach(function(idx){
       G('file-'+idx).value='';
       G('thumb-'+idx).style.display='none';G('thumb-'+idx).removeAttribute('src');
       G('meta-'+idx).style.display='none';G('meta-'+idx).textContent='';
       G('slot-wrap-'+idx).classList.remove('filled');
+      updateRotateLabel(idx);
     });
     order=[0,1,2,3];buildOrderList();
     G('slot-wrap-2').classList.add('hidden');G('slot-wrap-3').classList.add('hidden');
