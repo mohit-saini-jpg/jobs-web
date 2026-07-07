@@ -3435,7 +3435,31 @@ def build_all_sections(job_obj):
                     _h_join = ' '.join(safe(h) for h in _hdrs)
                     if _JUNK_ROW.search(_h_join) or 'Short Details' in _h_join:
                         _hdrs_clean = []
-                _tbl = '<table class="kv-table"><tbody>'
+                # column count check: kv-table's CSS forces width:38% on EVERY
+                # <th> (it's designed for 2-col label:value rows). District/
+                # state-wise breakdown tables have 3-5+ columns (District |
+                # Vacancy | Last Date | Link...) — putting width:38% on each
+                # of 5 <th> = 190% total width, so the browser crushes columns
+                # down to near-zero and text wraps one character per line.
+                # Multi-column tables must use the scrollable data-table class
+                # instead (table-layout:auto, no forced per-th width).
+                _ncols = max(len(_hdrs_clean) if isinstance(_hdrs_clean, list) else 0,
+                             max((len(r) for r in _clean_rows), default=0))
+                _is_multicol = _ncols > 2
+
+                def _cellhtml(_c):
+                    # auto-linkify bare URLs (e.g. pdf_url from district-wise
+                    # tables) so download/notification links are clickable
+                    # instead of rendering as raw unbroken URL text.
+                    _cs = safe(_c).strip()
+                    if _cs.startswith('http://') or _cs.startswith('https://'):
+                        return f'<a href="{e(_cs)}" target="_blank" rel="noopener noreferrer">Download</a>'
+                    return e(_cs)
+
+                if _is_multicol:
+                    _tbl = '<div class="tbl-scroll"><table class="data-table"><tbody>'
+                else:
+                    _tbl = '<table class="kv-table"><tbody>'
                 if isinstance(_hdrs_clean, list) and any(safe(h) for h in _hdrs_clean):
                     _tbl += '<tr>' + ''.join(f'<th>{e(safe(h))}</th>' for h in _hdrs_clean if safe(h)) + '</tr>'
                     _first_is_header = False
@@ -3443,9 +3467,22 @@ def build_all_sections(job_obj):
                     _first_is_header = True
                 for _ri, _r in enumerate(_clean_rows):
                     _cells = [safe(c) for c in _r]
+                    # keep row width == header width so no cell ever floats
+                    # outside the visible columns (e.g. a stray extra value
+                    # like an orphan "103" with no matching header)
+                    if isinstance(_hdrs_clean, list) and _hdrs_clean and len(_cells) != len(_hdrs_clean):
+                        if len(_cells) < len(_hdrs_clean):
+                            _cells = _cells + [''] * (len(_hdrs_clean) - len(_cells))
+                        else:
+                            _cells = _cells[:len(_hdrs_clean)]
                     _tag = 'th' if (_first_is_header and _ri == 0 and len(_cells) > 1) else 'td'
-                    _tbl += '<tr>' + ''.join(f'<{_tag}>{e(c)}</{_tag}>' for c in _cells) + '</tr>'
+                    if _tag == 'th':
+                        _tbl += '<tr>' + ''.join(f'<th>{e(c)}</th>' for c in _cells) + '</tr>'
+                    else:
+                        _tbl += '<tr>' + ''.join(f'<td>{_cellhtml(c)}</td>' for c in _cells) + '</tr>'
                 _tbl += '</tbody></table>'
+                if _is_multicol:
+                    _tbl += '</div>'
                 if _hd and _hd.lower() not in ('table', 'data table'):
                     _dt_parts.append(f'<div class="kv-stack-head" style="margin-top:10px">{e(_hd)}</div>{_tbl}')
                 else:
