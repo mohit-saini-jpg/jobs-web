@@ -12,6 +12,51 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+<style id="cropper-touch-fix">
+/* ===== Mobile-friendly Cropper.js touch targets (crop line/handles ko bada + easy-to-grab banaya) ===== */
+.cropper-view-box{outline:2px solid rgba(51,153,255,.9) !important;outline-color:rgba(51,153,255,.9) !important}
+.cropper-line{background-color:#39f !important;opacity:.35 !important}
+.cropper-line.line-e,.cropper-line.line-w{width:16px !important}
+.cropper-line.line-n,.cropper-line.line-s{height:16px !important}
+.cropper-line.line-e{right:-8px !important}
+.cropper-line.line-w{left:-8px !important}
+.cropper-line.line-n{top:-8px !important}
+.cropper-line.line-s{bottom:-8px !important}
+.cropper-point{
+  background-color:#2f7dff !important;
+  border:2px solid #fff !important;
+  border-radius:50% !important;
+  box-shadow:0 1px 5px rgba(0,0,0,.45) !important;
+  opacity:1 !important;
+}
+.cropper-point.point-nw,.cropper-point.point-ne,.cropper-point.point-sw,.cropper-point.point-se{
+  width:24px !important;height:24px !important;
+}
+.cropper-point.point-nw{top:-12px !important;left:-12px !important}
+.cropper-point.point-ne{top:-12px !important;right:-12px !important}
+.cropper-point.point-sw{bottom:-12px !important;left:-12px !important}
+.cropper-point.point-se{bottom:-12px !important;right:-12px !important}
+.cropper-point.point-n,.cropper-point.point-s{
+  width:40px !important;height:16px !important;left:50% !important;margin-left:-20px !important;border-radius:8px !important;
+}
+.cropper-point.point-n{top:-8px !important}
+.cropper-point.point-s{bottom:-8px !important}
+.cropper-point.point-e,.cropper-point.point-w{
+  width:16px !important;height:40px !important;top:50% !important;margin-top:-20px !important;border-radius:8px !important;
+}
+.cropper-point.point-e{right:-8px !important}
+.cropper-point.point-w{left:-8px !important}
+@media (max-width:600px){
+  .cropper-point.point-nw,.cropper-point.point-ne,.cropper-point.point-sw,.cropper-point.point-se{width:28px !important;height:28px !important}
+  .cropper-point.point-nw{top:-14px !important;left:-14px !important}
+  .cropper-point.point-ne{top:-14px !important;right:-14px !important}
+  .cropper-point.point-sw{bottom:-14px !important;left:-14px !important}
+  .cropper-point.point-se{bottom:-14px !important;right:-14px !important}
+  .cropper-point.point-n,.cropper-point.point-s{width:48px !important;height:18px !important;margin-left:-24px !important}
+  .cropper-point.point-e,.cropper-point.point-w{width:18px !important;height:48px !important;margin-top:-24px !important}
+}
+</style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -525,7 +570,7 @@
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,crop:function(){_bgCache=null;}});}catch(e){}
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
       _bgCache=null;
     };
     img.src=srcImg.src;
