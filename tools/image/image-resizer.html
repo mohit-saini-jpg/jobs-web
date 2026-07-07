@@ -257,13 +257,13 @@
 
   <div class="card" id="crop-card" style="display:none">
     <h3>✂️ Crop Karein</h3>
-    <div style="max-height:440px;background:#0f172a;border-radius:10px;overflow:hidden">
+    <div id="cropImgWrap" style="max-height:440px;background:#0f172a;border-radius:10px;overflow:hidden">
       <img id="cropImg" style="max-width:100%;display:block">
     </div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
       <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
       <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
-      <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select</button>
+      <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
     </div>
     <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — Process karte hi sirf cropped part hi resize/save hoga.</p>
   </div>
@@ -379,6 +379,116 @@
   // REAL image resizer — 7 units + 10 output formats
   // ══════════════════════════════════════════════════════════
   function G(id){return document.getElementById(id);}
+  // ══════ Freeform Quad Crop (angle-free 4-corner independent select) ══════
+  function _triXform(s,d){
+    var x0=s[0].x,y0=s[0].y,x1=s[1].x,y1=s[1].y,x2=s[2].x,y2=s[2].y;
+    var u0=d[0].x,v0=d[0].y,u1=d[1].x,v1=d[1].y,u2=d[2].x,v2=d[2].y;
+    var D=x0*(y1-y2)-y0*(x1-x2)+(x1*y2-x2*y1);
+    if(!D)D=1e-6;
+    var a=(u0*(y1-y2)-y0*(u1-u2)+(u1*y2-u2*y1))/D;
+    var c=(x0*(u1-u2)-u0*(x1-x2)+(x1*u2-x2*u1))/D;
+    var e=(x0*(y1*u2-y2*u1)-y0*(x1*u2-x2*u1)+u0*(x1*y2-x2*y1))/D;
+    var b=(v0*(y1-y2)-y0*(v1-v2)+(v1*y2-v2*y1))/D;
+    var dd=(x0*(v1-v2)-v0*(x1-x2)+(x1*v2-x2*v1))/D;
+    var f=(x0*(y1*v2-y2*v1)-y0*(x1*v2-x2*v1)+v0*(x1*y2-x2*y1))/D;
+    return [a,b,c,dd,e,f];
+  }
+  function _qdist(p,q){return Math.sqrt((p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y));}
+  function warpQuadToCanvas(imgEl,pts,outW,outH){
+    var cnv=document.createElement('canvas');cnv.width=outW;cnv.height=outH;
+    var ctx=cnv.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    var dst=[{x:0,y:0},{x:outW,y:0},{x:outW,y:outH},{x:0,y:outH}];
+    function drawTri(si,di){
+      var s=[pts[si[0]],pts[si[1]],pts[si[2]]];
+      var d=[dst[di[0]],dst[di[1]],dst[di[2]]];
+      var m=_triXform(s,d);
+      ctx.save();
+      ctx.beginPath();ctx.moveTo(d[0].x,d[0].y);ctx.lineTo(d[1].x,d[1].y);ctx.lineTo(d[2].x,d[2].y);ctx.closePath();ctx.clip();
+      ctx.transform(m[0],m[1],m[2],m[3],m[4],m[5]);
+      ctx.drawImage(imgEl,0,0);
+      ctx.restore();
+    }
+    drawTri([0,1,2],[0,1,2]);
+    drawTri([0,2,3],[0,2,3]);
+    return cnv;
+  }
+  function QuadCropUI(containerEl,imgEl){
+    var svgNS='http://www.w3.org/2000/svg';
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    function render(){
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
+      mask.setAttribute('d',d);
+      poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
+      handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+    }
+    this.activate=function(){
+      if(active)return;
+      active=true;
+      containerEl.style.position='relative';
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var mx=w*0.12,my=h*0.12;
+      pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
+      svg=document.createElementNS(svgNS,'svg');
+      svg.style.cssText='position:absolute;left:'+imgEl.offsetLeft+'px;top:'+imgEl.offsetTop+'px;width:'+w+'px;height:'+h+'px;touch-action:none;z-index:5;';
+      mask=document.createElementNS(svgNS,'path');
+      mask.setAttribute('fill','rgba(0,0,0,.5)');mask.setAttribute('fill-rule','evenodd');
+      svg.appendChild(mask);
+      poly=document.createElementNS(svgNS,'polygon');
+      poly.setAttribute('fill','rgba(47,125,255,.12)');
+      poly.setAttribute('stroke','#2f7dff');poly.setAttribute('stroke-width','2');
+      svg.appendChild(poly);
+      handles=[];
+      for(var i=0;i<4;i++){
+        var c=document.createElementNS(svgNS,'circle');
+        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';
+        (function(idx,circle){
+          circle.addEventListener('pointerdown',function(ev){
+            ev.preventDefault();ev.stopPropagation();
+            dragIdx=idx;
+            try{circle.setPointerCapture(ev.pointerId);}catch(e){}
+          });
+          circle.addEventListener('pointermove',function(ev){
+            if(dragIdx!==idx)return;
+            ev.preventDefault();
+            var r=imgEl.getBoundingClientRect();
+            var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
+            var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
+            pts[idx]={x:x,y:y};
+            render();
+          });
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          circle.addEventListener('pointerup',endDrag);
+          circle.addEventListener('pointercancel',endDrag);
+        })(i,c);
+        svg.appendChild(c);
+        handles.push(c);
+      }
+      containerEl.appendChild(svg);
+      render();
+    };
+    this.deactivate=function(){
+      if(!active)return;
+      active=false;
+      if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
+      svg=null;
+    };
+    this.isActive=function(){return active;};
+    this.getWarpedCanvas=function(outW,outH){
+      if(!active)return null;
+      var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+      var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+      var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
+      if(!outW||!outH){
+        var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
+        var leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
+        outW=Math.round(Math.max(topW,botW))||1;
+        outH=Math.round(Math.max(leftH,rightH))||1;
+      }
+      return warpQuadToCanvas(imgEl,natPts,outW,outH);
+    };
+  }
   var srcImg=null,natW=0,natH=0;
 
   function loadImageFromFile(f,cb){
@@ -564,19 +674,42 @@
     _refineCutout(c); _bgCache=c; return c;
   }
 
-  var cropperInst=null;
+  var cropperInst=null, quadUI=null;
   function initCrop(){
     var card=G('crop-card'),img=G('cropImg');
-    if(!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}return;}
+    if(!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}if(quadUI)quadUI.deactivate();return;}
     card.style.display='';
+    if(quadUI)quadUI.deactivate();
+    setFreeSelBtnState(false);
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
+      if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
       try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
       _bgCache=null;
     };
     img.src=srcImg.src;
     if(img.complete&&img.naturalWidth>0)img.onload();
+  }
+  function setFreeSelBtnState(on){
+    var b=G('freeSelBtn');if(!b)return;
+    if(on){b.classList.add('active');b.innerHTML='<i class="fa-solid fa-draw-polygon"></i> Rectangle Crop';}
+    else{b.classList.remove('active');b.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)';}
+  }
+  function toggleFreeSelect(){
+    var img=G('cropImg');
+    if(!cropperInst&&!quadUI)return;
+    if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
+    if(quadUI.isActive()){
+      quadUI.deactivate();
+      if(cropperInst)cropperInst.destroy();
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
+      setFreeSelBtnState(false);
+    }else{
+      if(cropperInst){cropperInst.destroy();cropperInst=null;}
+      quadUI.activate();
+      setFreeSelBtnState(true);
+    }
   }
 
   async function runProcess(){
@@ -585,7 +718,8 @@
     if(!natW||!srcImg){alert('Image abhi load ho rahi hai — 1 second baad Process karein.');return;}
     var unit=G('unit').value,dpi=G('dpi').value;
     var renderSrc=srcImg, sw=natW, sh=natH;
-    if(cropperInst){var _cc=cropperInst.getCroppedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
+    if(quadUI&&quadUI.isActive()){var _cc=quadUI.getWarpedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
+    else if(cropperInst){var _cc=cropperInst.getCroppedCanvas();if(_cc&&_cc.width){renderSrc=_cc;sw=_cc.width;sh=_cc.height;}}
     var tw=toPx(G('w').value,unit,dpi,sw),th=toPx(G('h').value,unit,dpi,sh);
     if(tw<1||th<1){alert('Valid Width/Height enter karein.');return;}
     if(tw>12000||th>12000){alert('Max 12000 px allowed hai.');return;}
@@ -691,8 +825,8 @@
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();});
-    if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',function(){if(!cropperInst)return;cropperInst.setAspectRatio(NaN);if(G('cropSquare'))G('cropSquare').checked=false;var b=this;b.classList.add('active');setTimeout(function(){b.classList.remove('active');},600);});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);}});
+    if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';

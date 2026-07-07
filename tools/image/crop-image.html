@@ -262,7 +262,7 @@
 
   <div class="card" id="crop-card" style="display:none">
     <h3>✂️ Crop Karein (Live)</h3>
-    <div style="max-height:460px;background:#0f172a;border-radius:10px;overflow:hidden">
+    <div id="cropImgWrap" style="max-height:460px;background:#0f172a;border-radius:10px;overflow:hidden">
       <img id="cropImg" style="max-width:100%;display:block">
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
@@ -273,7 +273,7 @@
       <button type="button" class="ctool" data-act="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom</button>
       <button type="button" class="ctool" data-act="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom</button>
       <button type="button" class="ctool" data-act="reset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
-      <button type="button" class="ctool" id="freeSelBtn" data-act="freeSel"><i class="fa-solid fa-lock-open"></i> Free Select</button>
+      <button type="button" class="ctool" id="freeSelBtn" onclick="toggleFreeSelect()"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
     </div>
     <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0" id="cropHintText">Box ko drag / resize karke crop area choose karein. Aspect Ratio ya Size Preset se fixed ratio lagayen. Rotate/Flip/Zoom se adjust karein.</p>
   </div>
@@ -346,7 +346,117 @@
   }
   // ══════ Full crop tool — Cropper.js live + aspect/size presets + rotate/flip/zoom ══════
   function G(id){return document.getElementById(id);}
-  var srcImg=null, cropper=null, flipX=1, flipY=1;
+  // ══════ Freeform Quad Crop (angle-free 4-corner independent select) ══════
+  function _triXform(s,d){
+    var x0=s[0].x,y0=s[0].y,x1=s[1].x,y1=s[1].y,x2=s[2].x,y2=s[2].y;
+    var u0=d[0].x,v0=d[0].y,u1=d[1].x,v1=d[1].y,u2=d[2].x,v2=d[2].y;
+    var D=x0*(y1-y2)-y0*(x1-x2)+(x1*y2-x2*y1);
+    if(!D)D=1e-6;
+    var a=(u0*(y1-y2)-y0*(u1-u2)+(u1*y2-u2*y1))/D;
+    var c=(x0*(u1-u2)-u0*(x1-x2)+(x1*u2-x2*u1))/D;
+    var e=(x0*(y1*u2-y2*u1)-y0*(x1*u2-x2*u1)+u0*(x1*y2-x2*y1))/D;
+    var b=(v0*(y1-y2)-y0*(v1-v2)+(v1*y2-v2*y1))/D;
+    var dd=(x0*(v1-v2)-v0*(x1-x2)+(x1*v2-x2*v1))/D;
+    var f=(x0*(y1*v2-y2*v1)-y0*(x1*v2-x2*v1)+v0*(x1*y2-x2*y1))/D;
+    return [a,b,c,dd,e,f];
+  }
+  function _qdist(p,q){return Math.sqrt((p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y));}
+  function warpQuadToCanvas(imgEl,pts,outW,outH){
+    var cnv=document.createElement('canvas');cnv.width=outW;cnv.height=outH;
+    var ctx=cnv.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    var dst=[{x:0,y:0},{x:outW,y:0},{x:outW,y:outH},{x:0,y:outH}];
+    function drawTri(si,di){
+      var s=[pts[si[0]],pts[si[1]],pts[si[2]]];
+      var d=[dst[di[0]],dst[di[1]],dst[di[2]]];
+      var m=_triXform(s,d);
+      ctx.save();
+      ctx.beginPath();ctx.moveTo(d[0].x,d[0].y);ctx.lineTo(d[1].x,d[1].y);ctx.lineTo(d[2].x,d[2].y);ctx.closePath();ctx.clip();
+      ctx.transform(m[0],m[1],m[2],m[3],m[4],m[5]);
+      ctx.drawImage(imgEl,0,0);
+      ctx.restore();
+    }
+    drawTri([0,1,2],[0,1,2]);
+    drawTri([0,2,3],[0,2,3]);
+    return cnv;
+  }
+  function QuadCropUI(containerEl,imgEl){
+    var svgNS='http://www.w3.org/2000/svg';
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    function render(){
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
+      mask.setAttribute('d',d);
+      poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
+      handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+    }
+    this.activate=function(){
+      if(active)return;
+      active=true;
+      containerEl.style.position='relative';
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var mx=w*0.12,my=h*0.12;
+      pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
+      svg=document.createElementNS(svgNS,'svg');
+      svg.style.cssText='position:absolute;left:'+imgEl.offsetLeft+'px;top:'+imgEl.offsetTop+'px;width:'+w+'px;height:'+h+'px;touch-action:none;z-index:5;';
+      mask=document.createElementNS(svgNS,'path');
+      mask.setAttribute('fill','rgba(0,0,0,.5)');mask.setAttribute('fill-rule','evenodd');
+      svg.appendChild(mask);
+      poly=document.createElementNS(svgNS,'polygon');
+      poly.setAttribute('fill','rgba(47,125,255,.12)');
+      poly.setAttribute('stroke','#2f7dff');poly.setAttribute('stroke-width','2');
+      svg.appendChild(poly);
+      handles=[];
+      for(var i=0;i<4;i++){
+        var c=document.createElementNS(svgNS,'circle');
+        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';
+        (function(idx,circle){
+          circle.addEventListener('pointerdown',function(ev){
+            ev.preventDefault();ev.stopPropagation();
+            dragIdx=idx;
+            try{circle.setPointerCapture(ev.pointerId);}catch(e){}
+          });
+          circle.addEventListener('pointermove',function(ev){
+            if(dragIdx!==idx)return;
+            ev.preventDefault();
+            var r=imgEl.getBoundingClientRect();
+            var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
+            var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
+            pts[idx]={x:x,y:y};
+            render();
+          });
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          circle.addEventListener('pointerup',endDrag);
+          circle.addEventListener('pointercancel',endDrag);
+        })(i,c);
+        svg.appendChild(c);
+        handles.push(c);
+      }
+      containerEl.appendChild(svg);
+      render();
+    };
+    this.deactivate=function(){
+      if(!active)return;
+      active=false;
+      if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
+      svg=null;
+    };
+    this.isActive=function(){return active;};
+    this.getWarpedCanvas=function(outW,outH){
+      if(!active)return null;
+      var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+      var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+      var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
+      if(!outW||!outH){
+        var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
+        var leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
+        outW=Math.round(Math.max(topW,botW))||1;
+        outH=Math.round(Math.max(leftH,rightH))||1;
+      }
+      return warpQuadToCanvas(imgEl,natPts,outW,outH);
+    };
+  }
+  var srcImg=null, cropper=null, flipX=1, flipY=1, quadUI=null;
 
   var SIZE_PRESETS=[
     {g:'Photo / ID',items:[['Passport Photo (413×531)',413,531],['Passport 35×45mm (413×531)',413,531],['Visa Photo (600×600)',600,600],['Stamp Size (236×295)',236,295],['PAN / ID (213×213)',213,213]]},
@@ -363,28 +473,52 @@
   }
   function initCrop(){
     var card=G('crop-card'),img=G('cropImg');
-    if(!srcImg){if(card)card.style.display='none';if(cropper){cropper.destroy();cropper=null;}return;}
+    if(!srcImg){if(card)card.style.display='none';if(cropper){cropper.destroy();cropper=null;}if(quadUI)quadUI.deactivate();return;}
     card.style.display='';flipX=1;flipY=1;
+    if(quadUI)quadUI.deactivate();
+    setFreeSelBtnState(false);
     if(cropper){cropper.destroy();cropper=null;}
     img.onload=function(){
       if(cropper)cropper.destroy();
+      if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
       var ar=parseFloat(G('aspect').value);
       try{cropper=new Cropper(img,{viewMode:1,autoCropArea:0.9,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,scalable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:isNaN(ar)?NaN:ar,minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200});}catch(e){}
     };
     img.src=srcImg.src;
     if(img.complete&&img.naturalWidth>0)img.onload();
   }
+  function setFreeSelBtnState(on){
+    var b=G('freeSelBtn');if(!b)return;
+    if(on){b.classList.add('active');b.innerHTML='<i class="fa-solid fa-draw-polygon"></i> Rectangle Crop';}
+    else{b.classList.remove('active');b.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)';}
+  }
+  function toggleFreeSelect(){
+    if(!cropper&&!quadUI)return;
+    var img=G('cropImg');
+    if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
+    if(quadUI.isActive()){
+      quadUI.deactivate();
+      if(cropper)cropper.destroy();
+      var ar=parseFloat(G('aspect').value);
+      try{cropper=new Cropper(img,{viewMode:1,autoCropArea:0.9,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,scalable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:isNaN(ar)?NaN:ar,minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200});}catch(e){}
+      setFreeSelBtnState(false);
+    }else{
+      if(cropper){cropper.destroy();cropper=null;}
+      quadUI.activate();
+      setFreeSelBtnState(true);
+    }
+  }
   function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error('encode fail'));},mime,q);});}
 
   async function runProcess(){
-    if(!cropper){alert('Pehle image upload karein!');return;}
+    if(!cropper&&!(quadUI&&quadUI.isActive())){alert('Pehle image upload karein!');return;}
     var fmt=G('fmt').value, ps=G('sizePreset');
     var opts={imageSmoothingEnabled:true,imageSmoothingQuality:'high'};
     var po=ps&&ps.options[ps.selectedIndex];
     if(po&&po.getAttribute('data-w')){opts.width=+po.getAttribute('data-w');opts.height=+po.getAttribute('data-h');}
     var pw=G('progress-wrap');pw.style.display='block';var bar=G('pbar');bar.style.width='55%';G('pmsg').textContent='Crop ho raha hai...';
     try{
-      var cv=cropper.getCroppedCanvas(opts);
+      var cv=(quadUI&&quadUI.isActive())?quadUI.getWarpedCanvas(opts.width,opts.height):cropper.getCroppedCanvas(opts);
       if(!cv){throw new Error('Crop area select karein');}
       if(['jpg','jpeg'].indexOf(fmt)>=0){var t=document.createElement('canvas');t.width=cv.width;t.height=cv.height;var tx=t.getContext('2d');tx.fillStyle='#fff';tx.fillRect(0,0,t.width,t.height);tx.drawImage(cv,0,0);cv=t;}
       var mime=fmt==='png'?'image/png':(fmt==='webp'?'image/webp':'image/jpeg');
@@ -418,10 +552,9 @@
       else if(a==='zoomIn')cropper.zoom(0.1);
       else if(a==='zoomOut')cropper.zoom(-0.1);
       else if(a==='reset'){flipX=1;flipY=1;cropper.reset();}
-      else if(a==='freeSel'){cropper.setAspectRatio(NaN);if(G('aspect'))G('aspect').selectedIndex=0;if(G('sizePreset'))G('sizePreset').selectedIndex=0;this.classList.add('active');setTimeout(function(){var b=G('freeSelBtn');if(b)b.classList.remove('active');},600);}
     });});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;if(cropper){cropper.destroy();cropper=null;}var cc=G('crop-card');if(cc)cc.style.display='none';var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var co=G('crop-out');if(co)co.removeAttribute('src');if(G('sizePreset'))G('sizePreset').selectedIndex=0;if(G('aspect'))G('aspect').selectedIndex=0;});
+    var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;if(cropper){cropper.destroy();cropper=null;}if(quadUI)quadUI.deactivate();setFreeSelBtnState(false);var cc=G('crop-card');if(cc)cc.style.display='none';var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var co=G('crop-out');if(co)co.removeAttribute('src');if(G('sizePreset'))G('sizePreset').selectedIndex=0;if(G('aspect'))G('aspect').selectedIndex=0;});
   });
 </script>
 

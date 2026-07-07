@@ -764,17 +764,130 @@ function handleFile(f){
 }
 
 // ── CROPPER ───────────────────────────────────────────
+  // ══════ Freeform Quad Crop (angle-free 4-corner independent select) ══════
+  function _triXform(s,d){
+    var x0=s[0].x,y0=s[0].y,x1=s[1].x,y1=s[1].y,x2=s[2].x,y2=s[2].y;
+    var u0=d[0].x,v0=d[0].y,u1=d[1].x,v1=d[1].y,u2=d[2].x,v2=d[2].y;
+    var D=x0*(y1-y2)-y0*(x1-x2)+(x1*y2-x2*y1);
+    if(!D)D=1e-6;
+    var a=(u0*(y1-y2)-y0*(u1-u2)+(u1*y2-u2*y1))/D;
+    var c=(x0*(u1-u2)-u0*(x1-x2)+(x1*u2-x2*u1))/D;
+    var e=(x0*(y1*u2-y2*u1)-y0*(x1*u2-x2*u1)+u0*(x1*y2-x2*y1))/D;
+    var b=(v0*(y1-y2)-y0*(v1-v2)+(v1*y2-v2*y1))/D;
+    var dd=(x0*(v1-v2)-v0*(x1-x2)+(x1*v2-x2*v1))/D;
+    var f=(x0*(y1*v2-y2*v1)-y0*(x1*v2-x2*v1)+v0*(x1*y2-x2*y1))/D;
+    return [a,b,c,dd,e,f];
+  }
+  function _qdist(p,q){return Math.sqrt((p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y));}
+  function warpQuadToCanvas(imgEl,pts,outW,outH){
+    var cnv=document.createElement('canvas');cnv.width=outW;cnv.height=outH;
+    var ctx=cnv.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    var dst=[{x:0,y:0},{x:outW,y:0},{x:outW,y:outH},{x:0,y:outH}];
+    function drawTri(si,di){
+      var s=[pts[si[0]],pts[si[1]],pts[si[2]]];
+      var d=[dst[di[0]],dst[di[1]],dst[di[2]]];
+      var m=_triXform(s,d);
+      ctx.save();
+      ctx.beginPath();ctx.moveTo(d[0].x,d[0].y);ctx.lineTo(d[1].x,d[1].y);ctx.lineTo(d[2].x,d[2].y);ctx.closePath();ctx.clip();
+      ctx.transform(m[0],m[1],m[2],m[3],m[4],m[5]);
+      ctx.drawImage(imgEl,0,0);
+      ctx.restore();
+    }
+    drawTri([0,1,2],[0,1,2]);
+    drawTri([0,2,3],[0,2,3]);
+    return cnv;
+  }
+  function QuadCropUI(containerEl,imgEl){
+    var svgNS='http://www.w3.org/2000/svg';
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    function render(){
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
+      mask.setAttribute('d',d);
+      poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
+      handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+    }
+    this.activate=function(){
+      if(active)return;
+      active=true;
+      containerEl.style.position='relative';
+      var w=imgEl.clientWidth,h=imgEl.clientHeight;
+      var mx=w*0.12,my=h*0.12;
+      pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
+      svg=document.createElementNS(svgNS,'svg');
+      svg.style.cssText='position:absolute;left:'+imgEl.offsetLeft+'px;top:'+imgEl.offsetTop+'px;width:'+w+'px;height:'+h+'px;touch-action:none;z-index:5;';
+      mask=document.createElementNS(svgNS,'path');
+      mask.setAttribute('fill','rgba(0,0,0,.5)');mask.setAttribute('fill-rule','evenodd');
+      svg.appendChild(mask);
+      poly=document.createElementNS(svgNS,'polygon');
+      poly.setAttribute('fill','rgba(47,125,255,.12)');
+      poly.setAttribute('stroke','#2f7dff');poly.setAttribute('stroke-width','2');
+      svg.appendChild(poly);
+      handles=[];
+      for(var i=0;i<4;i++){
+        var c=document.createElementNS(svgNS,'circle');
+        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';
+        (function(idx,circle){
+          circle.addEventListener('pointerdown',function(ev){
+            ev.preventDefault();ev.stopPropagation();
+            dragIdx=idx;
+            try{circle.setPointerCapture(ev.pointerId);}catch(e){}
+          });
+          circle.addEventListener('pointermove',function(ev){
+            if(dragIdx!==idx)return;
+            ev.preventDefault();
+            var r=imgEl.getBoundingClientRect();
+            var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
+            var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
+            pts[idx]={x:x,y:y};
+            render();
+          });
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          circle.addEventListener('pointerup',endDrag);
+          circle.addEventListener('pointercancel',endDrag);
+        })(i,c);
+        svg.appendChild(c);
+        handles.push(c);
+      }
+      containerEl.appendChild(svg);
+      render();
+    };
+    this.deactivate=function(){
+      if(!active)return;
+      active=false;
+      if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
+      svg=null;
+    };
+    this.isActive=function(){return active;};
+    this.getWarpedCanvas=function(outW,outH){
+      if(!active)return null;
+      var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+      var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+      var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
+      if(!outW||!outH){
+        var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
+        var leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
+        outW=Math.round(Math.max(topW,botW))||1;
+        outH=Math.round(Math.max(leftH,rightH))||1;
+      }
+      return warpQuadToCanvas(imgEl,natPts,outW,outH);
+    };
+  }
 var isFreeCrop=false;
+var quadUI=null;
 function initCropper(src){
   var img=document.getElementById('cropperImg');
   img.src=src;
   if(cropperInst){cropperInst.destroy();cropperInst=null;}
+  if(quadUI)quadUI.deactivate();
   isFreeCrop=false;
   var fb=document.getElementById('freeCropBtn');
   if(fb){fb.classList.remove('active');fb.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select';}
   var note=document.getElementById('freeCropNote');
   if(note)note.style.display='none';
   img.onload=function(){
+    if(!quadUI)quadUI=new QuadCropUI(document.getElementById('cropperWrap'),img);
     cropperInst=new Cropper(img,{
       aspectRatio:S.targetW/S.targetH,
       viewMode:1,autoCropArea:.88,
@@ -789,29 +902,45 @@ function initCropper(src){
 }
 
 function toggleFreeCrop(){
-  if(!cropperInst)return;
-  isFreeCrop=!isFreeCrop;
+  if(!cropperInst&&!quadUI)return;
+  var img=document.getElementById('cropperImg');
   var fb=document.getElementById('freeCropBtn');
   var note=document.getElementById('freeCropNote');
   var noteSize=document.getElementById('freeCropNoteSize');
+  if(!quadUI)quadUI=new QuadCropUI(document.getElementById('cropperWrap'),img);
+  isFreeCrop=!quadUI.isActive();
   if(isFreeCrop){
-    cropperInst.setAspectRatio(NaN);
-    if(fb){fb.classList.add('active');fb.innerHTML='<i class="fa-solid fa-lock"></i> Passport Ratio Lock';}
+    if(cropperInst){cropperInst.destroy();cropperInst=null;}
+    quadUI.activate();
+    if(fb){fb.classList.add('active');fb.innerHTML='<i class="fa-solid fa-draw-polygon"></i> Rectangle Crop';}
     if(noteSize)noteSize.textContent=S.targetW+'×'+S.targetH+'px';
     if(note)note.style.display='block';
   }else{
-    cropperInst.setAspectRatio(S.targetW/S.targetH);
+    quadUI.deactivate();
+    cropperInst=new Cropper(img,{
+      aspectRatio:S.targetW/S.targetH,
+      viewMode:1,autoCropArea:.88,
+      movable:true,zoomable:true,rotatable:true,scalable:true,
+      cropBoxMovable:true,cropBoxResizable:true,
+      guides:true,center:true,highlight:true,
+      background:true,responsive:true,restore:false,
+      minCropBoxWidth:60,minCropBoxHeight:60
+    });
     if(fb){fb.classList.remove('active');fb.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select';}
     if(note)note.style.display='none';
   }
 }
 
 function cropAndNext(){
-  if(!cropperInst)return;
-  S.croppedCanvas=cropperInst.getCroppedCanvas({
-    width:S.targetW,height:S.targetH,
-    imageSmoothingEnabled:true,imageSmoothingQuality:'high'
-  });
+  if(!cropperInst&&!(quadUI&&quadUI.isActive()))return;
+  if(quadUI&&quadUI.isActive()){
+    S.croppedCanvas=quadUI.getWarpedCanvas(S.targetW,S.targetH);
+  }else{
+    S.croppedCanvas=cropperInst.getCroppedCanvas({
+      width:S.targetW,height:S.targetH,
+      imageSmoothingEnabled:true,imageSmoothingQuality:'high'
+    });
+  }
   // Reset bg removal when re-cropping
   S.removedBgCanvas=null;
   document.getElementById('bgRemoveToggle').checked=false;
