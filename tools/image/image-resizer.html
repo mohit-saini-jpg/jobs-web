@@ -264,8 +264,12 @@
       <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
       <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
       <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
+      <button type="button" class="btn-secondary" id="cropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+      <button type="button" class="btn-secondary" id="cropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button type="button" class="btn-secondary" id="cropRotL" title="Rotate Left 90°"><i class="fa-solid fa-rotate-left"></i></button>
+      <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
-    <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — Process karte hi sirf cropped part hi resize/save hoga.</p>
+    <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — zoom se precise selection aur rotate se angle theek karein. Process karte hi sirf cropped part hi resize/save hoga.</p>
   </div>
 
   <div class="card">
@@ -414,8 +418,9 @@
   }
   function QuadCropUI(containerEl,imgEl){
     var svgNS='http://www.w3.org/2000/svg';
-    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1,rafId=null;
     var origImgStyle=imgEl.getAttribute('style')||'';
+    var origContainerOverflow=containerEl.style.overflow||'';
     function fitImageToBox(){
       // Replicate Cropper.js-style "contain" scaling so small/large images always
       // fill the available box consistently (fixes empty dark-space bug).
@@ -431,6 +436,22 @@
       imgEl.style.maxWidth='none';
       imgEl.style.display='block';
       imgEl.style.margin='0 auto';
+      // Kill native touch/selection behaviour on the image itself — this is what
+      // causes the browser's own "select/callout" gesture to fight with dragging
+      // on mobile and make the crop box feel slow/unresponsive.
+      imgEl.style.touchAction='none';
+      imgEl.style.webkitUserSelect='none';
+      imgEl.style.userSelect='none';
+      imgEl.style.webkitUserDrag='none';
+      imgEl.style.webkitTouchCallout='none';
+      imgEl.setAttribute('draggable','false');
+    }
+    function frameSvg(){
+      if(!svg)return;
+      svg.style.left=imgEl.offsetLeft+'px';
+      svg.style.top=imgEl.offsetTop+'px';
+      svg.style.width=imgEl.clientWidth+'px';
+      svg.style.height=imgEl.clientHeight+'px';
     }
     function render(){
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
@@ -439,10 +460,19 @@
       poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
       handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
     }
+    function scheduleRender(){
+      // Batch drag updates into a single paint per frame instead of once per
+      // pointermove event — this is what removes the laggy/slow feel while dragging.
+      if(rafId)return;
+      rafId=requestAnimationFrame(function(){rafId=null;render();});
+    }
     this.activate=function(){
       if(active)return;
       active=true;
       containerEl.style.position='relative';
+      origContainerOverflow=containerEl.style.overflow||'';
+      containerEl.style.overflow='auto';
+      containerEl.style.touchAction='pan-x pan-y';
       fitImageToBox();
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
       var mx=w*0.12,my=h*0.12;
@@ -459,12 +489,12 @@
       handles=[];
       for(var i=0;i<4;i++){
         var c=document.createElementNS(svgNS,'circle');
-        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
-        c.style.cursor='grab';c.style.touchAction='none';
+        c.setAttribute('r','22');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';c.style.webkitUserSelect='none';c.style.userSelect='none';
         (function(idx,circle){
           circle.addEventListener('pointerdown',function(ev){
             ev.preventDefault();ev.stopPropagation();
-            dragIdx=idx;
+            dragIdx=idx;circle.style.cursor='grabbing';
             try{circle.setPointerCapture(ev.pointerId);}catch(e){}
           });
           circle.addEventListener('pointermove',function(ev){
@@ -474,9 +504,9 @@
             var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
             var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
             pts[idx]={x:x,y:y};
-            render();
+            scheduleRender();
           });
-          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;circle.style.cursor='grab';try{circle.releasePointerCapture(ev.pointerId);}catch(e){}render();}}
           circle.addEventListener('pointerup',endDrag);
           circle.addEventListener('pointercancel',endDrag);
         })(i,c);
@@ -489,11 +519,31 @@
     this.deactivate=function(){
       if(!active)return;
       active=false;
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
       if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
       svg=null;
+      containerEl.style.overflow=origContainerOverflow;
+      containerEl.style.touchAction='';
       imgEl.setAttribute('style',origImgStyle);
     };
     this.isActive=function(){return active;};
+    this.zoom=function(factor){
+      // Scales the image (and the polygon points with it) so the user can zoom
+      // in for a pixel-precise selection, then scroll/pan the container to reach
+      // any corner. getWarpedCanvas() below already maps by clientWidth/Height
+      // ratio so no other change is needed for zoomed output to stay correct.
+      if(!active)return;
+      var cw=imgEl.clientWidth,ch=imgEl.clientHeight;
+      var maxW=(imgEl.naturalWidth||cw*4)*3;
+      var nw=Math.max(80,Math.min(cw*factor,maxW));
+      var nh=nw*(ch/cw);
+      var sx=nw/cw,sy=nh/ch;
+      imgEl.style.width=nw+'px';
+      imgEl.style.height=nh+'px';
+      pts=pts.map(function(p){return {x:p.x*sx,y:p.y*sy};});
+      frameSvg();
+      render();
+    };
     this.getWarpedCanvas=function(outW,outH){
       if(!active)return null;
       var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
@@ -508,6 +558,7 @@
       return warpQuadToCanvas(imgEl,natPts,outW,outH);
     };
   }
+
   var srcImg=null,natW=0,natH=0;
 
   function loadImageFromFile(f,cb){
@@ -704,7 +755,7 @@
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
       if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
       _bgCache=null;
     };
     img.src=srcImg.src;
@@ -722,7 +773,7 @@
     if(quadUI.isActive()){
       quadUI.deactivate();
       if(cropperInst)cropperInst.destroy();
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
       setFreeSelBtnState(false);
     }else{
       if(cropperInst){cropperInst.destroy();cropperInst=null;}
@@ -844,8 +895,12 @@
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:false,zoomable:false,rotatable:false,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);}});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);}});
     if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
+    if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst)cropperInst.zoom(0.1);});
+    if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst)cropperInst.zoom(-0.1);});
+    if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){if(cropperInst)cropperInst.rotate(-90);});
+    if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){if(cropperInst)cropperInst.rotate(90);});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';

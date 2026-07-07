@@ -395,8 +395,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <img id="cropperImg" src="" alt="Upload photo">
     </div>
     <div class="crop-actions">
-      <button class="btn-icon" onclick="cropperInst&&cropperInst.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-      <button class="btn-icon" onclick="cropperInst&&cropperInst.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+      <button class="btn-icon" onclick="(quadUI&&quadUI.isActive())?quadUI.zoom(1.15):(cropperInst&&cropperInst.zoom(0.1))"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button class="btn-icon" onclick="(quadUI&&quadUI.isActive())?quadUI.zoom(1/1.15):(cropperInst&&cropperInst.zoom(-0.1))"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
       <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(-90)"><i class="fa-solid fa-rotate-left"></i></button>
       <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(90)"><i class="fa-solid fa-rotate-right"></i></button>
       <button class="btn-icon" onclick="cropperInst&&cropperInst.reset()"><i class="fa-solid fa-arrow-rotate-right"></i> Reset</button>
@@ -799,8 +799,9 @@ function handleFile(f){
   }
   function QuadCropUI(containerEl,imgEl){
     var svgNS='http://www.w3.org/2000/svg';
-    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1,rafId=null;
     var origImgStyle=imgEl.getAttribute('style')||'';
+    var origContainerOverflow=containerEl.style.overflow||'';
     function fitImageToBox(){
       // Replicate Cropper.js-style "contain" scaling so small/large images always
       // fill the available box consistently (fixes empty dark-space bug).
@@ -816,6 +817,22 @@ function handleFile(f){
       imgEl.style.maxWidth='none';
       imgEl.style.display='block';
       imgEl.style.margin='0 auto';
+      // Kill native touch/selection behaviour on the image itself — this is what
+      // causes the browser's own "select/callout" gesture to fight with dragging
+      // on mobile and make the crop box feel slow/unresponsive.
+      imgEl.style.touchAction='none';
+      imgEl.style.webkitUserSelect='none';
+      imgEl.style.userSelect='none';
+      imgEl.style.webkitUserDrag='none';
+      imgEl.style.webkitTouchCallout='none';
+      imgEl.setAttribute('draggable','false');
+    }
+    function frameSvg(){
+      if(!svg)return;
+      svg.style.left=imgEl.offsetLeft+'px';
+      svg.style.top=imgEl.offsetTop+'px';
+      svg.style.width=imgEl.clientWidth+'px';
+      svg.style.height=imgEl.clientHeight+'px';
     }
     function render(){
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
@@ -824,10 +841,19 @@ function handleFile(f){
       poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
       handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
     }
+    function scheduleRender(){
+      // Batch drag updates into a single paint per frame instead of once per
+      // pointermove event — this is what removes the laggy/slow feel while dragging.
+      if(rafId)return;
+      rafId=requestAnimationFrame(function(){rafId=null;render();});
+    }
     this.activate=function(){
       if(active)return;
       active=true;
       containerEl.style.position='relative';
+      origContainerOverflow=containerEl.style.overflow||'';
+      containerEl.style.overflow='auto';
+      containerEl.style.touchAction='pan-x pan-y';
       fitImageToBox();
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
       var mx=w*0.12,my=h*0.12;
@@ -844,12 +870,12 @@ function handleFile(f){
       handles=[];
       for(var i=0;i<4;i++){
         var c=document.createElementNS(svgNS,'circle');
-        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
-        c.style.cursor='grab';c.style.touchAction='none';
+        c.setAttribute('r','22');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';c.style.webkitUserSelect='none';c.style.userSelect='none';
         (function(idx,circle){
           circle.addEventListener('pointerdown',function(ev){
             ev.preventDefault();ev.stopPropagation();
-            dragIdx=idx;
+            dragIdx=idx;circle.style.cursor='grabbing';
             try{circle.setPointerCapture(ev.pointerId);}catch(e){}
           });
           circle.addEventListener('pointermove',function(ev){
@@ -859,9 +885,9 @@ function handleFile(f){
             var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
             var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
             pts[idx]={x:x,y:y};
-            render();
+            scheduleRender();
           });
-          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;circle.style.cursor='grab';try{circle.releasePointerCapture(ev.pointerId);}catch(e){}render();}}
           circle.addEventListener('pointerup',endDrag);
           circle.addEventListener('pointercancel',endDrag);
         })(i,c);
@@ -874,11 +900,31 @@ function handleFile(f){
     this.deactivate=function(){
       if(!active)return;
       active=false;
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
       if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
       svg=null;
+      containerEl.style.overflow=origContainerOverflow;
+      containerEl.style.touchAction='';
       imgEl.setAttribute('style',origImgStyle);
     };
     this.isActive=function(){return active;};
+    this.zoom=function(factor){
+      // Scales the image (and the polygon points with it) so the user can zoom
+      // in for a pixel-precise selection, then scroll/pan the container to reach
+      // any corner. getWarpedCanvas() below already maps by clientWidth/Height
+      // ratio so no other change is needed for zoomed output to stay correct.
+      if(!active)return;
+      var cw=imgEl.clientWidth,ch=imgEl.clientHeight;
+      var maxW=(imgEl.naturalWidth||cw*4)*3;
+      var nw=Math.max(80,Math.min(cw*factor,maxW));
+      var nh=nw*(ch/cw);
+      var sx=nw/cw,sy=nh/ch;
+      imgEl.style.width=nw+'px';
+      imgEl.style.height=nh+'px';
+      pts=pts.map(function(p){return {x:p.x*sx,y:p.y*sy};});
+      frameSvg();
+      render();
+    };
     this.getWarpedCanvas=function(outW,outH){
       if(!active)return null;
       var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
@@ -893,6 +939,7 @@ function handleFile(f){
       return warpQuadToCanvas(imgEl,natPts,outW,outH);
     };
   }
+
 var isFreeCrop=false;
 var quadUI=null;
 function initCropper(src){

@@ -381,8 +381,9 @@
   }
   function QuadCropUI(containerEl,imgEl){
     var svgNS='http://www.w3.org/2000/svg';
-    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1,rafId=null;
     var origImgStyle=imgEl.getAttribute('style')||'';
+    var origContainerOverflow=containerEl.style.overflow||'';
     function fitImageToBox(){
       // Replicate Cropper.js-style "contain" scaling so small/large images always
       // fill the available box consistently (fixes empty dark-space bug).
@@ -398,6 +399,22 @@
       imgEl.style.maxWidth='none';
       imgEl.style.display='block';
       imgEl.style.margin='0 auto';
+      // Kill native touch/selection behaviour on the image itself — this is what
+      // causes the browser's own "select/callout" gesture to fight with dragging
+      // on mobile and make the crop box feel slow/unresponsive.
+      imgEl.style.touchAction='none';
+      imgEl.style.webkitUserSelect='none';
+      imgEl.style.userSelect='none';
+      imgEl.style.webkitUserDrag='none';
+      imgEl.style.webkitTouchCallout='none';
+      imgEl.setAttribute('draggable','false');
+    }
+    function frameSvg(){
+      if(!svg)return;
+      svg.style.left=imgEl.offsetLeft+'px';
+      svg.style.top=imgEl.offsetTop+'px';
+      svg.style.width=imgEl.clientWidth+'px';
+      svg.style.height=imgEl.clientHeight+'px';
     }
     function render(){
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
@@ -406,10 +423,19 @@
       poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
       handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
     }
+    function scheduleRender(){
+      // Batch drag updates into a single paint per frame instead of once per
+      // pointermove event — this is what removes the laggy/slow feel while dragging.
+      if(rafId)return;
+      rafId=requestAnimationFrame(function(){rafId=null;render();});
+    }
     this.activate=function(){
       if(active)return;
       active=true;
       containerEl.style.position='relative';
+      origContainerOverflow=containerEl.style.overflow||'';
+      containerEl.style.overflow='auto';
+      containerEl.style.touchAction='pan-x pan-y';
       fitImageToBox();
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
       var mx=w*0.12,my=h*0.12;
@@ -426,12 +452,12 @@
       handles=[];
       for(var i=0;i<4;i++){
         var c=document.createElementNS(svgNS,'circle');
-        c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
-        c.style.cursor='grab';c.style.touchAction='none';
+        c.setAttribute('r','22');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        c.style.cursor='grab';c.style.touchAction='none';c.style.webkitUserSelect='none';c.style.userSelect='none';
         (function(idx,circle){
           circle.addEventListener('pointerdown',function(ev){
             ev.preventDefault();ev.stopPropagation();
-            dragIdx=idx;
+            dragIdx=idx;circle.style.cursor='grabbing';
             try{circle.setPointerCapture(ev.pointerId);}catch(e){}
           });
           circle.addEventListener('pointermove',function(ev){
@@ -441,9 +467,9 @@
             var x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
             var y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
             pts[idx]={x:x,y:y};
-            render();
+            scheduleRender();
           });
-          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;try{circle.releasePointerCapture(ev.pointerId);}catch(e){}}}
+          function endDrag(ev){if(dragIdx===idx){dragIdx=-1;circle.style.cursor='grab';try{circle.releasePointerCapture(ev.pointerId);}catch(e){}render();}}
           circle.addEventListener('pointerup',endDrag);
           circle.addEventListener('pointercancel',endDrag);
         })(i,c);
@@ -456,11 +482,31 @@
     this.deactivate=function(){
       if(!active)return;
       active=false;
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
       if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
       svg=null;
+      containerEl.style.overflow=origContainerOverflow;
+      containerEl.style.touchAction='';
       imgEl.setAttribute('style',origImgStyle);
     };
     this.isActive=function(){return active;};
+    this.zoom=function(factor){
+      // Scales the image (and the polygon points with it) so the user can zoom
+      // in for a pixel-precise selection, then scroll/pan the container to reach
+      // any corner. getWarpedCanvas() below already maps by clientWidth/Height
+      // ratio so no other change is needed for zoomed output to stay correct.
+      if(!active)return;
+      var cw=imgEl.clientWidth,ch=imgEl.clientHeight;
+      var maxW=(imgEl.naturalWidth||cw*4)*3;
+      var nw=Math.max(80,Math.min(cw*factor,maxW));
+      var nh=nw*(ch/cw);
+      var sx=nw/cw,sy=nh/ch;
+      imgEl.style.width=nw+'px';
+      imgEl.style.height=nh+'px';
+      pts=pts.map(function(p){return {x:p.x*sx,y:p.y*sy};});
+      frameSvg();
+      render();
+    };
     this.getWarpedCanvas=function(outW,outH){
       if(!active)return null;
       var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
@@ -475,6 +521,7 @@
       return warpQuadToCanvas(imgEl,natPts,outW,outH);
     };
   }
+
   var srcImg=null, cropper=null, flipX=1, flipY=1, quadUI=null;
 
   var SIZE_PRESETS=[
@@ -563,7 +610,14 @@
     var mf=G('main-file');if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
     if(G('aspect'))G('aspect').addEventListener('change',function(){if(cropper){var ar=parseFloat(this.value);cropper.setAspectRatio(isNaN(ar)?NaN:ar);}});
     if(G('sizePreset'))G('sizePreset').addEventListener('change',function(){var o=this.options[this.selectedIndex];if(cropper&&o&&o.getAttribute('data-w')){cropper.setAspectRatio((+o.getAttribute('data-w'))/(+o.getAttribute('data-h')));}});
-    document.querySelectorAll('.ctool').forEach(function(btn){btn.addEventListener('click',function(){if(!cropper)return;var a=this.getAttribute('data-act');
+    document.querySelectorAll('.ctool').forEach(function(btn){btn.addEventListener('click',function(){var a=this.getAttribute('data-act');
+      if(quadUI&&quadUI.isActive()){
+        // Free Select mode: only zoom is supported (for precise selection); rotate/flip apply to Rectangle Crop only.
+        if(a==='zoomIn')quadUI.zoom(1.15);
+        else if(a==='zoomOut')quadUI.zoom(1/1.15);
+        return;
+      }
+      if(!cropper)return;
       if(a==='rotL')cropper.rotate(-90);
       else if(a==='rotR')cropper.rotate(90);
       else if(a==='flipH'){flipX=-flipX;cropper.scaleX(flipX);}
