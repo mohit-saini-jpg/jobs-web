@@ -925,7 +925,18 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              FAQ (visible + FAQPage schema). BUMP forces re-render of ALL existing
 #              ~6,246 pages so old A-Z posts also get the branded FAQ (warna
 #              hash-unchanged pages skip ho jaati aur branding sirf nayi pages pe aata).
-TEMPLATE_VERSION = '20260706.1-cs'
+# 20260707.1 — data_tables renderer fix: multi-column (3+ col) tables now use
+#              scrollable data-table class instead of kv-table (which forced
+#              width:38% per <th>, crushing columns → text wrapped one
+#              character per line). Also auto-linkifies bare URL cells (was
+#              plain unclickable text) and pads/truncates rows to header
+#              column count (was leaving orphan cells floating outside the
+#              table). BUMP forces re-render of ALL existing pages so already-
+#              baked District-Wise/Post-Wise "Additional Details" tables (UP
+#              Anganwadi, JPSC, etc.) get fixed — data itself did not change,
+#              so without this bump the content hash stays identical and
+#              write() would keep skipping these pages forever.
+TEMPLATE_VERSION = '20260707.1-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched

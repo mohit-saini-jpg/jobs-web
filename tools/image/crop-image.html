@@ -61,6 +61,7 @@
   <style>
     .ctool{padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700;color:#334155}
     .ctool:hover{background:#eef2fb;border-color:#345de6;color:#345de6}
+    .ctool.active{background:#f59e0b;border-color:#f59e0b;color:#fff}
     #crop-card .cropper-view-box,#crop-card .cropper-face{border-radius:0}
   </style>
   <style>
@@ -272,8 +273,9 @@
       <button type="button" class="ctool" data-act="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom</button>
       <button type="button" class="ctool" data-act="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom</button>
       <button type="button" class="ctool" data-act="reset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
+      <button type="button" class="ctool" id="freeSelBtn" data-act="freeSel"><i class="fa-solid fa-lock-open"></i> Free Select</button>
     </div>
-    <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Box ko drag / resize karke crop area choose karein. Aspect Ratio ya Size Preset se fixed ratio lagayen. Rotate/Flip/Zoom se adjust karein.</p>
+    <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0" id="cropHintText">Box ko drag / resize karke crop area choose karein. Aspect Ratio ya Size Preset se fixed ratio lagayen. Rotate/Flip/Zoom se adjust karein.</p>
   </div>
 
   <div class="card">
@@ -416,6 +418,7 @@
       else if(a==='zoomIn')cropper.zoom(0.1);
       else if(a==='zoomOut')cropper.zoom(-0.1);
       else if(a==='reset'){flipX=1;flipY=1;cropper.reset();}
+      else if(a==='freeSel'){cropper.setAspectRatio(NaN);if(G('aspect'))G('aspect').selectedIndex=0;if(G('sizePreset'))G('sizePreset').selectedIndex=0;this.classList.add('active');setTimeout(function(){var b=G('freeSelBtn');if(b)b.classList.remove('active');},600);}
     });});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){G('main-file').value='';srcImg=null;if(cropper){cropper.destroy();cropper=null;}var cc=G('crop-card');if(cc)cc.style.display='none';var fp=G('file-preview');if(fp)fp.classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';var rc=G('result-card');if(rc)rc.classList.remove('show');var co=G('crop-out');if(co)co.removeAttribute('src');if(G('sizePreset'))G('sizePreset').selectedIndex=0;if(G('aspect'))G('aspect').selectedIndex=0;});

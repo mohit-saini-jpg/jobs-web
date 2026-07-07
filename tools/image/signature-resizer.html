@@ -108,6 +108,7 @@
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
     .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-secondary.active { background: var(--brand); border-color: var(--brand); color: #fff; }
     .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
     .progress-wrap { display: none; margin-top: 14px; }
     .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
@@ -262,6 +263,7 @@
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
       <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
       <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
+      <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select</button>
     </div>
     <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — Process karte hi sirf cropped part hi resize/save hoga.</p>
   </div>
@@ -690,6 +692,7 @@
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
     if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();});
+    if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',function(){if(!cropperInst)return;cropperInst.setAspectRatio(NaN);if(G('cropSquare'))G('cropSquare').checked=false;var b=this;b.classList.add('active');setTimeout(function(){b.classList.remove('active');},600);});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';

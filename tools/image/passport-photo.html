@@ -152,6 +152,7 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .cropper-wrap img{display:block;max-width:100%;max-height:400px;margin:0 auto}
 .crop-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;align-items:center}
 .btn-icon{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--ink);transition:all .2s}
+.btn-icon.active{background:var(--warn);border-color:var(--warn);color:#fff}
 .btn-icon:hover{border-color:var(--brand);color:var(--brand)}
 .ratio-hint{font-size:.7rem;color:var(--muted);margin-left:auto}
 
@@ -399,7 +400,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(-90)"><i class="fa-solid fa-rotate-left"></i></button>
       <button class="btn-icon" onclick="cropperInst&&cropperInst.rotate(90)"><i class="fa-solid fa-rotate-right"></i></button>
       <button class="btn-icon" onclick="cropperInst&&cropperInst.reset()"><i class="fa-solid fa-arrow-rotate-right"></i> Reset</button>
+      <button class="btn-icon" id="freeCropBtn" onclick="toggleFreeCrop()"><i class="fa-solid fa-lock-open"></i> Free Select</button>
       <span class="ratio-hint" id="ratioHint">35×45mm</span>
+    </div>
+    <div id="freeCropNote" style="display:none;font-size:.8rem;color:var(--warn);margin-top:6px">
+      <i class="fa-solid fa-triangle-exclamation"></i> Free Select ON — aap kisi bhi kone/side ko independently khinch sakte hain. Final photo phir bhi selected size (<span id="freeCropNoteSize"></span>) me save hogi, isliye agar ratio match nahi kiya to photo halka stretch ho sakta hai.
     </div>
     <div class="info-notice" style="margin-top:11px">
       <i class="fa-solid fa-lightbulb"></i>
@@ -710,7 +715,7 @@ function selectSize(el){
   if(!isC){S.targetW=w;S.targetH=h;S.label=el.dataset.label;}
   else updateCustomPx();
   document.getElementById('ratioHint').textContent=S.label;
-  if(cropperInst)cropperInst.setAspectRatio(S.targetW/S.targetH);
+  if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(S.targetW/S.targetH);
 }
 function updateCustomPx(){
   var w=parseFloat(document.getElementById('customW').value)||400;
@@ -722,7 +727,7 @@ function updateCustomPx(){
   else if(u==='in'){S.targetW=Math.round(w*dpi);S.targetH=Math.round(h*dpi);}
   else{S.targetW=Math.round(w);S.targetH=Math.round(h);}
   S.label='Custom '+S.targetW+'×'+S.targetH+'px';
-  if(cropperInst)cropperInst.setAspectRatio(S.targetW/S.targetH);
+  if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(S.targetW/S.targetH);
 }
 
 // ── UPLOAD ────────────────────────────────────────────
@@ -759,10 +764,16 @@ function handleFile(f){
 }
 
 // ── CROPPER ───────────────────────────────────────────
+var isFreeCrop=false;
 function initCropper(src){
   var img=document.getElementById('cropperImg');
   img.src=src;
   if(cropperInst){cropperInst.destroy();cropperInst=null;}
+  isFreeCrop=false;
+  var fb=document.getElementById('freeCropBtn');
+  if(fb){fb.classList.remove('active');fb.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select';}
+  var note=document.getElementById('freeCropNote');
+  if(note)note.style.display='none';
   img.onload=function(){
     cropperInst=new Cropper(img,{
       aspectRatio:S.targetW/S.targetH,
@@ -775,6 +786,24 @@ function initCropper(src){
     });
   };
   if(img.complete&&img.naturalWidth>0)img.onload();
+}
+
+function toggleFreeCrop(){
+  if(!cropperInst)return;
+  isFreeCrop=!isFreeCrop;
+  var fb=document.getElementById('freeCropBtn');
+  var note=document.getElementById('freeCropNote');
+  var noteSize=document.getElementById('freeCropNoteSize');
+  if(isFreeCrop){
+    cropperInst.setAspectRatio(NaN);
+    if(fb){fb.classList.add('active');fb.innerHTML='<i class="fa-solid fa-lock"></i> Passport Ratio Lock';}
+    if(noteSize)noteSize.textContent=S.targetW+'×'+S.targetH+'px';
+    if(note)note.style.display='block';
+  }else{
+    cropperInst.setAspectRatio(S.targetW/S.targetH);
+    if(fb){fb.classList.remove('active');fb.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select';}
+    if(note)note.style.display='none';
+  }
 }
 
 function cropAndNext(){
