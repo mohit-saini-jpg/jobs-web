@@ -414,6 +414,23 @@
   function QuadCropUI(containerEl,imgEl){
     var svgNS='http://www.w3.org/2000/svg';
     var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
+    var origImgStyle=imgEl.getAttribute('style')||'';
+    function fitImageToBox(){
+      // Replicate Cropper.js-style "contain" scaling so small/large images always
+      // fill the available box consistently (fixes empty dark-space bug).
+      var cs=getComputedStyle(containerEl);
+      var maxW=containerEl.clientWidth||parseInt(cs.width)||300;
+      var maxH=parseInt(cs.maxHeight)||containerEl.clientHeight||400;
+      var natW=imgEl.naturalWidth||maxW, natH=imgEl.naturalHeight||maxH;
+      var ar=natW/natH;
+      var w=maxW,h=w/ar;
+      if(h>maxH){h=maxH;w=h*ar;}
+      imgEl.style.width=Math.round(w)+'px';
+      imgEl.style.height=Math.round(h)+'px';
+      imgEl.style.maxWidth='none';
+      imgEl.style.display='block';
+      imgEl.style.margin='0 auto';
+    }
     function render(){
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
       var d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
@@ -425,6 +442,7 @@
       if(active)return;
       active=true;
       containerEl.style.position='relative';
+      fitImageToBox();
       var w=imgEl.clientWidth,h=imgEl.clientHeight;
       var mx=w*0.12,my=h*0.12;
       pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
@@ -472,6 +490,7 @@
       active=false;
       if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
       svg=null;
+      imgEl.setAttribute('style',origImgStyle);
     };
     this.isActive=function(){return active;};
     this.getWarpedCanvas=function(outW,outH){
