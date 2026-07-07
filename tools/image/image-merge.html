@@ -831,7 +831,8 @@
     }catch(e){}
   }
 
-  function initSlotCropEditor(idx,src){
+  function initSlotCropEditor(idx,src,opts){
+    opts=opts||{};
     var card=G('cropCard-'+idx),img=G('cropImg-'+idx);
     card.classList.add('show');
     if(cropInst[idx]){cropInst[idx].destroy();cropInst[idx]=null;}
@@ -839,7 +840,13 @@
     setFreeSelBtnState(idx,false);
     img.onload=function(){
       if(!quadInst[idx])quadInst[idx]=new QuadCropUI(G('cropWrap-'+idx),img,function(){scheduleLivePreview();});
-      initRectCropper(idx);
+      if(opts.keepFreeSelect){
+        quadInst[idx].activate();
+        setFreeSelBtnState(idx,true);
+      }else{
+        initRectCropper(idx);
+      }
+      if(typeof opts.onReady==='function')opts.onReady();
     };
     img.src=src;
     if(img.complete&&img.naturalWidth>0)img.onload();
@@ -897,9 +904,15 @@
     var lbl=G('rotateVal-'+idx);if(lbl)lbl.textContent=(slotRotate[idx]||0)+'°';
   }
   function rotateSlot(idx,deg){
+    if(!slots[idx])return;
     slotRotate[idx]=((slotRotate[idx]||0)+deg+360)%360;
     updateRotateLabel(idx);
-    scheduleLivePreview();
+    var wasFree=quadInst[idx]&&quadInst[idx].isActive();
+    var rc=transformImage(slots[idx].img,slotRotate[idx],'none');
+    initSlotCropEditor(idx,rc.toDataURL('image/png'),{
+      keepFreeSelect:wasFree,
+      onReady:function(){scheduleLivePreview();}
+    });
   }
   [0,1,2,3].forEach(function(idx){
     var rb=G('cropResetBtn-'+idx);if(rb)rb.addEventListener('click',function(){resetSlotCrop(idx);});
@@ -1143,12 +1156,7 @@
     var flip=G('flipSel').value;
     var gap=parseInt(G('gapRange').value)||0;
     var gapColor=G('gapColor').value||'#ffffff';
-    var pieces=activeIdx.map(function(i){
-      var src=getSlotRenderSource(i);
-      var ir=slotRotate[i]||0;
-      if(ir)src=transformImage(src,ir,'none');
-      return transformImage(src,rotate,flip);
-    });
+    var pieces=activeIdx.map(function(i){return transformImage(getSlotRenderSource(i),rotate,flip);});
     var cv,ctx;
     if(posVal==='v'){
       var maxW=Math.max.apply(null,pieces.map(function(p){return p.width;}));
