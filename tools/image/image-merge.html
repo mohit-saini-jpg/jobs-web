@@ -99,16 +99,16 @@
     .drop-text { font-size: 0.78rem; color: var(--muted); }
     .slot-thumb { max-width: 100%; max-height: 90px; border-radius: 6px; display: none; margin: 8px auto 0; }
     .slot-meta { font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 4px; display: none; }
-    .crop-slot-btn{display:none;align-items:center;justify-content:center;gap:5px;margin:8px auto 0;padding:6px 12px;border:1.5px solid var(--brand);border-radius:8px;background:#fff;color:var(--brand);font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit}
-    .crop-slot-btn:hover{background:var(--brand);color:#fff}
-    .merge-slot.filled .crop-slot-btn{display:flex}
-    .crop-modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:9999;align-items:center;justify-content:center;padding:16px}
-    .crop-modal-overlay.show{display:flex}
-    .crop-modal-box{background:#fff;border-radius:14px;max-width:720px;width:100%;max-height:92vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-    .crop-modal-imgwrap{max-height:min(60vh,480px);background:#0f172a;border-radius:10px;overflow:hidden}
-    .crop-modal-imgwrap img{max-width:100%;display:block}
-    .crop-modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
-    .crop-modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+    .crop-editor-card{display:none;margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--line)}
+    .crop-editor-card.show{display:block}
+    .crop-editor-title{font-size:.92rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .crop-editor-imgwrap{max-height:min(55vh,480px);background:#0f172a;border-radius:10px;overflow:hidden}
+    .crop-editor-imgwrap img{max-width:100%;display:block}
+    .crop-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+    .crop-editor-btn{padding:8px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:700;color:var(--ink);font-family:inherit}
+    .crop-editor-btn:hover{border-color:var(--brand);color:var(--brand)}
+    .crop-editor-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    .crop-editor-hint{font-size:.74rem;color:#94a3b8;margin-top:6px}
     .slot-move { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
     .slot-move button { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line); background: white; cursor: pointer; font-size: 0.7rem; line-height: 1; color: var(--muted); }
     .slot-move button:hover { border-color: var(--brand); color: var(--brand); }
@@ -136,7 +136,6 @@
     .btn-primary { padding: 10px 22px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
     .btn-secondary { padding: 10px 16px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-secondary.active { background: var(--brand); border-color: var(--brand); color: #fff; }
     .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
     .progress-wrap { display: none; margin-top: 14px; }
     .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
@@ -287,7 +286,6 @@
           <div class="drop-text">Drop an image here…</div>
           <img class="slot-thumb" id="thumb-0" alt="">
           <div class="slot-meta" id="meta-0"></div>
-          <button type="button" class="crop-slot-btn" id="cropBtn-0" onclick="openCropModal(0)"><i class="fa-solid fa-crop-simple"></i> Crop</button>
         </div>
       </div>
       <div class="merge-slot" id="slot-wrap-1">
@@ -298,7 +296,6 @@
           <div class="drop-text">Drop an image here…</div>
           <img class="slot-thumb" id="thumb-1" alt="">
           <div class="slot-meta" id="meta-1"></div>
-          <button type="button" class="crop-slot-btn" id="cropBtn-1" onclick="openCropModal(1)"><i class="fa-solid fa-crop-simple"></i> Crop</button>
         </div>
       </div>
       <div class="merge-slot hidden" id="slot-wrap-2">
@@ -309,7 +306,6 @@
           <div class="drop-text">Drop an image here…</div>
           <img class="slot-thumb" id="thumb-2" alt="">
           <div class="slot-meta" id="meta-2"></div>
-          <button type="button" class="crop-slot-btn" id="cropBtn-2" onclick="openCropModal(2)"><i class="fa-solid fa-crop-simple"></i> Crop</button>
         </div>
       </div>
       <div class="merge-slot hidden" id="slot-wrap-3">
@@ -320,12 +316,48 @@
           <div class="drop-text">Drop an image here…</div>
           <img class="slot-thumb" id="thumb-3" alt="">
           <div class="slot-meta" id="meta-3"></div>
-          <button type="button" class="crop-slot-btn" id="cropBtn-3" onclick="openCropModal(3)"><i class="fa-solid fa-crop-simple"></i> Crop</button>
         </div>
       </div>
     </div>
     <button type="button" id="toggleExtraBtn" class="btn-secondary" style="margin-top:10px;font-size:.8rem;padding:7px 14px">+ Third / Fourth Image Add Karein (Optional)</button>
     <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Kam se kam 2 images zaroori hain. Order badalne ke liye ▲▼ buttons use karein (niche Options mein).</p>
+  </div>
+
+  <div class="card" id="cropSection" style="display:none">
+    <h3>✂️ Har Image Crop Karein (Live)</h3>
+    <p style="font-size:.78rem;color:#94a3b8;margin-bottom:6px">Box drag/resize karke area choose karein — jaisa adjust karenge, merge preview turant niche update hoga. Har image ka crop bilkul independent hai.</p>
+    <div class="crop-editor-card" id="cropCard-0">
+      <div class="crop-editor-title">1️⃣ First Image</div>
+      <div class="crop-editor-imgwrap" id="cropWrap-0"><img id="cropImg-0" alt="First image crop"></div>
+      <div class="crop-editor-actions">
+        <button type="button" class="crop-editor-btn" id="cropResetBtn-0">↺ Reset Crop</button>
+        <button type="button" class="crop-editor-btn" id="freeSelBtn-0">🔓 Free Select (kisi bhi angle)</button>
+      </div>
+    </div>
+    <div class="crop-editor-card" id="cropCard-1">
+      <div class="crop-editor-title">2️⃣ Second Image</div>
+      <div class="crop-editor-imgwrap" id="cropWrap-1"><img id="cropImg-1" alt="Second image crop"></div>
+      <div class="crop-editor-actions">
+        <button type="button" class="crop-editor-btn" id="cropResetBtn-1">↺ Reset Crop</button>
+        <button type="button" class="crop-editor-btn" id="freeSelBtn-1">🔓 Free Select (kisi bhi angle)</button>
+      </div>
+    </div>
+    <div class="crop-editor-card" id="cropCard-2">
+      <div class="crop-editor-title">3️⃣ Third Image</div>
+      <div class="crop-editor-imgwrap" id="cropWrap-2"><img id="cropImg-2" alt="Third image crop"></div>
+      <div class="crop-editor-actions">
+        <button type="button" class="crop-editor-btn" id="cropResetBtn-2">↺ Reset Crop</button>
+        <button type="button" class="crop-editor-btn" id="freeSelBtn-2">🔓 Free Select (kisi bhi angle)</button>
+      </div>
+    </div>
+    <div class="crop-editor-card" id="cropCard-3">
+      <div class="crop-editor-title">4️⃣ Fourth Image</div>
+      <div class="crop-editor-imgwrap" id="cropWrap-3"><img id="cropImg-3" alt="Fourth image crop"></div>
+      <div class="crop-editor-actions">
+        <button type="button" class="crop-editor-btn" id="cropResetBtn-3">↺ Reset Crop</button>
+        <button type="button" class="crop-editor-btn" id="freeSelBtn-3">🔓 Free Select (kisi bhi angle)</button>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -524,7 +556,7 @@
     drawTri([0,2,3],[0,2,3]);
     return cnv;
   }
-  function QuadCropUI(containerEl,imgEl){
+  function QuadCropUI(containerEl,imgEl,onChange){
     var svgNS='http://www.w3.org/2000/svg';
     var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1;
     var origImgStyle=imgEl.getAttribute('style')||'';
@@ -550,6 +582,7 @@
       mask.setAttribute('d',d);
       poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
       handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+      if(typeof onChange==='function')onChange();
     }
     this.activate=function(){
       if(active)return;
@@ -643,105 +676,102 @@
       meta.style.display='block';
       wrap.classList.add('filled');
       buildOrderList();
+      initSlotCropEditor(idx,img.src);
+      updateCropSectionVisibility();
       scheduleLivePreview();
     });
   }
 
   // ══════════════════════════════════════════════════════════
-  // PER-IMAGE CROP MODAL — har slot ka apna independent crop
-  // (Rectangle box ya Free Select / freeform quad dono available)
+  // PER-IMAGE LIVE CROP EDITOR — har slot ka apna independent
+  // Cropper.js (rectangle) + Free Select (freeform quad) system.
+  // Jaise hi crop adjust hota hai, merge preview live update hota hai.
   // ══════════════════════════════════════════════════════════
-  var mergeCropperInst=null, mergeQuadUI=null, mergeCropSlotIdx=-1;
-  var mergeSlotLabels=['First Image','Second Image','Third Image','Fourth Image'];
+  var cropInst=[null,null,null,null];
+  var quadInst=[null,null,null,null];
 
-  function mergeInitRectCropper(){
-    var img=G('cropModalImg');
-    if(mergeCropperInst){mergeCropperInst.destroy();mergeCropperInst=null;}
+  function updateCropSectionVisibility(){
+    var any=slots.some(function(s){return !!s;});
+    G('cropSection').style.display=any?'':'none';
+  }
+
+  function setFreeSelBtnState(idx,on){
+    var b=G('freeSelBtn-'+idx);if(!b)return;
+    if(on){b.classList.add('active');b.innerHTML='🔷 Rectangle Crop';}
+    else{b.classList.remove('active');b.innerHTML='🔓 Free Select (kisi bhi angle)';}
+  }
+
+  function initRectCropper(idx){
+    var img=G('cropImg-'+idx);
+    if(cropInst[idx]){cropInst[idx].destroy();cropInst[idx]=null;}
     try{
-      mergeCropperInst=new Cropper(img,{
+      cropInst[idx]=new Cropper(img,{
         viewMode:1,autoCropArea:.9,guides:true,center:true,highlight:true,
-        background:true,responsive:true,movable:true,zoomable:true,rotatable:true,scalable:true,
-        cropBoxMovable:true,cropBoxResizable:true,
-        aspectRatio:(G('mergeCropSquare')&&G('mergeCropSquare').checked)?1:NaN,
-        minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200
+        background:true,responsive:true,movable:true,zoomable:true,rotatable:false,scalable:false,
+        cropBoxMovable:true,cropBoxResizable:true,aspectRatio:NaN,
+        minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200,
+        crop:function(){scheduleLivePreview();}
       });
     }catch(e){}
   }
-  function mergeSetFreeSelBtnState(on){
-    var b=G('mergeFreeSelBtn');if(!b)return;
-    if(on){b.classList.add('active');b.innerHTML='<i class="fa-solid fa-draw-polygon"></i> Rectangle Crop';}
-    else{b.classList.remove('active');b.innerHTML='<i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)';}
-  }
-  function openCropModal(idx){
-    if(!slots[idx])return;
-    mergeCropSlotIdx=idx;
-    G('cropModalTitle').textContent='✂️ '+mergeSlotLabels[idx]+' — Crop Karein';
-    G('cropModalOverlay').classList.add('show');
-    var img=G('cropModalImg');
-    if(!mergeQuadUI)mergeQuadUI=new QuadCropUI(G('cropModalImgWrap'),img);
-    else mergeQuadUI.deactivate();
-    mergeSetFreeSelBtnState(false);
-    if(G('mergeCropSquare'))G('mergeCropSquare').checked=false;
-    img.onload=function(){ mergeInitRectCropper(); };
-    img.src=slots[idx].img.src;
+
+  function initSlotCropEditor(idx,src){
+    var card=G('cropCard-'+idx),img=G('cropImg-'+idx);
+    card.classList.add('show');
+    if(cropInst[idx]){cropInst[idx].destroy();cropInst[idx]=null;}
+    if(quadInst[idx])quadInst[idx].deactivate();
+    setFreeSelBtnState(idx,false);
+    img.onload=function(){
+      if(!quadInst[idx])quadInst[idx]=new QuadCropUI(G('cropWrap-'+idx),img,function(){scheduleLivePreview();});
+      initRectCropper(idx);
+    };
+    img.src=src;
     if(img.complete&&img.naturalWidth>0)img.onload();
   }
-  function closeCropModal(){
-    G('cropModalOverlay').classList.remove('show');
-    if(mergeCropperInst){mergeCropperInst.destroy();mergeCropperInst=null;}
-    if(mergeQuadUI)mergeQuadUI.deactivate();
-    mergeCropSlotIdx=-1;
-  }
-  function applyMergeCrop(){
-    if(mergeCropSlotIdx<0)return;
-    var cv=null;
-    if(mergeQuadUI&&mergeQuadUI.isActive()){
-      cv=mergeQuadUI.getWarpedCanvas();
-    }else if(mergeCropperInst){
-      cv=mergeCropperInst.getCroppedCanvas({imageSmoothingEnabled:true,imageSmoothingQuality:'high'});
-    }
-    if(!cv){alert('Crop area select karein.');return;}
-    var idx=mergeCropSlotIdx;
-    var dataURL=cv.toDataURL('image/png');
-    var newImg=new Image();
-    newImg.onload=function(){
-      slots[idx].img=newImg;
-      slots[idx].natW=cv.width;
-      slots[idx].natH=cv.height;
-      var thumb=G('thumb-'+idx),meta=G('meta-'+idx);
-      thumb.src=dataURL;
-      meta.textContent=cv.width+'×'+cv.height+' · Cropped';
-      closeCropModal();
-      scheduleLivePreview();
-    };
-    newImg.src=dataURL;
-  }
-  document.getElementById('mergeCropReset').addEventListener('click',function(){
-    if(mergeQuadUI&&mergeQuadUI.isActive()){
-      mergeQuadUI.deactivate();
-      mergeInitRectCropper();
-      mergeSetFreeSelBtnState(false);
-    }else if(mergeCropperInst){mergeCropperInst.reset();}
-  });
-  document.getElementById('mergeCropSquare').addEventListener('change',function(){
-    if(mergeCropperInst)mergeCropperInst.setAspectRatio(this.checked?1:NaN);
-  });
-  document.getElementById('mergeFreeSelBtn').addEventListener('click',function(){
-    var img=G('cropModalImg');
-    if(!mergeCropperInst&&!mergeQuadUI)return;
-    if(!mergeQuadUI)mergeQuadUI=new QuadCropUI(G('cropModalImgWrap'),img);
-    if(mergeQuadUI.isActive()){
-      mergeQuadUI.deactivate();
-      mergeInitRectCropper();
-      mergeSetFreeSelBtnState(false);
+
+  function toggleSlotFreeSelect(idx){
+    var img=G('cropImg-'+idx);
+    if(!cropInst[idx]&&!quadInst[idx])return;
+    if(!quadInst[idx])quadInst[idx]=new QuadCropUI(G('cropWrap-'+idx),img,function(){scheduleLivePreview();});
+    if(quadInst[idx].isActive()){
+      quadInst[idx].deactivate();
+      initRectCropper(idx);
+      setFreeSelBtnState(idx,false);
     }else{
-      if(mergeCropperInst){mergeCropperInst.destroy();mergeCropperInst=null;}
-      mergeQuadUI.activate();
-      mergeSetFreeSelBtnState(true);
+      if(cropInst[idx]){cropInst[idx].destroy();cropInst[idx]=null;}
+      quadInst[idx].activate();
+      setFreeSelBtnState(idx,true);
     }
-  });
-  document.getElementById('cropModalOverlay').addEventListener('click',function(e){
-    if(e.target===this)closeCropModal();
+    scheduleLivePreview();
+  }
+
+  function resetSlotCrop(idx){
+    if(quadInst[idx]&&quadInst[idx].isActive()){
+      quadInst[idx].deactivate();
+      initRectCropper(idx);
+      setFreeSelBtnState(idx,false);
+    }else if(cropInst[idx]){
+      cropInst[idx].reset();
+    }
+    scheduleLivePreview();
+  }
+
+  // Current live-cropped render source for a slot (canvas ya original img agar crop nahi hua)
+  function getSlotRenderSource(idx){
+    if(quadInst[idx]&&quadInst[idx].isActive()){
+      var qc=quadInst[idx].getWarpedCanvas();
+      if(qc)return qc;
+    }
+    if(cropInst[idx]){
+      var cc=cropInst[idx].getCroppedCanvas({imageSmoothingEnabled:true,imageSmoothingQuality:'high'});
+      if(cc)return cc;
+    }
+    return slots[idx]?slots[idx].img:null;
+  }
+
+  [0,1,2,3].forEach(function(idx){
+    var rb=G('cropResetBtn-'+idx);if(rb)rb.addEventListener('click',function(){resetSlotCrop(idx);});
+    var fb=G('freeSelBtn-'+idx);if(fb)fb.addEventListener('click',function(){toggleSlotFreeSelect(idx);});
   });
 
   // ── Toggle Third/Fourth image slots ──────────────────────────
@@ -910,7 +940,7 @@
   // MERGE ENGINE
   // ══════════════════════════════════════════════════════════
   function transformImage(img,rotateDeg,flip){
-    var w=img.naturalWidth,h=img.naturalHeight,rad=((rotateDeg%360)+360)%360;
+    var w=img.naturalWidth||img.width,h=img.naturalHeight||img.height,rad=((rotateDeg%360)+360)%360;
     var swapped=(rad===90||rad===270);
     var cw=swapped?h:w,ch=swapped?w:h;
     var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
@@ -974,7 +1004,7 @@
     var flip=G('flipSel').value;
     var gap=parseInt(G('gapRange').value)||0;
     var gapColor=G('gapColor').value||'#ffffff';
-    var pieces=activeIdx.map(function(i){return transformImage(slots[i].img,rotate,flip);});
+    var pieces=activeIdx.map(function(i){return transformImage(getSlotRenderSource(i),rotate,flip);});
     var cv,ctx;
     if(posVal==='v'){
       var maxW=Math.max.apply(null,pieces.map(function(p){return p.width;}));
@@ -1081,22 +1111,4 @@
   });
 </script>
 
-<div class="crop-modal-overlay" id="cropModalOverlay">
-  <div class="crop-modal-box">
-    <h3 style="margin-bottom:10px" id="cropModalTitle">✂️ Image Crop Karein</h3>
-    <div class="crop-modal-imgwrap" id="cropModalImgWrap">
-      <img id="cropModalImg" alt="Crop preview">
-    </div>
-    <div class="crop-modal-actions">
-      <button type="button" class="btn-secondary" id="mergeCropReset">↺ Reset Crop</button>
-      <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="mergeCropSquare" style="width:auto;margin:0"> Square (1:1)</label>
-      <button type="button" class="btn-secondary" id="mergeFreeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
-    </div>
-    <p style="font-size:.76rem;color:#94a3b8;margin-top:8px">Rectangle mode: box drag/resize karke area choose karein. Free Select mode: 4 corners ko kisi bhi angle mein independently khinch sakte hain.</p>
-    <div class="crop-modal-footer">
-      <button type="button" class="btn-secondary" onclick="closeCropModal()">Cancel</button>
-      <button type="button" class="btn-primary" onclick="applyMergeCrop()"><i class="fa-solid fa-check"></i> Crop Apply Karein</button>
-    </div>
-  </div>
-</div>
 </body></html>
