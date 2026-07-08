@@ -176,6 +176,7 @@
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
       <div class="upload-sub">Ya <b>Browse</b> karke select karein (Max 500MB)</div>
+      <div class="upload-sub" style="margin-top:6px;font-size:0.72rem">⏱️ Bade video files (100MB+) mein conversion 1-5+ minute le sakta hai — browser tab open rakhein</div>
     </div>
     <div class="file-preview" id="file-preview">
       <div class="preview-thumb" id="preview-icon">🎥</div>
@@ -542,11 +543,22 @@
   // failure can NEVER block file upload, drag-drop, or the rest of the UI.
   let ffmpegInstance = null;
 
+  async function toBlobURL(url, mimeType) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Failed to fetch FFmpeg core: ' + resp.status);
+    const buf = await resp.arrayBuffer();
+    return URL.createObjectURL(new Blob([buf], { type: mimeType }));
+  }
+
   async function getFFmpeg() {
     if (ffmpegInstance) return ffmpegInstance;
     const { FFmpeg } = FFmpegWASM;
     ffmpegInstance = new FFmpeg();
-    await ffmpegInstance.load();
+    const base = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd';
+    await ffmpegInstance.load({
+      coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
+      wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm'),
+    });
     return ffmpegInstance;
   }
 
@@ -655,7 +667,26 @@
     });
   }
 
-  // Conversion Logic (Simplified for Demo)
+  // Format configuration: extension + mime type for each output option
+  const FORMAT_MAP = {
+    'mp4':      { ext: 'mp4',  mime: 'video/mp4',        audioOnly: false },
+    'mp4-h265': { ext: 'mp4',  mime: 'video/mp4',        audioOnly: false },
+    'webm':     { ext: 'webm', mime: 'video/webm',       audioOnly: false },
+    'avi':      { ext: 'avi',  mime: 'video/x-msvideo',  audioOnly: false },
+    'mov':      { ext: 'mov',  mime: 'video/quicktime',  audioOnly: false },
+    'mkv':      { ext: 'mkv',  mime: 'video/x-matroska', audioOnly: false },
+    'flv':      { ext: 'flv',  mime: 'video/x-flv',      audioOnly: false },
+    'wmv':      { ext: 'wmv',  mime: 'video/x-ms-wmv',   audioOnly: false },
+    'mpeg':     { ext: 'mpeg', mime: 'video/mpeg',       audioOnly: false },
+    '3gp':      { ext: '3gp',  mime: 'video/3gpp',       audioOnly: false },
+    'mp3':      { ext: 'mp3',  mime: 'audio/mpeg',       audioOnly: true  },
+    'm4a':      { ext: 'm4a',  mime: 'audio/mp4',        audioOnly: true  },
+    'wav':      { ext: 'wav',  mime: 'audio/wav',        audioOnly: true  },
+    'aac':      { ext: 'aac',  mime: 'audio/aac',        audioOnly: true  },
+    'flac':     { ext: 'flac', mime: 'audio/flac',       audioOnly: true  },
+  };
+
+  // Conversion Logic - runs real FFmpeg.wasm exec()
   async function performConversion() {
     const file = window.selectedFile;
     if (!file) {
@@ -668,145 +699,177 @@
     const quality = document.getElementById('quality').value;
     const frameRate = document.getElementById('framerate').value;
     const audioOpt = document.getElementById('audio-opt').value;
+    const audioQuality = document.getElementById('audio-quality').value;
 
     const progressWrap = document.getElementById('progress-wrap');
     const pbar = document.getElementById('pbar');
     const ppercent = document.getElementById('ppercent');
     const pmsg = document.getElementById('pmsg');
+    const processBtn = document.getElementById('process-btn');
 
     progressWrap.style.display = 'block';
     pbar.style.width = '0%';
     ppercent.textContent = '0%';
-    pmsg.textContent = 'Setting up FFmpeg...';
+    pmsg.textContent = 'FFmpeg engine load ho raha hai (pehli baar thoda time lagega)...';
+    processBtn.disabled = true;
+    document.getElementById('result-card').classList.remove('show');
+
+    let ffmpeg;
+    try {
+      ffmpeg = await getFFmpeg();
+    } catch (err) {
+      console.error('FFmpeg load error:', err);
+      showAlert('❌ FFmpeg load nahi ho paya. Internet check karein aur retry karein.', 'error');
+      progressWrap.style.display = 'none';
+      processBtn.disabled = false;
+      return;
+    }
+
+    // Live progress from FFmpeg itself
+    const onProgress = ({ progress }) => {
+      const pct = Math.max(0, Math.min(100, Math.round(progress * 100)));
+      pbar.style.width = pct + '%';
+      ppercent.textContent = pct + '%';
+    };
+    ffmpeg.on('progress', onProgress);
+
+    const fmt = FORMAT_MAP[outputFormat] || FORMAT_MAP['mp4'];
+    const inputExt = file.name.split('.').pop();
+    const inputName = 'input.' + inputExt;
+    const outputName = 'output.' + fmt.ext;
+    const isExtractAudio = audioOpt === 'extract';
+    const isAudioTarget = fmt.audioOnly || isExtractAudio;
 
     try {
-      // Initialize FFmpeg (First time) - lazy loaded, won't affect upload UI
-      const ffmpeg = await getFFmpeg();
-
-      pmsg.textContent = 'Loading file...';
-
-      // Write input file
+      pmsg.textContent = 'File load ho rahi hai...';
       const data = await fetchFile(file);
-      const inputName = 'input.' + file.name.split('.').pop();
       await ffmpeg.writeFile(inputName, data);
 
-      // Determine output extension and codec parameters
-      let outputExt = 'mp4';
-      let codecParams = [];
-
+      // Build FFmpeg args
+      const args = ['-i', inputName];
       const qualityMap = { high: 18, medium: 23, low: 28 };
       const crf = qualityMap[quality] || 23;
+      const audioQualityMap = { high: '192k', medium: '128k', low: '64k' };
+      const abitrate = audioQualityMap[audioQuality] || '128k';
 
-      if (audioOpt === 'extract') {
-        // Extract audio only
-        codecParams = ['-vn', '-q:a', '0', '-map', 'a:0'];
-        const audioQualityMap = { high: 192, medium: 128, low: 64 };
-        codecParams.push('-ab', audioQualityMap[document.getElementById('audio-quality').value] + 'k');
-      } else {
-        // Video conversion
-        if (outputFormat === 'mp4') {
-          codecParams = ['-c:v', 'libx264', '-crf', crf.toString(), '-preset', 'fast'];
-          outputExt = 'mp4';
-        } else if (outputFormat === 'mp4-h265') {
-          codecParams = ['-c:v', 'libx265', '-crf', crf.toString(), '-preset', 'fast'];
-          outputExt = 'mp4';
-        } else if (outputFormat === 'webm') {
-          codecParams = ['-c:v', 'libvpx-vp9', '-crf', '31'];
-          outputExt = 'webm';
+      if (isAudioTarget) {
+        // Audio-only output
+        args.push('-vn');
+        if (fmt.ext === 'mp3') {
+          args.push('-c:a', 'libmp3lame', '-b:a', abitrate);
+        } else if (fmt.ext === 'aac' || fmt.ext === 'm4a') {
+          args.push('-c:a', 'aac', '-b:a', abitrate);
+        } else if (fmt.ext === 'wav') {
+          args.push('-c:a', 'pcm_s16le');
+        } else if (fmt.ext === 'flac') {
+          args.push('-c:a', 'flac');
         } else {
-          codecParams = ['-c:v', 'libx264', '-crf', crf.toString()];
+          args.push('-c:a', 'aac', '-b:a', abitrate);
+        }
+      } else {
+        // Video codec selection
+        if (outputFormat === 'mp4-h265') {
+          args.push('-c:v', 'libx265', '-crf', crf.toString(), '-preset', 'fast');
+        } else if (outputFormat === 'webm') {
+          args.push('-c:v', 'libvpx-vp9', '-crf', '31', '-b:v', '0');
+        } else if (outputFormat === 'wmv') {
+          args.push('-c:v', 'wmv2');
+        } else if (outputFormat === 'flv') {
+          args.push('-c:v', 'flv1');
+        } else if (outputFormat === '3gp') {
+          args.push('-c:v', 'h263', '-s', '352x288');
+        } else if (outputFormat === 'mpeg') {
+          args.push('-c:v', 'mpeg2video', '-q:v', '5');
+        } else {
+          args.push('-c:v', 'libx264', '-crf', crf.toString(), '-preset', 'fast', '-pix_fmt', 'yuv420p');
         }
 
-        // Resolution
+        // Resolution scaling
         if (resolution !== 'original') {
           const resMap = { '4k': 2160, '1080p': 1080, '720p': 720, '480p': 480, '360p': 360 };
-          const height = resMap[resolution];
-          codecParams.push('-vf', `scale=-1:${height}`);
+          args.push('-vf', `scale=-2:${resMap[resolution]}`);
         }
 
         // Frame rate
         if (frameRate !== 'original') {
-          codecParams.push('-r', frameRate);
+          args.push('-r', frameRate);
         }
 
-        // Audio handling
+        // Audio track handling
         if (audioOpt === 'remove') {
-          codecParams.push('-an');
-        } else if (audioOpt === 'keep') {
-          codecParams.push('-c:a', 'aac');
-          const audioQualityMap = { high: 192, medium: 128, low: 64 };
-          codecParams.push('-b:a', audioQualityMap[document.getElementById('audio-quality').value] + 'k');
+          args.push('-an');
+        } else {
+          if (outputFormat === 'wmv') {
+            args.push('-c:a', 'wmav2');
+          } else if (outputFormat === 'flv' || outputFormat === '3gp') {
+            args.push('-c:a', 'aac', '-b:a', abitrate, '-ar', '44100');
+          } else {
+            args.push('-c:a', 'aac', '-b:a', abitrate);
+          }
         }
       }
 
-      const outputName = 'output.' + outputExt;
+      args.push(outputName);
 
-      // Show format info
-      pmsg.textContent = `Converting to ${outputFormat.toUpperCase()}...`;
+      pmsg.textContent = `Converting to ${outputFormat.toUpperCase()}... (bada file ho to time lagega)`;
 
-      // Run FFmpeg command (without actual conversion to keep demo fast)
-      setTimeout(async () => {
-        // Simulate progress
-        for (let i = 0; i <= 100; i += 10) {
-          pbar.style.width = i + '%';
-          ppercent.textContent = i + '%';
-          await new Promise(r => setTimeout(r, 200));
-        }
+      await ffmpeg.exec(args);
 
-        pbar.style.width = '100%';
-        ppercent.textContent = '100%';
-        pmsg.textContent = 'Processing complete!';
+      pmsg.textContent = 'Output file taiyar ho raha hai...';
+      const outData = await ffmpeg.readFile(outputName);
+      const blob = new Blob([outData.buffer], { type: fmt.mime });
 
-        // Show result
-        const resultCard = document.getElementById('result-card');
-        resultCard.classList.add('show');
+      // Cleanup FFmpeg virtual FS
+      try { await ffmpeg.deleteFile(inputName); } catch (e) {}
+      try { await ffmpeg.deleteFile(outputName); } catch (e) {}
+      ffmpeg.off('progress', onProgress);
 
-        // Calculate estimated sizes
-        const estimateMap = { high: 0.4, medium: 0.25, low: 0.12 };
-        const estimatedSize = Math.round(file.size * estimateMap[quality]);
+      pbar.style.width = '100%';
+      ppercent.textContent = '100%';
+      pmsg.textContent = 'Conversion complete!';
 
-        const statRow = document.getElementById('stat-row');
-        statRow.innerHTML = `
-          <div class="stat-box">
-            <div class="stat-val">${formatBytes(file.size)}</div>
-            <div class="stat-lbl">Original Size</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val">${formatBytes(estimatedSize)}</div>
-            <div class="stat-lbl">Estimated Size</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val">${Math.round((1 - estimatedSize / file.size) * 100)}%</div>
-            <div class="stat-lbl">Saved</div>
-          </div>
-        `;
+      // Show result card
+      const resultCard = document.getElementById('result-card');
+      resultCard.classList.add('show');
 
-        // Download handler
-        document.getElementById('dl-btn').onclick = async () => {
-          try {
-            const data = await ffmpeg.readFile(outputName);
-            const blob = new Blob([data.buffer], { type: 'video/mp4' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'converted.' + outputExt;
-            a.click();
-            URL.revokeObjectURL(url);
-            showAlert('✅ Download complete!', 'success');
-          } catch (err) {
-            console.error('Download error:', err);
-            showAlert('❌ Download failed. Please try again.', 'error');
-          }
-        };
+      const statRow = document.getElementById('stat-row');
+      statRow.innerHTML = `
+        <div class="stat-box">
+          <div class="stat-val">${formatBytes(file.size)}</div>
+          <div class="stat-lbl">Original Size</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">${formatBytes(blob.size)}</div>
+          <div class="stat-lbl">New Size</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">${blob.size < file.size ? Math.round((1 - blob.size / file.size) * 100) + '%' : '0%'}</div>
+          <div class="stat-lbl">Saved</div>
+        </div>
+      `;
 
-        showAlert('✅ Conversion complete! File download karein.', 'success');
+      const outFileName = file.name.replace(/\.[^.]+$/, '') + '.' + fmt.ext;
+      document.getElementById('dl-btn').onclick = () => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outFileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showAlert('✅ Download shuru ho gaya!', 'success');
+      };
 
-      }, 500);
+      showAlert('✅ Conversion complete! File download karein.', 'success');
 
     } catch (error) {
       console.error('Conversion error:', error);
-      showAlert('❌ Conversion failed: ' + error.message, 'error');
+      showAlert('❌ Conversion fail ho gayi: ' + (error.message || 'Unknown error'), 'error');
       progressWrap.style.display = 'none';
+      try { ffmpeg.off('progress', onProgress); } catch (e) {}
+    } finally {
+      processBtn.disabled = false;
     }
   }
 
