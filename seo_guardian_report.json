@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-08T04:42:26.705643+00:00",
+  "timestamp": "2026-07-08T05:54:36.748203+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 4082,
+  "files_scanned": 4206,
   "issues_found_by_check": {
-    "jobposting_schema": 27,
+    "jobposting_schema": 28,
     "slug_validate": 24,
-    "sitemap_sync": 13
+    "sitemap_sync": 125
   },
-  "issues_auto_fixed": 39,
+  "issues_auto_fixed": 152,
   "unfixable": [
     {
       "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
@@ -164,8 +164,8 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links: No new redirects needed — all links OK",
+    "broken_links:   [Last_Date_Reminder] csir-neeri-project-associate-i-recruitment-2026-walkin",
     "build_sitemaps:   sitemap.xml                      64 urls [ok]"
   ],
-  "duration_sec": 14.4
+  "duration_sec": 14.1
 }
