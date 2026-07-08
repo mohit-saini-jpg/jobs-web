@@ -5479,7 +5479,8 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         for s in _schemas_list)
 
     cards_html = ''
-    for _idx, job in enumerate(jobs, 1):
+    _idx = 0  # FIX: sequential display number for RENDERED cards only (skipped jobs must not eat a number)
+    for job in jobs:
         bd    = job.get('basic_details',{}) or {}
         dates = job.get('important_dates',{}) or {}
         il    = job.get('important_links',{}) or {}
@@ -5514,6 +5515,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
                 continue   # no real page on disk → never render a 404 link
         # Landing/index pages can override the per-row link target (e.g. /state/{slug}/
         # instead of /jobs/{slug}/) via the optional _listing_url field.
+        _idx += 1  # FIX: only count jobs that survive all skip-checks above → true continuous 1,2,3...
         _row_url = safe(job.get('_listing_url','')) or f"/jobs/{e(jslug)}/"
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
