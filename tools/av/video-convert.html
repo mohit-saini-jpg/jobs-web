@@ -171,7 +171,8 @@
   <!-- UPLOAD -->
   <div class="card">
     <h3>📂 Video/Audio File Upload</h3>
-    <div class="upload-zone" id="dropzone">
+    <input type="file" id="main-file" accept="video/*,audio/*" style="display:none">
+    <div class="upload-zone" id="dropzone" onclick="document.getElementById('main-file').click()">
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
       <div class="upload-sub">Ya <b>Browse</b> karke select karein (Max 500MB)</div>
@@ -182,10 +183,9 @@
         <div class="file-name" id="preview-name">—</div>
         <div class="file-meta" id="preview-meta">—</div>
       </div>
-      <button class="file-remove" title="Remove">✕</button>
+      <button class="file-remove" title="Remove" type="button">✕</button>
     </div>
   </div>
-  <input type="file" id="main-file" style="display:none">
 
   <!-- OPTIONS -->
   <div class="card">
@@ -598,31 +598,44 @@
       previewMeta.textContent = `${formatBytes(file.size)} • ${ext.toUpperCase()}`;
 
       window.selectedFile = file;
+      showAlert(`✅ File selected: ${file.name}`, 'success');
     }
 
-    dropzone.addEventListener('click', () => input.click());
-    input.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    // File input change event
+    input.addEventListener('change', (e) => {
+      handleFile(e.target.files[0]);
+    });
 
+    // Drag over
     dropzone.addEventListener('dragover', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dropzone.classList.add('dragover');
     });
 
-    dropzone.addEventListener('dragleave', () => {
+    // Drag leave
+    dropzone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       dropzone.classList.remove('dragover');
     });
 
+    // Drop
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dropzone.classList.remove('dragover');
       handleFile(e.dataTransfer.files[0]);
     });
 
+    // Remove button
     removeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       input.value = '';
       preview.classList.remove('show');
       window.selectedFile = null;
+      showAlert('File removed', 'warn');
     });
   }
 
@@ -783,28 +796,53 @@
     }
   }
 
-  // Event Listeners
-  document.getElementById('process-btn').addEventListener('click', performConversion);
+  // Event Listeners - Attach to buttons
+  const processBtnListener = () => {
+    performConversion().catch(err => {
+      console.error('Error:', err);
+      showAlert('❌ Error: ' + err.message, 'error');
+    });
+  };
 
-  document.getElementById('reset-btn').addEventListener('click', () => {
-    document.getElementById('main-file').value = '';
-    document.getElementById('file-preview').classList.remove('show');
-    document.getElementById('progress-wrap').style.display = 'none';
-    document.getElementById('pbar').style.width = '0%';
-    document.getElementById('result-card').classList.remove('show');
+  const resetBtnListener = () => {
+    const input = document.getElementById('main-file');
+    const preview = document.getElementById('file-preview');
+    const progressWrap = document.getElementById('progress-wrap');
+    const pbar = document.getElementById('pbar');
+    const resultCard = document.getElementById('result-card');
+
+    input.value = '';
+    preview.classList.remove('show');
+    progressWrap.style.display = 'none';
+    pbar.style.width = '0%';
+    resultCard.classList.remove('show');
     window.selectedFile = null;
-  });
+    showAlert('Form reset!', 'warn');
+  };
 
-  // FAQ Toggle
-  document.querySelectorAll('.faq-q').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('open');
-      btn.nextElementSibling.classList.toggle('open');
+  document.getElementById('process-btn').addEventListener('click', processBtnListener);
+  document.getElementById('reset-btn').addEventListener('click', resetBtnListener);
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    setupFileUpload();
+
+    // FAQ Toggle
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('open');
+        btn.nextElementSibling.classList.toggle('open');
+      });
     });
   });
 
-  // Initialize
-  setupFileUpload();
+  // Fallback for if DOMContentLoaded already fired
+  if (document.readyState === 'loading') {
+    // DOM still loading
+  } else {
+    // DOM already loaded, run immediately
+    setupFileUpload();
+  }
 </script>
 </body>
 </html>
