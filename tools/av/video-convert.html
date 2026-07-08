@@ -171,7 +171,7 @@
   <!-- UPLOAD -->
   <div class="card">
     <h3>📂 Video/Audio File Upload</h3>
-    <input type="file" id="main-file" accept="video/*,audio/*" style="display:none">
+    <input type="file" id="main-file" style="display:none">
     <div class="upload-zone" id="dropzone" onclick="document.getElementById('main-file').click()">
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
@@ -584,12 +584,14 @@
       }
 
       const ext = file.name.split('.').pop().toLowerCase();
-      const supportedVideo = ['mp4', 'mkv', 'avi', 'mov', 'webm', 'flv', 'wmv', 'mpeg', 'vob', '3gp', 'ts', 'mts', 'mxf'];
-      const supportedAudio = ['mp3', 'm4a', 'wav', 'aac', 'flac', 'wma', 'opus', 'ogg'];
+      const supportedVideo = ['mp4', 'mkv', 'avi', 'mov', 'webm', 'flv', 'wmv', 'mpeg', 'mpg', 'vob', '3gp', 'ts', 'mts', 'mxf', 'f4v', 'ogv', 'm4v'];
+      const supportedAudio = ['mp3', 'm4a', 'wav', 'aac', 'flac', 'wma', 'opus', 'ogg', 'm4b', 'aiff', 'wv', 'ape'];
 
-      if (![...supportedVideo, ...supportedAudio].includes(ext)) {
-        showAlert(`❌ .${ext} format supported nahi hai!`, 'error');
-        return;
+      const allSupported = [...supportedVideo, ...supportedAudio];
+      
+      if (!allSupported.includes(ext)) {
+        showAlert(`⚠️ .${ext} might not be fully supported. Try anyway? (Only common formats recommended)`, 'warn');
+        // Don't return - allow user to try anyway
       }
 
       preview.classList.add('show');
