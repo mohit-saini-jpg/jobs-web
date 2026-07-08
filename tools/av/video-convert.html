@@ -536,10 +536,24 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
 <script>
-  const { FFmpeg, fetchFile } = FFmpeg;
-  const ffmpeg = new FFmpeg.FFmpeg();
+  // FFmpeg is loaded lazily inside performConversion() so a CDN/init
+  // failure can NEVER block file upload, drag-drop, or the rest of the UI.
+  let ffmpegInstance = null;
+
+  async function getFFmpeg() {
+    if (ffmpegInstance) return ffmpegInstance;
+    const { FFmpeg } = FFmpegWASM;
+    ffmpegInstance = new FFmpeg();
+    await ffmpegInstance.load();
+    return ffmpegInstance;
+  }
+
+  async function fetchFile(file) {
+    const buf = await file.arrayBuffer();
+    return new Uint8Array(buf);
+  }
 
   // Utility Functions
   function formatBytes(bytes) {
@@ -666,10 +680,8 @@
     pmsg.textContent = 'Setting up FFmpeg...';
 
     try {
-      // Initialize FFmpeg (First time)
-      if (!ffmpeg.isLoaded()) {
-        await ffmpeg.load();
-      }
+      // Initialize FFmpeg (First time) - lazy loaded, won't affect upload UI
+      const ffmpeg = await getFFmpeg();
 
       pmsg.textContent = 'Loading file...';
 
@@ -825,25 +837,21 @@
   document.getElementById('process-btn').addEventListener('click', processBtnListener);
   document.getElementById('reset-btn').addEventListener('click', resetBtnListener);
 
-  // Initialize on DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
+  // Initialize once DOM is ready (works regardless of script position)
+  function initApp() {
     setupFileUpload();
-
-    // FAQ Toggle
     document.querySelectorAll('.faq-q').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('open');
         btn.nextElementSibling.classList.toggle('open');
       });
     });
-  });
+  }
 
-  // Fallback for if DOMContentLoaded already fired
   if (document.readyState === 'loading') {
-    // DOM still loading
+    document.addEventListener('DOMContentLoaded', initApp);
   } else {
-    // DOM already loaded, run immediately
-    setupFileUpload();
+    initApp();
   }
 </script>
 </body>
