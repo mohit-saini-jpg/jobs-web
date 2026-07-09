@@ -563,12 +563,18 @@
     const instance = new FFmpeg();
     instance.on('log', ({ message }) => console.log('[ffmpeg]', message));
 
-    // Version MUST match the main @ffmpeg/ffmpeg script version loaded below
-    const base = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
-    const coreURL = await withTimeout(toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
-    const wasmURL = await withTimeout(toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
+    // All URLs MUST match the main @ffmpeg/ffmpeg script version loaded below (0.12.10)
+    const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
+    const ffmpegBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd';
 
-    await withTimeout(instance.load({ coreURL, wasmURL }), 30000, 'FFmpeg engine load');
+    const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
+    const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
+    // The library spawns its own Worker from a numbered chunk file (e.g. 814.ffmpeg.js).
+    // Browsers block Workers loaded cross-origin from a CDN, so we fetch it and
+    // hand it back as a same-origin blob URL via classWorkerURL.
+    const classWorkerURL = await withTimeout(toBlobURL(`${ffmpegBase}/814.ffmpeg.js`, 'text/javascript'), 20000, 'Worker script fetch');
+
+    await withTimeout(instance.load({ coreURL, wasmURL, classWorkerURL }), 30000, 'FFmpeg engine load');
     ffmpegInstance = instance;
     return ffmpegInstance;
   }
