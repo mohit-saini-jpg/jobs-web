@@ -16,6 +16,15 @@ import json, re, os, html as _html, shutil, hashlib
 from datetime import date, datetime
 from pathlib import Path
 
+# ── DIAGNOSTIC: timestamp every print() with elapsed seconds since script
+# start. Console/log output only — never touches generated HTML/JSON, so
+# it's invisible on the live site. Helps pinpoint slow phases in CI logs.
+import time as _perf_time
+_PERF_T0 = _perf_time.time()
+_builtin_print = print
+def print(*args, **kwargs):
+    _builtin_print(f"[{_perf_time.time() - _PERF_T0:7.1f}s]", *args, **kwargs)
+
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
 # Prefer root Complete_Jobs_Full_Data.json (scraper output = source of truth for ordering)
@@ -7093,10 +7102,20 @@ def _collect_district_jobs():
     # Unified scraper ka data nahi hai to FJA categories se fill karo.
     # har job ka basic_details.job_location → district ya state name se match karo.
     if not any(_district_jobs.values()):
-        _all_dist_names = set()
+        # PERF FIX: precompute (lowered_name, original_name) ONCE instead of
+        # calling .lower() + dict lookups on every district for EVERY job
+        # (was O(jobs * districts) with repeated string ops — with ~700
+        # districts and thousands of jobs this took 20-40+ minutes and hit
+        # the CI timeout). Precomputing cuts the per-job inner-loop cost to
+        # a plain list scan over cached tuples — same match logic/order,
+        # much faster.
+        _dist_lower_pairs = []
         for _st, _dlist in _DIST_BY_STATE.items():
             for _dd in _dlist:
-                _all_dist_names.add(_dd.get('district','').lower())
+                _dn0 = _dd.get('district', '')
+                if _dn0:
+                    _dist_lower_pairs.append((_dn0.lower(), _dn0))
+
         for _cat, _cat_jobs in FJA.items():
             if not isinstance(_cat_jobs, list): continue
             for _fj in _cat_jobs:
@@ -7104,14 +7123,12 @@ def _collect_district_jobs():
                 _loc = safe(_bd.get('job_location','') or _bd.get('organization_name','')).lower()
                 if not _loc: continue
                 # Match job_location to any known district name
-                for _st, _dlist in _DIST_BY_STATE.items():
-                    for _dd in _dlist:
-                        _dn = _dd.get('district','')
-                        if _dn.lower() in _loc or _loc in _dn.lower():
-                            _district_jobs.setdefault(_dn, [])
-                            if _fj not in _district_jobs[_dn]:
-                                _district_jobs[_dn].append(_fj)
-                            break
+                for _dn_lower, _dn in _dist_lower_pairs:
+                    if _dn_lower in _loc or _loc in _dn_lower:
+                        _district_jobs.setdefault(_dn, [])
+                        if _fj not in _district_jobs[_dn]:
+                            _district_jobs[_dn].append(_fj)
+                        break
 
 # ── UNIFIED JOBS: SLUG DERIVE KARO (collect se PEHLE) ────────────────────────
 # CRITICAL ORDER: slug derivation _collect_district_jobs() se PEHLE hona chahiye.
