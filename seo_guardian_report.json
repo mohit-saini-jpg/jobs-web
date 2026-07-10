@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-09T10:40:26.914098+00:00",
+  "timestamp": "2026-07-10T04:13:57.686937+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 4355,
   "issues_found_by_check": {
     "jobposting_schema": 28,
-    "slug_validate": 24,
-    "sitemap_sync": 162
+    "slug_validate": 4,
+    "sitemap_sync": 1
   },
-  "issues_auto_fixed": 189,
+  "issues_auto_fixed": 28,
   "unfixable": [
     {
       "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
@@ -39,126 +39,6 @@
       "check": "slug_validate",
       "severity": "non_critical",
       "reason": "validate [WARN]  Link to /jobs/wbjee-2026-application-form-correction-window/ in [education/west-bengal/index.html] has no built page"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-unregistered-death-fund-yojana/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-family-pension-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkariresultshine.com' in href: jobs/3000-pension-pension-yojana-apply/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-ph-children-pension-yojana-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-copy-apply-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-widow-pension-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-divyang-pension-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkariresultshine.com' in href: jobs/pradhan-mantri-kisan-samman-nidhi-online/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-matrushakti-udyamita-yojana-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/youth-hostel-yojana-online-application-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-kanyadan-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-antyodaya-parivar-utthan-yojana-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-bimari-treatment-yojana-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-death-fund-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-mahila-samridhi-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-self-marriage-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-tour-fund-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/indira-gandhi-national-disability-pension-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/haryana-labour-silai-machine-yojana-online-form/index.html"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [ERROR] 'sarkarinetwork.com' in href: jobs/stand-up-india-loan-yojana-apply-online-form/index.html"
     }
   ],
   "critical_unfixable": 0,
@@ -167,5 +47,5 @@
     "broken_links: No new redirects needed — all links OK",
     "build_sitemaps:   sitemap.xml                      64 urls [ok]"
   ],
-  "duration_sec": 14.8
+  "duration_sec": 14.9
 }
