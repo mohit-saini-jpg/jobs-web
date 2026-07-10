@@ -621,7 +621,7 @@
         (sec.items || []).forEach(function(item) {
           var title = String(item.name || item.title || '').trim();
           if (!title || title.length < 4) return;
-          var href = item.url || item.link || '#';
+          var href = item.slug ? ('/jobs/' + item.slug + '/') : (item.url || item.link || '#');
           if (!href || href === '#') return;
 
           extra.push({
