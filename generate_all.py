@@ -547,10 +547,18 @@ def _reconstruct_job_from_html(html_content, title, slug):
         job['_detected_pin']    = _p
     return job
 
+# SR_Latest_Jobs / SR_Upcoming_Jobs are scraped as generic "latest update"
+# buckets and, in practice, also contain scheme/yojana, result, admit
+# card, answer key and admission items alongside real job postings — NOT
+# forced to 'job' below, so STEP 2/3 keyword detection decides these.
+_MIXED_JOB_CATS = ('SR_Latest_Jobs', 'SR_Upcoming_Jobs')
+
 def page_intent(job_obj):
     """Dynamically classify page into one of 9 intents.
     Priority: category prefix > data signals > title/slug keywords.
     Category NEVER gets overridden by title — avoids false positives.
+    Exception: SR_Latest_Jobs / SR_Upcoming_Jobs are mixed-content buckets
+    (see _MIXED_JOB_CATS) and always fall through to keyword detection.
     """
     bd    = job_obj.get('basic_details', {}) or {}
     cat   = str(job_obj.get('category') or '').strip()
@@ -558,9 +566,12 @@ def page_intent(job_obj):
     slug  = str(job_obj.get('_canonical_slug') or job_obj.get('slug') or '')
 
     # ── STEP 1: Category prefix (authoritative, fastest) ────────────────────
-    for prefix, intent in _CAT_INTENT.items():
-        if cat == prefix or cat.startswith(prefix + '_') or cat.startswith(prefix):
-            return intent
+    if cat not in _MIXED_JOB_CATS:
+        for prefix, intent in _CAT_INTENT.items():
+            if prefix in _MIXED_JOB_CATS:
+                continue
+            if cat == prefix or cat.startswith(prefix + '_') or cat.startswith(prefix):
+                return intent
 
     # ── STEP 2: Data signals (vacancy/salary = definite job) ────────────────
     has_vacancy = bool(
