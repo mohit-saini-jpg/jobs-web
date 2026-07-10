@@ -402,6 +402,15 @@ _CAT_INTENT = {
     'SR_Answer_Key':  'answerkey','FJA_Answer_Key':   'answerkey',
     'SR_Syllabus':    'syllabus', 'FJA_Syllabus':     'syllabus',
     'SR_Admission':   'admission','FJA_Admission':    'admission',
+    # 'ADMISSIONS' (all-caps, no SR_ prefix) is the ACTUAL category string the
+    # SARK pipeline uses site-wide for admission records (see SARK_CAT_MAP,
+    # sections_index['ADMISSIONS'], etc.) — 'SR_Admission' above never
+    # actually matches real data. Without this key, admission pages whose
+    # title contains "Online Form"/"Apply Online" (extremely common phrasing
+    # for admission forms too) fell through to the job-keyword fallback and
+    # got a JobPosting schema + job-style AI content (fake salary/job
+    # profile) instead of being recognized as an admission notice.
+    'ADMISSIONS':     'admission',
     'Scheme':         'scheme',   'Yojana':           'scheme',
     'Education':      'education','StateWise':        'education',
     'Article':        'article',  'Guide':            'article',
@@ -972,7 +981,18 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              content forever. BUMP forces every page onto a brand-new,
 #              never-before-cached ASSET_VER query string so the fixed JS
 #              is guaranteed to be fetched fresh.
-TEMPLATE_VERSION = '20260710.3-cs'
+# 20260710.4 — page_intent() bug: 'ADMISSIONS' (the real, all-caps category
+#              string the SARK pipeline uses site-wide) was never in
+#              _CAT_INTENT — only the never-matching 'SR_Admission' was. Any
+#              admission page whose title contains "Online Form"/"Apply
+#              Online" (very common admission-form phrasing) fell through to
+#              the job-keyword fallback and got tagged @type:JobPosting with
+#              a fake salary/employment-type instead of
+#              EducationalOccupationalProgram. BUMP forces re-render of ALL
+#              existing pages so already-baked ADMISSIONS pages get the
+#              correct schema (and, downstream, correct AI content — see
+#              ai_html_enricher.py's intent-detection fix in the same commit).
+TEMPLATE_VERSION = '20260710.4-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched

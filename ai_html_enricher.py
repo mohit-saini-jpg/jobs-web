@@ -81,6 +81,65 @@ def render_faq(faq_list):
                   f'<div>{e(a)}</div></div></div>')
     return items
 
+# ── Intent detector ─────────────────────────────────────────────────────────
+# generate_all.py's build_schemas() already classifies every page into a
+# specific JSON-LD @type based on category/keywords (job/result/admit
+# card/answer key/syllabus/admission/scheme/generic article) — see
+# page_intent() there. Read that SAME classification back out of the page's
+# own JSON-LD instead of re-guessing, so the AI prompt asks type-appropriate
+# questions (a Result page has no "salary", an Admission page is not "a job").
+_NON_PRIMARY_JSONLD_TYPES = {"WebSite", "Organization", "BreadcrumbList", "FAQPage"}
+
+def detect_intent(html: str) -> str:
+    """Returns one of: job, result, admitcard, answerkey, syllabus, admission,
+    scheme, article. Falls back to 'job' (previous default behaviour) only
+    when no recognizable schema is found at all."""
+    for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL):
+        try:
+            jd = json.loads(block)
+        except Exception:
+            continue
+        t = jd.get("@type", "")
+        if not t or t in _NON_PRIMARY_JSONLD_TYPES:
+            continue
+        if t == "JobPosting":
+            return "job"
+        if t == "Event":
+            return "admitcard"
+        if t == "SpecialAnnouncement":
+            return "result"
+        if t == "Course":
+            return "syllabus"
+        if t == "EducationalOccupationalProgram":
+            return "admission"
+        if t == "GovernmentService":
+            return "scheme"
+        if t == "Article":
+            # Article is shared by BOTH answer-key pages and generic
+            # education/notice pages — build_schemas() only sets these
+            # distinguishing fields for answer-key pages.
+            about = jd.get("about") or {}
+            about_name = str(about.get("name") or "") if isinstance(about, dict) else ""
+            keywords = str(jd.get("keywords") or "")
+            if "answer key" in about_name.lower() or "answer key" in keywords.lower():
+                return "answerkey"
+            return "article"
+        break   # first primary schema found but an unrecognized @type — stop looking
+    return "job"
+
+# Old job-only headings that should never appear on a non-job page. Any page
+# carrying AI_MARKER + one of these headings was enriched before intent
+# detection existed and needs re-enrichment with type-appropriate content.
+_OLD_JOB_ONLY_HEADING_RE = re.compile(
+    r">[^<]*\bSalary Insights\b[^<]*<|>[^<]*\bJob Profile\b[^<]*<", re.I)
+
+def needs_reheal(html: str, intent: str) -> bool:
+    if intent == "job":
+        return False
+    m = re.search(re.escape(AI_MARKER) + r"(.*?)" + re.escape(AI_MARKER), html, re.DOTALL)
+    block = m.group(1) if m else html
+    return bool(_OLD_JOB_ONLY_HEADING_RE.search(block))
+
 # ── Facts extractor from HTML ─────────────────────────────────────────────────
 def extract_facts(html: str, slug: str) -> dict:
     """HTML se job facts nikalo — JSON-LD + kv-table + heading"""
@@ -147,11 +206,91 @@ def extract_facts(html: str, slug: str) -> dict:
     return {k: v for k, v in facts.items() if v}
 
 # ── Groq API ──────────────────────────────────────────────────────────────────
+# Per-intent framing + per-field instructions. The 6 AI JSON keys stay THE
+# SAME across every intent (so patch_html/HTML injection never changes) —
+# only what each field is ASKED to contain changes, so a Result/Admit Card/
+# Admission/Scheme page never gets asked for "job salary" or "job profile".
+INTENT_LABEL = {
+    "job":       "a government job recruitment notification",
+    "result":    "a government exam RESULT declaration — NOT a job posting. Never mention salary or call it \"this job\"",
+    "admitcard": "an EXAM ADMIT CARD / hall-ticket release — NOT a job posting",
+    "answerkey": "an EXAM ANSWER KEY release — NOT a job posting",
+    "syllabus":  "an EXAM SYLLABUS / exam pattern page — NOT a job posting",
+    "admission": "a college/university ADMISSION notification for a course. This is about ENROLLING in a course, NOT employment — never call it \"this job\" or quote a monthly job salary",
+    "scheme":    "a GOVERNMENT SCHEME / Yojana benefit for citizens — NOT a job posting",
+    "article":   "a general Sarkari update / notice, not necessarily a job posting",
+}
+INTENT_NOUN = {
+    "job": "notification", "result": "result declaration", "admitcard": "admit card release",
+    "answerkey": "answer key release", "syllabus": "syllabus/exam pattern",
+    "admission": "admission notification", "scheme": "government scheme", "article": "update",
+}
+INTENT_FIELDS = {
+    "job": {
+        "who":      "<1-2 sentences on ideal candidate profile who should apply>",
+        "prep":     "<2-3 actionable exam/interview preparation tips>",
+        "salary":   "<salary context, comparison with similar govt jobs, growth prospects>",
+        "profile":  "<job role, day-to-day work, career growth>",
+        "strategy": "<selection process strategy, what to focus on to get selected>",
+    },
+    "result": {
+        "who":      "<1-2 sentences on who should check this result and how>",
+        "prep":     "<2-3 tips on what to do right after checking the result — download/save marksheet, verify details, next steps>",
+        "salary":   "<analysis of cutoff marks / merit trends and what they indicate about difficulty level — NOT salary>",
+        "profile":  "<what happens next: the following stage (interview/document verification/counselling) candidates should now prepare for>",
+        "strategy": "<tips for the next selection stage and how to stay updated on further notices>",
+    },
+    "admitcard": {
+        "who":      "<1-2 sentences on who should download this admit card and by when>",
+        "prep":     "<2-3 exam-day tips — documents to carry, reporting time, dress code>",
+        "salary":   "<exam pattern and marking scheme overview relevant to this exam — NOT salary>",
+        "profile":  "<exam center rules, ID proof requirements, and things not allowed inside the center>",
+        "strategy": "<last-minute preparation strategy for the exam>",
+    },
+    "answerkey": {
+        "who":      "<1-2 sentences on who should check this answer key>",
+        "prep":     "<2-3 tips on how to raise an objection/challenge if a candidate disagrees with an answer, including fee/deadline if known>",
+        "salary":   "<marking scheme details (marks per question, negative marking) and how to estimate probable score — NOT salary>",
+        "profile":  "<expected cutoff analysis based on this answer key and likely difficulty level>",
+        "strategy": "<what to do next while waiting for the final result>",
+    },
+    "syllabus": {
+        "who":      "<1-2 sentences on who should follow this syllabus>",
+        "prep":     "<2-3 study-plan tips for covering this syllabus effectively>",
+        "salary":   "<topic-wise weightage or marks distribution insights — NOT salary>",
+        "profile":  "<subject-wise preparation approach and recommended focus areas>",
+        "strategy": "<revision strategy and time management tips before the exam>",
+    },
+    "admission": {
+        "who":      "<1-2 sentences on who is eligible and should apply for this admission>",
+        "prep":     "<2-3 tips on how to apply — documents needed, application steps>",
+        "salary":   "<fee structure details and any scholarship/fee-waiver options available — NOT a job salary>",
+        "profile":  "<what this course covers and career prospects AFTER completing it — phrase as future potential, never as an existing job>",
+        "strategy": "<admission/counselling selection basis — merit, entrance test, or interview>",
+    },
+    "scheme": {
+        "who":      "<1-2 sentences on who is eligible for this scheme>",
+        "prep":     "<2-3 tips on how to apply and documents required>",
+        "salary":   "<benefit amount/value details and how it helps beneficiaries — NOT a job salary>",
+        "profile":  "<how the scheme works — implementation process and disbursement details>",
+        "strategy": "<tips to ensure successful application and avoid common rejection reasons>",
+    },
+    "article": {
+        "who":      "<1-2 sentences on who this update is relevant for>",
+        "prep":     "<2-3 key takeaways or action points from this update>",
+        "salary":   "<deeper analysis or context around this update — NOT salary>",
+        "profile":  "<related background/context that helps understand this update>",
+        "strategy": "<what to do next or where to check for further updates>",
+    },
+}
+
 PROMPT_TEMPLATE = """\
 You are a veteran Sarkari Naukri journalist writing for Indian government job aspirants.
 Write in natural Hinglish (Hindi words in English script + English terms mixed naturally).
 
-JOB FACTS:
+This page is about: {intent_label}
+
+PAGE FACTS:
 {facts_json}
 
 Generate EXACTLY this JSON (no extra text, no markdown):
@@ -160,12 +299,12 @@ Generate EXACTLY this JSON (no extra text, no markdown):
   "ai_meta_description":   "<compelling meta ≤155 chars, include key facts>",
   "ai_h1":                 "<punchy H1, different from title, ≤80 chars>",
   "ai_overview":           "<2-3 sentences natural Hinglish overview, aspirant-friendly>",
-  "ai_expert_analysis":    "<2-3 sentences expert take on this notification>",
-  "ai_who_should_apply":   "<1-2 sentences on ideal candidate profile>",
-  "ai_preparation_tips":   "<2-3 actionable prep tips>",
-  "ai_salary_insights":    "<salary context, comparison, growth prospects>",
-  "ai_job_profile_analysis":"<job role, day-to-day work, career growth>",
-  "ai_selection_strategy": "<selection process strategy, what to focus on>",
+  "ai_expert_analysis":    "<2-3 sentences expert take on this {intent_noun}>",
+  "ai_who_should_apply":   "{f_who}",
+  "ai_preparation_tips":   "{f_prep}",
+  "ai_salary_insights":    "{f_salary}",
+  "ai_job_profile_analysis":"{f_profile}",
+  "ai_selection_strategy": "{f_strategy}",
   "ai_expanded_faqs":      [
     {{"question":"<Q?>","answer":"<A>"}},
     {{"question":"<Q?>","answer":"<A>"}},
@@ -210,14 +349,20 @@ def _retry_after_secs(ex) -> float | None:
         return None
 
 
-def call_groq(facts: dict):
+def call_groq(facts: dict, intent: str = "job"):
     """Returns a dict on success, None on a soft failure (skip this page), or the
     RATE_LIMITED sentinel when the daily quota is genuinely exhausted."""
     if not GROQ_KEY:
         print("  ❌ GROQ_API_KEY missing")
         return None
 
-    prompt = PROMPT_TEMPLATE.format(facts_json=json.dumps(facts, ensure_ascii=False, indent=2))
+    fields = INTENT_FIELDS.get(intent, INTENT_FIELDS["job"])
+    prompt = PROMPT_TEMPLATE.format(
+        facts_json=json.dumps(facts, ensure_ascii=False, indent=2),
+        intent_label=INTENT_LABEL.get(intent, INTENT_LABEL["job"]),
+        intent_noun=INTENT_NOUN.get(intent, "notification"),
+        f_who=fields["who"], f_prep=fields["prep"], f_salary=fields["salary"],
+        f_profile=fields["profile"], f_strategy=fields["strategy"])
     body = {
         "model": MODEL,
         "max_tokens": 800,
@@ -304,18 +449,79 @@ def call_groq(facts: dict):
 
 # ── HTML Patcher ──────────────────────────────────────────────────────────────
 # Heading templates — job title AI cards ke heading mein bhi aaye, exact pattern
-# jo user ne diya (kuch mein title pehle, "Who Should Apply" mein title baad mein)
-HEADING_TEMPLATES = {
-    "ai_overview":             "{t} Overview",
-    "ai_expert_analysis":      "{t} Expert Analysis",
-    "ai_who_should_apply":     "Who Should Apply {t}",
-    "ai_preparation_tips":     "{t} Preparation Tips",
-    "ai_salary_insights":      "{t} Salary Insights",
-    "ai_job_profile_analysis": "{t} Job Profile",
-    "ai_selection_strategy":   "{t} Selection Strategy",
+# jo user ne diya (kuch mein title pehle, "Who Should Apply" mein title baad mein).
+# ai_overview / ai_expert_analysis headings are intent-neutral (same for every
+# page type); the other 5 change wording per intent so a Result/Admit Card/
+# Admission/Scheme page never shows a heading like "Salary Insights".
+BASE_HEADINGS = {
+    "ai_overview":        "{t} Overview",
+    "ai_expert_analysis": "{t} Expert Analysis",
+}
+INTENT_HEADINGS = {
+    "job": {
+        "ai_who_should_apply":     "Who Should Apply {t}",
+        "ai_preparation_tips":     "{t} Preparation Tips",
+        "ai_salary_insights":      "{t} Salary Insights",
+        "ai_job_profile_analysis": "{t} Job Profile",
+        "ai_selection_strategy":   "{t} Selection Strategy",
+    },
+    "result": {
+        "ai_who_should_apply":     "Who Should Check {t}",
+        "ai_preparation_tips":     "{t}: What To Do Next",
+        "ai_salary_insights":      "{t} Cutoff & Merit Insights",
+        "ai_job_profile_analysis": "{t}: Next Stage Details",
+        "ai_selection_strategy":   "{t}: Next Steps",
+    },
+    "admitcard": {
+        "ai_who_should_apply":     "Who Should Download {t}",
+        "ai_preparation_tips":     "{t}: Exam Day Tips",
+        "ai_salary_insights":      "{t} Exam Pattern Insights",
+        "ai_job_profile_analysis": "{t}: Exam Center Guidelines",
+        "ai_selection_strategy":   "{t} Last-Minute Strategy",
+    },
+    "answerkey": {
+        "ai_who_should_apply":     "Who Should Check {t}",
+        "ai_preparation_tips":     "How To Raise Objection — {t}",
+        "ai_salary_insights":      "{t} Marking Scheme",
+        "ai_job_profile_analysis": "{t} Expected Cutoff",
+        "ai_selection_strategy":   "{t}: What To Do Next",
+    },
+    "syllabus": {
+        "ai_who_should_apply":     "Who Should Follow {t}",
+        "ai_preparation_tips":     "{t} Study Plan Tips",
+        "ai_salary_insights":      "{t} Weightage & Marks Distribution",
+        "ai_job_profile_analysis": "{t} Subject-Wise Strategy",
+        "ai_selection_strategy":   "{t} Revision Strategy",
+    },
+    "admission": {
+        "ai_who_should_apply":     "Who Should Apply {t}",
+        "ai_preparation_tips":     "{t} Application Tips",
+        "ai_salary_insights":      "{t} Fee & Scholarship Details",
+        "ai_job_profile_analysis": "{t} Course & Career Insights",
+        "ai_selection_strategy":   "{t} Admission Strategy",
+    },
+    "scheme": {
+        "ai_who_should_apply":     "Who Is Eligible — {t}",
+        "ai_preparation_tips":     "{t} Application Process",
+        "ai_salary_insights":      "{t} Benefits Details",
+        "ai_job_profile_analysis": "How {t} Works",
+        "ai_selection_strategy":   "{t} Application Tips",
+    },
+    "article": {
+        "ai_who_should_apply":     "Who Should Read {t}",
+        "ai_preparation_tips":     "{t}: Key Takeaways",
+        "ai_salary_insights":      "{t}: Detailed Insights",
+        "ai_job_profile_analysis": "{t}: Related Context",
+        "ai_selection_strategy":   "{t}: What To Do Next",
+    },
 }
 
-def patch_html(original: str, result: dict, facts: dict | None = None) -> str:
+def get_headings(intent: str) -> dict:
+    h = dict(BASE_HEADINGS)
+    h.update(INTENT_HEADINGS.get(intent, INTENT_HEADINGS["job"]))
+    return h
+
+def patch_html(original: str, result: dict, facts: dict | None = None, intent: str = "job") -> str:
     html = original
     facts = facts or {}
 
@@ -355,13 +561,28 @@ def patch_html(original: str, result: dict, facts: dict | None = None) -> str:
         ("ai_job_profile_analysis", "fa-briefcase",          "475569,#334155"),
         ("ai_selection_strategy",   "fa-bullseye",           "be123c,#f43f5e"),
     ]
+    # Non-job intents repurpose the salary/profile fields for non-money
+    # content (cutoff trends, exam-center rules, etc.) — swap the icon so a
+    # rupee sign doesn't show up next to "Cutoff & Merit Insights".
+    ICON_OVERRIDE = {
+        "result":    {"ai_salary_insights": "fa-chart-line",       "ai_job_profile_analysis": "fa-forward"},
+        "admitcard": {"ai_salary_insights": "fa-list-ol",          "ai_job_profile_analysis": "fa-building-shield"},
+        "answerkey": {"ai_salary_insights": "fa-calculator",       "ai_job_profile_analysis": "fa-bullseye"},
+        "syllabus":  {"ai_salary_insights": "fa-chart-pie",        "ai_job_profile_analysis": "fa-diagram-project"},
+        "admission": {"ai_job_profile_analysis": "fa-graduation-cap"},
+        "scheme":    {"ai_salary_insights": "fa-hand-holding-dollar", "ai_job_profile_analysis": "fa-gears"},
+        "article":   {"ai_salary_insights": "fa-magnifying-glass-chart", "ai_job_profile_analysis": "fa-book-open"},
+    }
+    headings = get_headings(intent)
+    intent_icons = ICON_OVERRIDE.get(intent, {})
     ai_html = ""
     for key, icon, color in ai_cards:
         if key == "ai_overview" and base_has_overview:
             continue   # base page mein already Overview section hai — skip, duplicate mat banao
         val = striptags(result.get(key) or "").strip()
         if val and len(val) > 20:
-            heading = HEADING_TEMPLATES[key].format(t=job_title) if job_title else key.replace("ai_", "").replace("_", " ").title()
+            icon = intent_icons.get(key, icon)
+            heading = headings[key].format(t=job_title) if job_title else key.replace("ai_", "").replace("_", " ").title()
             body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
             ai_html += sec_card(heading, icon, color, body)
 
@@ -558,15 +779,37 @@ def main():
     # Collect HTML files to process — NEWEST first so fresh jobs get AI content
     # promptly. Already-enriched pages are skipped (AI_MARKER), so the backlog of
     # older un-enriched pages still drains over subsequent days.
+    #
+    # PRIORITY: pages that were enriched before intent-detection existed and
+    # still carry the wrong job-only headings ("Salary Insights"/"Job Profile")
+    # on a non-job page get fixed FIRST, ahead of never-touched pages — wrong
+    # live content is a bigger problem than missing content.
     if SINGLE_SLUG:
         html_files = [JOBS_DIR / SINGLE_SLUG / "index.html"]
     else:
-        html_files = sorted(JOBS_DIR.rglob("index.html"),
-                            key=lambda p: p.stat().st_mtime, reverse=True)
+        all_files = list(JOBS_DIR.rglob("index.html"))
+        reheal_paths, fresh_paths = [], []
+        for p in all_files:
+            try:
+                txt = p.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+            if AI_MARKER in txt:
+                itnt = detect_intent(txt)
+                if itnt != "job" and needs_reheal(txt, itnt):
+                    reheal_paths.append(p)
+            else:
+                fresh_paths.append(p)
+        reheal_paths.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        fresh_paths.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        html_files = reheal_paths + fresh_paths
+        if reheal_paths:
+            print(f"🔧 {len(reheal_paths)} previously mis-templated non-job page(s) found — fixing these first\n")
 
     processed = 0
     skipped_done = 0
     skipped_ai = 0
+    reheal_fixed = 0
     errors = 0
     failed_slugs = []          # pages the API couldn't enrich → retried next run
     rate_stopped = False       # True if we stopped early due to daily quota
@@ -607,8 +850,16 @@ def main():
             original = md_html   # updated original for AI patch below
             print(f"   📋 Microdata injected (JobPosting itemprop)")
 
-        # Skip if already has AI content (and not forcing)
-        if not FORCE and AI_MARKER in original:
+        # Detect what kind of page this actually is (job/result/admit card/
+        # answer key/syllabus/admission/scheme/article) so the prompt below
+        # asks type-appropriate questions instead of always assuming a job.
+        intent = detect_intent(original)
+        is_reheal = AI_MARKER in original and intent != "job" and needs_reheal(original, intent)
+
+        # Skip if already has AI content (and not forcing) — UNLESS this page
+        # was mis-templated (non-job page with old job-only headings), which
+        # always gets re-enriched with the correct type-appropriate content.
+        if not FORCE and AI_MARKER in original and not is_reheal:
             skipped_ai += 1
             done_slugs.add(slug)
             continue
@@ -619,7 +870,8 @@ def main():
             skipped_done += 1
             continue
 
-        print(f"\n⚡ [{processed+1}/{RUN_LIMIT}] [{calls_today+1}/{DAILY_LIMIT}]")
+        print(f"\n⚡ [{processed+1}/{RUN_LIMIT}] [{calls_today+1}/{DAILY_LIMIT}]" +
+              (f"  🔧 RE-HEAL ({intent})" if is_reheal else f"  [{intent}]"))
         print(f"   {facts.get('title','')[:65]}")
         print(f"   Org: {facts.get('organization','?')[:50]}")
 
@@ -629,7 +881,7 @@ def main():
             continue
 
         # Call Groq
-        result = call_groq(facts)
+        result = call_groq(facts, intent)
         if result is RATE_LIMITED:
             # Daily quota done — stop THIS run cleanly. Progress is saved, the
             # final report still prints, and remaining pages resume next run.
@@ -643,7 +895,9 @@ def main():
             continue
 
         # Patch HTML
-        new_html = patch_html(original, result, facts)
+        new_html = patch_html(original, result, facts, intent)
+        if is_reheal:
+            reheal_fixed += 1
 
         # Atomic write
         tmp = html_path.with_suffix(".tmp")
@@ -685,6 +939,7 @@ def main():
     print("  📋 AI ENRICHMENT — FINAL REPORT")
     print("=" * 60)
     print(f"  ✅ Enriched this run : {processed}")
+    print(f"  🔧 Re-healed (mis-templated non-job pages fixed) : {reheal_fixed}")
     print(f"  ⏭️  Already had AI    : {skipped_ai}")
     print(f"  ⏭️  Skipped (no data) : {skipped_done}")
     print(f"  ❌ Failed (retry)    : {errors}" + (f"  e.g. {', '.join(failed_slugs[:3])}" if failed_slugs else ""))
@@ -714,6 +969,7 @@ def main():
         "| Metric | Value |",
         "|---|---|",
         f"| ✅ Enriched this run | **{processed}** |",
+        f"| 🔧 Re-healed (mis-templated non-job pages) | **{reheal_fixed}** |",
         f"| 📄 Remaining | **{remaining}** |",
         f"| ❌ Failed (auto-retry next run) | {errors} |",
         f"| 🔢 API calls today | {calls_today}/{DAILY_LIMIT} |",
