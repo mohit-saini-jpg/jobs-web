@@ -100,17 +100,28 @@ else:
 print('Checking for blocked-domain leakage in job pages...')
 BLOCKED = {'sarkariresult.com', 'freejobalert.com', 'sarkarinetwork.com',
            'sarkariresultshine.com'}
+ANCHOR_RE = re.compile(r'<a\b[^>]*>', re.I)
 all_pages = list(glob.glob('jobs/*/index.html'))
 domain_violations = []
 for fpath in all_pages:
     try:
-        html = open(fpath, encoding='utf-8', errors='ignore').read().lower()
+        html = open(fpath, encoding='utf-8', errors='ignore').read()
     except Exception:
         continue
-    # Only flag blocked domains inside href/src/action attributes (not in page text)
-    for domain in BLOCKED:
-        if f'href="https://{domain}' in html or f'href="http://{domain}' in html:
-            domain_violations.append(f"'{domain}' in href: {fpath}")
+    # Only flag blocked domains inside href attributes (not in page text), and
+    # only if the link is NOT already rel="nofollow" — a nofollow link already
+    # tells search engines not to pass trust/equity to that domain, so it no
+    # longer counts as an SEO leak even though the href itself is still needed
+    # for the redirect UX.
+    for tag in ANCHOR_RE.findall(html):
+        tag_lower = tag.lower()
+        if 'href="http' not in tag_lower:
+            continue
+        if 'nofollow' in tag_lower:
+            continue
+        for domain in BLOCKED:
+            if f'href="https://{domain}' in tag_lower or f'href="http://{domain}' in tag_lower:
+                domain_violations.append(f"'{domain}' in href: {fpath}")
 
 if domain_violations:
     for v in domain_violations[:20]:

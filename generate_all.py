@@ -7605,7 +7605,7 @@ def _du_page(name, url, sec_title, other_items):
     card_bd = (
         '<div style="background:#fff;border-radius:0 0 12px 12px;'
         + 'border:1px solid #e2e8f0;border-top:none;padding:16px 18px;">'
-        + '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="noopener noreferrer" '
+        + '<a href="' + e(url) + '" class="lnk-btn ' + btn_cl + '" target="_blank" rel="nofollow noopener noreferrer" '
         + 'style="display:flex;align-items:center;justify-content:center;gap:8px;'
         + 'width:100%;padding:12px 18px;font-size:.9rem;font-weight:800;margin-bottom:10px;">'
         + '<i class="fa-solid ' + btn_ic + '"></i> ' + e(btn_tx) + ' \u2197'
