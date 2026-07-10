@@ -104,12 +104,6 @@
     /* FORM CARDS */
     .f-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:18px;}
     .f-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;color:#fff;font-size:.81rem;font-weight:800;}
-    .f-head.blue{background:linear-gradient(90deg,#0d2257,#1a56db);}
-    .f-head.teal{background:linear-gradient(90deg,#134e4a,#0d9488);}
-    .f-head.green{background:linear-gradient(90deg,#064e3b,#059669);}
-    .f-head.orange{background:linear-gradient(90deg,#78350f,#f97316);}
-    .f-head.purple{background:linear-gradient(90deg,#3b0764,#7c3aed);}
-    .f-head.slate{background:linear-gradient(90deg,#1e293b,#475569);}
     .f-body{padding:18px;}
     .sec-lbl{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:6px;padding-bottom:9px;border-bottom:1.5px solid var(--border);}
 
@@ -152,12 +146,9 @@
 
     /* SKILLS */
     .sk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-    .sk-name{flex:0 0 155px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.79rem;font-family:inherit;outline:none;}
+    .sk-name{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.79rem;font-family:inherit;outline:none;}
     .sk-name:focus{border-color:var(--blue);}
-    .sk-bar-w{flex:1;display:flex;align-items:center;gap:10px;}
-    .sk-range{flex:1;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--border);outline:none;cursor:pointer;}
-    .sk-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);cursor:pointer;}
-    .sk-pct{font-size:.71rem;font-weight:700;color:var(--blue);min-width:34px;text-align:right;}
+    .sk-bar-w, .sk-pct{display:none;}
 
     /* EDU */
     .edu-hdr{display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 34px;gap:6px;margin-bottom:5px;}
@@ -189,18 +180,14 @@
     /* TEMPLATE GRID */
     .tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:4px 0 12px;}
     @media(max-width:480px){.tpl-grid{grid-template-columns:repeat(2,1fr);}}
-    .tpl-it{border:2.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+    .tpl-it{border:2.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;background:#fff;}
     .tpl-it:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:var(--shadow-md);}
     .tpl-it.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.15);}
-    .tpl-prev{height:108px;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-    .tpl-hbar{padding:8px 9px;font-size:7.5px;font-weight:800;}
-    .tpl-bwrap{flex:1;display:flex;gap:3px;padding:5px 8px;}
-    .tpl-mc{flex:1;display:flex;flex-direction:column;gap:4px;}
-    .tpl-sc{width:28%;display:flex;flex-direction:column;gap:3px;padding:4px;}
-    .tpl-ln{height:3px;border-radius:3px;opacity:.3;}
-    .tpl-ln.dk{opacity:.65;}
-    .tpl-lbl{padding:6px 8px;font-size:9.5px;font-weight:800;text-align:center;border-top:1.5px solid var(--border);color:var(--text);}
-    .tpl-bdg{position:absolute;top:4px;right:4px;color:#fff;font-size:6px;font-weight:800;padding:2px 5px;border-radius:3px;text-transform:uppercase;}
+    .tpl-prev{height:236px;overflow:hidden;position:relative;background:#fff;}
+    .tpl-canvas{position:absolute;top:0;left:0;width:794px;transform-origin:top left;pointer-events:none;background:#fff;}
+    .tpl-prev-fade{position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.96));}
+    .tpl-lbl{padding:7px 8px;font-size:9.5px;font-weight:800;text-align:center;border-top:1.5px solid var(--border);color:var(--text);}
+    .tpl-bdg{position:absolute;top:6px;right:6px;color:#fff;font-size:8px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.2);}
 
     /* GEN BUTTON */
     .sub-row{padding:14px 18px 18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
@@ -213,21 +200,29 @@
     .ats-box p{font-size:.73rem;font-weight:700;color:#1e40af;margin-bottom:2px;}
     .ats-box span{font-size:.69rem;color:#3b82f6;}
 
+    /* SAMPLE DATA */
+    .sample-box{background:linear-gradient(135deg,#0d2257,#1a56db);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .sample-box .sb-txt p{font-size:.92rem;font-weight:800;color:#fff;margin-bottom:3px;display:flex;align-items:center;gap:7px;}
+    .sample-box .sb-txt span{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:600;}
+    .sample-btn{background:#fff;color:var(--navy);border:none;border-radius:10px;padding:11px 22px;font-size:.82rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:inherit;white-space:nowrap;transition:all .18s;box-shadow:0 3px 14px rgba(0,0,0,.15);}
+    .sample-btn:hover{transform:translateY(-2px);background:#fef3c7;}
+
+    .demo-banner{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #fde68a;border-radius:10px;padding:10px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .demo-banner p{font-size:.76rem;font-weight:800;color:#92400e;display:flex;align-items:center;gap:7px;}
+    .demo-banner button{background:#d97706;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
+
     /* PREVIEW */
     .prev-wrap{display:none;}.prev-wrap.show{display:block;}
     .prev-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;background:#fff;padding:14px 18px;border-radius:var(--radius);box-shadow:var(--shadow);}
     .back-btn{background:none;border:1.5px solid var(--border);border-radius:9px;padding:10px 20px;font-size:.81rem;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:6px;}
     .back-btn:hover{background:var(--bg);}
     .print-btn{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:.86rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;}
-    .print-btn:hover{opacity:.9;}
     .r-paper{background:#fff;border-radius:12px;overflow:visible;color:#111;box-shadow:var(--shadow-md);width:100%;max-width:210mm;margin:0 auto;}
 
-    /* LIVE BADGE */
     .live{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#15803d;font-size:.66rem;font-weight:800;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;}
     .live::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pd 1.5s infinite;}
     @keyframes pd{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
 
-    /* FOOTER */
     footer{background:linear-gradient(135deg,var(--navy),#1a3c8f);color:rgba(255,255,255,.75);padding:24px 24px 14px;margin-top:32px;}
     .ft-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
     @media(min-width:768px){.ft-in{grid-template-columns:2fr 1fr 1fr;}}
@@ -236,143 +231,50 @@
     .ft-links{display:flex;flex-direction:column;gap:5px;margin-top:4px;}
     .ft-links a{color:rgba(255,255,255,.68);font-size:.71rem;font-weight:600;transition:color .12s;}
     .ft-links a:hover{color:#fff;}
-    .ft-bot{border-top:1px solid rgba(255,255,255,.1);margin-top:14px;padding-top:10px;font-size:.66rem;color:rgba(255,255,255,.38);text-align:center;}
+    .ft-bot{border-top:1px solid rgba(255,255,255,.1);margin-top:14px;padding-top:10px;font-size:#666;text-align:center;}
 
-    /* PRINT */
+    /* ── FIX: 100% PERFECT FULL PAGE PRINT MEDIA CSS ── */
+    @page{ size: A4 portrait; margin: 0; }
     @media print{
-      .site-header,.nav-bar,.hero,.aside,.prev-actions,.s-card,#formSection,footer{display:none!important;}
-      @page{size:A4 portrait;margin:0;}
-      html,body{margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-      .grid,.page{display:block!important;padding:0!important;margin:0!important;max-width:100%!important;width:100%!important;}
-      .prev-wrap{display:block!important;}
-      .r-paper{border:none!important;border-radius:0!important;box-shadow:none!important;width:210mm!important;max-width:210mm!important;overflow:visible!important;}
-      #resumeOut *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-    }
-  
-    /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
-    #site-header .brand { flex: 1 1 auto !important; min-width: 0 !important; }
-    #site-header .brand-text { min-width: 0 !important; }
-    #site-header .brand-title { white-space: nowrap !important; font-size: .92rem !important; }
-    #site-header .header-actions { flex-shrink: 0 !important; }
-    #site-header .header-logo-bar { display: flex !important; align-items: center !important; }
-    .skip-link { position:absolute; transform:translateY(-100%); background:#000; color:#fff; padding:8px 16px; z-index:9999; transition:transform .3s; text-decoration:none; }
-    .skip-link:focus { transform:translateY(0); }
-    </style>
-  <!-- GA4: Centralized Analytics -->
-  <script src="/analytics.js" defer></script>
-
-  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="application-name" content="Top Sarkari Jobs"/>
-  <meta name="msapplication-TileColor" content="#0d2257"/>
-  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
-  <meta name="msapplication-tap-highlight" content="no"/>
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
-  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
-  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
-  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
-  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
-  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
-  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
-  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/tsj-menu.js?v=20260710140546" defer></script>
-  <script src="/pwa-install.js?v=6.0" defer></script>
-  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Free Resume / CV Maker",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "url": "https://www.topsarkarijobs.com/resume-maker/",
-    "description": "Free ATS-friendly resume and CV maker for government job applicants. Create professional resumes in 2 minutes with PDF download. No signup needed.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "1200",
-      "bestRating": "5"
-    },
-    "featureList": [
-      "ATS-friendly resume templates",
-      "PDF download free",
-      "Government job resume format",
-      "No signup required",
-      "Works on mobile and desktop"
-    ],
-    "inLanguage": ["en", "hi"],
-    "provider": {
-      "@type": "Organization",
-      "name": "Top Sarkari Jobs",
-      "url": "https://www.topsarkarijobs.com"
-    }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
-      {"@type":"ListItem","position":2,"name":"Resume Maker","item":"https://www.topsarkarijobs.com/resume-maker/"}
-    ]
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is this resume maker free?",
-        "acceptedAnswer": {"@type":"Answer","text":"Yes, completely free. No signup, no payment needed. Create and download PDF resume instantly."}
-      },
-      {
-        "@type": "Question",
-        "name": "Is this resume ATS-friendly for government jobs?",
-        "acceptedAnswer": {"@type":"Answer","text":"Yes, all templates are ATS-friendly and suitable for SSC, Railway, Bank, UPSC and state government job applications."}
-      },
-      {
-        "@type": "Question",
-        "name": "Can I download resume as PDF?",
-        "acceptedAnswer": {"@type":"Answer","text":"Yes, you can download your resume as a professional PDF file directly from your browser, no app installation needed."}
+      body, html {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
-    ]
-  }
-  </script>
-  <script>
-  /* Auto-update canonical to clean URL when served via SPA rewrite */
-  (function(){
-    var can = document.querySelector('link[rel="canonical"]');
-    var cleanPath = window.location.pathname;
-    if (can && cleanPath && cleanPath !== '/' && !cleanPath.endsWith('.html')) {
-      can.href = 'https://www.topsarkarijobs.com' + cleanPath;
+      /* Hide EVERYTHING first, then reveal only the resume paper.
+         This avoids leftover layout space from sticky/hidden elements
+         that was causing the resume to print small in a corner. */
+      body * { visibility: hidden !important; }
+      #resumeOut, #resumeOut * { visibility: visible !important; }
+      #resumeOut {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;      /* fill whatever page box the printer actually gives us */
+        max-width: 100% !important;
+        min-height: 100vh !important;
+        display: block !important;
+      }
+      /* Ensure resume builder content expands nicely to edges */
+      #resumeOut > div {
+        padding: 12mm 14mm !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+      }
     }
-  })();
-  </script>
+    .skip-link { position:absolute; transform:translateY(-100%); background:#000; color:#fff; padding:8px 16px; z-index:9999; }
+    .skip-link:focus { transform:translateY(0); }
+  </style>
 </head>
 <body>
 <div id="header-placeholder"></div>
@@ -396,7 +298,6 @@
     <a class="nav-link" href="/category/admissions/"><i class="fa-solid fa-trophy"></i> RESULTS</a>
     <a class="nav-link" href="/section/govt-scheme-yojna/"><i class="fa-solid fa-hand-holding-heart"></i> GOVT SCHEMES</a>
     <a class="nav-link cur" href="/resume-maker/"><i class="fa-solid fa-file-lines"></i> RESUME MAKER</a>
-    <a class="nav-link" href="/helpdesk/"><i class="fa-solid fa-headset"></i> CONTACT</a>
   </nav>
 </header>
 
@@ -405,12 +306,6 @@
     <div class="hero-badge"><i class="fa-solid fa-star" style="color:#fbbf24"></i> FREE TOOL 2026 – NO LOGIN REQUIRED</div>
     <h1>Free <span>Resume / CV Maker</span> 2026</h1>
     <p>Fill your details, choose from modern templates &amp; download as PDF instantly. Photo upload, skill bars, color themes &amp; ATS-friendly formats.</p>
-    <div class="hero-stats">
-      <div class="h-stat"><i class="fa-solid fa-palette"></i> 10 Modern Templates</div>
-      <div class="h-stat"><i class="fa-solid fa-file-arrow-down"></i> Instant PDF Download</div>
-      <div class="h-stat"><i class="fa-solid fa-robot"></i> ATS Friendly</div>
-      <div class="h-stat"><i class="fa-solid fa-lock-open"></i> 100% Free</div>
-    </div>
   </div>
 </section>
 
@@ -418,6 +313,15 @@
   <div class="grid">
     <div>
       <div id="formSection">
+
+        <!-- Sample Data -->
+        <div class="sample-box">
+          <div class="sb-txt">
+            <p><i class="fa-solid fa-wand-magic-sparkles"></i> Confuse ho rahe ho konsa template best hai?</p>
+            <span>Ek click me sample data bhar ke sabhi templates ka live preview dekho.</span>
+          </div>
+          <button type="button" class="sample-btn" onclick="fillSampleData()"><i class="fa-solid fa-eye"></i> Sample Data se Preview Dekhein</button>
+        </div>
 
         <!-- Doc Type -->
         <div class="f-card" style="overflow:visible">
@@ -427,10 +331,10 @@
           </div>
           <div class="f-body" style="padding-top:14px">
             <div id="catF" class="c-panel active">
-              <div class="ats-box"><i class="fa-solid fa-info-circle"></i><div><p>Fresher Resume Tips</p><span>Focus on education, skills &amp; objectives. Add internships/projects if available.</span></div></div>
+              <div class="ats-box"><i class="fa-solid fa-info-circle"></i><div><p>Fresher Resume Tips</p><span>Focus on education, skills &amp; objectives.</span></div></div>
             </div>
             <div id="catE" class="c-panel">
-              <div class="ats-box" style="background:linear-gradient(135deg,#fefce8,#fef3c7);border-color:#fde68a;"><i class="fa-solid fa-star" style="color:#d97706"></i><div><p style="color:#92400e">Experienced Resume Tips</p><span style="color:#b45309">Highlight work experience first. Add achievements with numbers.</span></div></div>
+              <div class="ats-box" style="background:linear-gradient(135deg,#fefce8,#fef3c7);border-color:#fde68a;"><i class="fa-solid fa-star" style="color:#d97706"></i><div><p style="color:#92400e">Experienced Resume Tips</p><span style="color:#b45309">Highlight work experience first.</span></div></div>
             </div>
             <div class="sec-lbl"><i class="fa-solid fa-id-badge"></i> Document Type</div>
             <div class="rr">
@@ -487,9 +391,9 @@
 
         <!-- Skills -->
         <div class="f-card">
-          <div class="f-head teal"><i class="fa-solid fa-chart-bar"></i> Skills <span style="font-size:.71rem;opacity:.85;margin-left:4px">(with Progress Bar)</span></div>
+          <div class="f-head teal"><i class="fa-solid fa-chart-bar"></i> Skills</div>
           <div class="f-body">
-            <div class="sec-lbl"><i class="fa-solid fa-sliders"></i> Add skills &amp; proficiency level</div>
+            <div class="sec-lbl"><i class="fa-solid fa-sliders"></i> Enter Candidate Skills</div>
             <div id="skillsList"></div>
             <button class="add-btn" onclick="addSkill()"><i class="fa-solid fa-plus"></i> Add Skill</button>
           </div>
@@ -501,12 +405,9 @@
           <div class="f-body">
             <div class="sec-lbl"><i class="fa-solid fa-list-check"></i> Choose preset or write your own</div>
             <div id="objList">
-              <div class="obj-opt"><input type="radio" name="obj" value="1" aria-label="Objective option 1: Secure a responsible career opportunity"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="2" aria-label="Objective option 2: Self-motivated fresher seeking opportunity"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="3" aria-label="Objective option 3: Professionally managed organization"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="4" aria-label="Objective option 4: Good position in reputed company"><span>To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="5" aria-label="Objective option 5: Contribute best to organization"><span>To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.</span></div>
-              <div class="obj-opt"><input type="radio" name="obj" value="6" aria-label="Objective option 6: Experienced professional seeking senior role"><span>Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="1" aria-label="Objective option 1"><span>Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="2" aria-label="Objective option 2"><span>Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.</span></div>
+              <div class="obj-opt"><input type="radio" name="obj" value="3" aria-label="Objective option 3"><span>To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.</span></div>
             </div>
             <div class="row full" style="margin-top:12px">
               <div class="fld"><label for="f_objective">Or write your own objective</label><textarea id="f_objective" placeholder="Write a custom career objective..."></textarea></div>
@@ -516,7 +417,7 @@
 
         <!-- Academic -->
         <div class="f-card">
-          <div class="f-head orange"><i class="fa-solid fa-graduation-cap"></i> Academic Qualification <span style="font-size:.71rem;opacity:.85;margin-left:4px">(required)</span></div>
+          <div class="f-head orange"><i class="fa-solid fa-graduation-cap"></i> Academic Qualification</div>
           <div class="f-body">
             <div class="edu-hdr"><span>Exam / Degree</span><span>Board / University</span><span>Year</span><span>Marks%</span><span>Division</span><span></span></div>
             <div id="eduList"></div>
@@ -538,8 +439,39 @@
         <div class="f-card">
           <div class="f-head teal"><i class="fa-solid fa-briefcase"></i> Work Experience <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
           <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-building"></i> Job Title, Company Name &amp; Duration (ek line me likhein)</div>
             <div id="workList"></div>
-            <button class="add-btn" onclick="addWork()"><i class="fa-solid fa-plus"></i> Add</button>
+            <button class="add-btn" onclick="addWork()"><i class="fa-solid fa-plus"></i> Add Work Experience</button>
+          </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="f-card">
+          <div class="f-head teal"><i class="fa-solid fa-diagram-project"></i> Projects <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-code-branch"></i> Project Title &amp; Short Description (ek line me likhein)</div>
+            <div id="projList"></div>
+            <button class="add-btn" onclick="addProj()"><i class="fa-solid fa-plus"></i> Add Project</button>
+          </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="f-card">
+          <div class="f-head orange"><i class="fa-solid fa-trophy"></i> Achievements / Awards <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-medal"></i> Award, Prize ya Achievement ka naam</div>
+            <div id="achList"></div>
+            <button class="add-btn" onclick="addAch()"><i class="fa-solid fa-plus"></i> Add Achievement</button>
+          </div>
+        </div>
+
+        <!-- Strengths -->
+        <div class="f-card">
+          <div class="f-head orange"><i class="fa-solid fa-hand-fist"></i> Strengths <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-star"></i> Apni Personal Strength likhein (kuch common already add hain, edit/remove kar sakte hain)</div>
+            <div id="strList"></div>
+            <button class="add-btn" onclick="addStr()"><i class="fa-solid fa-plus"></i> Add Strength</button>
           </div>
         </div>
 
@@ -547,73 +479,88 @@
         <div class="f-card">
           <div class="f-head slate"><i class="fa-solid fa-award"></i> Extra Qualifications / Certifications <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
           <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-certificate"></i> Certification / Extra Qualification ka naam</div>
             <div id="extraList"></div>
-            <button class="add-btn" onclick="addExtra()"><i class="fa-solid fa-plus"></i> Add</button>
+            <button class="add-btn" onclick="addExtra()"><i class="fa-solid fa-plus"></i> Add Certification</button>
           </div>
         </div>
 
-        <!-- Template & Theme -->
+        <!-- Additional Info -->
         <div class="f-card">
-          <div class="f-head purple"><i class="fa-solid fa-palette"></i> Template &amp; Color Theme</div>
+          <div class="f-head slate"><i class="fa-solid fa-circle-info"></i> Additional Information <span style="font-size:.71rem;opacity:.85;margin-left:4px">(optional)</span></div>
           <div class="f-body">
-            <div class="sec-lbl"><i class="fa-solid fa-swatchbook"></i> Professional Color Themes</div>
+            <div class="row">
+              <div class="fld"><label for="f_linkedin">LinkedIn / Portfolio / GitHub URL</label><input type="text" id="f_linkedin" placeholder="e.g. linkedin.com/in/rahulkumar"></div>
+              <div class="fld"><label for="f_references">References</label><input type="text" id="f_references" placeholder="e.g. Available on request"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Template Gallery -->
+        <div class="f-card">
+          <div class="f-head purple"><i class="fa-solid fa-palette"></i> Template Gallery</div>
+          <div class="f-body">
+            <div class="sec-lbl"><i class="fa-solid fa-swatchbook"></i> Color Accents (Applied to Top Headers)</div>
             <div class="th-pick" id="thPick">
               <div class="th-dot active" style="background:linear-gradient(135deg,#0d2257,#1a56db)" data-theme="navy" title="Navy Blue" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#1a1a1a,#444)" data-theme="bw" title="Black &amp; White" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#064e3b,#059669)" data-theme="green" title="Modern Green" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#374151,#6b7280)" data-theme="grey" title="Corporate Grey" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#534AB7,#7c3aed)" data-theme="purple" title="Deep Purple" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#A32D2D,#dc2626)" data-theme="red" title="Bold Red" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#185FA5,#3b82f6)" data-theme="blue" title="Royal Blue" onclick="selTheme(this)"></div>
-              <div class="th-dot" style="background:linear-gradient(135deg,#BA7517,#f97316)" data-theme="amber" title="Corporate Amber" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#111827,#374151)" data-theme="bw" title="Charcoal Dark" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#064e3b,#059669)" data-theme="green" title="Emerald Green" onclick="selTheme(this)"></div>
+              <div class="th-dot" style="background:linear-gradient(135deg,#7f1d1d,#b91c1c)" data-theme="red" title="Wine Red" onclick="selTheme(this)"></div>
             </div>
-            <div class="sec-lbl" style="margin-top:4px"><i class="fa-solid fa-layout"></i> Choose Resume Template</div>
-            <div class="tpl-grid">
+            
+            <div class="sec-lbl" style="margin-top:4px"><i class="fa-solid fa-layout"></i> Choose Beautiful Colorful & ATS Layouts</div>
+            
+            <div class="tpl-grid" id="tplGrid">
               <div class="tpl-it active" data-tpl="1" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div class="tpl-bdg" style="background:#10b981">Popular</div><div class="tpl-hbar" style="background:#0d2257;color:#fff">Name · Classic</div><div class="tpl-bwrap"><div class="tpl-mc"><div class="tpl-ln dk" style="background:#0d2257"></div><div class="tpl-ln" style="background:#0d2257"></div><div class="tpl-ln" style="background:#0d2257"></div></div></div></div>
-                <div class="tpl-lbl">1 – Classic Bold</div>
+                <div class="tpl-prev"><div class="tpl-bdg" style="background:#1a56db">Top Choice</div><div class="tpl-canvas" data-tplthumb="1"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">1 – Premium Top Banner Accent</div>
               </div>
               <div class="tpl-it" data-tpl="2" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div class="tpl-bwrap" style="padding:0;gap:0"><div class="tpl-sc" style="background:#0d2257;padding:6px 5px"><div class="tpl-ln" style="background:#fff"></div><div class="tpl-ln" style="background:#fff"></div></div><div class="tpl-mc" style="padding:6px 8px"><div class="tpl-hbar" style="background:#1a56db;color:#fff;padding:5px 6px;font-size:7px">NAME</div><div class="tpl-ln dk" style="background:#0d2257"></div></div></div></div>
-                <div class="tpl-lbl">2 – Sidebar Modern</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="2"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">2 – Dual Column Sidebar Professional</div>
               </div>
               <div class="tpl-it" data-tpl="3" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#fff"><div style="display:flex;height:100%"><div style="width:5px;background:#0d2257;flex-shrink:0"></div><div style="flex:1;padding:5px 8px"><div style="font-size:8px;font-weight:800;color:#0d2257">NAME</div><div style="height:2px;background:#1a56db;width:30px;margin:3px 0"></div><div class="tpl-ln" style="background:#0d2257"></div></div></div></div>
-                <div class="tpl-lbl">3 – Accent Line</div>
+                <div class="tpl-prev"><div class="tpl-bdg" style="background:#059669">Govt Standard</div><div class="tpl-canvas" data-tplthumb="3"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">3 – Official Central Indian Format</div>
               </div>
               <div class="tpl-it" data-tpl="4" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#fff"><div class="tpl-bdg" style="background:#6366f1">ATS</div><div style="padding:6px 8px;border-bottom:2px solid #111"><div style="font-size:8px;font-weight:900;color:#000">NAME</div><div style="font-size:6px;color:#666">contact · email</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#111"></div><div class="tpl-ln" style="background:#111"></div></div></div>
-                <div class="tpl-lbl">4 – ATS Friendly</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="4"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">4 – Modern Left-Strip Bracket</div>
               </div>
               <div class="tpl-it" data-tpl="5" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#0f172a"><div style="display:flex;height:100%"><div style="width:35%;background:#1e293b;padding:5px"><div style="font-size:6.5px;font-weight:800;color:#fbbf24">NAME</div><div class="tpl-ln" style="background:#fff"></div></div><div style="flex:1;padding:5px 7px"><div class="tpl-ln dk" style="background:#fbbf24"></div><div class="tpl-ln" style="background:#e2e8f0"></div></div></div></div>
-                <div class="tpl-lbl">5 – Dark Pro</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="5"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">5 – Minimal Line Elegant</div>
               </div>
               <div class="tpl-it" data-tpl="6" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div style="background:linear-gradient(135deg,#0d2257,#1a56db);padding:10px 9px"><div style="font-size:8px;font-weight:900;color:#fff">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
-                <div class="tpl-lbl">6 – Gradient</div>
+                <div class="tpl-prev"><div class="tpl-bdg" style="background:#f97316">ATS Approved</div><div class="tpl-canvas" data-tplthumb="6"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">6 – Clean Single-Row Borderless</div>
               </div>
               <div class="tpl-it" data-tpl="7" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div style="display:flex;height:100%"><div style="width:32%;background:#1e40af;padding:5px;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.3)"></div><div class="tpl-ln" style="background:#fff;width:80%"></div></div><div style="flex:1;padding:5px 7px"><div class="tpl-ln dk" style="background:#1e40af"></div><div class="tpl-ln" style="background:#1e40af"></div></div></div></div>
-                <div class="tpl-lbl">7 – Photo Sidebar</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="7"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">7 – Split Compact Box (Bank / LIC)</div>
               </div>
               <div class="tpl-it" data-tpl="8" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div style="background:linear-gradient(120deg,#0d2257,#1a56db 50%,#f97316);padding:12px 9px;text-align:center"><div style="font-size:8px;font-weight:900;color:#fff">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
-                <div class="tpl-lbl">8 – Tri-Gradient</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="8"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">8 – Traditional Centered Biodata Style</div>
               </div>
               <div class="tpl-it" data-tpl="9" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#fff"><div style="padding:6px 8px;border-bottom:3px solid #0d2257"><div style="font-size:8px;font-weight:900;color:#0d2257">NAME</div></div><div style="padding:5px 8px"><div class="tpl-ln dk" style="background:#0d2257"></div></div></div>
-                <div class="tpl-lbl">9 – Minimal Lines</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="9"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">9 – Tech Stack Block Grid</div>
               </div>
               <div class="tpl-it" data-tpl="10" onclick="selTpl(this)">
-                <div class="tpl-prev" style="background:#f8f7ff"><div style="display:flex;height:100%"><div style="width:32%;background:#374151;padding:5px"><div class="tpl-ln" style="background:#fff"></div></div><div style="flex:1;padding:5px 7px"><div style="background:#374151;height:18px;margin-bottom:4px;display:flex;align-items:center;padding:2px 5px"><span style="font-size:6.5px;font-weight:900;color:#fff">NAME</span></div><div class="tpl-ln" style="background:#374151"></div></div></div></div>
-                <div class="tpl-lbl">10 – Corp. Grey</div>
+                <div class="tpl-prev"><div class="tpl-canvas" data-tplthumb="10"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">10 – Executive Underlined Banner</div>
+              </div>
+              <div class="tpl-it" data-tpl="11" onclick="selTpl(this)">
+                <div class="tpl-prev"><div class="tpl-bdg" style="background:#7c3aed">Advanced</div><div class="tpl-canvas" data-tplthumb="11"></div><div class="tpl-prev-fade"></div></div>
+                <div class="tpl-lbl">11 – Advanced ATS Two-Tone (Projects &amp; Achievements)</div>
               </div>
             </div>
+
           </div>
           <div class="sub-row">
             <button class="gen-btn" onclick="genResume()"><i class="fa-solid fa-file-arrow-down"></i> Generate Resume / CV</button>
-            <span style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px"><i class="fa-solid fa-print" style="color:var(--green)"></i> Then Print → Save as PDF</span>
+            <button type="button" class="add-btn" onclick="fillSampleData()" style="border-color:var(--teal);color:var(--teal)"><i class="fa-solid fa-wand-magic-sparkles"></i> Is Template ko Sample Data se Try Karein</button>
           </div>
         </div>
 
@@ -621,10 +568,14 @@
 
       <!-- PREVIEW -->
       <div class="prev-wrap" id="prevSection">
+        <div class="demo-banner" id="demoBanner" style="display:none">
+          <p><i class="fa-solid fa-circle-info"></i> Ye SAMPLE / DEMO data hai — sirf template preview ke liye. Download se pehle apni asli detail bharein.</p>
+          <button type="button" onclick="clearSampleData()"><i class="fa-solid fa-eraser"></i> Sample Data Hatayein &amp; Apni Detail Bharein</button>
+        </div>
         <div class="prev-actions">
           <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Edit Details</button>
-          <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-file-arrow-down"></i> Download PDF / Print</button>
-          <span style="font-size:.71rem;color:var(--muted)"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Ctrl+P → Margins: None → Uncheck Headers/Footers → Save PDF</span>
+          <button class="print-btn" onclick="printResume()"><i class="fa-solid fa-file-arrow-down"></i> Download PDF / Print</button>
+          <span style="font-size:.71rem;color:var(--muted)"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Print dialog me: Paper size = <b>A4</b>, Margins = <b>None</b> zaroor select karein, phir Print/Save PDF karein</span>
         </div>
         <div class="r-paper" id="resumeOut"></div>
       </div>
@@ -639,35 +590,6 @@
           <a href="/category/admit-result/"><i class="fa-solid fa-id-card"></i><span>Admit Card</span><i class="fa-solid fa-chevron-right arr"></i></a>
           <a href="/category/admissions/"><i class="fa-solid fa-trophy"></i><span>Results</span><i class="fa-solid fa-chevron-right arr"></i></a>
           <a href="/section/govt-scheme-yojna/"><i class="fa-solid fa-hand-holding-heart"></i><span>Govt Schemes</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/section/haryana-jobs/"><i class="fa-solid fa-location-dot"></i><span>Haryana Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-        </div>
-        <a href="/category/popular/" class="s-more">View All →</a>
-      </div>
-      <div class="s-card">
-        <div class="s-head blue"><i class="fa-solid fa-fire-flame-curved"></i> TRENDING JOBS</div>
-        <div class="s-list">
-          <a href="/section/railway-jobs/"><i class="fa-solid fa-train"></i><span>Railway Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/section/bank-jobs/"><i class="fa-solid fa-building-columns"></i><span>Bank Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/section/police-jobs/"><i class="fa-solid fa-shield-halved"></i><span>Police Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/section/teaching-jobs/"><i class="fa-solid fa-chalkboard-user"></i><span>Teaching Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/section/army-jobs/"><i class="fa-solid fa-star"></i><span>Army Jobs</span><i class="fa-solid fa-chevron-right arr"></i></a>
-        </div>
-        <a href="/section/latest-jobs/" class="s-more">View All Jobs →</a>
-      </div>
-      <div class="s-card">
-        <div class="s-head teal"><i class="fa-solid fa-screwdriver-wrench"></i> TOOLS</div>
-        <div class="s-list">
-          <a href="/tools/"><i class="fa-solid fa-image"></i><span>Photo &amp; PDF Tools</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/resume-maker/"><i class="fa-solid fa-file-lines" style="color:#7c3aed"></i><span>Resume Maker</span><i class="fa-solid fa-chevron-right arr"></i></a>
-          <a href="/helpdesk/"><i class="fa-solid fa-headset"></i><span>Helpdesk</span><i class="fa-solid fa-chevron-right arr"></i></a>
-        </div>
-      </div>
-      <div class="s-card">
-        <div class="s-head orange"><i class="fa-solid fa-bell"></i> JOIN &amp; FOLLOW US</div>
-        <div class="soc-btns">
-          <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" class="soc-btn sb-wa"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel</a>
-          <a href="https://www.youtube.com/@Topsarkarijobs/shorts" target="_blank" class="soc-btn sb-yt"><i class="fa-brands fa-youtube"></i> YouTube Channel</a>
-          <a href="https://www.instagram.com/topsarkarijobs" target="_blank" class="soc-btn sb-ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
         </div>
       </div>
     </aside>
@@ -680,23 +602,6 @@
       <div class="ft-t">Top Sarkari Jobs</div>
       <div class="ft-sub">India's No.1 portal for Sarkari Jobs, Results, Admit Cards, Govt Schemes and Free Tools.</div>
     </div>
-    <div>
-      <div class="ft-t">Quick Links</div>
-      <div class="ft-links">
-        <a href="./">Home</a>
-        <a href="/section/latest-jobs/">Latest Jobs</a>
-        <a href="/category/admit-result/">Admit Card</a>
-        <a href="/resume-maker/">Resume Maker</a>
-      </div>
-    </div>
-    <div>
-      <div class="ft-t">Follow Us</div>
-      <div class="ft-links">
-        <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T">WhatsApp Channel</a>
-        <a href="https://www.youtube.com/@Topsarkarijobs/shorts">YouTube</a>
-        <a href="https://www.instagram.com/topsarkarijobs">Instagram</a>
-      </div>
-    </div>
   </div>
   <div class="ft-bot">© 2026 Top Sarkari Jobs. All rights reserved.</div>
 </footer>
@@ -704,133 +609,397 @@
 <script>
 (function(){
 'use strict';
-var eduC=0,proC=0,exC=0,wkC=0,skC=0,selTplN=1,photoDU='',curTheme='navy';
-var TC={navy:{p:'#0d2257',a:'#1a56db',l:'#eef3ff'},bw:{p:'#1a1a1a',a:'#444',l:'#f5f5f5'},green:{p:'#064e3b',a:'#059669',l:'#ecfdf5'},grey:{p:'#374151',a:'#6b7280',l:'#f9fafb'},purple:{p:'#3b0764',a:'#7c3aed',l:'#f5f3ff'},red:{p:'#7f1d1d',a:'#dc2626',l:'#fff5f5'},blue:{p:'#1e3a8a',a:'#3b82f6',l:'#eff6ff'},amber:{p:'#78350f',a:'#f97316',l:'#fffbeb'}};
+var eduC=0,proC=0,exC=0,wkC=0,skC=0,achC=0,pjC=0,strC=0,selTplN=1,photoDU='',curTheme='navy';
+var TC={
+  navy:{p:'#0d2257',a:'#1a56db',l:'#f0f4ff'},
+  bw:{p:'#1f2937',a:'#4b5563',l:'#f3f4f6'},
+  green:{p:'#064e3b',a:'#059669',l:'#ecfdf5'},
+  red:{p:'#7f1d1d',a:'#b91c1c',l:'#fff5f5'}
+};
 
 window.switchCat=function(cat,btn){
   document.querySelectorAll('.c-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');
   document.querySelectorAll('.c-panel').forEach(function(p){p.classList.remove('active');});
   document.getElementById(cat==='fresher'?'catF':'catE').classList.add('active');
 };
-window.selTheme=function(el){document.querySelectorAll('.th-dot').forEach(function(d){d.classList.remove('active');});el.classList.add('active');curTheme=el.getAttribute('data-theme');};
+window.selTheme=function(el){document.querySelectorAll('.th-dot').forEach(function(d){d.classList.remove('active');});el.classList.add('active');curTheme=el.getAttribute('data-theme');renderTplThumbs();};
 window.handlePhoto=function(inp){if(!inp.files||!inp.files[0])return;var r=new FileReader();r.onload=function(e){photoDU=e.target.result;var p=document.getElementById('phPrev');p.src=photoDU;p.classList.add('show');document.getElementById('phZone').style.display='none';document.getElementById('rmPh').classList.add('show');};r.readAsDataURL(inp.files[0]);};
 window.removePhoto=function(){photoDU='';var p=document.getElementById('phPrev');p.src='';p.classList.remove('show');document.getElementById('phZone').style.display='';document.getElementById('rmPh').classList.remove('show');};
-window.addSkill=function(){var l=document.getElementById('skillsList');var n=++skC;var id='sk'+n;var d=document.createElement('div');d.className='sk-row';d.id='sr'+id;d.innerHTML='<input type="text" class="sk-name" id="'+id+'n" placeholder="e.g. MS Word"><div class="sk-bar-w"><input type="range" class="sk-range" id="'+id+'r" min="0" max="100" value="70" oninput="updSk(\''+id+'\')"><span class="sk-pct" id="'+id+'p">70%</span></div><button class="rm-btn" onclick="rmR(\'sr'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
-window.updSk=function(id){document.getElementById(id+'p').textContent=document.getElementById(id+'r').value+'%';};
+
+window.addSkill=function(){
+  var l=document.getElementById('skillsList');var n=++skC;var id='sk'+n;var d=document.createElement('div');
+  d.className='sk-row';d.id='sr'+id;
+  d.innerHTML='<input type="text" class="sk-name" id="'+id+'n" placeholder="e.g. Computer Typing / MS Excel"><button class="rm-btn" onclick="rmR(\'sr'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';
+  l.appendChild(d);
+};
+
 window.addEdu=function(t){var l=document.getElementById(t==='edu'?'eduList':'proList');var n=t==='edu'?++eduC:++proC;var id=t+n;var d=document.createElement('div');d.className='edu-row';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Exam/Degree" id="'+id+'q"><input type="text" placeholder="Board/University" id="'+id+'e"><input type="text" placeholder="Year" id="'+id+'y"><input type="text" placeholder="Marks%" id="'+id+'m"><input type="text" placeholder="Division" id="'+id+'d"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
-window.addExtra=function(){var l=document.getElementById('extraList');var n=++exC;var id='ex'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Extra qualification / certification" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
-window.addWork=function(){var l=document.getElementById('workList');var n=++wkC;var id='wk'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. Software Engineer at XYZ Ltd (2022-2024) – Key responsibilities..." id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addExtra=function(){var l=document.getElementById('extraList');var n=++exC;var id='ex'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. CCC (Course on Computer Concepts) Qualified" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addAch=function(){var l=document.getElementById('achList');var n=++achC;var id='ach'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. 1st Prize in District Level Essay Competition (2022)" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addProj=function(){var l=document.getElementById('projList');var n=++pjC;var id='pj'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. Student Attendance Tracker - Excel based automated attendance system" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
+window.addStr=function(val){var l=document.getElementById('strList');var n=++strC;var id='str'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. Good Communication Skills" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);if(val){document.getElementById(id+'v').value=val;}};
+window.addWork=function(){var l=document.getElementById('workList');var n=++wkC;var id='wk'+n;var d=document.createElement('div');d.className='xrow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="e.g. Data Entry Operator at XYZ Firm (2023-2025)" id="'+id+'v"><button class="rm-btn" onclick="rmR(\'r'+id+'\')" title="Remove"><i class="fa-solid fa-trash"></i></button>';l.appendChild(d);};
 window.rmR=function(id){var el=document.getElementById(id);if(el)el.remove();};
 window.selTpl=function(el){document.querySelectorAll('.tpl-it').forEach(function(t){t.classList.remove('active');});el.classList.add('active');selTplN=parseInt(el.getAttribute('data-tpl'));};
 
+/* SAMPLE DATA SETS */
+var SAMPLE_PHOTO='data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="240"><rect width="200" height="240" fill="#e2e8f0"/><circle cx="100" cy="88" r="42" fill="#94a3b8"/><path d="M30 230c0-45 32-78 70-78s70 33 70 78z" fill="#94a3b8"/></svg>');
+var SAMPLE_SETS=[
+  {name:'Rahul Kumar',contact:'9876543210',email:'rahul.kumar@gmail.com',dob:'15-08-2000',fname:'Suresh Kumar',mname:'Sunita Devi',nationality:'Indian',gender:'Male',marital:'Unmarried',language:'Hindi, English',hobbies:'Reading, Cricket',address:'H.No. 123, Model Town, Ambala, Haryana - 134003',
+    edu:[{q:'B.A. (Bachelor of Arts)',e:'Kurukshetra University',y:'2022',m:'74%',d:'First'},{q:'12th Standard',e:'HBSE, Haryana',y:'2019',m:'82%',d:'First'}],
+    pro:[{q:'Diploma in Computer Application (DCA)',e:'State Technical Board',y:'2020',m:'78%',d:'First'}],
+    work:['Data Entry Operator at ABC Solutions (2023-2025) - Managed office records, documentation, and digital logs.','Office Assistant Intern (6 Months) - Assisted in registry optimization and database maintenance.'],
+    extra:['English & Hindi Typing Certificate - 45 WPM','CCC (Course on Computer Concepts) Qualified'],
+    skills:[{name:'MS Office (Word, Excel)'},{name:'Data Entry Operations'},{name:'Speed Typing'}],
+    proj:['Digital Record Management System - Organized 5000+ office files into a searchable digital format.'],
+    ach:['Employee of the Month - ABC Solutions (March 2024)','1st Prize in District Level Essay Competition (2019)'],
+    linkedin:'linkedin.com/in/rahulkumar',references:'Available on request',
+    obj:2}
+];
+
+var OBJ=['','Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.','Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.','To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.'];
+
+window.fillSampleData=function(){
+  var s=SAMPLE_SETS[0];
+  function setV(id,val){var el=document.getElementById(id);if(el)el.value=val;}
+  setV('f_name',s.name);setV('f_contact',s.contact);setV('f_email',s.email);setV('f_dob',s.dob);
+  setV('f_fname',s.fname);setV('f_mname',s.mname);setV('f_nationality',s.nationality);
+  setV('f_gender',s.gender);setV('f_marital',s.marital);setV('f_language',s.language);
+  setV('f_hobbies',s.hobbies);setV('f_address',s.address);setV('f_objective','');
+  setV('f_linkedin',s.linkedin||'');setV('f_references',s.references||'');
+  var objRadio=document.querySelector('input[name="obj"][value="'+s.obj+'"]');if(objRadio)objRadio.checked=true;
+  photoDU=SAMPLE_PHOTO;var p=document.getElementById('phPrev');if(p){p.src=photoDU;p.classList.add('show');}
+  document.getElementById('phZone').style.display='none';document.getElementById('rmPh').classList.add('show');
+  fillRows('eduList','edu',eduC,s.edu,function(){window.addEdu('edu');eduC++;},function(id,r){setV(id+'q',r.q);setV(id+'e',r.e);setV(id+'y',r.y);setV(id+'m',r.m);setV(id+'d',r.d);});
+  fillRows('proList','pro',proC,s.pro,function(){window.addEdu('pro');proC++;},function(id,r){setV(id+'q',r.q);setV(id+'e',r.e);setV(id+'y',r.y);setV(id+'m',r.m);setV(id+'d',r.d);});
+  fillRows('workList','wk',wkC,s.work,function(){window.addWork();wkC++;},function(id,r){setV(id+'v',r);});
+  fillRows('extraList','ex',exC,s.extra,function(){window.addExtra();exC++;},function(id,r){setV(id+'v',r);});
+  fillRows('skillsList','sk',skC,s.skills,function(){window.addSkill();skC++;},function(id,r){setV(id+'n',r.name);});
+  fillRows('projList','pj',pjC,s.proj||[],function(){window.addProj();pjC++;},function(id,r){setV(id+'v',r);});
+  fillRows('achList','ach',achC,s.ach||[],function(){window.addAch();achC++;},function(id,r){setV(id+'v',r);});
+  sampleModeOn=true;window.genResume();
+};
+
+function fillRows(listId,prefix,haveCount,dataArr,addFn,setFn){
+  while(haveCount<dataArr.length){addFn();haveCount++;}
+  for(var i=0;i<dataArr.length;i++){setFn(prefix+(i+1),dataArr[i]);}
+}
+var sampleModeOn=false;
+window.clearSampleData=function(){location.reload();};
+
 function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
-var OBJ=['','Secure a responsible career opportunity to fully utilize my talent and skills while making a significant contribution to the success of the company.','Self-motivated and hardworking fresher seeking an opportunity to work in a challenging environment to prove my skills in the growth of the organization.','To seek a position in a professionally managed organization where conceptual and functional skills are effectively utilized, contributing to organizational and personal growth.','To make a good position in a reputed company and work enthusiastically in a team, providing steady career growth along with job satisfaction.','To contribute my best to the organization and utilize my skills to perform the job to the best of my ability with zeal and willingness to learn.','Experienced professional seeking a senior role to apply domain knowledge, mentor teams, and deliver measurable results aligned with organizational goals.'];
 function getObj(){var c=g('f_objective');if(c)return c;var s=document.querySelector('input[name="obj"]:checked');return s?OBJ[parseInt(s.value)]||'':"";};
 function getDT(){var s=document.querySelector('input[name="doctype"]:checked');return s?s.value:'Resume';}
-function colEdu(t){var px=t==='edu'?'edu':'pro',rows=[];for(var i=1;i<=80;i++){var q=document.getElementById(px+i+'q');if(!q)continue;rows.push({q:q.value,e:document.getElementById(px+i+'e').value,y:document.getElementById(px+i+'y').value,m:document.getElementById(px+i+'m').value,d:document.getElementById(px+i+'d').value});}return rows.filter(function(r){return r.q.trim();});}
+function colEdu(t){var px=t==='edu'?'edu':'pro',rows=[];for(var i=1;i<=20;i++){var q=document.getElementById(px+i+'q');if(!q)continue;rows.push({q:q.value,e:document.getElementById(px+i+'e').value,y:document.getElementById(px+i+'y').value,m:document.getElementById(px+i+'m').value,d:document.getElementById(px+i+'d').value});}return rows.filter(function(r){return r.q.trim();});}
 function colList(px,max){var rows=[];for(var i=1;i<=max;i++){var v=document.getElementById(px+i+'v');if(v&&v.value.trim())rows.push(v.value.trim());}return rows;}
-function colSkills(){var sk=[];for(var i=1;i<=skC;i++){var n=document.getElementById('sk'+i+'n'),r=document.getElementById('sk'+i+'r');if(n&&n.value.trim())sk.push({name:n.value.trim(),pct:r?parseInt(r.value):70});}return sk;}
+function colSkills(){var sk=[];for(var i=1;i<=skC;i++){var n=document.getElementById('sk'+i+'n');if(n&&n.value.trim())sk.push({name:n.value.trim()});}return sk;}
 
-/* ── RESUME HTML BUILDERS ── */
-var RF='font-family:"Segoe UI",Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact';
-
-function tbl(rows,c,ca){
-  if(!rows.length)return'';
-  var h='<table style="width:100%;border-collapse:collapse;margin-bottom:8px"><tr style="background:'+c+';color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact"><th style="padding:5px 8px;text-align:left;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Exam / Degree</th><th style="padding:5px 8px;text-align:left;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Board / University</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Year</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Marks%</th><th style="padding:5px 8px;text-align:center;font-size:10.5px;font-weight:800;border:1px solid rgba(255,255,255,.15)">Division</th></tr>';
-  rows.forEach(function(r,i){var bg=i%2===0?'#f7f9fc':'#fff';h+='<tr style="background:'+bg+';-webkit-print-color-adjust:exact;print-color-adjust:exact"><td style="border:1px solid #e2e8f0;padding:4px 8px;font-size:10.5px;font-weight:700">'+r.q+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;font-size:10.5px">'+r.e+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700">'+r.y+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700;color:'+c+'">'+r.m+'</td><td style="border:1px solid #e2e8f0;padding:4px 8px;text-align:center;font-size:10.5px;font-weight:700">'+r.d+'</td></tr>';});
-  return h+'</table>';
-}
-function li(items){return items.map(function(x){return'<li style="font-size:10.5px;font-weight:600;margin-bottom:4px;color:#111;line-height:1.5">'+x+'</li>';}).join('');}
-function iRow(lbl,val){return val?'<tr><td style="font-size:10.5px;font-weight:700;color:#555;padding:3px 8px;width:40%;border-bottom:1px solid #f1f5f9;vertical-align:top">'+lbl+'</td><td style="font-size:10.5px;font-weight:700;padding:3px 8px;color:#111;border-bottom:1px solid #f1f5f9"><span style="color:#aaa;margin-right:3px">:</span>'+val+'</td></tr>':'';}
-function pTbl(d){return'<table style="width:100%;border-collapse:collapse">'+iRow('Date of Birth',d.dob)+iRow("Father's Name",d.fname)+iRow("Mother's Name",d.mname)+iRow('Nationality',d.nationality)+iRow('Gender',d.gender)+iRow('Marital Status',d.marital)+iRow('Languages Known',d.language)+iRow('Hobbies',d.hobbies)+'</table>';}
-function decl(ca){return'<div style="margin-top:12px;padding:8px 14px;background:#f8fafc;border-left:4px solid '+ca+';border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact"><span style="font-size:10.5px;font-weight:800;color:#000">Declaration: </span><span style="font-size:10.5px;color:#333;font-weight:600">I hereby declare that the information given above is true and correct to the best of my knowledge and belief.</span></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#444"><span>Place: _______________________</span><span>Signature: _______________________</span></div>';}
-function skBars(skills,c){if(!skills.length)return'';var h='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:8px">';skills.forEach(function(s){h+='<div style="min-width:130px;flex:1"><div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:800;margin-bottom:3px"><span>'+s.name+'</span><span style="color:'+c+'">'+s.pct+'%</span></div><div style="background:#e5e7eb;height:6px;border-radius:5px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="background:'+c+';height:6px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div></div></div>';});return h+'</div>';}
-function sh(lbl,c,ca){return'<div style="background:'+c+';color:#fff;padding:5px 20px;margin:10px -24px 8px;font-size:11px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;border-left:5px solid '+ca+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';}
-function shSb(lbl,col){return'<div style="font-size:8.5px;font-weight:900;color:'+col+';text-transform:uppercase;letter-spacing:.8px;border-bottom:1.5px solid '+col+';padding-bottom:2px;margin:10px 0 5px;opacity:.9">'+lbl+'</div>';}
-function sbInf(lbl,val,tc,sc){return val?'<div style="margin-bottom:5px"><div style="font-size:8px;font-weight:900;color:'+sc+';text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px">'+lbl+'</div><div style="font-size:9.5px;font-weight:700;color:'+tc+';line-height:1.35;word-break:break-all">'+val+'</div></div>':'';}
-
+/* ── BUILD ENGINE FOR 10 COMPLETELY REMODELLED UNIQUE TEMPLATES ── */
 function buildResume(d){
-  var th=TC[curTheme]||TC.navy,c=th.p,ca=th.a,cl=th.l;
-  var hasSb=[2,5,7,10].indexOf(selTplN)>-1;
-  var isAts=selTplN===4,isDark=selTplN===5;
+  var th=TC[curTheme]||TC.navy, c=th.p, ca=th.a, cl=th.l;
+  var fontStyle = 'font-family:"Segoe UI",Arial,sans-serif;color:#1e293b;line-height:1.5;';
+  
+  var makeTable = function(borderColor) {
+    var borderCol = borderColor || '#cbd5e1';
+    if(!d.edu.length) return '';
+    var h = '<table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;"><tr style="background:#f8fafc;color:#0f172a;font-weight:bold;"><th style="padding:6px 8px;text-align:left;border:1px solid '+borderCol+'">Exam / Degree</th><th style="padding:6px 8px;text-align:left;border:1px solid '+borderCol+'">Board / University</th><th style="padding:6px 8px;text-align:center;border:1px solid '+borderCol+';width:60px;">Year</th><th style="padding:6px 8px;text-align:center;border:1px solid '+borderCol+';width:70px;">Marks%</th><th style="padding:6px 8px;text-align:center;border:1px solid '+borderCol+';width:80px;">Division</th></tr>';
+    d.edu.forEach(function(r){
+      h += '<tr><td style="border:1px solid '+borderCol+';padding:6px 8px;font-weight:bold;color:#0f172a">'+r.q+'</td><td style="border:1px solid '+borderCol+';padding:6px 8px;">'+r.e+'</td><td style="border:1px solid '+borderCol+';padding:6px 8px;text-align:center;">'+r.y+'</td><td style="border:1px solid '+borderCol+';padding:6px 8px;text-align:center;font-weight:bold;color:'+c+'">'+r.m+'</td><td style="border:1px solid '+borderCol+';padding:6px 8px;text-align:center;">'+r.d+'</td></tr>';
+    });
+    return h + '</table>';
+  };
 
-  // ATS
-  if(isAts){
-    return'<div style="'+RF+';padding:24px 28px;background:#fff;min-height:270mm"><div style="border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:14px;display:flex;align-items:center;gap:16px">'+(d.photo?'<img src="'+d.photo+'" style="width:72px;height:88px;object-fit:cover;border:2px solid #111;border-radius:4px;flex-shrink:0" loading="lazy" decoding="async">':'')+'<div style="flex:1"><div style="font-size:22px;font-weight:900;color:#000;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="font-size:11px;font-weight:700;color:#333;margin-top:5px">'+[d.contact,d.email].filter(Boolean).join('  |  ')+'</div>'+(d.address?'<div style="font-size:10.5px;color:#555;margin-top:2px;font-weight:600">'+d.address+'</div>':'')+'</div></div>'
-    +(d.objective?'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Career Objective</div><p style="font-size:10.5px;line-height:1.65;margin-bottom:12px;color:#222;font-weight:600">'+d.objective+'</p>':'')
-    +(d.skills.length?'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Skills</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">'+d.skills.map(function(s){return'<span style="background:#f1f5f9;border:1.5px solid #cbd5e1;padding:3px 10px;border-radius:4px;font-size:10.5px;font-weight:800">'+s.name+' — '+s.pct+'%</span>';}).join('')+'</div>':'')
-    +'<div style="font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Education</div>'+tbl(d.edu,'#374151','#374151')
-    +(d.pro.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Professional Qualification</div>'+tbl(d.pro,'#374151','#374151'):'')
-    +(d.work.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Work Experience</div><ul style="margin:0 0 10px 18px">'+li(d.work)+'</ul>':'')
-    +(d.extra.length?'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Certifications</div><ul style="margin:0 0 10px 18px">'+li(d.extra)+'</ul>':'')
-    +'<div style="margin-top:10px;font-size:11.5px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;margin-bottom:7px;padding-bottom:2px">Personal Information</div>'
-    +pTbl(d)+decl(ca)+'</div>';
+  var makeList = function(items) {
+    return items.map(function(x){return '<li style="font-size:11px;margin-bottom:5px;color:#334155;line-height:1.5;">'+x+'</li>';}).join('');
+  };
+
+  var personalDetailsGrid = function() {
+    return '<table style="width:100%;border-collapse:collapse;margin-top:5px;font-size:11px;color:#334155;">'
+      + '<tr><td style="width:25%;font-weight:bold;padding:5px 0;color:#0f172a">Father\'s Name</td><td style="padding:5px 0;">: '+d.fname+'</td><td style="width:25%;font-weight:bold;padding:5px 0;color:#0f172a">Date of Birth</td><td style="padding:5px 0;">: '+d.dob+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;color:#0f172a">Mother\'s Name</td><td style="padding:5px 0;">: '+d.mname+'</td><td style="font-weight:bold;padding:5px 0;color:#0f172a">Gender</td><td style="padding:5px 0;">: '+d.gender+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;color:#0f172a">Nationality</td><td style="padding:5px 0;">: '+d.nationality+'</td><td style="font-weight:bold;padding:5px 0;color:#0f172a">Marital Status</td><td style="padding:5px 0;">: '+d.marital+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;color:#0f172a">Languages</td><td style="padding:5px 0;">: '+d.language+'</td><td style="font-weight:bold;padding:4px 0;color:#0f172a">Hobbies</td><td style="padding:5px 0;">: '+d.hobbies+'</td></tr>'
+      + (d.linkedin ? '<tr><td style="font-weight:bold;padding:5px 0;color:#0f172a">LinkedIn / Portfolio</td><td colspan="3" style="padding:5px 0;">: '+d.linkedin+'</td></tr>' : '')
+      + '</table>';
+  };
+
+  var plainSectionHead = function(title) {
+    return '<h2 style="font-size:12px;text-transform:uppercase;border-bottom:1.5px solid #0f172a;padding-bottom:3px;margin-top:18px;margin-bottom:6px;font-weight:bold;color:#000;">'+title+'</h2>';
+  };
+
+  /* Shared "extra sections" block — auto-included at the end of EVERY template
+     (all 10 designs + the new one) so Achievements, Projects and References
+     show up consistently without needing per-template layout work. */
+  var extraSectionsHTML = ''
+    + (d.proj.length ? plainSectionHead('Projects') + '<ul style="padding-left:15px;margin:0;">'+d.proj.map(function(x){return '<li style="font-size:11px;margin-bottom:5px;color:#334155;line-height:1.5;">'+x+'</li>';}).join('')+'</ul>' : '')
+    + (d.ach.length ? plainSectionHead('Achievements / Awards') + '<ul style="padding-left:15px;margin:0;">'+d.ach.map(function(x){return '<li style="font-size:11px;margin-bottom:5px;color:#334155;line-height:1.5;">'+x+'</li>';}).join('')+'</ul>' : '')
+    + (d.strengths.length ? plainSectionHead('Strengths') + '<ul style="padding-left:15px;margin:0;">'+d.strengths.map(function(x){return '<li style="font-size:11px;margin-bottom:5px;color:#334155;line-height:1.5;">'+x+'</li>';}).join('')+'</ul>' : '')
+    + (d.extra.length ? plainSectionHead('Extra Qualifications / Certifications') + '<ul style="padding-left:15px;margin:0;">'+d.extra.map(function(x){return '<li style="font-size:11px;margin-bottom:5px;color:#334155;line-height:1.5;">'+x+'</li>';}).join('')+'</ul>' : '')
+    + (d.references ? plainSectionHead('References') + '<p style="font-size:11px;color:#334155;">'+d.references+'</p>' : '');
+
+  var cleanDecl = extraSectionsHTML + '<div style="margin-top:25px;font-size:11px;color:#334155;"><p style="font-weight:bold;text-transform:uppercase;color:#0f172a;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:2px;">Declaration</p><p style="font-style:italic;margin-bottom:20px;">I hereby declare that all the statements made in this document are true, complete and correct to the best of my knowledge and belief.</p><div style="display:flex;justify-content:space-between;margin-top:15px;font-weight:bold;"><div>Place: _________________<br><br>Date: _________________</div><div style="text-align:right;"><br><br>___________________________<br>(Signature of Candidate)</div></div></div>';
+
+  /* ── Print Wrap Injection Fix ── */
+  var htmlOut = '<div style="'+fontStyle+';padding:30px;background:#fff;box-sizing:border-box;width:100%;">';
+
+  var headerHTML = '<div style="text-align:center;margin-bottom:15px;">'
+    + '<h1 style="font-size:24px;margin:0;color:#000;text-transform:uppercase;font-weight:bold;">'+d.name+'</h1>'
+    + '<p style="font-size:11px;margin:5px 0 0 0;color:#334155;font-weight:600;">'
+    + (d.contact ? 'Mob: '+d.contact+' &nbsp;|&nbsp; ' : '')
+    + (d.email ? 'Email: '+d.email : '')
+    + '</p>'
+    + (d.address ? '<p style="font-size:11px;margin:2px 0 0 0;color:#475569;">Address: '+d.address+'</p>' : '')
+    + '</div>';
+
+  // 1. PREMIUM TOP BANNER ACCENT
+  if(selTplN === 1) {
+    htmlOut += '<div style="background:'+c+';padding:20px;margin:-30px -30px 20px -30px;display:flex;align-items:center;justify-content:space-between;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+      + '<div><h1 style="font-size:26px;margin:0;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">'+d.name+'</h1>'
+      + '<p style="font-size:11px;margin:6px 0 0 0;opacity:0.9;">📱 '+d.contact+' &nbsp;|&nbsp; ✉ '+d.email+' &nbsp;|&nbsp; 📍 '+d.address+'</p></div>'
+      + (d.photo ? '<div><img src="'+d.photo+'" style="width:75px;height:90px;border:2px solid #fff;border-radius:4px;object-fit:cover;"></div>' : '')
+      + '</div>'
+      + (d.objective ? '<h2 style="font-size:12px;color:'+c+';text-transform:uppercase;border-bottom:2px solid '+c+';padding-bottom:3px;margin-top:15px;font-weight:bold;">Career Objective</h2><p style="font-size:11px;margin-top:6px;">'+d.objective+'</p>' : '')
+      + '<h2 style="font-size:12px;color:'+c+';text-transform:uppercase;border-bottom:2px solid '+c+';padding-bottom:3px;margin-top:15px;font-weight:bold;">Education Details</h2>' + makeTable()
+      + (d.work.length ? '<h2 style="font-size:12px;color:'+c+';text-transform:uppercase;border-bottom:2px solid '+c+';padding-bottom:3px;margin-top:15px;font-weight:bold;">Work History</h2><ul style="padding-left:15px;margin-top:5px;">'+makeList(d.work)+'</ul>' : '')
+      + (d.skills.length ? '<h2 style="font-size:12px;color:'+c+';text-transform:uppercase;border-bottom:2px solid '+c+';padding-bottom:3px;margin-top:15px;font-weight:bold;">Core Skills</h2><p style="font-size:11px;margin-top:5px;font-weight:bold;color:'+ca+'">'+d.skills.map(function(s){return s.name;}).join(' &bull; ')+'</p>' : '')
+      + '<h2 style="font-size:12px;color:'+c+';text-transform:uppercase;border-bottom:2px solid '+c+';padding-bottom:3px;margin-top:15px;font-weight:bold;">Personal Profile</h2>' + personalDetailsGrid() + cleanDecl;
+  }
+  
+  // 2. DUAL COLUMN SIDEBAR PROFESSIONAL
+  else if(selTplN === 2) {
+    htmlOut += '<table style="width:100%;border-collapse:collapse;table-layout:fixed;"><colgroup><col style="width:32%"><col style="width:68%"></colgroup><tr>'
+      + '<td style="vertical-align:top;background:'+cl+';padding:20px 12px;border-right:1px solid #cbd5e1;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+      + (d.photo ? '<div style="text-align:center;margin-bottom:15px;"><img src="'+d.photo+'" style="width:85px;height:105px;border:3px solid '+c+';border-radius:6px;object-fit:cover;"></div>' : '')
+      + '<h3 style="font-size:11px;text-transform:uppercase;color:'+c+';border-bottom:1px solid '+c+';padding-bottom:2px;margin-bottom:8px;font-weight:bold;">Contact Info</h3>'
+      + '<p style="font-size:10px;margin-bottom:6px;"><b>Phone:</b><br>'+d.contact+'</p><p style="font-size:10px;margin-bottom:6px;"><b>Email:</b><br><span style="word-break:break-all;">'+d.email+'</span></p><p style="font-size:10px;margin-bottom:6px;"><b>Address:</b><br>'+d.address+'</p>'
+      + (d.skills.length ? '<h3 style="font-size:11px;text-transform:uppercase;color:'+c+';border-bottom:1px solid '+c+';padding-bottom:2px;margin-top:15px;margin-bottom:8px;font-weight:bold;">Key Skills</h3><p style="font-size:10px;line-height:1.6;">'+d.skills.map(function(s){return '&bull; '+s.name;}).join('<br>')+'</p>' : '')
+      + '</td>'
+      + '<td style="vertical-align:top;padding:10px 0 10px 20px;">'
+      + '<h1 style="font-size:24px;margin:0;color:'+c+';font-weight:bold;text-transform:uppercase;">'+d.name+'</h1>'
+      + '<p style="font-size:11px;color:#475569;font-weight:bold;letter-spacing:1px;margin-bottom:15px;">'+getDT().toUpperCase()+'</p>'
+      + (d.objective ? '<h4 style="font-size:11px;text-transform:uppercase;color:#0f172a;margin-bottom:4px;font-weight:bold;">Profile Objective</h4><p style="font-size:11px;margin-bottom:15px;text-align:justify;">'+d.objective+'</p>' : '')
+      + '<h4 style="font-size:11px;text-transform:uppercase;color:#0f172a;margin-bottom:4px;font-weight:bold;">Education System</h4>' + makeTable()
+      + (d.work.length ? '<h4 style="font-size:11px;text-transform:uppercase;color:#0f172a;margin-top:15px;margin-bottom:4px;font-weight:bold;">Experience & Projects</h4><ul style="padding-left:15px;margin:0;">'+makeList(d.work)+'</ul>' : '')
+      + '<h4 style="font-size:11px;text-transform:uppercase;color:#0f172a;margin-top:15px;margin-bottom:4px;font-weight:bold;">Personal Framework</h4>' + personalDetailsGrid() + cleanDecl
+      + '</td></tr></table>';
   }
 
-  // SIDEBAR TEMPLATES
-  if(hasSb){
-    var sbBg=isDark?'#0f172a':c,acBr=isDark?'#fbbf24':ca;
-    var tc=isDark?'#f1f5f9':'#fff',sc=isDark?'rgba(255,255,255,.5)':'rgba(255,255,255,.55)';
-    var msh=function(lbl){return'<div style="background:'+c+';color:#fff;padding:5px 14px;margin:10px -14px 7px;font-size:10.5px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border-left:4px solid '+acBr+';-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div>';};
-    var sbSk=d.skills.length?shSb('Skills',isDark?'#fbbf24':'rgba(255,255,255,.7)')+d.skills.map(function(s){return'<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:9.5px;font-weight:800;margin-bottom:2px;color:'+tc+'"><span>'+s.name+'</span><span style="color:'+acBr+'">'+s.pct+'%</span></div><div style="background:rgba(255,255,255,.18);height:5px;border-radius:4px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="background:'+acBr+';height:5px;width:'+s.pct+'%;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div></div></div>';}).join(''):'';
-    return'<div style="'+RF+';min-height:270mm"><table style="width:100%;border-collapse:collapse;table-layout:fixed;-webkit-print-color-adjust:exact;print-color-adjust:exact"><colgroup><col style="width:31%"><col style="width:69%"></colgroup><tr>'
-    +'<td style="vertical-align:top;background:'+sbBg+';padding:18px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +(d.photo?'<div style="text-align:center;margin-bottom:10px"><img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:10px;border:3px solid '+acBr+'" loading="lazy" decoding="async"></div>':'')
-    +'<div style="text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.15)"><div style="font-size:13px;font-weight:900;color:'+acBr+';line-height:1.2;word-break:break-word">'+d.name+'</div><div style="font-size:8.5px;font-weight:800;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-top:3px">'+getDT()+'</div></div>'
-    +shSb('Contact',isDark?'#fbbf24':'rgba(255,255,255,.7)')+sbInf('Mobile',d.contact,tc,sc)+sbInf('Email',d.email,tc,sc)+sbInf('Address',d.address,tc,sc)
-    +shSb('Personal',isDark?'#fbbf24':'rgba(255,255,255,.7)')+sbInf('Date of Birth',d.dob,tc,sc)+sbInf("Father's Name",d.fname,tc,sc)+sbInf("Mother's Name",d.mname,tc,sc)+sbInf('Gender',d.gender,tc,sc)+sbInf('Nationality',d.nationality,tc,sc)+sbInf('Marital Status',d.marital,tc,sc)
-    +sbSk+(d.language?shSb('Languages',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:9.5px;font-weight:700;color:#fff">'+d.language+'</div>':'')+(d.hobbies?shSb('Hobbies',isDark?'#fbbf24':'rgba(255,255,255,.7)')+'<div style="font-size:9.5px;font-weight:700;color:#fff">'+d.hobbies+'</div>':'')
-    +'</td>'
-    +'<td style="vertical-align:top;background:#fff;padding:0"><div style="background:linear-gradient(135deg,'+c+','+ca+');padding:15px 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.88);margin-top:3px">'+[d.contact,d.email].filter(Boolean).join(' • ')+'</div></div>'
-    +'<div style="padding:10px 14px">'
-    +(d.objective?msh('Career Objective')+'<p style="font-size:10.5px;line-height:1.6;margin-bottom:9px;color:#111;font-weight:600">'+d.objective+'</p>':'')
-    +msh('Academic Qualification')+tbl(d.edu,c,ca)
-    +(d.pro.length?msh('Professional Qualification')+tbl(d.pro,c,ca):'')
-    +(d.work.length?msh('Work Experience')+'<ul style="margin:0 0 9px 16px">'+li(d.work)+'</ul>':'')
-    +(d.extra.length?msh('Certifications & Extra')+'<ul style="margin:0 0 9px 16px">'+li(d.extra)+'</ul>':'')
-    +decl(ca)+'</div></td></tr></table></div>';
+  // 3. OFFICIAL CENTRAL INDIAN FORMAT
+  else if(selTplN === 3) {
+    htmlOut += '<div style="border:2px solid #000;padding:15px;position:relative;width:100%;box-sizing:border-box;">'
+      + '<div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:15px;">'
+      + '<h1 style="font-size:22px;margin:0;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;">'+getDT()+'</h1>'
+      + '<p style="font-size:11px;margin-top:4px;font-weight:bold;">APPLICATION PROTOCOL STRUCTURE</p></div>'
+      + (d.photo ? '<div style="position:absolute;top:70px;right:15px;"><img src="'+d.photo+'" style="width:80px;height:105px;border:1px solid #000;padding:2px;"></div>' : '')
+      + '<table style="width:75%;font-size:11px;margin-bottom:20px;border-collapse:collapse;">'
+      + '<tr><td style="font-weight:bold;padding:5px 0;width:140px;">Full Name</td><td>: '+d.name.toUpperCase()+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;">Father\'s Name</td><td>: '+d.fname+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;">Date of Birth</td><td>: '+d.dob+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;">Mobile &amp; Email</td><td>: '+d.contact+' / '+d.email+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:5px 0;vertical-align:top;">Postal Address</td><td>: '+d.address+'</td></tr>'
+      + '</table>'
+      + '<h3 style="font-size:12px;text-transform:uppercase;background:#e2e8f0;padding:4px 8px;font-weight:bold;border:1px solid #000;-webkit-print-color-adjust:exact;print-color-adjust:exact;">1. Educational Qualification</h3>' + makeTable('#000')
+      + (d.work.length ? '<h3 style="font-size:12px;text-transform:uppercase;background:#e2e8f0;padding:4px 8px;font-weight:bold;border:1px solid #000;margin-top:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">2. Experience Status</h3><ul style="padding-left:20px;margin-top:5px;">'+makeList(d.work)+'</ul>' : '')
+      + '<h3 style="font-size:12px;text-transform:uppercase;background:#e2e8f0;padding:4px 8px;font-weight:bold;border:1px solid #000;margin-top:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">3. Personal Details</h3>'
+      + '<table style="width:100%;font-size:11px;margin-top:5px;"><tr><td style="font-weight:bold;width:140px;">Mother\'s Name:</td><td>'+d.mname+'</td></tr><tr><td style="font-weight:bold;">Gender / Marital:</td><td>'+d.gender+' / '+d.marital+'</td></tr><tr><td style="font-weight:bold;">Languages Known:</td><td>'+d.language+'</td></tr></table>'
+      + cleanDecl + '</div>';
   }
 
-  // FULL-WIDTH TEMPLATES
-  var W='<div style="'+RF+';background:#fff;padding:22px 24px;min-height:270mm">';
-  var H='';
-  if(selTplN===1){
-    H='<div style="background:'+c+';padding:18px 24px 16px;margin:-22px -24px 0;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05);-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>'+(d.photo?'<img src="'+d.photo+'" style="position:absolute;top:12px;right:20px;width:74px;height:90px;object-fit:cover;border-radius:8px;border:3px solid rgba(255,255,255,.4)" loading="lazy" decoding="async">':'')+'<div style="color:rgba(255,255,255,.6);font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px">'+getDT()+'</div><div style="font-size:26px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:.2px">'+d.name+'</div><div style="height:3px;width:52px;background:'+ca+';margin:8px 0 10px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:13px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82)">📍 '+d.address+'</span>':'')+'</div></div>';
-  }else if(selTplN===3){
-    H='<div style="display:flex;background:#fff;border-bottom:3px solid '+ca+';margin:-22px -24px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="width:7px;background:'+c+';flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="flex:1;padding:16px 18px;display:flex;align-items:center;gap:16px">'+(d.photo?'<img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:8px;border:2px solid '+c+';flex-shrink:0" loading="lazy" decoding="async">':'')+'<div><div style="font-size:23px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div><div style="font-size:9px;font-weight:800;color:'+ca+';text-transform:uppercase;letter-spacing:.8px;margin:5px 0 7px">'+getDT()+'</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')+'</div></div></div></div>';
-  }else if(selTplN===6){
-    H='<div style="background:linear-gradient(135deg,'+c+','+ca+');padding:18px 24px;margin:-22px -24px 0;display:flex;align-items:center;gap:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:76px;height:92px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);flex-shrink:0" loading="lazy" decoding="async">':'')+'<div style="flex:1"><div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:.3px;line-height:1.1">'+d.name+'</div><div style="height:2px;width:42px;background:rgba(255,255,255,.5);margin:7px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+'</div></div></div>';
-  }else if(selTplN===8){
-    H='<div style="background:linear-gradient(120deg,'+c+','+ca+' 50%,#f97316);padding:20px 24px 16px;margin:-22px -24px 0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:72px;height:86px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.5);margin-bottom:8px;display:block;margin-left:auto;margin-right:auto" loading="lazy" decoding="async">':'')+'<div style="font-size:25px;font-weight:900;color:#fff;letter-spacing:.3px">'+d.name+'</div><div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;margin:4px 0 7px">'+getDT()+'</div><div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.95)">✉ '+d.email+'</span>':'')+'</div></div>';
-  }else{
-    H='<div style="padding:18px 24px 14px;margin:-22px -24px 0;border-bottom:3px solid '+c+';background:#fff;display:flex;align-items:center;gap:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(d.photo?'<img src="'+d.photo+'" style="width:74px;height:90px;object-fit:cover;border-radius:5px;border:2px solid '+ca+';flex-shrink:0" loading="lazy" decoding="async">':'')+'<div style="flex:1"><div style="font-size:24px;font-weight:900;color:'+c+';letter-spacing:.2px;line-height:1.1">'+d.name+'</div><div style="width:42px;height:3px;background:'+ca+';border-radius:2px;margin:7px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="display:flex;flex-wrap:wrap;gap:12px">'+(d.contact?'<span style="font-size:10.5px;font-weight:700;color:#333">📱 '+d.contact+'</span>':'')+(d.email?'<span style="font-size:10.5px;font-weight:700;color:#333">✉ '+d.email+'</span>':'')+(d.address?'<span style="font-size:10.5px;font-weight:700;color:#555">📍 '+d.address+'</span>':'')+'</div></div></div>';
+  // 4. MODERN LEFT-STRIP BRACK
+  else if(selTplN === 4) {
+    var sectionHead4 = function(title) { return '<h3 style="font-size:12px;color:#0f172a;background:'+cl+';border-left:5px solid '+c+';padding:6px 10px;text-transform:uppercase;font-weight:bold;margin-top:18px;margin-bottom:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+title+'</h3>'; };
+    htmlOut += '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:12px;margin-bottom:10px;">'
+      + '<div><h1 style="font-size:24px;color:'+c+';margin:0;font-weight:bold;">'+d.name+'</h1>'
+      + '<p style="font-size:11px;color:#475569;margin-top:4px;">✉ '+d.email+' &nbsp;|&nbsp; 📱 +91 '+d.contact+'<br>📍 '+d.address+'</p></div>'
+      + (d.photo ? '<div><img src="'+d.photo+'" style="width:70px;height:85px;object-fit:cover;border-radius:50%;border:2px solid '+c+'"></div>' : '')
+      + '</div>'
+      + (d.objective ? sectionHead4('Statement Intent') + '<p style="font-size:11px;padding:0 4px;">'+d.objective+'</p>' : '')
+      + sectionHead4('Academic Qualifications') + makeTable()
+      + (d.work.length ? sectionHead4('Professional Work History') + '<ul style="padding-left:20px;">'+makeList(d.work)+'</ul>' : '')
+      + (d.skills.length ? sectionHead4('Technical Competencies') + '<p style="font-size:11px;padding:0 4px;font-weight:bold;">'+d.skills.map(function(s){return s.name;}).join(', ')+'</p>' : '')
+      + sectionHead4('Personal Framework') + personalDetailsGrid() + cleanDecl;
   }
 
-  var body=
-    (d.objective?sh('Career Objective',c,ca)+'<p style="font-size:10.5px;line-height:1.65;margin-bottom:4px;color:#111;font-weight:600">'+d.objective+'</p>':'')
-    +(d.skills.length?sh('Skills',c,ca)+skBars(d.skills,c):'')
-    +sh('Academic Qualification',c,ca)+tbl(d.edu,c,ca)
-    +(d.pro.length?sh('Professional Qualification',c,ca)+tbl(d.pro,c,ca):'')
-    +(d.work.length?sh('Work Experience',c,ca)+'<ul style="margin:0 0 8px 18px">'+li(d.work)+'</ul>':'')
-    +(d.extra.length?sh('Certifications & Extra',c,ca)+'<ul style="margin:0 0 8px 18px">'+li(d.extra)+'</ul>':'')
-    +sh('Personal Information',c,ca)+pTbl(d)+decl(ca);
+  // 5. MINIMAL LINE ELEGANT
+  else if(selTplN === 5) {
+    var minimalHead = function(title) { return '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:'+c+';margin-top:20px;margin-bottom:4px;font-weight:bold;">'+title+'</h3><div style="height:1px;background:#e2e8f0;margin-bottom:8px;"></div>'; };
+    htmlOut += '<div style="text-align:center;margin-bottom:20px;">'
+      + '<h1 style="font-size:26px;margin:0;font-weight:300;color:#0f172a;text-transform:uppercase;letter-spacing:1px;"><b>'+d.name+'</b></h1>'
+      + '<p style="font-size:11px;color:#64748b;margin-top:5px;">'+d.address+' &nbsp;&bull;&nbsp; '+d.contact+' &nbsp;&bull;&nbsp; '+d.email+'</p></div>'
+      + (d.objective ? minimalHead('Professional Summary') + '<p style="font-size:11px;color:#334155;">'+d.objective+'</p>' : '')
+      + minimalHead('Educational Timeline') + makeTable()
+      + (d.work.length ? minimalHead('Experience History') + '<ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + minimalHead('Personal Details') + personalDetailsGrid() + cleanDecl;
+  }
 
-  return W+H+'<div style="margin-top:16px">'+body+'</div></div>';
+  // 6. CLEAN SINGLE-ROW BORDERLESS
+  else if(selTplN === 6) {
+    htmlOut += '<div style="text-align:left;border-bottom:3px solid #0f172a;padding-bottom:8px;margin-bottom:15px;">'
+      + '<h1 style="font-size:26px;margin:0;font-weight:bold;color:#000;">'+d.name.toUpperCase()+'</h1>'
+      + '<p style="font-size:11px;color:#334155;margin-top:4px;font-weight:600;">Address: '+d.address+' | Mob: '+d.contact+' | Email: '+d.email+'</p></div>'
+      + (d.objective ? plainSectionHead('Career Objective') + '<p style="font-size:11px;line-height:1.6;">'+d.objective+'</p>' : '')
+      + plainSectionHead('Academic Qualifications') + makeTable()
+      + (d.work.length ? plainSectionHead('Employment History Records') + '<ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + plainSectionHead('Personal Particulars') + personalDetailsGrid() + cleanDecl;
+  }
+
+  // 7. SPLIT COMPACT BOX
+  else if(selTplN === 7) {
+    htmlOut += '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,0.02);width:100%;box-sizing:border-box;">'
+      + '<div style="display:flex;justify-content:between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:15px;">'
+      + '<div><h1 style="font-size:22px;color:'+c+';margin:0;font-weight:bold;">'+d.name+'</h1>'
+      + '<p style="font-size:11px;color:#475569;margin-top:3px;">Email: '+d.email+' | Contact: '+d.contact+'</p></div>'
+      + (d.photo ? '<div><img src="'+d.photo+'" style="width:70px;height:85px;border:1px solid #cbd5e1;border-radius:4px;object-fit:cover;"></div>' : '')
+      + '</div>'
+      + (d.objective ? '<p style="font-size:11px;background:'+cl+';padding:8px;border-radius:4px;color:#0f172a;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><b>Objective:</b> '+d.objective+'</p>' : '')
+      + plainSectionHead('Scholastic Credentials Matrix') + makeTable()
+      + (d.work.length ? plainSectionHead('Operational Experience Timeline') + '<ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + plainSectionHead('Bio-Statistical Information') + personalDetailsGrid() + cleanDecl + '</div>';
+  }
+
+  // 8. TRADITIONAL CENTERED BIODATA STYLE
+  else if(selTplN === 8) {
+    htmlOut += '<div style="text-align:center;margin-bottom:20px;"><h1 style="font-size:24px;font-weight:bold;text-decoration:underline;text-transform:uppercase;color:#000;">'+getDT().toUpperCase()+'</h1></div>'
+      + plainSectionHead('Candidate Demographic Framework')
+      + '<table style="width:100%;font-size:12px;margin-bottom:15px;border-collapse:collapse;">'
+      + '<tr><td style="font-weight:bold;width:160px;padding:6px 0;color:#000;">Name of Applicant</td><td>: '+d.name+'</td>'
+      + (d.photo ? '<td rowspan="6" style="vertical-align:top;text-align:right;"><img src="'+d.photo+'" style="width:85px;height:110px;border:1px solid #000;padding:2px;object-fit:cover;"></td>' : '') + '</tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Father\'s Name</td><td>: '+d.fname+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Mother\'s Name</td><td>: '+d.mname+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Date of Birth</td><td>: '+d.dob+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Marital Condition</td><td>: '+d.marital+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Linguistic Comfort</td><td>: '+d.language+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Hobbies Stack</td><td colspan="2">: '+d.hobbies+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;vertical-align:top;">Correspondence Address</td><td colspan="2">: '+d.address+'</td></tr>'
+      + '<tr><td style="font-weight:bold;padding:6px 0;color:#000;">Communication Coordinates</td><td colspan="2">: Phone: '+d.contact+' / Email: '+d.email+'</td></tr>'
+      + '</table>'
+      + plainSectionHead('Academic Milestones') + makeTable()
+      + (d.work.length ? plainSectionHead('Chronological Professional Engagements') + '<ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + cleanDecl;
+  }
+
+  // 9. TECH STACK BLOCK GRID
+  else if(selTplN === 9) {
+    htmlOut += headerHTML
+      + plainSectionHead('Acquired Core Competencies')
+      + (d.skills.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;">' + d.skills.map(function(s){ return '<span style="background:'+c+';color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:bold;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+s.name+'</span>'; }).join('') + '</div>' : '<p style="font-size:11px;">General Skills Asset.</p>')
+      + plainSectionHead('Scholastic Credentials') + makeTable()
+      + (d.work.length ? plainSectionHead('Practical Internships & Positions') + '<ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + plainSectionHead('Dossier Variables') + personalDetailsGrid() + cleanDecl;
+  }
+
+  // 10. EXECUTIVE UNDERLINED BANNER
+  else if(selTplN === 10) {
+    htmlOut += '<div style="text-align:center;margin-bottom:15px;border-bottom:4px double '+c+';padding-bottom:10px;">'
+      + '<h1 style="margin:0;font-size:26px;font-weight:800;color:'+c+';letter-spacing:0.5px;">'+d.name+'</h1>'
+      + '<p style="font-size:11px;color:#334155;margin-top:5px;font-weight:bold;">📱 '+d.contact+' &nbsp;&bull;&nbsp; ✉ '+d.email+' &nbsp;&bull;&nbsp; 📍 '+d.address+'</p></div>'
+      + (d.objective ? '<h3 style="font-size:12px;color:'+c+';text-transform:uppercase;font-weight:bold;margin-top:14px;margin-bottom:4px;">Profile Executive Summary</h3><p style="font-size:11px;text-align:justify;">'+d.objective+'</p>' : '')
+      + '<h3 style="font-size:12px;color:'+c+';text-transform:uppercase;font-weight:bold;margin-top:14px;margin-bottom:4px;">Educational Records</h3>' + makeTable()
+      + (d.work.length ? '<h3 style="font-size:12px;color:'+c+';text-transform:uppercase;font-weight:bold;margin-top:14px;margin-bottom:4px;">Professional History</h3><ul style="padding-left:15px;">'+makeList(d.work)+'</ul>' : '')
+      + '<h3 style="font-size:12px;color:'+c+';text-transform:uppercase;font-weight:bold;margin-top:14px;margin-bottom:4px;">Personal Demographics</h3>' + personalDetailsGrid() + cleanDecl;
+  }
+
+  // 11. ADVANCED ATS TWO-TONE ACCENT (highlights Projects & Achievements)
+  else if(selTplN === 11) {
+    var chip = function(t){return '<span style="display:inline-block;background:'+cl+';color:'+c+';border:1px solid '+c+';padding:3px 10px;border-radius:20px;font-size:10px;font-weight:bold;margin:0 5px 5px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+t+'</span>';};
+    var timelineList = function(items,icon){
+      if(!items.length) return '';
+      return '<div style="margin:6px 0 4px;">' + items.map(function(x){
+        return '<div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;">'
+          + '<span style="color:'+c+';font-size:10px;margin-top:3px;flex-shrink:0;">'+icon+'</span>'
+          + '<span style="font-size:11px;color:#334155;line-height:1.5;">'+x+'</span></div>';
+      }).join('') + '</div>';
+    };
+    htmlOut += '<div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid '+c+';padding-bottom:14px;margin-bottom:16px;">'
+      + (d.photo ? '<img src="'+d.photo+'" style="width:78px;height:96px;border-radius:8px;object-fit:cover;border:3px solid '+c+';flex-shrink:0;">' : '')
+      + '<div><h1 style="font-size:25px;margin:0;color:'+c+';font-weight:800;text-transform:uppercase;letter-spacing:.5px;">'+d.name+'</h1>'
+      + '<p style="font-size:10.5px;color:#475569;font-weight:700;letter-spacing:1px;margin-top:3px;">'+getDT().toUpperCase()+'</p>'
+      + '<p style="font-size:11px;color:#334155;margin-top:6px;">📱 '+d.contact+(d.email?' &nbsp;|&nbsp; ✉ '+d.email:'')+(d.linkedin?' &nbsp;|&nbsp; 🔗 '+d.linkedin:'')+'</p></div></div>'
+      + (d.objective ? plainSectionHead('Career Summary') + '<p style="font-size:11px;text-align:justify;color:#334155;">'+d.objective+'</p>' : '')
+      + (d.skills.length ? plainSectionHead('Key Skills') + '<div>' + d.skills.map(function(s){return chip(s.name);}).join('') + '</div>' : '')
+      + plainSectionHead('Education') + makeTable()
+      + (d.work.length ? plainSectionHead('Work Experience') + timelineList(d.work,'▸') : '')
+      + (d.proj.length ? plainSectionHead('Projects') + timelineList(d.proj,'◆') : '')
+      + (d.ach.length ? plainSectionHead('Achievements / Awards') + timelineList(d.ach,'★') : '')
+      + (d.strengths.length ? plainSectionHead('Strengths') + '<div>' + d.strengths.map(function(s){return chip(s);}).join('') + '</div>' : '')
+      + (d.extra.length ? plainSectionHead('Extra Qualifications / Certifications') + timelineList(d.extra,'✔') : '')
+      + plainSectionHead('Personal Details') + personalDetailsGrid()
+      + (d.references ? plainSectionHead('References') + '<p style="font-size:11px;color:#334155;">'+d.references+'</p>' : '')
+      + '<div style="margin-top:25px;font-size:11px;color:#334155;"><p style="font-weight:bold;text-transform:uppercase;color:#0f172a;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:2px;">Declaration</p><p style="font-style:italic;margin-bottom:20px;">I hereby declare that all the statements made in this document are true, complete and correct to the best of my knowledge and belief.</p><div style="display:flex;justify-content:space-between;margin-top:15px;font-weight:bold;"><div>Place: _________________<br><br>Date: _________________</div><div style="text-align:right;"><br><br>___________________________<br>(Signature of Candidate)</div></div></div>';
+  }
+
+  htmlOut += '</div>';
+  return htmlOut;
 }
 
 window.genResume=function(){
   var name=g('f_name');if(!name){alert('Please enter your full name.');return;}
-  var d={name:name,contact:g('f_contact'),email:g('f_email'),dob:g('f_dob'),fname:g('f_fname'),mname:g('f_mname'),nationality:g('f_nationality'),gender:g('f_gender'),marital:g('f_marital'),language:g('f_language'),hobbies:g('f_hobbies'),address:g('f_address'),objective:getObj(),edu:colEdu('edu'),pro:colEdu('pro'),extra:colList('ex',exC),work:colList('wk',wkC),skills:colSkills(),photo:photoDU};
+  var d={name:name,contact:g('f_contact'),email:g('f_email'),dob:g('f_dob'),fname:g('f_fname'),mname:g('f_mname'),nationality:g('f_nationality'),gender:g('f_gender'),marital:g('f_marital'),language:g('f_language'),hobbies:g('f_hobbies'),address:g('f_address'),objective:getObj(),edu:colEdu('edu'),pro:colEdu('pro'),extra:colList('ex',exC),work:colList('wk',wkC),skills:colSkills(),proj:colList('pj',pjC),ach:colList('ach',achC),strengths:colList('str',strC),linkedin:g('f_linkedin'),references:g('f_references'),photo:photoDU};
   document.getElementById('resumeOut').innerHTML=buildResume(d);
   document.getElementById('formSection').style.display='none';
   document.getElementById('prevSection').classList.add('show');
+  var db=document.getElementById('demoBanner');if(db)db.style.display=sampleModeOn?'flex':'none';
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.goBack=function(){document.getElementById('formSection').style.display='block';document.getElementById('prevSection').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});};
+window.printResume=function(){
+  var el=document.getElementById('resumeOut');
+  if(!el || !el.innerHTML.trim()){alert('Pehle resume generate karein.');return;}
+  var w=window.open('','_blank');
+  if(!w){alert('Popup block ho gaya hai. Print/Download PDF ke liye popup allow karein.');return;}
+  var docHtml='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Resume Print</title>'
+    + '<style>'
+    + '@page{ size:A4 portrait; margin:0; }'
+    + '*{box-sizing:border-box;}'
+    + 'html,body{margin:0 !important;padding:0 !important;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    + '.resume-print-wrap{width:161.5mm;min-height:228.5mm;padding:10.8mm 12.3mm;margin:0 auto;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;zoom:1.3;}'
+    + '@media print{ html,body{width:100% !important;} .resume-print-wrap{ zoom:1.3 !important; margin:0 !important; } }'
+    + '</style></head><body>'
+    + '<div class="resume-print-wrap">'+el.innerHTML+'</div>'
+    + '<script>window.onload=function(){setTimeout(function(){window.focus();window.print();},300);};<\/script>'
+    + '</body></html>';
+  w.document.open();
+  w.document.write(docHtml);
+  w.document.close();
+};
+window.goBack=function(){
+  var wasSample=sampleModeOn;
+  sampleModeOn=false;
+  if(wasSample){
+    /* User was viewing a SAMPLE DATA preview — reload to a clean blank
+       form instead of leaving the sample text sitting in the boxes. */
+    location.reload();
+    return;
+  }
+  document.getElementById('formSection').style.display='block';
+  document.getElementById('prevSection').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
 
-addEdu('edu');addEdu('pro');addExtra();addWork();addSkill();addSkill();
+addEdu('edu');addEdu('pro');addExtra();addWork();addSkill();addSkill();addProj();addAch();
+addStr('Good Communication Skills');addStr('Sincere & Hardworking');addStr('Team Spirit / Team Player');addStr('Positive Attitude');addStr('Quick Learner');addStr('Punctual & Disciplined');
+
+/* TEMPLATE GALLERY THUMBS PREVIEW */
+var TPL_THEME_MAP={1:'navy',2:'bw',3:'bw',4:'green',5:'navy',6:'bw',7:'navy',8:'bw',9:'green',10:'red',11:'navy'};
+var THUMB_D=(function(){
+  var s=SAMPLE_SETS[0];
+  return{name:s.name,contact:s.contact,email:s.email,dob:s.dob,fname:s.fname,mname:s.mname,nationality:s.nationality,gender:s.gender,marital:s.marital,language:s.language,hobbies:s.hobbies,address:s.address,objective:OBJ[1],edu:s.edu,pro:s.pro,extra:s.extra,work:s.work,skills:s.skills,proj:s.proj||[],ach:s.ach||[],strengths:s.strengths||['Good Communication Skills','Sincere & Hardworking','Team Spirit / Team Player'],linkedin:s.linkedin||'',references:s.references||'',photo:SAMPLE_PHOTO};
+})();
+
+function renderTplThumbs(){
+  var W=794;
+  document.querySelectorAll('.tpl-canvas').forEach(function(el){
+    var box=el.parentElement;var bw=box.clientWidth;if(!bw)return;var scale=bw/W;
+    el.style.transform='scale('+scale+')';
+    var tplN=parseInt(el.getAttribute('data-tplthumb'),10);
+    var savedT=selTplN,savedC=curTheme;selTplN=tplN;curTheme=TPL_THEME_MAP[tplN]||'navy';
+    el.innerHTML=buildResume(THUMB_D);
+    selTplN=savedT;curTheme=savedC;
+  });
+}
+var tplThumbResizeTO;
+window.addEventListener('resize',function(){clearTimeout(tplThumbResizeTO);tplThumbResizeTO=setTimeout(renderTplThumbs,180);});
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',renderTplThumbs);}else{renderTplThumbs();}
 })();
 </script>
-<div id="footer-placeholder"></div>
 </body>
 </html>
