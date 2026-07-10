@@ -5420,6 +5420,14 @@ def _page_exists_on_disk(slug):
     return slug in _DISK_JOB_SLUGS
 
 def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html='', list_noun='Jobs'):
+    # _DISK_JOB_SLUGS freezes on its first-ever call (often triggered early,
+    # mid-way through the detail-page write loop, by the "Related Jobs" widget).
+    # Force a fresh glob here so every listing page sees ALL detail pages
+    # written so far in this run — otherwise jobs added later in the same run
+    # (e.g. brand-new postings) get silently dropped from listing cards even
+    # though their /jobs/<slug>/ page already exists on disk.
+    global _DISK_JOB_SLUGS
+    _DISK_JOB_SLUGS = None
     _yr_str = str(YEAR)
     _t = title if _yr_str in title else f"{title} {YEAR}"
     # SEO FIX: latest-jobs page ka title differentiate karo homepage se
