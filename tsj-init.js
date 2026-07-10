@@ -3,7 +3,13 @@
 (function(){
   var h=document.getElementById('headerPlaceholder');
   if(!h) return;
-  fetch('/header.html',{cache:'force-cache'})
+  // cache:'no-cache' = always revalidate with the server (conditional
+  // request) instead of blindly trusting a stale local copy. force-cache
+  // was keeping edited header.html invisible to users for up to the full
+  // 2h Cache-Control window (see _headers: /*.html max-age=7200) since
+  // it skips revalidation entirely. Server still returns 304 when nothing
+  // changed, so repeat loads stay fast — this only fixes propagation.
+  fetch('/header.html',{cache:'no-cache'})
     .then(function(r){return r.ok?r.text():null})
     .catch(function(){return null})
     .then(function(t){

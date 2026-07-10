@@ -962,7 +962,17 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              (needs 4.5:1). Changed to #166534 (7.1:1). BUMP forces
 #              re-render of ALL existing pages so this PageSpeed-flagged
 #              contrast issue is fixed sitewide, not just on new pages.
-TEMPLATE_VERSION = '20260710.2-cs'
+# 20260710.3 — header.html/tsj-menu.js fixed (brand color, mobile clipping,
+#              desktop dropdowns not opening) but those files aren't in the
+#              auto-workflow's push trigger list and /*.js is cached
+#              immutable for 1 year — so already-written pages kept
+#              referencing tsj-menu.js?v=<OLD> and any CDN edge that had
+#              already fetched that exact URL during the gap between the
+#              previous full regen and this JS fix would serve the buggy
+#              content forever. BUMP forces every page onto a brand-new,
+#              never-before-cached ASSET_VER query string so the fixed JS
+#              is guaranteed to be fetched fresh.
+TEMPLATE_VERSION = '20260710.3-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
