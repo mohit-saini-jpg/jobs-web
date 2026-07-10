@@ -828,17 +828,28 @@ def main():
 
         slug = html_path.parent.name
 
-        # Skip if already done today
-        if not FORCE and slug in done_slugs:
-            skipped_done += 1
-            continue
-
         # Read HTML
         try:
             original = html_path.read_text(encoding="utf-8")
         except Exception as ex:
             print(f"  ❌ Read error [{slug}]: {ex}")
             errors += 1
+            continue
+
+        # Detect what kind of page this actually is (job/result/admit card/
+        # answer key/syllabus/admission/scheme/article) so the prompt below
+        # asks type-appropriate questions instead of always assuming a job.
+        # Computed BEFORE the done_slugs/AI_MARKER skip checks so a page that
+        # was mis-templated by an EARLIER run today (old code, now fixed)
+        # still gets corrected today instead of waiting for done_slugs to
+        # reset tomorrow — wrong live content re-published today should not
+        # have to wait a full extra day to be corrected.
+        intent = detect_intent(original)
+        is_reheal = AI_MARKER in original and intent != "job" and needs_reheal(original, intent)
+
+        # Skip if already done today — UNLESS this page needs re-healing.
+        if not FORCE and not is_reheal and slug in done_slugs:
+            skipped_done += 1
             continue
 
         # ── Microdata inject (no API needed) ─────────────────────
@@ -849,12 +860,6 @@ def main():
             tmp.replace(html_path)
             original = md_html   # updated original for AI patch below
             print(f"   📋 Microdata injected (JobPosting itemprop)")
-
-        # Detect what kind of page this actually is (job/result/admit card/
-        # answer key/syllabus/admission/scheme/article) so the prompt below
-        # asks type-appropriate questions instead of always assuming a job.
-        intent = detect_intent(original)
-        is_reheal = AI_MARKER in original and intent != "job" and needs_reheal(original, intent)
 
         # Skip if already has AI content (and not forcing) — UNLESS this page
         # was mis-templated (non-job page with old job-only headings), which
