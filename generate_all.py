@@ -947,7 +947,17 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              Anganwadi, JPSC, etc.) get fixed — data itself did not change,
 #              so without this bump the content hash stays identical and
 #              write() would keep skipping these pages forever.
-TEMPLATE_VERSION = '20260707.1-cs'
+# 20260710.1 — REL_CATS_HTML SEO relabel: "Related Categories" footer card
+#              (present on every /jobs/*/, /state-jobs/*/, /education/*/,
+#              /qualification/*/ page) had bare state names ("Haryana") and
+#              bare qualification levels ("Diploma") with no "Jobs" suffix,
+#              and an "Education State Wise Jobs" header that muddled
+#              education with jobs. BUMP forces re-render of ALL existing
+#              pages so already-baked pages also pick up the reworded links —
+#              data itself did not change, so without this bump the content
+#              hash stays identical and write() would keep skipping these
+#              pages forever.
+TEMPLATE_VERSION = '20260710.1-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
