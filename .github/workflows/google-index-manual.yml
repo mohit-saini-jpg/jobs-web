@@ -1,0 +1,26 @@
+name: 🔎 Google Index — Manual Submit / Test
+
+# Manual "push newest job URLs to Google now" button.
+# Use it to (a) verify the credential + Search Console ownership are set up
+# correctly, and (b) force-submit URLs any time without waiting for the
+# nightly auto-update run. Reads the same GOOGLE_INDEXING_SA_JSON secret and
+# runs the same script the auto pipeline uses.
+on:
+  workflow_dispatch:
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔎 Submit newest URLs to Google Indexing API
+        env:
+          GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
+        run: node .github/workflows/google-index-submit.js
