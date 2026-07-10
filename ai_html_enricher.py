@@ -752,8 +752,33 @@ def git_commit(count, calls, push=False):
             subprocess.run(["git","commit","-m",msg],capture_output=True)
             print(f"  💾 Git commit (local): {count} pages")
         if push:
-            subprocess.run(["git","push","origin","main"],capture_output=True)
-            print(f"  🚀 Git push: all pending commits pushed")
+            # NOTE: a bare push here previously never checked returncode, so a
+            # rejected (non-fast-forward — e.g. another workflow pushed
+            # posted_jobs.txt in the meantime) push silently printed "pushed"
+            # while the commit stayed local-only. Now verified, with a
+            # pull --rebase + retry loop for the common "origin moved" case.
+            pushed = False
+            for attempt in range(3):
+                pr = subprocess.run(["git","push","origin","main"],capture_output=True,text=True)
+                if pr.returncode == 0:
+                    pushed = True
+                    break
+                print(f"  ⚠️  Push attempt {attempt+1} failed: {pr.stderr.strip()[:200]}")
+                # .ai_progress_html.json is never staged above, so it can be
+                # sitting there uncommitted (e.g. mid-run checkpoints) and
+                # would block `pull --rebase` — stash it around the rebase.
+                st = subprocess.run(["git","stash","--include-untracked"],capture_output=True,text=True)
+                stashed = "No local changes to save" not in (st.stdout + st.stderr)
+                rb = subprocess.run(["git","pull","--rebase","origin","main"],capture_output=True,text=True)
+                if stashed:
+                    subprocess.run(["git","stash","pop"],capture_output=True)
+                if rb.returncode != 0:
+                    print(f"  ⚠️  Rebase failed: {rb.stderr.strip()[:200]} — giving up on push")
+                    break
+            if pushed:
+                print(f"  🚀 Git push: all pending commits pushed")
+            else:
+                print(f"  ❌ Git push FAILED — commits are local-only, will retry next checkpoint/run")
     except Exception as ex:
         print(f"  ⚠️  Git commit skip: {ex}")
 
