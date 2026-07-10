@@ -25,6 +25,12 @@ SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "3")))
 DELAY_SEC    = 60.0 / SAFE_RPM                    # 20s at 3 RPM
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "800"))
 RUN_LIMIT    = int(os.environ.get("RUN_LIMIT", "800"))
+# Default True = unchanged GitHub Actions behaviour (push every 10-page
+# checkpoint, as before). Set PUSH_EVERY_CHECKPOINT=false for a long manual
+# run to only commit locally along the way and push ONCE at the very end —
+# every push triggers a Vercel deploy, so a 700-page manual run pushing
+# every 10 pages would burn ~70 deploys instead of 1.
+PUSH_EVERY_CHECKPOINT = os.environ.get("PUSH_EVERY_CHECKPOINT", "true").strip().lower() != "false"
 FORCE        = "--force" in sys.argv or os.environ.get("FORCE_REGEN","false").lower() == "true"
 DRY_RUN      = "--dry-run" in sys.argv
 JOBS_DIR     = Path(os.environ.get("JOBS_DIR", "jobs"))
@@ -730,7 +736,11 @@ def write_summary(lines):
         pass
 
 # ── Git commit ────────────────────────────────────────────────────────────────
-def git_commit(count, calls):
+def git_commit(count, calls, push=False):
+    """Commit locally every checkpoint (cheap, safe — crash-proof progress).
+    Only PUSH when explicitly asked (push=True, normally just the final call)
+    — every push triggers a Vercel deploy, so pushing on every 10-page
+    checkpoint would burn through the deployment quota over a long run."""
     import subprocess
     try:
         subprocess.run(["git","config","user.name","github-actions[bot]"],capture_output=True)
@@ -740,8 +750,10 @@ def git_commit(count, calls):
         if r.returncode != 0:
             msg = f"🤖 AI HTML: {count} pages enriched ({calls} API calls) | {datetime.now().strftime('%Y-%m-%d %H:%M')} [skip ci]"
             subprocess.run(["git","commit","-m",msg],capture_output=True)
+            print(f"  💾 Git commit (local): {count} pages")
+        if push:
             subprocess.run(["git","push","origin","main"],capture_output=True)
-            print(f"  💾 Git commit: {count} pages pushed")
+            print(f"  🚀 Git push: all pending commits pushed")
     except Exception as ex:
         print(f"  ⚠️  Git commit skip: {ex}")
 
@@ -920,15 +932,19 @@ def main():
         progress["calls_today"] = calls_today
         save_progress(progress)
 
-        # Har 10 pages ke baad commit — cancel hone par max 10 pages ka loss
+        # Har 10 pages ke baad commit. GitHub Actions ka default (unchanged):
+        # push bhi turant. Manual long run (PUSH_EVERY_CHECKPOINT=false):
+        # commit sirf local, push end mein ek hi baar (Vercel deploy-quota
+        # bachane ke liye).
         if processed % 10 == 0:
-            git_commit(processed, calls_today)
+            git_commit(processed, calls_today, push=PUSH_EVERY_CHECKPOINT)
 
         time.sleep(DELAY_SEC)
 
-    # Final git commit
+    # Final commit — always pushes, so nothing is ever left stranded
+    # unpushed at the end of a run regardless of the checkpoint mode above.
     if processed > 0 and not DRY_RUN:
-        git_commit(processed, calls_today)
+        git_commit(processed, calls_today, push=True)
 
     enr1, tot1 = site_progress(JOBS_DIR)
     remaining = tot1 - enr1
