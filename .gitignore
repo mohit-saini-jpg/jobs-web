@@ -27,6 +27,20 @@ scraper/ai_usage_tracker.json
 # Node (if any tooling uses it)
 node_modules/
 
+# ── SECRETS: Google service-account / API credentials ────────────────
+# The Google Indexing API service-account JSON contains a private_key.
+# It must NEVER be committed — it lives ONLY in GitHub Secrets
+# (GOOGLE_INDEXING_SA_JSON). These patterns block common local filenames.
+*service-account*.json
+*service_account*.json
+*-credentials*.json
+*credentials.json
+gcp-*.json
+google-indexing*.json
+job-portal-*.json
+sa-key*.json
+indexing-key*.json
+
 # Do NOT ignore: jobs/, state/, education/, section/, qualification/,
 # category/, data/ — these are the LIVE SITE CONTENT that GitHub Pages
 # serves directly. They must stay committed.

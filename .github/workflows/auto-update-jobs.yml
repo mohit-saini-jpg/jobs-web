@@ -366,6 +366,18 @@ jobs:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: node .github/workflows/indexnow-ping.js
 
+      # ── STEP 12a: Google Indexing API (GATED by SEO Guardian) ─────
+      # Officially supported for JobPosting pages (this site). Submits the
+      # newest job URLs so Googlebot recrawls them fast. Requires the
+      # GOOGLE_INDEXING_SA_JSON secret + the service-account added as an
+      # Owner in Search Console; the script no-ops safely if either is absent.
+      - name: 🔎 Google Indexing API submit
+        if: env.SEO_CLEAN == 'true'
+        continue-on-error: true
+        env:
+          GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
+        run: node .github/workflows/google-index-submit.js
+
       # ── STEP 12b: Guardian gate warning (only when ping was skipped) ──
       - name: ⚠️ SEO Guardian gate — ping skipped
         if: env.SEO_CLEAN != 'true'
