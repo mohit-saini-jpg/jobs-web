@@ -8219,13 +8219,96 @@ if _recon_fixed or _recon_removed:
     print(f"  [reconcile] sections-index fixed {_recon_fixed} slugs, removed {_recon_removed} dead items")
 
 write(str(ROOT/'sections-index.json'), json.dumps(sections_index, ensure_ascii=False, separators=(',',':')))
-# Update version string in index.html to bust cache
+
+# ── HOMEPAGE SR-SECTION CARDS: server-side pre-render (LCP fix) ─────────────
+# The homepage used to ship only 4 empty skeleton divs in static HTML and
+# build all 26 section cards purely client-side after fetching
+# sections-index.json + dailyupdates.json. Under throttled mobile conditions
+# that fetch+parse+render chain was the dominant cost behind a 7s+ LCP.
+# sections_index (just written above, already reconciled to real /jobs/
+# pages) has every field mkCard() needs, so mirror that exact JS template
+# here in Python and inject real HTML at generation time. tsj9's own JS
+# still runs afterwards to refresh the cards in the background — it already
+# skips replacing the DOM once it finds >=20 real (non-skeleton) cards.
+_HOMEPAGE_SECS = [
+    ('Latest Jobs',          'SR_Latest_Jobs',       '/section/latest-jobs/',           '#1a56db'),
+    ('Result',               'SR_Result',             '/section/results/',               '#9b1c1c'),
+    ('Admit Card',           'SR_Admit_Card',         '/section/admit-card/',            '#1e3a5f'),
+    ('Admission',            'ADMISSIONS',            '/section/admissions/',            '#14532d'),
+    ('Answer Key',           'SR_Answer_Key',         '/section/answer-key/',            '#713f12'),
+    ('Offline Form',         'OFFLINE_FORM',          '/section/offline-form/',          '#1e3a5f'),
+    ('Upcoming Jobs',        'UPCOMING_JOBS',         '/section/upcoming-jobs/',         '#14532d'),
+    ('Latest Jobs New',      'LATEST_JOBS NEW',       '/section/latest-jobs-new/',       '#1a56db'),
+    ('Latest Notifications', 'Latest_Notifications',  '/section/latest-notifications/',  '#1a56db'),
+    ('10th Pass Jobs',       '10TH_Pass',             '/section/10th-pass-jobs/',        '#9b1c1c'),
+    ('12th Pass Jobs',       '12TH_Pass',             '/section/12th-pass-jobs/',        '#14532d'),
+    ('Diploma Jobs',         'Diploma',               '/section/diploma-jobs/',          '#713f12'),
+    ('ITI Jobs',             'ITI',                   '/section/iti-jobs/',              '#1e3a5f'),
+    ('B.Tech / B.E. Jobs',   'B_Tech_BE',             '/section/btech-jobs/',            '#14532d'),
+    ('Any Graduate Jobs',    'Any_Graduate',          '/section/graduation-jobs/',       '#1a56db'),
+    ('Post Graduate Jobs',   'Any_Post_Graduate',     '/section/post-graduation-jobs/',  '#9b1c1c'),
+    ('Railway Jobs',         'Railway_Jobs',          '/section/railway-jobs/',          '#1e3a5f'),
+    ('Police / Defence',     'Police_Defence',        '/section/police-jobs/',           '#14532d'),
+    ('Teaching / Faculty',   'Teaching_Faculty',      '/section/teaching-jobs/',         '#713f12'),
+    ('Bank Jobs',            'Bank_Jobs',             '/section/bank-jobs/',             '#1e3a5f'),
+    ('Medical / Hospital',   'Medical_Hospital',      '/section/healthcare-jobs/',       '#9b1c1c'),
+    ('Last Date Reminder',   'Last_Date_Reminder',    '/section/last-date-reminder/',    '#14532d'),
+    ('Govt Scheme & Yojna',  'Govt Scheme & Yojna',   '/section/govt-scheme-yojna/',     '#1a56db'),
+    ('ImportantCSC PDF',     'ImportantCSC PDF',      '/section/importantcsc-pdf/',      '#713f12'),
+    ('ImportantCSC link',    'ImportantCSC link',     '/section/importantcsc-link/',     '#9b1c1c'),
+    ('Today Updates',        'Today Updates',         '/section/today-updates/',         '#F24EEC'),
+]
+
+def _render_homepage_sr_cards(sec_index, max_items=5):
+    out = []
+    for label, key, url, color in _HOMEPAGE_SECS:
+        items = (sec_index.get(key) or [])[:max_items]
+        li_parts = []
+        n = 0
+        for it in items:
+            if not isinstance(it, dict): continue
+            nm = (it.get('name') or '').strip()
+            if not nm: continue
+            slug = (it.get('slug') or '').strip()
+            raw_url = (it.get('url') or '').strip()
+            href = f'/jobs/{slug}/' if slug else (raw_url or url)
+            is_ext = href.startswith('http') and 'topsarkarijobs.com' not in href
+            tgt = ' target="_blank" rel="noopener noreferrer"' if is_ext else ''
+            dt = str(it.get('date') or '')
+            n += 1
+            li_parts.append(
+                f'<li><a href="{e(href)}"{tgt} class="sr-job-link"><span class="sr-num">{n}</span>'
+                f'<span class="sr-job-title">{e(nm[:80])}</span>'
+                + (f'<span class="sr-job-date">{e(dt[:10])}</span>' if dt else '')
+                + ('<span style="margin-left:3px;font-size:.58rem;color:#7c3aed;">↗</span>' if is_ext else '')
+                + '</a></li>'
+            )
+        li_html = ''.join(li_parts) if li_parts else (
+            f'<li><a href="{e(url)}" class="sr-job-link">'
+            f'<span class="sr-job-title">View all {e(label)} &rarr;</span></a></li>')
+        out.append(
+            f'<div class="sr-card"><div class="sr-card-head" style="background:{color}">'
+            f'<div class="left"><span class="sr-section-title">{e(label)}</span></div>'
+            f'<a href="{e(url)}" aria-label="View all {e(label)}" '
+            'style="color:#fff;font-size:.68rem;background:rgba(255,255,255,.2);padding:2px 7px;'
+            f'border-radius:4px;text-decoration:none;white-space:nowrap;">View All</a></div>'
+            f'<ul class="sr-job-list">{li_html}</ul>'
+            f'<div class="sr-card-footer"><a href="{e(url)}" class="sr-sub-link">View All {e(label)} &rarr;</a></div>'
+            '</div>')
+    return ''.join(out)
+
+# Update version string in index.html to bust cache + inject pre-rendered cards
 _ver = __import__('datetime').datetime.now().strftime('%Y%m%d%H%M')
 _idx_path = str(ROOT/'index.html')
 if __import__('os').path.exists(_idx_path):
     _idx = open(_idx_path, encoding='utf-8').read()
     import re as _re
     _idx_new = _re.sub(r'sections-index\.json\?v=\d+', f'sections-index.json?v={_ver}', _idx)
+    _sr_cards_html = _render_homepage_sr_cards(sections_index)
+    _idx_new = _re.sub(
+        r'(<div id="sr-sections-grid" class="sr-sections-grid">)(.*?)(</div>\s*</div>\s*<div id="dynamic-sections")',
+        lambda _m: _m.group(1) + _sr_cards_html + _m.group(3),
+        _idx_new, count=1, flags=_re.S)
     if _idx_new != _idx:
         open(_idx_path, 'w', encoding='utf-8').write(_idx_new)
 
