@@ -19,19 +19,26 @@
         var dd   = btn.closest('[data-dd]') || btn.parentNode;
         var menu = dd ? dd.querySelector('.nav-dd-menu') : null;
         if (!menu) return;
-        var isOpen = menu.style.display === 'block';
+        var isOpen = menu.classList.contains('open');
         // close all menus + reset all buttons
-        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+        // NOTE: toggle BOTH the inline display style (header.html's own
+        // embedded CSS: display:none / .open{display:block}) AND the
+        // 'open' class (styles.css's CSS: visibility/opacity/.open{...} —
+        // loaded on every non-homepage page). Only setting style.display
+        // left the menu at opacity:0/pointer-events:none on those pages —
+        // technically "open" but invisible and unclickable.
+        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; m.classList.remove('open'); });
         document.querySelectorAll('.nav-dd-btn').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
         if (!isOpen) {
           menu.style.display = 'block';
+          menu.classList.add('open');
           btn.setAttribute('aria-expanded', 'true');
         }
         return;
       }
       // click outside any open dropdown → close all
       if (!(e.target.closest && e.target.closest('.nav-dd-menu'))) {
-        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; });
+        document.querySelectorAll('.nav-dd-menu').forEach(function (m) { m.style.display = ''; m.classList.remove('open'); });
         document.querySelectorAll('.nav-dd-btn').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
       }
     });
@@ -184,7 +191,7 @@
 // R3 FIX: ESC key closes dropdowns
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
-    document.querySelectorAll('.nav-dd-menu').forEach(function(m){m.style.display='';});
+    document.querySelectorAll('.nav-dd-menu').forEach(function(m){m.style.display='';m.classList.remove('open');});
     document.querySelectorAll('.nav-dd-btn').forEach(function(b){b.setAttribute('aria-expanded','false');});
   }
 });

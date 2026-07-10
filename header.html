@@ -81,7 +81,8 @@ a, button, [role="button"] {
   font-size: 1.3rem; font-weight: 900; color: var(--navy); line-height: 1.2;
   white-space: nowrap; overflow: visible;
 }
-.brand-title span { color: var(--accent); }
+/* Solid navy — matches homepage brand color (no separate accent tint on "SARKARI") */
+.brand-title span { color: var(--navy); }
 .brand-sub {
   font-size: .62rem; color: var(--muted); font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -94,6 +95,17 @@ a, button, [role="button"] {
   .brand-title { font-size: 1.08rem; white-space: nowrap; }
   .brand-sub { font-size: .6rem; }
   .brand-logo { width: 42px; height: 42px; }
+  /* FIX: "Language" label was eating the width the brand title needed to fit
+     on one line without clipping — icon-only on small screens frees ~55px. */
+  .translate-hint { font-size: 0; gap: 0; }
+  .translate-hint i { font-size: 15px; }
+  .translate-box { padding: 4px 7px; }
+}
+/* Very small phones (iPhone SE / older Android ~360px and below): brand
+   title + tagline still need a touch more room than 480px alone frees up. */
+@media (max-width: 360px) {
+  .brand-title { font-size: .96rem; }
+  .brand-sub { font-size: .56rem; }
 }
 /* ── Header Actions ── */
 .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
