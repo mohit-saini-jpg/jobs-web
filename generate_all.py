@@ -957,7 +957,12 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              data itself did not change, so without this bump the content
 #              hash stays identical and write() would keep skipping these
 #              pages forever.
-TEMPLATE_VERSION = '20260710.1-cs'
+# 20260710.2 — Contrast fix: .fee-free text (green "Fee: Free" label on job
+#              detail pages) was #16a34a, only 3.3:1 on white — fails WCAG AA
+#              (needs 4.5:1). Changed to #166534 (7.1:1). BUMP forces
+#              re-render of ALL existing pages so this PageSpeed-flagged
+#              contrast issue is fixed sitewide, not just on new pages.
+TEMPLATE_VERSION = '20260710.2-cs'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -4331,7 +4336,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .fee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 .fee-cell{padding:9px 13px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9}
 .fee-cat{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;color:#64748b;margin-bottom:3px;letter-spacing:.04em}
-.fee-amt{font-size:.93rem;font-weight:800;color:#1e293b}.fee-free{color:#16a34a}.fee-paid{color:#dc2626}
+.fee-amt{font-size:.93rem;font-weight:800;color:#1e293b}.fee-free{color:#166534}.fee-paid{color:#dc2626}
 .fee-note{padding:9px 14px;font-size:.8rem;color:#78350f;background:#fffbeb;border-top:1px solid #fde68a;display:flex;gap:6px}
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
 .data-table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:420px;table-layout:auto}
