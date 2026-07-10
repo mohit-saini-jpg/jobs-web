@@ -4159,6 +4159,7 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
         elif intent == 'admitcard':
             _exam_nd = norm_date(safe(dates.get('exam_date','') or dates.get('written_exam_date','')))
             _ac_nd   = norm_date(safe(dates.get('admit_card_date','') or dates.get('admit_card_available',''))) or date_posted
+            _org_url = _official_site_url or canon_url
             primary = {
                 '@context':'https://schema.org','@type':'Event',
                 'name':title[:110],'description':desc,
@@ -4169,7 +4170,10 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
                 'location':{'@type':'Place',
                     'name':loc if loc and loc!='India' else 'India (Multiple Centres)',
                     'address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':loc}},
-                'organizer':{'@type':'Organization','name':org},
+                'organizer':{'@type':'Organization','name':org,'url':_org_url},
+                'performer':{'@type':'Organization','name':org,'url':_org_url},
+                'offers':{'@type':'Offer','url':canon_url,'price':'0','priceCurrency':'INR',
+                    'availability':'https://schema.org/InStock','validFrom':date_posted_iso},
                 'url':canon_url,'image':BASE_URL+'/og-jobs.png',
             }
         elif intent == 'answerkey':
