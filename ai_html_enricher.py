@@ -932,17 +932,19 @@ def main():
         progress["calls_today"] = calls_today
         save_progress(progress)
 
-        # Har 10 pages ke baad commit. GitHub Actions ka default (unchanged):
-        # push bhi turant. Manual long run (PUSH_EVERY_CHECKPOINT=false):
-        # commit sirf local, push end mein ek hi baar (Vercel deploy-quota
-        # bachane ke liye).
-        if processed % 10 == 0:
-            git_commit(processed, calls_today, push=PUSH_EVERY_CHECKPOINT)
+        # GitHub Actions ka default (unchanged): har 10 pages pe commit +
+        # push turant. Manual long run (PUSH_EVERY_CHECKPOINT=false): koi
+        # intermediate commit hi nahi — saare page changes uncommitted working
+        # tree mein accumulate hote hain (files disk pe safe hain, resumability
+        # AI_MARKER/done_slugs se hi chalti hai, git commit status se nahi).
+        # Sirf ek EK commit + EK push hoga, poore run ke bilkul end mein.
+        if processed % 10 == 0 and PUSH_EVERY_CHECKPOINT:
+            git_commit(processed, calls_today, push=True)
 
         time.sleep(DELAY_SEC)
 
-    # Final commit — always pushes, so nothing is ever left stranded
-    # unpushed at the end of a run regardless of the checkpoint mode above.
+    # Final commit — the ONLY commit + push when batching (PUSH_EVERY_CHECKPOINT
+    # false); always runs regardless of mode so nothing is ever left stranded.
     if processed > 0 and not DRY_RUN:
         git_commit(processed, calls_today, push=True)
 
