@@ -5958,3 +5958,10 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/hppsc-734-police-constable-2026/  /jobs/hppsc-hp-police-constable-male-female-recruitment-2026-734-vacancies/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/bihar-bpssc-forest-range-officer-fro-advt-no-10-2026-recruitment-2026/  /jobs/bpssc-forest-range-officer-recruitment-2026-apply-online-for-16-posts/  301
+/jobs/jk-chadoora-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
+/jobs/jk-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
+/jobs/ncl-259-mining-sirdar-surveyor/  /jobs/ncl-recruitment-2026-mining-sirdar-surveyor-posts-apply-online-from-14-july/  301
+/jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
