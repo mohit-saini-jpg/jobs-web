@@ -8291,7 +8291,7 @@ _HOMEPAGE_SECS = [
     ('Govt Scheme & Yojna',  'Govt Scheme & Yojna',   '/section/govt-scheme-yojna/',     '#1a56db'),
     ('ImportantCSC PDF',     'ImportantCSC PDF',      '/section/importantcsc-pdf/',      '#713f12'),
     ('ImportantCSC link',    'ImportantCSC link',     '/section/importantcsc-link/',     '#9b1c1c'),
-    ('Today Updates',        'Today Updates',         '/section/today-updates/',         '#A21CAF'),
+    ('Today Updates',        'Today Updates',         '/section/today-updates/',         '#F24EEC'),
 ]
 
 def _render_homepage_sr_cards(sec_index, max_items=5):
