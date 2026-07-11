@@ -245,25 +245,11 @@
 
   // ── Step 7: Service Worker registration ────────────────────────────
   if ('serviceWorker' in navigator) {
-    // PERF FIX: a first-time visitor has no controller yet — registering the
-    // SW for the first time (skipWaiting + clients.claim in sw.js) makes the
-    // browser fire 'controllerchange' / our own 'SW_UPDATED' message exactly
-    // once, which this code used to treat as "new deploy, reload now". That
-    // forced a full page reload on every single first visit (measured as a
-    // ~3.5s "redirect" in Lighthouse/PSI — the LCP render delay was actually
-    // this reload). Only reload for a REAL update: page already had an
-    // active controller before this registration.
-    var hadControllerAtBoot = !!navigator.serviceWorker.controller;
-
     navigator.serviceWorker.addEventListener('message', function(e) {
       var type = (e.data || {}).type;
 
       if (type === 'SW_UPDATED') {
         console.log('[TSJ-ZSCE v8] SW activated v' + e.data.version);
-        if (!hadControllerAtBoot) {
-          console.log('[TSJ-ZSCE v8] First-time SW install — no reload needed');
-          return;
-        }
         // RC-7 FIX: only reload if enough time has passed (prevent reload loops)
         var now = Date.now();
         if (now - _lastReload > 10000) {
@@ -314,11 +300,6 @@
 
     // Detect SW controller change (new SW took over)
     navigator.serviceWorker.addEventListener('controllerchange', function() {
-      if (!hadControllerAtBoot) {
-        console.log('[TSJ-ZSCE v8] First-time SW claim — no reload needed');
-        hadControllerAtBoot = true; // any FUTURE change is a real update
-        return;
-      }
       console.log('[TSJ-ZSCE v8] SW controller changed → reloading');
       // RC-7 FIX: only reload if toast not shown AND enough time has passed
       var now = Date.now();
