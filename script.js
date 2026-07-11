@@ -2354,7 +2354,15 @@
     }
 
     let searchData = [];
-    try {
+    /* PERF FIX: Complete_Jobs_Full_Data.json is now 5MB+ gzipped (30MB+
+       raw) — fetching it eagerly on every page load tanked LCP/TBT
+       site-wide. Load it lazily, only once a visitor actually touches a
+       search box (focus/input), and memoize so it only fetches once. */
+    let searchDataPromise = null;
+    function loadSearchData() {
+      if (searchDataPromise) return searchDataPromise;
+      searchDataPromise = (async () => {
+      try {
       /* ── ONLY these 4 authoritative JSON files are used for search ──
          jobs.json / tools.json / services.json are EXCLUDED intentionally.
          ─────────────────────────────────────────────────────────────── */
@@ -2431,19 +2439,24 @@
           });
         });
       }
-    } catch (e) {}
+      } catch (e) {}
+      })();
+      return searchDataPromise;
+    }
 
     inputs.forEach(({ input, resultsId }) => {
       const resultsWrap = document.getElementById(resultsId);
       if (!resultsWrap) return;
 
-      const performSearch = () => {
+      const performSearch = async () => {
         const query = input.value.toLowerCase().trim();
         if (query.length < 1) {
           resultsWrap.innerHTML = "";
           resultsWrap.style.display = "none";
           return;
         }
+
+        await loadSearchData();
 
         const tokens = query.split(/\s+/).filter(t => t.length);
         const matches = searchData.filter(item => {
@@ -2481,7 +2494,7 @@
       };
 
       input.addEventListener("input", performSearch);
-      input.addEventListener("focus", () => { if(input.value.length >= 1) resultsWrap.style.display="block"; });
+      input.addEventListener("focus", () => { loadSearchData(); if(input.value.length >= 1) resultsWrap.style.display="block"; });
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") { e.preventDefault(); performSearch(); }
       });
