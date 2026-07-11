@@ -928,12 +928,11 @@
           }
         }, { passive: true });
 
-        /* Also load on idle after 20s */
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadHeavy, { timeout: 25000 });
-        } else {
-          setTimeout(loadHeavy, 20000);
-        }
+        /* PERF FIX: no more forced idle-load. Complete_Jobs_Full_Data.json
+           is 5MB+ gzipped (30MB+ raw) — force-loading it ~20-25s into every
+           visit (even with zero search interaction) was blocking LCP/TBT
+           site-wide (measured LCP ~33s). Only genuine typing in the search
+           box triggers this fetch now (see 'input' listener above). */
       })
       .catch(function(err) {
         searchReady = true;

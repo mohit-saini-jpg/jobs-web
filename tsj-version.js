@@ -30,26 +30,22 @@
   var _lastReload      = 0;               // RC-7 FIX: reload loop guard
 
   // ── STEP 0: RC-4 FIX — Boot-time version check ─────────────────────
-  // Runs synchronously BEFORE any data fetch starts.
-  // If version mismatch detected → clear sessionStorage NOW so data
-  // fetches that follow always get fresh JSON.
+  // This script loads with `defer`, so by the time it runs, index.html's
+  // own inline fetches (sections-index.json etc.) have already started —
+  // a synchronous XHR here can no longer actually block them, it just
+  // blocks the main thread for no benefit (and sync XHR is deprecated by
+  // browsers). Fetch async instead; on a version mismatch, sessionStorage
+  // is cleared a beat later than before, which is an acceptable tradeoff.
   (function bootVersionCheck() {
     try {
       var savedVer = localStorage.getItem(LS_VER_KEY);
       if (savedVer) {
-        // We have a saved version — fetch the current one immediately
-        // Use XMLHttpRequest (synchronous-ish path on DOMContentLoaded)
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', VERSION_URL + '?_t=' + Date.now(), false); // sync
-        xhr.setRequestHeader('Cache-Control', 'no-store');
-        xhr.setRequestHeader('Pragma', 'no-cache');
-        try {
-          xhr.send();
-          if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
+        fetch(VERSION_URL + '?_t=' + Date.now(), {
+          cache: 'no-store',
+          headers: { 'Pragma': 'no-cache' }
+        }).then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(data) {
             if (data && data.version && String(data.version) !== savedVer) {
-              // Version mismatch — clear sessionStorage IMMEDIATELY
-              // so the data fetches below get fresh content
               sessionStorage.clear();
               localStorage.setItem(LS_VER_KEY, String(data.version));
               KNOWN_VERSION = String(data.version);
@@ -57,10 +53,9 @@
             } else if (data && data.version) {
               KNOWN_VERSION = String(data.version);
             }
-          }
-        } catch (xhrErr) {
-          // Sync XHR failed (CORS, etc.) — async check will catch it
-        }
+          }).catch(function() {
+            // fetch failed (CORS, offline, etc.) — async check will catch it
+          });
       }
     } catch (e) {}
   })();
