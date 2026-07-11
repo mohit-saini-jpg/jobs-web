@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T15:07:08.593040+00:00",
+  "timestamp": "2026-07-11T04:38:21.971657+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 4416,
@@ -45,5 +45,5 @@
   "notes": [
     "broken_links: No new redirects needed — all links OK"
   ],
-  "duration_sec": 22.8
+  "duration_sec": 14.2
 }
