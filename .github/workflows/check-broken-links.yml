@@ -2,14 +2,21 @@ name: "\U0001F50D Check & Fix Broken Job Links"
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 21 * * *'  # Daily 2:30 AM IST (UTC 21:00)
+  # Chained: fires right after "Auto Update Jobs" finishes, so it always
+  # runs on the day's freshly-generated HTML (scraper push → auto-update →
+  # broken-links → ai-nightly). No more fixed-time cron drift.
+  workflow_run:
+    workflows: ["🔄 Auto Update Jobs + Sitemap + Cache Bust"]
+    types: [completed]
 
 jobs:
   check-and-fix:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout

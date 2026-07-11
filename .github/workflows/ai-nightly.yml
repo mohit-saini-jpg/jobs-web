@@ -6,8 +6,13 @@
 name: 🌙 AI Content Enrichment (Nightly)
 
 on:
-  schedule:
-    - cron: '30 0 * * *'   # Daily 6:00 AM IST (Groq reset 5:30 AM IST ke 30 min baad)
+  # Chained: fires right after "Check & Fix Broken Job Links" finishes, so
+  # AI enrichment always runs on the day's freshest data (scraper push →
+  # auto-update → broken-links → ai-nightly). Replaces the old fixed
+  # 6:00 AM cron, which drifted whenever the earlier steps ran late.
+  workflow_run:
+    workflows: ["🔍 Check & Fix Broken Job Links"]
+    types: [completed]
 
   workflow_dispatch:
     inputs:
@@ -34,6 +39,9 @@ jobs:
     timeout-minutes: 170       # room for 300 pages @ 3 RPM (~100 min) + 429 waits
     permissions:
       contents: write
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: 📥 Checkout

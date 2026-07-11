@@ -24,6 +24,17 @@ scraper/scraper_checkpoint.json
 scraper/scrape_seen_urls.json
 scraper/ai_usage_tracker.json
 
+# GitHub-hosted scraper (FJA + Education) — intermediate/raw scrape output.
+# The workflow merges these into Complete_Jobs_Full_Data.json and only that
+# final file gets committed; the raw intermediates reset every run.
+scraper/_temp_unified_fja.json
+scraper/_temp_unified_index.json
+scraper/_temp_district.json
+scraper/Education_Jobs.json
+scraper/Complete_Jobs_Full_Data.json
+scraper/backups/
+scraper/merged_sarkari_data.json
+
 # Node (if any tooling uses it)
 node_modules/
 

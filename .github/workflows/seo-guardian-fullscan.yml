@@ -1,16 +1,19 @@
 # ══════════════════════════════════════════════════════════════════════
-# SEO Guardian — Weekly FULL-SCAN heal (MANUAL trigger only)
+# SEO Guardian — Daily FULL-SCAN heal
 # Runs seo_guardian.py over the ENTIRE jobs/state/education/category/section/
 # qualification tree (not just git-changed files) and commits the heals.
 #
-# NOTE: intentionally workflow_dispatch ONLY — no cron yet. We first watch the
-# daily --changed-only Guardian (in auto-update-jobs.yml, Step 8b) run stably in
-# production for a week or two; a cron schedule is added later once proven.
+# Scheduled for ~1:00 AM IST — an isolated slot where nothing else in the
+# pipeline runs (scraper 5:30 AM, auto-update/broken-links/ai-nightly chain
+# after that), so the whole site gets freshly validated before the day's
+# new pages are pushed to Google Indexing.
 # ══════════════════════════════════════════════════════════════════════
 
-name: 🛡️ SEO Guardian — Weekly Full Scan
+name: 🛡️ SEO Guardian — Full Scan
 
 on:
+  schedule:
+    - cron: '30 19 * * *'   # Daily 1:00 AM IST (UTC 19:30)
   workflow_dispatch:
 
 # Share the data-pipeline concurrency group so a full-scan never runs at the same

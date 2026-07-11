@@ -1,0 +1,70 @@
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW: merge-sr.yml — Merge SR (Sarkari) upload
+# Sarkari-category scraping stays on the user's PC forever (target site
+# blocks GitHub's IP). User runs scraper_sarkari.py locally, which writes
+# merged_sarkari_data.json, then uploads/pushes just that one file to the
+# repo root. This workflow merges it into Complete_Jobs_Full_Data.json —
+# only the "sarkari_data" source is replaced; freejobalert_unified and
+# education_jobs (from the GitHub scraper) stay untouched.
+#
+# Pushing the merged Complete_Jobs_Full_Data.json auto-triggers
+# auto-update-jobs.yml (already quota-safe for Google Indexing — shared
+# daily-cap state file means no double-submit even if this and the FJA
+# scraper both push the same day).
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🆕 Merge SR (Sarkari) Upload
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'merged_sarkari_data.json'
+  workflow_dispatch:
+
+concurrency:
+  group: merge-sr
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🔀 Merge sarkari_data into master JSON
+        run: python scraper/merge_sr_upload.py
+
+      - name: 💾 Commit + push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Complete_Jobs_Full_Data.json
+          if git diff --staged --quiet; then
+            echo "No sarkari_data changes to commit"
+          else
+            git commit -m "🔀 Merge SR upload ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            for i in 1 2 3; do
+              git push origin main && break
+              echo "push retry $i…"
+              git pull --rebase origin main || break
+            done
+          fi
+
+      - name: 📊 Summary
+        run: |
+          echo "### 🆕 Merge SR Upload" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY

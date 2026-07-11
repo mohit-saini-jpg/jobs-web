@@ -1,0 +1,102 @@
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW: scraper-fja-education.yml — GitHub Scraper (FJA + Education)
+# Runs on GitHub's own runners (freejobalert.com does not block GitHub IPs).
+# Sarkari (SR) scraping stays on the user's PC — see merge-sr.yml instead.
+#
+# Sequence (must stay sequential — both scripts read-modify-write the SAME
+# Complete_Jobs_Full_Data.json via scraper_merge.py, so parallel runs would
+# race/corrupt the merge):
+#   1. scraper_unified_fja.py  → source "freejobalert_unified"
+#   2. scraper_education.py    → source "education_jobs"
+# Each step commits+pushes its own result, so a 60-min timeout mid-run only
+# loses that step's work — the other's is already safely committed.
+#
+# Pushing Complete_Jobs_Full_Data.json auto-triggers auto-update-jobs.yml
+# (path-trigger already set there), which then chains into
+# check-broken-links.yml → ai-nightly.yml.
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🆕 GitHub Scraper (FJA + Education)
+
+on:
+  schedule:
+    - cron: '0 0 * * *'    # Daily 5:30 AM IST (UTC 00:00)
+  workflow_dispatch:
+
+concurrency:
+  group: scraper-fja-education
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: pip install --quiet requests beautifulsoup4
+
+      - name: 📋 Seed scraper/ working copy of master JSON
+        run: cp Complete_Jobs_Full_Data.json scraper/Complete_Jobs_Full_Data.json
+
+      # ── STEP: Unified FJA (qualification + state + district in one pass) ──
+      - name: 🕷️ Run Unified FJA scraper
+        working-directory: scraper
+        run: python scraper_unified_fja.py
+
+      - name: 💾 Commit + push (Unified FJA)
+        run: |
+          cp scraper/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Complete_Jobs_Full_Data.json
+          if git diff --staged --quiet; then
+            echo "No FJA changes to commit"
+          else
+            git commit -m "🕷️ FJA scraper update ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            for i in 1 2 3; do
+              git push origin main && break
+              echo "push retry $i…"
+              git pull --rebase origin main || break
+            done
+          fi
+
+      # ── STEP: Education jobs ────────────────────────────────────────────
+      - name: 🕷️ Run Education scraper
+        working-directory: scraper
+        run: python scraper_education.py
+
+      - name: 💾 Commit + push (Education)
+        run: |
+          cp scraper/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Complete_Jobs_Full_Data.json
+          if git diff --staged --quiet; then
+            echo "No Education changes to commit"
+          else
+            git commit -m "🕷️ Education scraper update ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            for i in 1 2 3; do
+              git push origin main && break
+              echo "push retry $i…"
+              git pull --rebase origin main || break
+            done
+          fi
+
+      - name: 📊 Summary
+        run: |
+          echo "### 🆕 GitHub Scraper (FJA + Education)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY
