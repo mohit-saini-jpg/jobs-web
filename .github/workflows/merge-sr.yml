@@ -56,7 +56,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No sarkari_data changes to commit"
           else
-            git commit -m "🔀 Merge SR upload ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            git commit -m "🔀 Merge SR upload ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST)"
             for i in 1 2 3; do
               git push origin main && break
               echo "push retry $i…"
