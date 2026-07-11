@@ -1,37 +1,46 @@
 /**
- * google-index-submit.js — Submit fresh job URLs to the Google Indexing API
+ * google-index-submit.js — Smart Google Indexing API submitter (quota-safe)
  * =========================================================================
  * Google's Indexing API is officially supported for pages with JobPosting
- * structured data (exactly this site) — it asks Googlebot to (re)crawl a URL
- * far sooner than waiting for the normal sitemap crawl. Perfect for a jobs
- * site where new postings must get indexed fast.
+ * structured data (this site's /jobs/ pages) — it asks Googlebot to (re)crawl
+ * a URL far sooner than the normal sitemap crawl. Perfect for a jobs site
+ * where new postings must get indexed fast.
+ *
+ * WHY "SMART": the free quota is 200 URL notifications/project/DAY. The auto
+ * pipeline can run several times a day (morning FJA scrape push + any manual
+ * SR-data upload), and a naive submitter would resubmit the same URLs each
+ * run and blow the quota. This version keeps a small committed state file so
+ * that, no matter how many times it runs in a day, it NEVER exceeds the daily
+ * cap and NEVER submits the same URL twice in a day. It also drains the
+ * backlog of older /jobs/ pages that were never submitted, a slice per day.
+ *
+ * Priority order within each day's remaining budget:
+ *   1. Hub/section pages (change daily — resubmitted once/day)
+ *   2. NEW job pages (newest first from posted_jobs.txt) — fast indexing
+ *   3. OLD backlog job pages (never submitted yet) — oldest coverage first
+ * Once every /jobs/ page has been submitted once, only #1 + #2 remain, which
+ * comfortably fit under the daily cap.
  *
  * Called by auto-update-jobs.yml via:  node .github/workflows/google-index-submit.js
  *
  * Required env:
  *   GOOGLE_INDEXING_SA_JSON  — the FULL service-account JSON (GitHub Secret).
- *                              Contains a private_key; never store it in the repo.
  *
- * The service-account email MUST be added as an *Owner* of the property in
- * Google Search Console, or every publish call returns 403 (see SETUP below).
+ * State file (committed by the workflow step that follows this one):
+ *   data/google_index_state.json
+ *     { date, count_today, submitted_today[], done_slugs[] }
+ *   - count_today / submitted_today reset each day (fresh budget + dedup)
+ *   - done_slugs is permanent (which /jobs/ slugs have EVER been submitted)
  *
- * Zero external dependencies — uses only Node.js built-ins (crypto, https, fs).
- * Never throws: every failure is logged and the process still exits 0 so it
- * can run as a non-blocking, continue-on-error workflow step.
- *
- * Quota: Google allows 200 URL notifications/project/day by default. We cap
- * per-run submissions well under that and prioritise the newest postings.
+ * Zero external dependencies — Node.js built-ins only. Never throws: every
+ * failure is logged and it still exits 0 so it can be a non-blocking step.
  * ─────────────────────────────────────────────────────────────────────────
- * ONE-TIME SETUP (do this once, then it runs automatically forever):
- *   1. Google Cloud Console → enable the "Indexing API" for your project.
- *   2. Create a service account + JSON key (you already have this).
- *   3. Google Search Console → your property → Settings → Users and
- *      permissions → Add user → paste the service account's client_email
- *      → role: OWNER.  (Verified-Owner is what the API checks.)
- *   4. GitHub → repo → Settings → Secrets and variables → Actions →
- *      New repository secret → name: GOOGLE_INDEXING_SA_JSON,
- *      value: paste the ENTIRE contents of the JSON key file.
- *   Done. New jobs get pinged to Google on every clean auto-update run.
+ * ONE-TIME SETUP (already done for this repo):
+ *   1. Google Cloud Console → enable "Indexing API".
+ *   2. Service account + JSON key.
+ *   3. Search Console → Settings → Users and permissions → Add the service
+ *      account client_email as OWNER.
+ *   4. GitHub secret GOOGLE_INDEXING_SA_JSON = the entire JSON key file.
  */
 
 'use strict';
@@ -44,14 +53,30 @@ const path   = require('path');
 const HOST = 'www.topsarkarijobs.com';
 const SITE = `https://${HOST}`;
 
-// Cap per run — stays safely under the 200/day project quota even if the
-// workflow fires several times in a day. Newest jobs are submitted first.
-const MAX_URLS = 150;
+// Google Indexing API free quota. Kept at the real limit; the 429 handler is
+// the ultimate safety net if the day-boundary ever misaligns with Google's.
+const DAILY_CAP = 200;
+
+const STATE_FILE = path.join(process.cwd(), 'data', 'google_index_state.json');
+const JOBS_DIR   = path.join(process.cwd(), 'jobs');
+
+// Hub / section pages: their listings change every day, so re-submitting them
+// once per day (dedup handles multiple runs) is legitimate and useful.
+const HUB_PAGES = [
+  `${SITE}/`,
+  `${SITE}/section/latest-jobs/`,
+  `${SITE}/section/latest-jobs-new/`,
+  `${SITE}/section/results/`,
+  `${SITE}/section/admit-card/`,
+  `${SITE}/section/answer-key/`,
+  `${SITE}/section/today-updates/`,
+  `${SITE}/section/upcoming-jobs/`,
+];
 
 // ── Load + validate the service-account credential ─────────────────────────
 const RAW = process.env.GOOGLE_INDEXING_SA_JSON || '';
 if (!RAW.trim()) {
-  console.warn('⚠️  GOOGLE_INDEXING_SA_JSON not set — skipping Google Indexing API (this is fine if you have not added the secret yet).');
+  console.warn('⚠️  GOOGLE_INDEXING_SA_JSON not set — skipping Google Indexing API (fine if the secret is not added yet).');
   process.exit(0);
 }
 
@@ -154,50 +179,110 @@ async function getAccessToken() {
   }
 }
 
-// ── Collect the URLs to submit (newest jobs first) ─────────────────────────
-function collectUrls() {
-  const urls = [];
-  const seen = new Set();
-  const add = (u) => { if (u && !seen.has(u)) { seen.add(u); urls.push(u); } };
+// ── Daily state (committed to the repo so it survives across runs) ─────────
+function todayIST() {
+  // Consistent day boundary for our own budget counter (Asia/Kolkata). The
+  // 429 handler covers any misalignment with Google's own quota reset.
+  return new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+}
 
-  // Key hub pages — legitimately change every run as new jobs list on them.
-  [
-    `${SITE}/`,
-    `${SITE}/section/latest-jobs/`,
-    `${SITE}/section/latest-jobs-new/`,
-    `${SITE}/section/results/`,
-    `${SITE}/section/admit-card/`,
-    `${SITE}/section/answer-key/`,
-    `${SITE}/section/today-updates/`,
-    `${SITE}/section/upcoming-jobs/`,
-  ].forEach(add);
-
-  // Newest job pages: posted_jobs.txt is appended chronologically, so the
-  // TAIL is the freshest. These are exactly the "new jobs" we want indexed fast.
+function loadState() {
+  let s;
   try {
-    const candidates = ['posted_jobs.txt', path.join(process.cwd(), 'posted_jobs.txt')];
-    for (const p of candidates) {
-      if (fs.existsSync(p)) {
-        const lines = fs.readFileSync(p, 'utf8')
-          .split('\n')
-          .map((l) => l.trim())
-          .filter((l) => l.startsWith('http'));
-        // last ~120 newest, reversed so the very newest go first
-        lines.slice(-120).reverse().forEach(add);
-        break;
-      }
+    s = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
+  } catch (e) {
+    s = {};
+  }
+  if (!s || typeof s !== 'object') s = {};
+  if (s.date !== todayIST()) {
+    // New day → reset the daily counters, KEEP the permanent backlog record.
+    s.date = todayIST();
+    s.count_today = 0;
+    s.submitted_today = [];
+  }
+  if (!Array.isArray(s.submitted_today)) s.submitted_today = [];
+  if (!Array.isArray(s.done_slugs))      s.done_slugs = [];
+  if (typeof s.count_today !== 'number') s.count_today = 0;
+  return s;
+}
+
+function saveState(s) {
+  try {
+    fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
+    fs.writeFileSync(STATE_FILE, JSON.stringify(s));
+  } catch (e) {
+    console.warn('⚠️  Could not write state file:', e && e.message);
+  }
+}
+
+// ── URL sources ─────────────────────────────────────────────────────────────
+function slugFromJobUrl(url) {
+  const m = String(url).match(/\/jobs\/([^/]+)\/?$/);
+  return m ? m[1] : null;
+}
+
+// Newest job URLs first (posted_jobs.txt is appended chronologically → tail is
+// freshest). These are the "new jobs" we want indexed fastest.
+function readNewestJobUrls() {
+  const out = [];
+  try {
+    const p = path.join(process.cwd(), 'posted_jobs.txt');
+    if (fs.existsSync(p)) {
+      const lines = fs.readFileSync(p, 'utf8')
+        .split('\n').map((l) => l.trim()).filter((l) => l.startsWith('http'));
+      // last 250 newest, reversed so the very newest go first
+      for (const url of lines.slice(-250).reverse()) out.push(url);
     }
   } catch (e) {
     console.warn('⚠️  Could not read posted_jobs.txt:', e && e.message);
   }
+  return out;
+}
 
-  return urls.slice(0, MAX_URLS);
+// Every /jobs/<slug>/ page currently on disk (for backlog coverage).
+function listAllJobSlugs() {
+  try {
+    return fs.readdirSync(JOBS_DIR, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
+  } catch (e) {
+    return [];
+  }
+}
+
+// Build the prioritised submit list, skipping anything already sent today.
+function collectCandidates(state) {
+  const submittedToday = new Set(state.submitted_today);
+  const doneSlugs      = new Set(state.done_slugs);
+  const out = [];
+  const seen = new Set();
+  // slug is set only for /jobs/ URLs (backlog tracking); hub pages have none.
+  // kind: 'hub' | 'new' | 'backlog' — for accurate log counts only.
+  const add = (url, slug, kind) => {
+    if (!url || seen.has(url) || submittedToday.has(url)) return;
+    seen.add(url);
+    out.push({ url, slug: slug || null, kind });
+  };
+
+  // 1. Hub / section pages (daily) — always eligible once per day.
+  HUB_PAGES.forEach((u) => add(u, null, 'hub'));
+
+  // 2. NEW job pages — newest first.
+  for (const url of readNewestJobUrls()) add(url, slugFromJobUrl(url), 'new');
+
+  // 3. OLD backlog — job slugs on disk that were never submitted.
+  for (const slug of listAllJobSlugs()) {
+    if (doneSlugs.has(slug)) continue;
+    add(`${SITE}/jobs/${slug}/`, slug, 'backlog');
+  }
+
+  return out;
 }
 
 // ── Publish one URL notification ───────────────────────────────────────────
 async function publish(token, url) {
   const body = JSON.stringify({ url, type: 'URL_UPDATED' });
-  const res = await httpsRequest({
+  return httpsRequest({
     hostname: 'indexing.googleapis.com',
     path: '/v3/urlNotifications:publish',
     method: 'POST',
@@ -207,7 +292,6 @@ async function publish(token, url) {
       'Content-Length': Buffer.byteLength(body),
     },
   }, body);
-  return res;
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────
@@ -218,33 +302,57 @@ async function publish(token, url) {
     process.exit(0);
   }
 
-  const urls = collectUrls();
-  console.log(`📡 Google Indexing API: submitting ${urls.length} URL(s) (newest first, cap ${MAX_URLS})...`);
+  const state = loadState();
+  const budget = DAILY_CAP - state.count_today;
+  const totalJobs = listAllJobSlugs().length;
+  const backlogLeft = Math.max(0, totalJobs - state.done_slugs.length);
 
-  let ok = 0, quota = 0, forbidden = 0, other = 0;
-  for (const url of urls) {
-    const res = await publish(token, url);
+  if (budget <= 0) {
+    console.log(`✅ Daily budget already used (${state.count_today}/${DAILY_CAP}) — nothing submitted this run. Backlog remaining: ${backlogLeft}. Resets tomorrow (IST).`);
+    saveState(state);   // still persist (keeps date fresh)
+    process.exit(0);
+  }
+
+  const candidates = collectCandidates(state);
+  const toSubmit = candidates.slice(0, budget);
+  console.log(`📡 Google Indexing — day ${state.date} | used ${state.count_today}/${DAILY_CAP} | budget ${budget} | candidates ${candidates.length} | backlog left ${backlogLeft}`);
+
+  const doneSet = new Set(state.done_slugs);
+  let ok = 0, hubOk = 0, newOk = 0, backlogOk = 0, quotaStopped = false, forbidden = 0, other = 0;
+
+  for (const item of toSubmit) {
+    const res = await publish(token, item.url);
     if (res.status === 200) {
       ok++;
+      state.count_today++;
+      state.submitted_today.push(item.url);
+      if (item.slug && !doneSet.has(item.slug)) {
+        doneSet.add(item.slug);
+        state.done_slugs.push(item.slug);
+      }
+      if (item.kind === 'hub') hubOk++;
+      else if (item.kind === 'new') newOk++;
+      else backlogOk++;
+      // periodic save so a mid-run crash doesn't lose progress
+      if (ok % 25 === 0) saveState(state);
     } else if (res.status === 429) {
-      quota++;
-      // Daily quota hit — no point hammering the rest this run.
-      console.warn('⚠️  Daily quota (200/day) reached — stopping early. Remaining URLs go out on the next run.');
+      quotaStopped = true;
+      console.warn('⚠️  Daily quota reached (429) — stopping early. Remaining go out next run.');
       break;
     } else if (res.status === 403) {
       forbidden++;
-      if (forbidden === 1) {
-        console.warn('⚠️  403 Permission denied. The service-account email must be added as an OWNER of the property in Google Search Console. Details: ' + res.body.slice(0, 180));
-      }
-      // 403 will apply to every URL — stop early instead of spamming.
-      break;
+      console.warn('⚠️  403 Permission denied — is the service account an OWNER in Search Console? ' + String(res.body).slice(0, 160));
+      break;   // 403 applies to every URL — no point continuing
     } else {
       other++;
-      if (other <= 3) console.warn(`⚠️  ${url} → ${res.status}: ${String(res.body).slice(0, 140)}`);
+      if (other <= 3) console.warn(`⚠️  ${item.url} → ${res.status}: ${String(res.body).slice(0, 140)}`);
     }
   }
 
-  console.log(`✅ Google Indexing done — submitted ${ok}, quota-stopped ${quota ? 'yes' : 'no'}, forbidden ${forbidden}, other-errors ${other}.`);
+  saveState(state);
+  const backlogAfter = Math.max(0, totalJobs - state.done_slugs.length);
+  console.log(`✅ Google Indexing done — submitted ${ok} (hub ${hubOk}, new ${newOk}, backlog ${backlogOk}) | today ${state.count_today}/${DAILY_CAP} | quota-stopped ${quotaStopped ? 'yes' : 'no'} | forbidden ${forbidden} | other ${other}`);
+  console.log(`   📊 Backlog: ${state.done_slugs.length}/${totalJobs} job pages ever submitted — ${backlogAfter} remaining.`);
   process.exit(0);
 })().catch((e) => {
   console.warn('⚠️  Unexpected error (ignored):', e && e.message);

@@ -378,6 +378,30 @@ jobs:
           GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
         run: node .github/workflows/google-index-submit.js
 
+      # ── STEP 12a-2: Persist the Google-index budget/backlog tracker ──
+      # google-index-submit.js writes data/google_index_state.json (how many
+      # URLs were submitted today + which /jobs/ slugs have ever been
+      # submitted). Commit it so the NEXT run — even a second run the same
+      # day (e.g. a manual SR-data upload) — reads it and never exceeds the
+      # 200/day quota or re-submits the same URL. [skip ci] + the state path
+      # not being a trigger path means this commit won't re-trigger the pipeline.
+      - name: 💾 Commit Google-index state
+        if: env.SEO_CLEAN == 'true'
+        continue-on-error: true
+        run: |
+          git add data/google_index_state.json 2>/dev/null || true
+          if ! git diff --staged --quiet; then
+            git -c user.name="github-actions[bot]" \
+                -c user.email="github-actions[bot]@users.noreply.github.com" \
+                commit -m "🔎 Google index state ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            for i in 1 2 3; do
+              git push origin main && break
+              echo "push retry $i…"; git pull --rebase origin main || break
+            done
+          else
+            echo "No state change to commit."
+          fi
+
       # ── STEP 12b: Guardian gate warning (only when ping was skipped) ──
       - name: ⚠️ SEO Guardian gate — ping skipped
         if: env.SEO_CLEAN != 'true'
