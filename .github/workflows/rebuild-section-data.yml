@@ -57,6 +57,21 @@ jobs:
 
           sarkari_jobs = cj.get('sarkari_data', {}).get('jobs', [])
           fj_cats = cj.get('freejobalert_categories', {})
+          # PERF FIX (2026-07-12): freejobalert_categories is no longer persisted
+          # to data/Complete_Jobs_Full_Data.json (it duplicated every job's full
+          # record into each category — 49.8MB of a 75MB public file). Rebuild
+          # it here from freejobalert_unified instead before falling back to the
+          # old flat top-level format.
+          if not fj_cats:
+              uni = cj.get('freejobalert_unified', {}) or {}
+              uni_jobs = uni.get('deduped_jobs', []) or []
+              by_fja = uni.get('by_fja_category', {}) or {}
+              url_to_job = {j.get('_scraped_from', ''): j for j in uni_jobs}
+              fj_cats = {}
+              for cat_name, urls in by_fja.items():
+                  cat_jobs = [url_to_job[u] for u in urls if u in url_to_job]
+                  if cat_jobs:
+                      fj_cats[cat_name] = cat_jobs
           if not fj_cats:
               OLD_CATS = {'10TH_Pass','8TH_Pass','12TH_Pass','Diploma','ITI','B_Tech_BE',
                           'B_Com','Any_Graduate','Any_Post_Graduate','Railway_Jobs',

@@ -646,46 +646,60 @@
     /* ── Complete_Jobs_Full_Data.json ── */
     if (fileName === 'Complete_Jobs_Full_Data.json') {
       if (data && typeof data === 'object' && !Array.isArray(data)) {
-        // NEW structure: data.freejobalert_categories[cat] = [job, ...]
-        var cats = data.freejobalert_categories || {};
-        Object.keys(cats).forEach(function(catKey) {
-          var meta = COMPLETE_JOBS_META[catKey] || {
+        // PERF FIX: used to read data.freejobalert_categories, a rebuilt
+        // structure that duplicated every job's full record into EACH
+        // category it belongs to (49.8MB of a 75MB total file, downloaded
+        // by every real visitor who searches). Read the flat, deduplicated
+        // job list from freejobalert_unified instead (one copy per job),
+        // and derive each job's category label from the lightweight
+        // by_fja_category URL index instead of a pre-duplicated job list.
+        var uni = data.freejobalert_unified || {};
+        var uniJobs = Array.isArray(uni.deduped_jobs) ? uni.deduped_jobs : [];
+        var byFjaCat = uni.by_fja_category || {};
+        var urlToCat = {};
+        Object.keys(byFjaCat).forEach(function(catKey) {
+          (byFjaCat[catKey] || []).forEach(function(u) {
+            if (!urlToCat[u]) urlToCat[u] = catKey; // first category wins
+          });
+        });
+        var DEFAULT_META = { id: 'sarkari-jobs', cat: 'Sarkari Jobs', qual: '', icon: 'fa-briefcase', label: 'Sarkari Jobs' };
+
+        uniJobs.forEach(function(job) {
+          var bd = job.basic_details || {};
+          var title = (bd.job_title || '').trim();
+          if (!title) return;
+          var catKey = urlToCat[job._scraped_from || ''] || '';
+          var meta = (catKey && COMPLETE_JOBS_META[catKey]) || (catKey ? {
             id: catKey.toLowerCase().replace(/_/g, '-'),
             cat: catKey.replace(/_/g, ' '),
             qual: '',
             icon: 'fa-briefcase',
             label: catKey.replace(/_/g, ' '),
-          };
+          } : DEFAULT_META);
+          var org = (bd.organization_name || '').trim();
+          var href = resolveJobUrl(job._canonical_slug || job.canonical_slug || job.slug || '', title);
+          if (!href) return;   // no real page on disk → skip (never emit a 404)
+          var dates = job.important_dates || {};
+          var lastDate = String(
+            dates.last_date_to_apply || dates.last_date || dates['Last Date to Apply'] || ''
+          ).trim();
 
-          (Array.isArray(cats[catKey]) ? cats[catKey] : []).forEach(function(job) {
-            var bd = job.basic_details || {};
-            var title = (bd.job_title || '').trim();
-            if (!title) return;
-            var org = (bd.organization_name || '').trim();
-            var href = resolveJobUrl(job._canonical_slug || job.canonical_slug || '', title);
-            if (!href) return;   // no real page on disk → skip (never emit a 404)
-            var dates = job.important_dates || {};
-            var lastDate = String(
-              dates.last_date_to_apply || dates.last_date || dates['Last Date to Apply'] || ''
-            ).trim();
-
-            extra.push({
-              title:         title,
-              slug:          href,
-              dept:          org,
-              postName:      bd.post_name || '',
-              qual:          meta.qual || '',
-              state:         'All India',
-              cat:           meta.cat,
-              tags:          [title, org, meta.id, meta.qual||'',
-                              String(bd.short_information||'').slice(0,80),
-                              'sarkari job 2026'].join(' '),
-              lastDate:      lastDate,
-              icon:          meta.icon,
-              lastUpdated:   bd.last_updated || now,
-              sectionSource: meta.label,
-              isJobDetail:   true,
-            });
+          extra.push({
+            title:         title,
+            slug:          href,
+            dept:          org,
+            postName:      bd.post_name || '',
+            qual:          meta.qual || '',
+            state:         'All India',
+            cat:           meta.cat,
+            tags:          [title, org, meta.id, meta.qual||'',
+                            String(bd.short_information||'').slice(0,80),
+                            'sarkari job 2026'].join(' '),
+            lastDate:      lastDate,
+            icon:          meta.icon,
+            lastUpdated:   bd.last_updated || now,
+            sectionSource: meta.label,
+            isJobDetail:   true,
           });
         });
 

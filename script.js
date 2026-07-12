@@ -2407,19 +2407,23 @@
         });
       }
 
-      /* 3. Complete_Jobs_Full_Data.json — freejobalert_categories */
-      if (complete && complete.freejobalert_categories) {
-        const cats = complete.freejobalert_categories;
-        Object.keys(cats).forEach(k => {
-          if (!Array.isArray(cats[k])) return;
-          cats[k].forEach(i => {
-            const bd = i.basic_details || {};
-            const title = bd.job_title || bd.post_name || i.title || i.name || '';
-            if (!title) return;
-            const slug = i.slug || slugify(title);
-            const href = slug ? '/jobs/' + slug + '/' : '#';
-            push(title, href, k.replace(/_/g,' '));
-          });
+      /* 3. Complete_Jobs_Full_Data.json — freejobalert_unified.deduped_jobs
+         PERF FIX: used to read `freejobalert_categories`, a rebuilt structure
+         that duplicates every job's full record into EACH category it
+         belongs to (a job tagged with 4 qualifications was stored 4 times).
+         That alone made the downloaded JSON 49.8MB out of 75MB total. Read
+         the flat, deduplicated job list instead — one copy per unique job,
+         same fields, no behavior change for search (results just no longer
+         show a job's specific category label, which search never surfaced
+         distinctly anyway since results are ranked by title match only). */
+      if (complete && complete.freejobalert_unified && Array.isArray(complete.freejobalert_unified.deduped_jobs)) {
+        complete.freejobalert_unified.deduped_jobs.forEach(i => {
+          const bd = i.basic_details || {};
+          const title = bd.job_title || bd.post_name || i.title || i.name || '';
+          if (!title) return;
+          const slug = i.slug || slugify(title);
+          const href = slug ? '/jobs/' + slug + '/' : '#';
+          push(title, href, 'Sarkari Naukri');
         });
       }
 

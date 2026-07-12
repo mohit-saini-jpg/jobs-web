@@ -5836,19 +5836,27 @@ def _normalize_all_slugs():
         print(f"  [slug-norm] Normalized {_fixed_count} slugs (stripped trailing dashes)")
 _normalize_all_slugs()
 
-# ── BACKWARD COMPAT: Smart-search reads `freejobalert_categories` (old format).
-# New scraper puts everything in `freejobalert_unified`. Rebuild categories
-# from unified so search works. Also write back to data/ JSON file.
+# ── freejobalert_categories: BUILD IN MEMORY ONLY, NEVER PERSIST TO DISK ──
+# PERF FIX (2026-07-12): this used to be written into CJ and persisted to
+# data/Complete_Jobs_Full_Data.json for smart-search.js/script.js to read.
+# That structure duplicates every job's full record into EACH category it
+# belongs to — 49.8MB of dead weight inside a 75MB file that every real
+# visitor's browser downloaded just to open search (direct cause of a Vercel
+# bandwidth spike). script.js and smart-search.js now read
+# freejobalert_unified.deduped_jobs (flat, one copy per job) instead, so this
+# is built here ONLY for generate_all.py's own page-generation use (FJA_RAW)
+# and is explicitly stripped from CJ before the data/ JSON is written back.
 _uni_for_search = CJ.get('freejobalert_unified', {}) or {}
 _uni_jobs_search = _uni_for_search.get('deduped_jobs', []) or []
 _fja_cats_existing = CJ.get('freejobalert_categories', {}) or {}
-_fja_cats_empty = sum(len(v) for v in _fja_cats_existing.values() if isinstance(v, list)) == 0
 
-if _uni_jobs_search and _fja_cats_empty:
-    print(f"  [search-compat] Rebuilding freejobalert_categories from {len(_uni_jobs_search)} unified jobs...")
-    _rebuilt_cats = {}
+if _fja_cats_existing:
+    FJA_RAW = _fja_cats_existing
+elif _uni_jobs_search:
+    print(f"  [search-compat] Rebuilding FJA categories from {len(_uni_jobs_search)} unified jobs (in-memory only)...")
     _by_fja = _uni_for_search.get('by_fja_category', {}) or {}
     _url_to_uj = {j.get('_scraped_from',''): j for j in _uni_jobs_search}
+    FJA_RAW = {}
     for _cat_name, _urls in _by_fja.items():
         _cat_jobs = []
         for _u in _urls:
@@ -5856,21 +5864,25 @@ if _uni_jobs_search and _fja_cats_empty:
             if _uj:
                 _cat_jobs.append(_uj)
         if _cat_jobs:
-            _rebuilt_cats[_cat_name] = _cat_jobs
+            FJA_RAW[_cat_name] = _cat_jobs
     # Also create Latest_Notifications combining all unified jobs
-    if 'Latest_Notifications' not in _rebuilt_cats:
-        _rebuilt_cats['Latest_Notifications'] = _uni_jobs_search
-    CJ['freejobalert_categories'] = _rebuilt_cats
-    print(f"  [search-compat] Rebuilt {len(_rebuilt_cats)} FJA categories")
-    # Write back to data/ JSON so smart-search.js reads updated data
-    _data_path_search = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
-    if _data_path_search.parent.exists():
-        try:
-            with open(_data_path_search, 'w', encoding='utf-8') as _f:
-                json.dump(CJ, _f, ensure_ascii=False, separators=(',', ':'))
-            print(f"  [search-compat] data/Complete_Jobs_Full_Data.json updated")
-        except Exception as _e:
-            print(f"  [search-compat] data/ write failed: {_e}")
+    if 'Latest_Notifications' not in FJA_RAW:
+        FJA_RAW['Latest_Notifications'] = _uni_jobs_search
+    print(f"  [search-compat] Rebuilt {len(FJA_RAW)} FJA categories")
+else:
+    FJA_RAW = {}
+
+# Never persist the duplicated per-category structure — pop it even if it
+# came in already-populated from the scraper's raw output.
+CJ.pop('freejobalert_categories', None)
+_data_path_search = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
+if _data_path_search.parent.exists():
+    try:
+        with open(_data_path_search, 'w', encoding='utf-8') as _f:
+            json.dump(CJ, _f, ensure_ascii=False, separators=(',', ':'))
+        print(f"  [search-compat] data/Complete_Jobs_Full_Data.json updated (freejobalert_categories excluded from disk)")
+    except Exception as _e:
+        print(f"  [search-compat] data/ write failed: {_e}")
 
 # Inject slug field into DU items (for script.js buildSectionCard)
 import hashlib as _hlib2
@@ -5889,12 +5901,10 @@ for _dsec in DU.get('sections', []):
 with open(DU_FILE, 'w', encoding='utf-8') as _f:
     json.dump(DU, _f, ensure_ascii=False, separators=(',',':'))
 
-FJA_RAW = CJ.get('freejobalert_categories', {})
-
 # ── UNIFIED FALLBACK ────────────────────────────────────────────────────────
-# scraper_fja.py ki jagah ab scraper_unified_fja.py chalta hai jo data
-# 'freejobalert_unified' key mein dalta hai. Agar legacy key empty ho to
-# unified data se FJA_RAW build karo taaki site mein jobs dikhein.
+# FJA_RAW was already built above (in-memory, from either the scraper's raw
+# freejobalert_categories or the freejobalert_unified rebuild). This is a
+# final safety net only, in case both of those were empty.
 if not FJA_RAW:
     _uni = (CJ.get('freejobalert_unified') or {})
     _uni_jobs = _uni.get('deduped_jobs', []) or []
