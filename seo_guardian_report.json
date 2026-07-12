@@ -1,12 +1,13 @@
 {
-  "timestamp": "2026-07-12T05:03:10.513944+00:00",
+  "timestamp": "2026-07-12T05:27:58.208811+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 4611,
+  "files_scanned": 4630,
   "issues_found_by_check": {
-    "jobposting_schema": 32
+    "jobposting_schema": 32,
+    "sitemap_sync": 19
   },
-  "issues_auto_fixed": 31,
+  "issues_auto_fixed": 50,
   "unfixable": [
     {
       "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
@@ -18,7 +19,8 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links: No new redirects needed — all links OK"
+    "broken_links: No new redirects needed — all links OK",
+    "build_sitemaps:   sitemap.xml                      64 urls [ok]"
   ],
-  "duration_sec": 13.6
+  "duration_sec": 15.5
 }
