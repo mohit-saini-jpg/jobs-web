@@ -345,8 +345,28 @@ jobs:
           # Restore stash if any
           git stash pop 2>/dev/null || true
 
-          git push origin main
-          echo "✅ Pushed successfully"
+          # RETRY: a bare single push can fail on a transient GitHub-side error
+          # (seen: "remote: fatal error in commit_refs") with no code-side cause
+          # at all — that killed the ENTIRE pipeline (sitemap ping, Google
+          # Indexing, everything after) for the whole day. Retry with re-fetch
+          # + re-merge between attempts so a genuine race is handled too.
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git push origin main; then
+              pushed=1
+              break
+            fi
+            echo "push attempt $i failed — retrying in 10s…"
+            sleep 10
+            git fetch origin main
+            git merge origin/main -X ours --no-edit --allow-unrelated-histories 2>/dev/null || true
+          done
+          if [ "$pushed" = "1" ]; then
+            echo "✅ Pushed successfully"
+          else
+            echo "❌ Push failed after 5 attempts"
+            exit 1
+          fi
 
       # ── STEP 11: Ping Google + Bing sitemaps (GATED by SEO Guardian) ──
       - name: 📡 Ping Google & Bing sitemaps
