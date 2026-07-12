@@ -245,11 +245,27 @@
 
   // ── Step 7: Service Worker registration ────────────────────────────
   if ('serviceWorker' in navigator) {
+    // PERF FIX (regressed once already — see PERMANENT NOTE at bottom of
+    // this file before touching this block again): a first-time visitor
+    // has no controller yet — registering the SW for the first time
+    // (skipWaiting + clients.claim in sw.js) makes the browser fire
+    // 'controllerchange' / our own 'SW_UPDATED' message exactly once, which
+    // this code used to treat as "new deploy, reload now". That forced a
+    // full page reload on every single first visit — measured by real PSI
+    // as a ~3.5-4.7s "redirect"/render-delay eating the whole LCP budget.
+    // Only reload for a REAL update: page already had an active controller
+    // before this registration.
+    var hadControllerAtBoot = !!navigator.serviceWorker.controller;
+
     navigator.serviceWorker.addEventListener('message', function(e) {
       var type = (e.data || {}).type;
 
       if (type === 'SW_UPDATED') {
         console.log('[TSJ-ZSCE v8] SW activated v' + e.data.version);
+        if (!hadControllerAtBoot) {
+          console.log('[TSJ-ZSCE v8] First-time SW install — no reload needed');
+          return;
+        }
         // RC-7 FIX: only reload if enough time has passed (prevent reload loops)
         var now = Date.now();
         if (now - _lastReload > 10000) {
@@ -300,6 +316,11 @@
 
     // Detect SW controller change (new SW took over)
     navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (!hadControllerAtBoot) {
+        console.log('[TSJ-ZSCE v8] First-time SW claim — no reload needed');
+        hadControllerAtBoot = true; // any FUTURE change is a real update
+        return;
+      }
       console.log('[TSJ-ZSCE v8] SW controller changed → reloading');
       // RC-7 FIX: only reload if toast not shown AND enough time has passed
       var now = Date.now();
@@ -310,6 +331,21 @@
       }
     });
   }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // PERMANENT NOTE — DO NOT REMOVE hadControllerAtBoot WITHOUT RE-READING
+  // ═══════════════════════════════════════════════════════════════════
+  // This exact fix was implemented, reverted (as part of an unrelated bulk
+  // revert), and had to be re-diagnosed from a real PSI report + re-applied
+  // TWICE in one day (2026-07-12) before this comment was added. Real cost
+  // measured both times: LCP balloons to 4-34s and Performance score drops
+  // to the 40s-70s range because every first-time visitor gets an
+  // unexpected full page reload mid-load. If you are about to revert a
+  // commit that touches this file, check whether it also removes
+  // `hadControllerAtBoot` — if so, that specific change should survive the
+  // revert. The automated Lighthouse Performance Monitor (see
+  // .github/workflows/lighthouse.yml) will reopen the tracking GitHub issue
+  // (label: perf-regression) within one push if this regresses again.
 
   // ── Step 8: Start version polling ──────────────────────────────────
   setTimeout(checkVersion, 3000);
