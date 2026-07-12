@@ -20,7 +20,8 @@ name: 🆕 GitHub Scraper (FJA + Education)
 
 on:
   schedule:
-    - cron: '0 0 * * *'    # Daily 5:30 AM IST (UTC 00:00)
+    - cron: '7 0 * * *'    # Daily ~5:37 AM IST (UTC 00:07 — off-the-hour, avoids
+                            # the :00 congestion spike that delayed this to 8:48 AM once
   workflow_dispatch:
 
 concurrency:

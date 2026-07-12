@@ -7,10 +7,18 @@
 name: 🔧 AI HTML Patcher
 
 on:
-  # ai-nightly workflow complete hone ke baad auto-trigger
+  # Bonus trigger: ai-nightly workflow complete hone ke baad auto-trigger,
+  # IF GitHub actually delivers the workflow_run event (this chain had gone
+  # silent for 2+ weeks despite ai-nightly itself running fine — workflow_run
+  # is unreliable in this repo). Cron below is the real, reliable trigger.
   workflow_run:
     workflows: ["🌙 AI Content Enrichment (Nightly)"]
     types: [completed]
+
+  schedule:
+    - cron: '30 7 * * *'   # Daily 1:00 PM IST — comfortable buffer after
+                            # AI Content Enrichment's 9:30 AM start (up to
+                            # 170 min runtime)
 
   # Manual trigger bhi
   workflow_dispatch:
@@ -31,9 +39,10 @@ jobs:
     permissions:
       contents: write
 
-    # Sirf chalao agar nightly succeeded ya manual trigger
+    # Sirf chalao agar nightly succeeded ya manual trigger ya scheduled
     if: >
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       github.event.workflow_run.conclusion == 'success'
 
     steps:

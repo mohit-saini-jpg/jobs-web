@@ -2,12 +2,19 @@ name: "\U0001F50D Check & Fix Broken Job Links"
 
 on:
   workflow_dispatch:
-  # Chained: fires right after "Auto Update Jobs" finishes, so it always
-  # runs on the day's freshly-generated HTML (scraper push → auto-update →
-  # broken-links → ai-nightly). No more fixed-time cron drift.
+  # Bonus trigger: fires right after "Auto Update Jobs" finishes, IF GitHub
+  # actually delivers the workflow_run event (observed unreliable in this
+  # repo — even the pre-existing ai-nightly → ai-patch-html workflow_run
+  # chain has gone silent for weeks despite ai-nightly itself running fine).
+  # The cron below is the real, proven-reliable trigger — this just saves
+  # time on the days workflow_run does fire.
   workflow_run:
     workflows: ["🔄 Auto Update Jobs + Sitemap + Cache Bust"]
     types: [completed]
+  schedule:
+    - cron: '30 3 * * *'   # Daily 9:00 AM IST — comfortably after the
+                            # scraper (~5:37 AM) and Auto Update Jobs (7:00 AM
+                            # cron, or sooner via its own push-trigger)
 
 jobs:
   check-and-fix:
@@ -16,6 +23,7 @@ jobs:
       contents: write
     if: >
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       github.event.workflow_run.conclusion == 'success'
 
     steps:

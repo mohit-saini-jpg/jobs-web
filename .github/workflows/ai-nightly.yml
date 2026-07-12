@@ -6,13 +6,17 @@
 name: 🌙 AI Content Enrichment (Nightly)
 
 on:
-  # Chained: fires right after "Check & Fix Broken Job Links" finishes, so
-  # AI enrichment always runs on the day's freshest data (scraper push →
-  # auto-update → broken-links → ai-nightly). Replaces the old fixed
-  # 6:00 AM cron, which drifted whenever the earlier steps ran late.
+  # Bonus trigger: fires right after "Check & Fix Broken Job Links" finishes,
+  # IF GitHub actually delivers the workflow_run event (observed unreliable
+  # in this repo — see check-broken-links.yml for details). The cron below
+  # is the real, proven-reliable trigger.
   workflow_run:
     workflows: ["🔍 Check & Fix Broken Job Links"]
     types: [completed]
+
+  schedule:
+    - cron: '0 4 * * *'    # Daily 9:30 AM IST — after Check & Fix Broken
+                            # Links' 9:00 AM fallback
 
   workflow_dispatch:
     inputs:
@@ -41,6 +45,7 @@ jobs:
       contents: write
     if: >
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       github.event.workflow_run.conclusion == 'success'
 
     steps:
