@@ -316,9 +316,19 @@
 
     // Detect SW controller change (new SW took over)
     navigator.serviceWorker.addEventListener('controllerchange', function() {
+      // BUG FIX: this used to set hadControllerAtBoot = true here, which
+      // broke the very thing it was meant to fix — controllerchange and the
+      // SW_UPDATED message BOTH fire once during the SAME initial activation
+      // (controllerchange first, then SW_UPDATED ~500ms later per sw.js).
+      // Flipping the flag after the first one made the SECOND one think it
+      // was a genuine later update and reload anyway — confirmed via a
+      // console-log trace: "First-time SW claim" at 224ms, then an actual
+      // reload-triggered navigation at 1533ms. hadControllerAtBoot must stay
+      // a fixed boot-time snapshot for the whole page session; a long-lived
+      // tab still gets real update prompts via the 6-hourly checkVersion()
+      // poll and its own toast/reload path, independent of this listener.
       if (!hadControllerAtBoot) {
         console.log('[TSJ-ZSCE v8] First-time SW claim — no reload needed');
-        hadControllerAtBoot = true; // any FUTURE change is a real update
         return;
       }
       console.log('[TSJ-ZSCE v8] SW controller changed → reloading');
@@ -346,6 +356,19 @@
   // revert. The automated Lighthouse Performance Monitor (see
   // .github/workflows/lighthouse.yml) will reopen the tracking GitHub issue
   // (label: perf-regression) within one push if this regresses again.
+
+  // ── Step 7b: Trigger SW precache only AFTER the page has fully loaded —
+  // see the matching PERF FIX comment in sw.js's install handler for why
+  // (was racing the page's own first-load fetches for the same assets).
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({ type: 'PRECACHE_NOW' });
+        }
+      }, 5000);
+    });
+  }
 
   // ── Step 8: Start version polling ──────────────────────────────────
   setTimeout(checkVersion, 3000);

@@ -96,25 +96,37 @@ border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;border:none}
 </div></body></html>`;
 
 // ══════════════════════════════════════════════════════════════
-// INSTALL — precache critical assets, skip waiting IMMEDIATELY
+// INSTALL — skip waiting IMMEDIATELY. Precaching is intentionally NOT done
+// here anymore.
 // ══════════════════════════════════════════════════════════════
+// PERF FIX: PRECACHE_STATIC includes script.min.js, tsj-menu.js,
+// sections-index.json, dailyupdates.json, smart-search.min.js,
+// seo-engine.min.js — the SAME core assets the page itself requests on
+// every load. Precaching them here ran `cache.add()` for all ~20 URLs IN
+// PARALLEL with the page's own first-load fetches, so under a throttled
+// connection every core asset raced against a duplicate SW-driven fetch
+// for the same bytes. Measured on real PageSpeed Insights: a ~4-7 second
+// "redirect"/render-delay that ate the entire LCP budget on every single
+// first-time visit (score dropped to the 60s-70s). Precaching now only
+// runs once the client tells us the page has actually finished loading
+// (see PRECACHE_NOW message handler below + the postMessage call added
+// to tsj-version.js), so it never competes with critical-path resources.
 self.addEventListener('install', e => {
   e.waitUntil(
-    Promise.allSettled([
-      caches.open(CACHE.static).then(c =>
-        Promise.allSettled(PRECACHE_STATIC.map(url =>
-          c.add(url).catch(() => {})
-        ))
-      ),
-      caches.open(CACHE.offline).then(c =>
-        c.put('offline', new Response(OFFLINE_HTML, {
-          headers: { 'Content-Type': 'text/html; charset=utf-8' }
-        }))
-      ),
-    ])
+    caches.open(CACHE.offline).then(c =>
+      c.put('offline', new Response(OFFLINE_HTML, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      }))
+    )
     .then(() => self.skipWaiting())
   );
 });
+
+function runPrecache() {
+  return caches.open(CACHE.static).then(c =>
+    Promise.allSettled(PRECACHE_STATIC.map(url => c.add(url).catch(() => {})))
+  );
+}
 
 // ══════════════════════════════════════════════════════════════
 // ACTIVATE — delete ALL stale caches, claim all clients
@@ -460,6 +472,13 @@ self.addEventListener('message', e => {
 
   if (type === 'GET_VERSION') {
     e.source?.postMessage({ type: 'SW_VERSION', version: SW_VERSION });
+    return;
+  }
+
+  if (type === 'PRECACHE_NOW') {
+    // Client (tsj-version.js) sends this after window 'load' + a delay, so
+    // this network activity never competes with the page's own first paint.
+    e.waitUntil(runPrecache());
     return;
   }
 
