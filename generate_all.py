@@ -6439,8 +6439,12 @@ def _find_fja_canonical(sark_title):
     # If SARK and FJA share org acronym + exam code → definite same job
     _sark_raw = str(sark_title or '').lower()
     for _ftok, _fslug, _fja_raw_t in _fja_token_index:
-        # Quick extract compound codes like "cre-5", "jto", "afcat-02" from SARK title
-        _sark_codes = re.findall(r'\b[a-z]{2,6}[\-]?\d{1,2}\b|\bjto\b|\bcgl\b|\bchsl\b|\bcpo\b|\bmts\b|\bcre-\d\b|\bafcat\b', _sark_raw)
+        # Quick extract compound codes like "cre-5", "jto", "afcat-02" from SARK title.
+        # NOTE: "mts" (Multi Tasking Staff) deliberately excluded — it's a generic
+        # post name reused by dozens of unrelated departments (Railways, SSC, MHA/IB,
+        # Air Force, etc.), not a unique exam code, and was wrongly merging unrelated
+        # recruitments that only shared "MTS" + 2 filler tokens.
+        _sark_codes = re.findall(r'\b[a-z]{2,6}[\-]?\d{1,2}\b|\bjto\b|\bcgl\b|\bchsl\b|\bcpo\b|\bcre-\d\b|\bafcat\b', _sark_raw)
         if _sark_codes:
             _shared_codes = [c for c in _sark_codes if c in _fja_raw_t]
             if len(_shared_codes) >= 1 and len(_ftok & stok) >= 2:
@@ -7999,6 +8003,11 @@ for _sj in SARK:
     if not _st: continue
     # CRITICAL FIX: get_canonical_slug() so SARK section-index slugs match disk pages
     _sl = get_canonical_slug(_sj)
+    # If this SARK job was cross-source-deduped to an FJA canonical page (see
+    # _dedup_sark_slugs above), no page exists at _sl — use the redirect target
+    # instead, otherwise this item silently vanishes from the homepage/section
+    # list at the later disk-existence reconcile step.
+    _sl = _dedup_sark_slugs.get(_sl, _sl)
     _ld = safe((_sj.get('important_dates') or {}).get('last_date','') or _sj.get('last_date',''))
     if _scat not in sections_index:
         sections_index[_scat] = []
