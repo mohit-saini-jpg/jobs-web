@@ -5962,3 +5962,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/jk-chadoora-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
 /jobs/jk-anganwadi-recruitment-2026-anganwadi-worker-and-helper-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
 /jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/jk-anganwadi-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/delhi-icsil-deo-mts-driver-vacancy-2026-check-eligibility-criteria-how-to-apply/  /jobs/aiims-delhi-recruitment-2026-apply-online-for-57-deo-mts-and-more-posts/  301
+/jobs/ncl-259-mining-sirdar-surveyor/  /jobs/ncl-recruitment-2026-mining-sirdar-surveyor-posts-apply-online-from-14-july/  301
