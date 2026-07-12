@@ -8323,10 +8323,7 @@ def _render_homepage_sr_cards(sec_index, max_items=5):
             f'<span class="sr-job-title">View all {e(label)} &rarr;</span></a></li>')
         out.append(
             f'<div class="sr-card"><div class="sr-card-head" style="background:{color}">'
-            f'<div class="left"><span class="sr-section-title">{e(label)}</span></div>'
-            f'<a href="{e(url)}" aria-label="View all {e(label)}" '
-            'style="color:#fff;font-size:.68rem;background:rgba(255,255,255,.2);padding:2px 7px;'
-            f'border-radius:4px;text-decoration:none;white-space:nowrap;">View All</a></div>'
+            f'<div class="left"><span class="sr-section-title">{e(label)}</span></div></div>'
             f'<ul class="sr-job-list">{li_html}</ul>'
             f'<div class="sr-card-footer"><a href="{e(url)}" class="sr-sub-link">View All {e(label)} &rarr;</a></div>'
             '</div>')
