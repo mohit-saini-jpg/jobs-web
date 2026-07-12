@@ -30,7 +30,9 @@ on:
 
 concurrency:
   group: ai-patch-html
-  cancel-in-progress: false
+  # Same reasoning as ai-nightly.yml — false lets one stuck/orphaned run
+  # permanently block every future trigger with no visible error.
+  cancel-in-progress: true
 
 jobs:
   patch:

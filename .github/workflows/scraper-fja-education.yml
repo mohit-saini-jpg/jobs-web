@@ -26,7 +26,11 @@ on:
 
 concurrency:
   group: scraper-fja-education
-  cancel-in-progress: false
+  # false lets one stuck/orphaned run permanently block every future
+  # scheduled scrape from ever running, with no visible error (see
+  # ai-nightly.yml). Each scraper step commits its own checkpoint, so a
+  # cancelled run loses at most the in-progress phase, not prior work.
+  cancel-in-progress: true
 
 jobs:
   scrape:

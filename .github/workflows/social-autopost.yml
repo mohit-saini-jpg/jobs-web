@@ -21,7 +21,9 @@ on:
 
 concurrency:
   group: social-autopost
-  cancel-in-progress: false
+  # false lets one stuck/orphaned run permanently block every future 3-hourly
+  # trigger, with no visible error (see ai-nightly.yml).
+  cancel-in-progress: true
 
 jobs:
   post:

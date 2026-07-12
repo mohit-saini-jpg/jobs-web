@@ -35,7 +35,14 @@ on:
 
 concurrency:
   group: ai-nightly
-  cancel-in-progress: false
+  # PERF FIX: was false — if a run ever gets stuck/orphaned (e.g. a stale
+  # workflow_run-triggered instance queued forever), every future cron/dispatch
+  # trigger queues silently behind it and NEVER runs, with zero error visible
+  # anywhere. Confirmed this happened: the 9:30 AM cron fired daily but
+  # produced zero commits for over a day. cancel-in-progress: true guarantees
+  # the newest trigger always gets to run (checkpoint commits every 10 pages
+  # mean a cancelled run loses at most ~3 min of work, not the whole day).
+  cancel-in-progress: true
 
 jobs:
   enrich:
