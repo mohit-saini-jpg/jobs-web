@@ -1,21 +1,14 @@
 name: Lighthouse Performance Monitor
 
-# Watches live-site performance so regressions surface automatically — you don't
-# have to manually run PageSpeed. NON-BLOCKING: it never fails a deploy; it writes
-# a scoreboard to the run summary and opens/updates a GitHub issue on a real drop.
+# Report-only: measures live-site performance, writes a scoreboard to the run
+# summary, and opens/updates a GitHub issue on a real drop. NEVER modifies
+# code or fails a deploy — it's a monitor, not a fixer.
+#
+# MANUAL ONLY (2026-07-13, user request): no schedule/push auto-trigger — run
+# it from the Actions tab when you actually want a performance check.
 
 on:
-  schedule:
-    - cron: "0 3 * * 1"          # every Monday 03:00 UTC (~08:30 IST)
   workflow_dispatch: {}           # run on demand from the Actions tab
-  push:
-    branches: [main]
-    paths:                        # only when perf-relevant assets change
-      - "index.html"
-      - "vercel.json"
-      - "**/*.js"
-      - "styles.css"
-      - "lighthouserc.json"
 
 # Don't pile up runs; a newer commit/schedule supersedes an in-flight one.
 concurrency:
