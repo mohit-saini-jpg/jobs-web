@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T07:54:36.973457+00:00",
+  "timestamp": "2026-07-13T08:29:04.945013+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 4713,
+  "files_scanned": 4719,
   "issues_found_by_check": {
     "jobposting_schema": 32,
     "sitemap_sync": 6
@@ -22,5 +22,5 @@
     "broken_links: No new redirects needed — all links OK",
     "build_sitemaps:   sitemap.xml                      64 urls [ok]"
   ],
-  "duration_sec": 15.8
+  "duration_sec": 16.1
 }
