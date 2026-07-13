@@ -16,10 +16,11 @@ on:
     types: [completed]
 
   schedule:
-    - cron: '30 21 * * *'  # Daily 3:00 AM IST (UTC 21:30 previous day) —
-                            # fixed time per user request (2026-07-13), so
-                            # this always runs once/day at a predictable
-                            # time instead of piggybacking on other triggers.
+    - cron: '30 7 * * *'   # Daily 1:00 PM IST — sequenced after AI Content
+                            # Enrichment (9:30 AM start, ~1h50m typical, up to
+                            # ~170min worst case) so the day's fresh AI data
+                            # actually exists before this patches it in
+                            # (user-confirmed chain order, 2026-07-13).
 
   # Manual trigger bhi
   workflow_dispatch:

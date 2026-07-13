@@ -20,7 +20,10 @@ name: 🔎 Google Indexing API (Daily)
 
 on:
   schedule:
-    - cron: '30 6 * * *'   # Daily 12:00 PM IST (UTC 06:30)
+    - cron: '30 8 * * *'   # Daily 2:00 PM IST (UTC 08:30) — after SEO
+                            # Guardian (1:30 PM, 30min timeout), so nothing
+                            # gets submitted before being validated
+                            # (user-confirmed chain order, 2026-07-13).
   workflow_dispatch:
 
 concurrency:

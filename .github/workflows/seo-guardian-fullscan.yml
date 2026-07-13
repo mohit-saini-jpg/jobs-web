@@ -3,16 +3,17 @@
 # Runs seo_guardian.py over the ENTIRE jobs/state/education/category/section/
 # qualification tree (not just git-changed files) and commits the heals.
 #
-# Scheduled for 11:30 AM IST — 30 minutes before google-index-daily.yml's
-# 12:00 PM IST run, so the whole site gets freshly validated right before
-# the day's new pages are pushed to Google Indexing (user request, 2026-07-13).
+# Scheduled for 1:30 PM IST — after AI HTML Patcher (1:00 PM, 15min timeout)
+# so it validates the day's freshly-patched pages, and before Google Indexing
+# (2:00 PM) so nothing gets submitted before being checked (user-confirmed
+# chain order, 2026-07-13).
 # ══════════════════════════════════════════════════════════════════════
 
 name: 🛡️ SEO Guardian — Full Scan
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # Daily 11:30 AM IST (UTC 06:00)
+    - cron: '0 8 * * *'   # Daily 1:30 PM IST (UTC 08:00)
   workflow_dispatch:
 
 # Share the data-pipeline concurrency group so a full-scan never runs at the same
