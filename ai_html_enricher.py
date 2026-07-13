@@ -74,6 +74,7 @@ def render_faq(faq_list):
             return sl.endswith("?") or bool(re.match(
                 r"^(what|when|how|who|where|which|is|are|can|will|does|do|why)\b",sl))
         if _looksq(a) and not _looksq(q): q, a = a, q
+        if not _looksq(q) and not _looksq(a): continue
         q = re.sub(r"^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*","",q,flags=re.I).strip()
         key = re.sub(r"\s+"," ",q.lower()).strip()
         if not key or key in seen: continue
@@ -585,7 +586,12 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
     for key, icon, color in ai_cards:
         if key == "ai_overview" and base_has_overview:
             continue   # base page mein already Overview section hai — skip, duplicate mat banao
-        val = striptags(result.get(key) or "").strip()
+        _raw_val = result.get(key)
+        if isinstance(_raw_val, list):
+            # LLM sometimes returns a JSON array of steps for these fields —
+            # stringifying a list directly prints literal Python brackets/quotes.
+            _raw_val = ' '.join(str(x).strip() for x in _raw_val if str(x or '').strip())
+        val = striptags(_raw_val or "").strip()
         if val and len(val) > 20:
             icon = intent_icons.get(key, icon)
             heading = headings[key].format(t=job_title) if job_title else key.replace("ai_", "").replace("_", " ").title()

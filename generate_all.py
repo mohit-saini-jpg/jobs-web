@@ -699,10 +699,23 @@ def strip_html(text):
         t = t.replace(ent, ch)
     return ' '.join(t.split())
 
+# Internal enum/category tokens that sometimes leak straight from scraped
+# source data into a user-facing field (e.g. "Job Type: NON_JOB") — map to a
+# human label instead of showing the raw backend token.
+_INTERNAL_ENUM_FIX = {'NON_JOB': 'General Notice', 'NON JOB': 'General Notice'}
+
 def safe(v):
     if v is None: return ''
     if isinstance(v, str):
         s = v.strip()
+        if s in _INTERNAL_ENUM_FIX:
+            return _INTERNAL_ENUM_FIX[s]
+        # U+FFFD replacement char — mojibake from a source-site encoding
+        # mismatch (usually an em-dash/minus sign that failed to decode).
+        # A plain hyphen preserves the "minus N marks" / separator meaning
+        # in the vast majority of observed cases without showing a broken glyph.
+        if '�' in s:
+            s = s.replace('�', '-')
         return strip_html(s) if ('<' in s and '>' in s) else s
     if isinstance(v, (int, float, bool)): return str(v).strip()
     if isinstance(v, list):
@@ -992,7 +1005,31 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              existing pages so already-baked ADMISSIONS pages get the
 #              correct schema (and, downstream, correct AI content — see
 #              ai_html_enricher.py's intent-detection fix in the same commit).
-TEMPLATE_VERSION = '20260710.4-cs'
+# 20260713.1 — SEO/UX audit fix batch: mojibake ("�") + NON_JOB enum leak
+#              cleaned in safe(); FAQ pairs where neither half reads as a
+#              question (mis-scraped table fragments) are dropped instead of
+#              published; extra_fields (admissions.json) and self-referential
+#              {heading==only item} blocks no longer render as garbled
+#              catch-all cards; content_sections "... - Overview" duplicate
+#              table now correctly skipped (anchor bug: pattern only matched
+#              "Overview" at the START of a heading, never at the end where
+#              real scraped headings put it); duplicate Important
+#              Links labels (e.g. 6x "Cutoff") disambiguated with a
+#              host-derived qualifier; "Job Overview" section label is now
+#              intent-aware (Result/Admit Card/Answer Key/Admission get their
+#              own label instead of the word "Job"); header stat box no
+#              longer shows a blank "Vacancies" dash on non-recruitment pages;
+#              Apply CTA label matches page intent; related-categories mega
+#              footer is now a collapsed-by-default <details> (links still
+#              crawlable, page no longer looks identical-length everywhere).
+# 20260713.2 — render_sarkari_sections() now marks important_dates/
+#              application_fee/age_limit as covered in the caller's `rendered`
+#              set once it successfully extracts them from a titled `sections`
+#              sub-entry, so the later structured-field pass doesn't render
+#              the SAME facts a second time (admissions.json pages carry both
+#              a raw `sections` array AND normalized important_dates/
+#              application_fee/age_limit dicts for the same underlying data).
+TEMPLATE_VERSION = '20260713.2-seoaudit'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1222,6 +1259,12 @@ def _seo_heading_title(job_obj):
         t = t[:58].rsplit(' ', 1)[0].rstrip(' ,;:-–(')
     return t
 
+_OVERVIEW_LABEL_BY_INTENT = {
+    'job': 'Job Overview', 'result': 'Result Overview', 'admitcard': 'Admit Card Overview',
+    'answerkey': 'Answer Key Overview', 'admission': 'Admission Overview',
+    'syllabus': 'Syllabus Overview', 'scheme': 'Scheme Overview',
+}
+
 def _dyn_section_heading(key, job_obj):
     """Return the dynamic '[Title] : [Context]' heading for a section key, or the
     plain SECTION_META label when the key isn't a mapped content section / no title."""
@@ -1229,6 +1272,10 @@ def _dyn_section_heading(key, job_obj):
     if not suffix:
         meta = SECTION_META.get(key)
         return meta[0] if meta else (key if isinstance(key, str) else key_label(key))
+    if key == 'basic_details':
+        # "Job Overview" is wrong on a Result/Admit Card/Answer Key/Admission
+        # page — swap the suffix to match what the page is actually about.
+        suffix = _OVERVIEW_LABEL_BY_INTENT.get(page_intent(job_obj), suffix)
     t = _seo_heading_title(job_obj)
     if key == 'age_limit':
         ag = job_obj.get('age_limit') or {}
@@ -1725,6 +1772,34 @@ def _prepare_il(job_obj):
             elif 'official' in _ll or 'website' in _ll or 'visit' in _ll: _ab = 'official_website'
             else: _ab = re.sub(r'[^a-z0-9]+','_', (_l or _u).lower()).strip('_')[:40] or 'official_website'
             _merge_or_upgrade(_u, _l, _ab)
+
+    # ── Disambiguate identical labels ───────────────────────────────────────
+    # Source data sometimes carries the SAME label for several distinct links
+    # (e.g. 6 zone-wise "Cutoff" PDFs, each just labelled "Cutoff") — indistin-
+    # guishable without clicking. Append a short host-derived qualifier so
+    # every row reads differently.
+    _label_groups = {}
+    for _k, _v in il.items():
+        _lbl = _il_label(_v).strip()
+        if _lbl:
+            _label_groups.setdefault(_lbl.lower(), []).append(_k)
+    _KNOWN_ORG_PREFIXES = ('rrb', 'ssc', 'upsc', 'ibps', 'uppsc', 'mpsc', 'bpsc',
+                          'rpsc', 'hpsc', 'kpsc', 'tnpsc', 'wbpsc', 'opsc', 'jpsc')
+    for _keys in _label_groups.values():
+        if len(_keys) < 2:
+            continue
+        for _k in _keys:
+            _u = _il_url(il[_k])
+            _host = re.sub(r'^https?://', '', _u.lower()).split('/')[0]
+            _host = re.sub(r'^www\.', '', _host).split('.')[0]
+            _qual = _host
+            for _p in _KNOWN_ORG_PREFIXES:
+                if _host.startswith(_p) and len(_host) > len(_p) + 2:
+                    _qual = _host[len(_p):]
+                    break
+            _orig = _il_label(il[_k])
+            if _qual and _qual.isalpha() and len(_qual) >= 3 and _qual not in _orig.lower():
+                il[_k]['label'] = f'{_orig} — {_qual.capitalize()}'
     return il
 
 def render_links(il_obj):
@@ -2070,6 +2145,12 @@ def render_faq(faq_list):
             return sl.endswith('?') or bool(re.match(r'^(what|when|how|who|where|which|is|are|can|will|does|do|whom|whose|why)\b', sl))
         if _looks_q(a) and not _looks_q(q):
             q, a = a, q
+        # Neither half reads as a real question — this is almost always a
+        # mis-scraped table fragment (e.g. a vacancy post-name mapped to a
+        # generic "<Exam> Eligibility" label), not a genuine FAQ. Drop it
+        # rather than publish a Q/A pair that visibly doesn't match.
+        if not _looks_q(q) and not _looks_q(a):
+            continue
         # strip any pre-existing "Q1." / "Q12)" / "1." numbering from the question text
         # (renderer adds its own Q{n} badge, so leaving it causes "Q1 Q1." double numbering)
         q = re.sub(r'^\s*Q?\s*\d{1,3}\s*[\.\):\-]\s*', '', q, flags=re.I).strip()
@@ -2649,8 +2730,13 @@ TITLE_MAP = {
 }
 SKIP_TITLES = {'set as preferred source on google','set as preferred source','about'}
 
-def render_sarkari_sections(sections_list, existing_il=None):
-    """Map titled sections to proper renderers"""
+def render_sarkari_sections(sections_list, existing_il=None, already_covered=None):
+    """Map titled sections to proper renderers. `already_covered`, if given, is
+    the caller's `rendered` set — when this function successfully extracts and
+    renders dates/fee/age from a titled sub-section, it adds the matching
+    SECTION_ORDER key so the caller's later structured-field pass doesn't
+    render the SAME facts a second time from important_dates/application_fee/
+    age_limit (both sources exist independently on e.g. admissions.json data)."""
     if not sections_list: return ''
     data = {
         'dates':[],'fee':[],'age':[],'sel':[],'vac_tables':[],'cat_vac':[],
@@ -2738,13 +2824,19 @@ def render_sarkari_sections(sections_list, existing_il=None):
     html = ''
     if data['dates']:
         lis = render_list_items(data['dates'])
-        if lis: html += sec_card('important_dates','fa-calendar-check','b91c1c,#dc2626', lis)
+        if lis:
+            html += sec_card('important_dates','fa-calendar-check','b91c1c,#dc2626', lis)
+            if already_covered is not None: already_covered.add('important_dates')
     if data['fee']:
         lis = render_list_items(data['fee'])
-        if lis: html += sec_card('application_fee','fa-indian-rupee-sign','c2410c,#ea580c', lis)
+        if lis:
+            html += sec_card('application_fee','fa-indian-rupee-sign','c2410c,#ea580c', lis)
+            if already_covered is not None: already_covered.add('application_fee')
     if data['age']:
         lis = render_list_items(data['age'])
-        if lis: html += sec_card('age_limit','fa-user-clock','0f766e,#0891b2', lis)
+        if lis:
+            html += sec_card('age_limit','fa-user-clock','0f766e,#0891b2', lis)
+            if already_covered is not None: already_covered.add('age_limit')
     if data['sel']:
         html += sec_card('selection_process','fa-list-check','5b21b6,#7c3aed', render_selection(data['sel']))
     for tbl in data['vac_tables']:
@@ -2839,6 +2931,14 @@ def render_edu_sections(sections_list):
                 text = safe(block.get('text',''))
                 if text: body += f'<p class="edu-para">{e(text)}</p>'
             elif btype == 'table':
+                # An UNTITLED section's table is, in every observed case, a raw
+                # intro-summary dump that repeats — in a messier single-cell
+                # format — the exact same facts the TITLED sections below it
+                # (Important Dates, Application Fees, Age Limit...) already
+                # render cleanly as bulleted lists. Skip it to avoid showing
+                # every fact twice on the same page.
+                if not heading:
+                    continue
                 rows = block.get('rows',[])
                 if not rows: continue
                 is_obj = (isinstance(rows[0], list) and rows[0] and isinstance(rows[0][0], dict) and 'text' in rows[0][0])
@@ -3100,7 +3200,7 @@ def _render_ai_sections(job_obj):
 _CSALL_SKIP_RE = re.compile(
     r'(how\s*to\s*apply|apply\s*online|step[\s-]*by[\s-]*step|application\s*process|'
     r'important\s*link|useful\s*link|^\s*faq\b|frequently\s*asked|'
-    r'official\s*notification|pdf\s*download|^\s*overview|basic\s*detail|'
+    r'official\s*notification|pdf\s*download|overview|basic\s*detail|'
     r'common\s*mistake|other\s*active|other\s*(latest\s*)?(govt\s*)?(jobs|recruitment)|'
     r'you\s*might\s*be\s*interested|other\s*posts|about\s*the\s*author)',
     re.I)
@@ -3210,7 +3310,7 @@ def build_all_sections(job_obj):
             _bd_body = render_basic_details(_bd)
             if _bd_body and _bd_body.strip():
                 _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', '1e40af,#3b82f6'))
-                html += sec_card('basic_details', _bm[1], _bm[2], _bd_body)
+                html += sec_card(_dyn_section_heading('basic_details', job_obj), _bm[1], _bm[2], _bd_body)
                 rendered.add('basic_details')
         html += render_content_sections_all(_cs)
         # Covered typed keys + raw carriers ko rendered mark karo (dobara / raw dump na ho)
@@ -3223,7 +3323,7 @@ def build_all_sections(job_obj):
         _cs_rendered = True
 
     if not _cs_rendered and has_sarkari:
-        html += render_sarkari_sections(sections, il)
+        html += render_sarkari_sections(sections, il, rendered)
         rendered.add('sections')
     elif not _cs_rendered and has_edu_secs:
         # For education/state pages: render Job Overview + Important Dates FIRST (above edu content)
@@ -3865,7 +3965,31 @@ def build_all_sections(job_obj):
         # Inhe kabhi render mat karo. Links important_links section me safe rahenge.
         'all_links', 'details_page_content', 'faqs',
         'age_relaxation_notes', 'salary_stipend', 'age_reference_date',
+        # extra_fields (admissions.json schema): a naive colon/regex split over
+        # long descriptive sentences that already render cleanly via `sections`
+        # elsewhere on the page — its own keys are frequently truncated/garbled
+        # (e.g. "s_with_single_correct_response_scoring_scheme") and it never
+        # carries information not already shown properly. Never render it.
+        'extra_fields',
     }
+    def _is_degenerate_self_ref(val):
+        """True when a scraped {heading, items} block just repeats its own
+        heading as its single 'item' — a common SR-scraper miss (real bullet
+        content wasn't captured) that would otherwise render a useless
+        'Heading | Items' row showing the same text in both columns."""
+        entries = val if isinstance(val, list) else [val]
+        if not entries:
+            return False
+        for entry in entries:
+            if not isinstance(entry, dict):
+                return False
+            head = safe(entry.get('heading') or entry.get('title') or '').strip().lower()
+            items = entry.get('items')
+            if not head or not isinstance(items, list) or len(items) != 1:
+                return False
+            if safe(items[0]).strip().lower() != head:
+                return False
+        return True
     for key, val in job_obj.items():
         # Skip internal/AI/already-rendered keys
         if isinstance(key, str) and key.startswith('_'):
@@ -3892,6 +4016,9 @@ def build_all_sections(job_obj):
             if _looks_elig and len(val) < 400:
                 _dyn_elig[key] = val
                 continue
+
+        if isinstance(val, list) and _is_degenerate_self_ref(val):
+            continue
 
         # UNIVERSAL SMART RENDER — handles dicts, lists-of-dicts (tables),
         # lists-of-strings (bullets), nested structures, anything else.
@@ -4409,6 +4536,12 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .val-list{margin:8px 0;padding-left:22px;font-size:.82rem;color:#374151;line-height:1.7}
 .rel-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:10px;overflow:hidden}
 .rel-head{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:.82rem;font-weight:700;color:#374151}
+.rel-collapsible{margin-top:10px}
+.rel-collapsible>summary{list-style:none;cursor:pointer;padding:12px 14px;background:#f8fafc;font-size:.85rem;font-weight:700;color:#374151;display:flex;align-items:center;gap:8px}
+.rel-collapsible>summary::-webkit-details-marker{display:none}
+.rel-collapsible>summary .rel-summary-chev{margin-left:auto;transition:transform .15s}
+.rel-collapsible[open]>summary .rel-summary-chev{transform:rotate(180deg)}
+.rel-collapsible>summary:hover{background:#eef2f7}
 .rel-grid{display:flex;flex-wrap:wrap;gap:7px;padding:11px 14px}
 .rel-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-decoration:none;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;transition:all .15s;white-space:nowrap}
 .rel-btn:hover{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
@@ -4447,7 +4580,8 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 """
 
 # ── Page builder ───────────────────────────────────────────────
-REL_CATS_HTML = '''<div class="rel-section">
+REL_CATS_HTML = '''<details class="rel-section rel-collapsible">
+<summary><i class="fa-solid fa-grip"></i> Browse More Categories &amp; Follow Us<i class="fa-solid fa-chevron-down rel-summary-chev"></i></summary>
 <div class="rel-head"><i class="fa-solid fa-grip"></i> Related Categories</div>
 <div style="padding:0 14px 14px">
 
@@ -4607,7 +4741,7 @@ REL_CATS_HTML = '''<div class="rel-section">
 </div>
 
 </div>
-</div>'''
+</details>'''
 
 def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt Job', noindex_dup=False):
     bd    = job_obj.get('basic_details', {}) or {}
@@ -4625,6 +4759,18 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     if not vacancies:
         _vm = re.search(r'([\d,]+)\s*(?:posts?|vacanc)', title, re.I)
         if _vm: vacancies = _vm.group(1)
+    # Result / Admit Card / Answer Key / Admission pages often have no vacancy
+    # count at all (e.g. a university exam result) — showing a bare "—" in the
+    # most prominent box on the page looks broken. Swap the stat for something
+    # that's actually populated for that content type instead of leaving it blank.
+    _stat1_lbl = 'Vacancies'
+    if not vacancies:
+        _intent0 = page_intent(job_obj)
+        if _intent0 == 'admission':
+            _c = safe(bd.get('post_name','') or job_obj.get('course_name',''))
+            if _c: vacancies, _stat1_lbl = _c[:22], 'Course'
+        if not vacancies and _intent0 in ('result', 'admitcard', 'answerkey', 'admission'):
+            vacancies, _stat1_lbl = org[:22], 'Organization'
     last_d    = safe(dates.get('extended_last_date','') or dates.get('date_extended','')
                      or dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','')
                      or dates.get('last_date','') or dates.get('last_date_pay_fee','')
@@ -4813,10 +4959,16 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 
     # Quick apply link
     apply_url = safe(_il_url(il.get('apply_online')) or _il_url(il.get('registration_link')) or bd.get('official_website',''))
+    _CTA_LABEL_BY_INTENT = {
+        'result': 'Check Result / Official Website', 'admitcard': 'Download Admit Card',
+        'answerkey': 'Download Answer Key', 'syllabus': 'Download Syllabus',
+        'scheme': 'Apply / Official Website',
+    }
     apply_banner = ''
     if apply_url and not is_blocked(apply_url):
+        _cta_lbl = _CTA_LABEL_BY_INTENT.get(page_intent(job_obj), 'Apply Online / Official Website')
         apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="nofollow noopener noreferrer" class="apply-cta">'
-                       f'<i class="fa-solid fa-paper-plane"></i> Apply Online / Official Website ↗</a>')
+                       f'<i class="fa-solid fa-paper-plane"></i> {e(_cta_lbl)} ↗</a>')
 
     # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
@@ -4874,7 +5026,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     <span>Sourced from the official notification — <a href="/editorial-policy/" style="color:#1a56db;text-decoration:none;">how we verify</a></span>
   </div>
   <div class="stats-bar">
-    <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">Vacancies</div></div>
+    <div class="stat"><div class="stat-val">{e(vacancies or "—")}</div><div class="stat-lbl">{e(_stat1_lbl)}</div></div>
     <div class="stat"><div class="stat-val" style="color:#dc2626">{e(last_d or "—")}</div><div class="stat-lbl">{e(_dh_lbl)}</div></div>
     <div class="stat"><div class="stat-val">{e(apply_m or "Online")}</div><div class="stat-lbl">Apply Mode</div></div>
     <div class="stat"><div class="stat-val">{e(location or "India")}</div><div class="stat-lbl">Location</div></div>
