@@ -23,8 +23,31 @@ const STATES = new Set([
 ]);
 
 // Run on clean-URL page paths only; skip static assets and platform internals.
+// NOTE: .html is deliberately NOT in the excluded-extensions list below — this
+// site never serves real .html files under /jobs/, so any request for one is
+// a legacy broken relative link (see JOBS_SLUG_HTML_LEAK below) that needs to
+// reach the middleware to be redirected, not fall through as a 404.
 export const config = {
-  matcher: ['/((?!_next/|_vercel/|assets/|images/|fonts/|api/|.*\\.[a-zA-Z0-9]+$).*)'],
+  matcher: ['/((?!_next/|_vercel/|assets/|images/|fonts/|api/|.*\\.(?:css|js|mjs|json|xml|txt|pdf|png|jpe?g|gif|svg|ico|webp|woff2?|ttf)$).*)'],
+};
+
+// PERMANENT FIX (2026-07-13): a since-disabled JS widget (script.js
+// renderHomeQuickLinks, dead since ~May 2026) once injected relative links
+// like href="category.html?group=study" into job detail pages. The browser
+// resolved those relative to the current page, producing URLs like
+// /jobs/{slug}/category.html?group=study — which never existed. Google
+// crawled and indexed thousands of these before the widget was disabled, and
+// they still show up in Search Console as "Not found (404)". The widget is
+// gone, but the URLs Google already knows about still need a real redirect
+// to actually resolve — this catches ANY job slug + any of these filenames.
+const JOBS_SLUG_HTML_LEAK = /^\/jobs\/[^/]+\/(index|category|helpdesk|tools|view|govt-services)\.html$/;
+const LEAK_TARGET = {
+  index: '/',
+  category: '/category.html',
+  helpdesk: '/helpdesk/',
+  tools: '/tools/',
+  view: '/',
+  'govt-services': '/govt-services/',
 };
 
 function redirect(origin, dest, search) {
@@ -35,6 +58,13 @@ function redirect(origin, dest, search) {
 export default function middleware(request) {
   const url = new URL(request.url);
   const p = url.pathname;
+
+  // 0) legacy /jobs/{slug}/{utility}.html leak from the disabled nav-grid widget
+  const leak = p.match(JOBS_SLUG_HTML_LEAK);
+  if (leak) {
+    const dest = LEAK_TARGET[leak[1]];
+    if (dest) return redirect(url.origin, dest, url.search);
+  }
 
   // 1) exact map lookup — try as-is, then toggle the trailing slash
   const candidates = p.endsWith('/') ? [p, p.slice(0, -1)] : [p, p + '/'];

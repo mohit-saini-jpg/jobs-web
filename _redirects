@@ -11,6 +11,22 @@
 /section/m-e-mtech/             /category/study/               301
 /qualification/latest-notifications/  /section/latest-jobs/    301
 
+# ══ GSC-reported 404s (2026-07-13): more old section/jobs slugs → current scheme ══
+/section/defence-jobs/          /section/army-jobs/            301
+/section/haryana-jobs/          /state-jobs/haryana/           301
+/section/haryana-all-state-jobs/ /state-jobs/haryana/          301
+/section/upsc-jobs/             /section/latest-jobs/          301
+/section/medical-jobs/          /section/healthcare-jobs/      301
+/section/10th-pass/             /section/10th-pass-jobs/       301
+/jobs/12th-pass-jobs/           /section/12th-pass-jobs/       301
+/jobs/8th-pass-jobs/            /section/8th-pass/             301
+/jobs/iti-pass-jobs/            /section/iti-jobs/             301
+/jobs/graduation-jobs/          /section/graduation-jobs/      301
+/jobs/bank-jobs/                /section/bank-jobs/            301
+/jobs/top-20-jobs/              /section/top-20-jobs/          301
+/jobs/important-csc-link/       /section/important-csc-link/   301
+/jobs/job/                      /                               301
+
 # ══ Permanent historical redirects (always at top) ══
 /jobs/jnu-non-teaching-recruitment-2026-notification-out-apply-online-for-267-mts-sten/  /jobs/jnu-non-teaching-recruitment-2026-notification-out-apply-online-for-267-mts-st/  301
 /jobs/up-police-sub-inspector-si-advt-no-03-2025-recruitment-2025-pet-admit-card-2026/  /jobs/up-police-sub-inspector-si-advt-no-032025-recruitment-2025-pet-admit-card-2026-f/  301
