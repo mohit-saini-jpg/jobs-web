@@ -572,14 +572,18 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                     if canonical_u not in _seen:
                         by_fja[tag].append(canonical_u)
                         _seen.add(canonical_u)
-        # Safety: include any tags present in job.fja_categories but not in index
+        # Safety: include any tags present in job.fja_categories but not in index.
+        # ORDER FIX (2026-07-13): same reasoning as the by_state fallback below —
+        # a job caught here was missed by this run's category-listing capture,
+        # almost always because it's brand-new (posted after that fetch).
+        # Prepend, don't append, so it lands at the top like the source site.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for c in j.get("fja_categories", []):
                 if c not in by_fja:
                     by_fja[c] = []
                 if u not in by_fja[c]:
-                    by_fja[c].append(u)
+                    by_fja[c].insert(0, u)
     else:
         # Fallback: derive from job tags (dedup order-preserving)
         by_fja = {}
@@ -602,14 +606,22 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                     if canonical_u not in _seen:
                         by_state[state_name].append(canonical_u)
                         _seen.add(canonical_u)
-        # Safety: include any tags present in job.state_tags but not in index
+        # Safety: include any tags present in job.state_tags but not in index.
+        # ORDER FIX (2026-07-13): a job lands here only when it was NOT seen in
+        # this run's state-table capture (state_per_tag_order) but IS tagged
+        # for this state some other way — almost always because it was posted
+        # on freejobalert.com in the brief window between this run's state-page
+        # fetch and its other phases, so the state table simply didn't have it
+        # yet. Since freejobalert lists state jobs NEWEST-FIRST, appending to
+        # the END put brand-new jobs at the BOTTOM — the opposite of correct.
+        # Prepend instead so they land at the top, matching source-site order.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for s in j.get("state_tags", []) + j.get("inferred_states", []):
                 if s not in by_state:
                     by_state[s] = []
                 if u not in by_state[s]:
-                    by_state[s].append(u)
+                    by_state[s].insert(0, u)
     else:
         # Fallback: derive from job tags
         by_state = {}
@@ -634,14 +646,18 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                     if canonical_u not in _seen:
                         by_dist[dist_name].append(canonical_u)
                         _seen.add(canonical_u)
-        # Safety: include any tags present in job.district_tags but not in index
+        # Safety: include any tags present in job.district_tags but not in index.
+        # ORDER FIX (2026-07-13): same reasoning as the by_state fallback above —
+        # a job caught here was missed by this run's district-table capture,
+        # almost always because it's brand-new (posted after that fetch).
+        # Prepend, don't append, so it lands at the top like the source site.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for d in j.get("district_tags", []):
                 if d not in by_dist:
                     by_dist[d] = []
                 if u not in by_dist[d]:
-                    by_dist[d].append(u)
+                    by_dist[d].insert(0, u)
     else:
         # Fallback: derive from job tags (old behavior — order matches jobs list,
         # NOT the district listing page's own order)
