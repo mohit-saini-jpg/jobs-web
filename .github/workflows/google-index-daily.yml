@@ -1,0 +1,72 @@
+# ══════════════════════════════════════════════════════════════════════
+# WORKFLOW: google-index-daily.yml — Google Indexing API (ONCE A DAY)
+# ══════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS (2026-07-13): this step used to live inside
+# auto-update-jobs.yml, so it fired on EVERY pipeline run — and that
+# pipeline can run many times a day (scraper pushes, manual SR uploads,
+# any code push). Google's Indexing API rejects requests with HTTP 429
+# after just a handful per call, not anywhere near the 200/day quota the
+# script assumes — so back-to-back runs the same day mostly just burned
+# through a few requests each and hit 429 immediately, wasting most of
+# the day's real quota on failed/duplicate attempts instead of steadily
+# draining the backlog.
+#
+# Moving this to its own once-daily cron means exactly ONE clean attempt
+# at the real quota per day, at a fixed time, regardless of how many
+# times the rest of the pipeline fires that day.
+# ══════════════════════════════════════════════════════════════════════
+
+name: 🔎 Google Indexing API (Daily)
+
+on:
+  schedule:
+    - cron: '30 6 * * *'   # Daily 12:00 PM IST (UTC 06:30)
+  workflow_dispatch:
+
+concurrency:
+  group: google-index-daily
+  cancel-in-progress: true
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔎 Google Indexing API submit
+        env:
+          GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
+        run: node .github/workflows/google-index-submit.js
+
+      - name: 💾 Commit Google-index state
+        run: |
+          git add data/google_index_state.json 2>/dev/null || true
+          if ! git diff --staged --quiet; then
+            git -c user.name="github-actions[bot]" \
+                -c user.email="github-actions[bot]@users.noreply.github.com" \
+                commit -m "🔎 Google index state ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
+            for i in 1 2 3; do
+              git push origin main && break
+              echo "push retry $i…"; git pull --rebase origin main || break
+            done
+          else
+            echo "No state change to commit."
+          fi
+
+      - name: 📊 Summary
+        run: |
+          echo "### 🔎 Google Indexing API (Daily)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY

@@ -401,41 +401,13 @@ jobs:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: node .github/workflows/indexnow-ping.js
 
-      # ── STEP 12a: Google Indexing API (GATED by SEO Guardian) ─────
-      # Officially supported for JobPosting pages (this site). Submits the
-      # newest job URLs so Googlebot recrawls them fast. Requires the
-      # GOOGLE_INDEXING_SA_JSON secret + the service-account added as an
-      # Owner in Search Console; the script no-ops safely if either is absent.
-      - name: 🔎 Google Indexing API submit
-        if: env.SEO_CLEAN == 'true'
-        continue-on-error: true
-        env:
-          GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
-        run: node .github/workflows/google-index-submit.js
-
-      # ── STEP 12a-2: Persist the Google-index budget/backlog tracker ──
-      # google-index-submit.js writes data/google_index_state.json (how many
-      # URLs were submitted today + which /jobs/ slugs have ever been
-      # submitted). Commit it so the NEXT run — even a second run the same
-      # day (e.g. a manual SR-data upload) — reads it and never exceeds the
-      # 200/day quota or re-submits the same URL. [skip ci] + the state path
-      # not being a trigger path means this commit won't re-trigger the pipeline.
-      - name: 💾 Commit Google-index state
-        if: env.SEO_CLEAN == 'true'
-        continue-on-error: true
-        run: |
-          git add data/google_index_state.json 2>/dev/null || true
-          if ! git diff --staged --quiet; then
-            git -c user.name="github-actions[bot]" \
-                -c user.email="github-actions[bot]@users.noreply.github.com" \
-                commit -m "🔎 Google index state ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
-            for i in 1 2 3; do
-              git push origin main && break
-              echo "push retry $i…"; git pull --rebase origin main || break
-            done
-          else
-            echo "No state change to commit."
-          fi
+      # ── STEP 12a: Google Indexing API — MOVED (2026-07-13) ────────
+      # Now runs once/day in its own workflow: google-index-daily.yml (12:00
+      # PM IST). This pipeline can fire many times a day (scraper pushes,
+      # manual uploads), and Google's Indexing API 429s after just a handful
+      # of requests per call — running it here on every trigger burned
+      # through the day's real quota on repeated near-empty attempts instead
+      # of steadily draining the backlog. See google-index-daily.yml for why.
 
       # ── STEP 12b: Guardian gate warning (only when ping was skipped) ──
       - name: ⚠️ SEO Guardian gate — ping skipped
