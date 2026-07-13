@@ -11,6 +11,11 @@
 /section/m-e-mtech/             /category/study/               301
 /qualification/latest-notifications/  /section/latest-jobs/    301
 
+# ══ High-traffic old job-slug renames (2026-07-13): found via GA4 landing-page
+# audit — these still get real clicks from WhatsApp/social shares of the OLD
+# URL, which were 404ing with no redirect. ══
+/jobs/haryana-dbc-vacancy-2026-notification-check-for-district-wise/  /jobs/haryana-health-department-dbc-vacancy-2026-790-posts-notification-check-for-dist/  301
+
 # ══ GSC-reported 404s (2026-07-13): more old section/jobs slugs → current scheme ══
 /section/defence-jobs/          /section/army-jobs/            301
 /section/haryana-jobs/          /state-jobs/haryana/           301
