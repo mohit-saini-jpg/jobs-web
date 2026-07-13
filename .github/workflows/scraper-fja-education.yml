@@ -38,6 +38,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      actions: write
 
     steps:
       - name: 📥 Checkout
@@ -63,6 +64,7 @@ jobs:
         run: python scraper_unified_fja.py
 
       - name: 💾 Commit + push (Unified FJA)
+        id: commit_fja
         run: |
           cp scraper/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
           git config user.name  "github-actions[bot]"
@@ -70,6 +72,7 @@ jobs:
           git add Complete_Jobs_Full_Data.json
           if git diff --staged --quiet; then
             echo "No FJA changes to commit"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "🕷️ FJA scraper update ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST)"
             for i in 1 2 3; do
@@ -77,6 +80,7 @@ jobs:
               echo "push retry $i…"
               git pull --rebase origin main || break
             done
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
 
       # ── STEP: Education jobs ────────────────────────────────────────────
@@ -85,6 +89,7 @@ jobs:
         run: python scraper_education.py
 
       - name: 💾 Commit + push (Education)
+        id: commit_edu
         run: |
           cp scraper/Complete_Jobs_Full_Data.json Complete_Jobs_Full_Data.json
           git config user.name  "github-actions[bot]"
@@ -92,6 +97,7 @@ jobs:
           git add Complete_Jobs_Full_Data.json
           if git diff --staged --quiet; then
             echo "No Education changes to commit"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "🕷️ Education scraper update ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST)"
             for i in 1 2 3; do
@@ -99,7 +105,21 @@ jobs:
               echo "push retry $i…"
               git pull --rebase origin main || break
             done
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # PERMANENT NOTE (2026-07-13): pushes made with the default GITHUB_TOKEN
+      # do NOT trigger other workflows' `push` events — GitHub's built-in
+      # infinite-loop guard, not something we can configure away (same issue
+      # fixed in merge-sr.yml the same day). So a real scrape could succeed
+      # and push fresh jobs, yet the site never rebuilt from them — visitors
+      # kept seeing yesterday's order/content until the next unrelated push
+      # or the 7 AM cron. Explicitly dispatching here closes that gap.
+      - name: 🚀 Trigger site regeneration (auto-update-jobs.yml)
+        if: steps.commit_fja.outputs.pushed == 'true' || steps.commit_edu.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run auto-update-jobs.yml
 
       - name: 📊 Summary
         run: |
