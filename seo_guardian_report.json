@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14T08:36:08.400967+00:00",
+  "timestamp": "2026-07-14T09:54:51.253817+00:00",
   "mode": "full-scan",
   "dry_run": false,
   "files_scanned": 6487,
@@ -1259,5 +1259,5 @@
     "broken_links: No new redirects needed — all links OK",
     "build_sitemaps:   sitemap.xml                      64 urls [ok]"
   ],
-  "duration_sec": 14.9
+  "duration_sec": 17.4
 }
