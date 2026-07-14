@@ -277,16 +277,54 @@ function listAllJobSlugs() {
   }
 }
 
+// ── NEVER SUBMIT A BROKEN URL (2026-07-14) ──────────────────────────────────
+// Root cause of a live 404 (pau-young-professional-ii-...) reaching Google:
+// a slug-computation mismatch in generate_all.py wrote a redirect/candidate
+// that pointed at a page that was never actually rendered. That class of bug
+// is now fixed at the source (generate_all.py) plus a build-time guard that
+// heals any dead-end redirect — but THIS script is the last checkpoint
+// before a URL reaches Google, so it re-verifies independently: only a URL
+// that (a) is not itself a redirect origin in _redirects, and (b) resolves
+// to a real index.html in this exact repo checkout (the same checkout
+// Vercel deploys from) is eligible for submission. Zero cost — no network
+// calls, pure filesystem/text checks — so it's safe to run on every URL.
+let REDIRECT_SOURCES = new Set();
+try {
+  const rtext = fs.readFileSync(path.join(process.cwd(), '_redirects'), 'utf8');
+  for (const line of rtext.split('\n')) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const m = t.match(/^(\/\S+)\s+\/\S*\s+301/);
+    if (m) REDIRECT_SOURCES.add(m[1]);
+  }
+} catch (e) { /* _redirects missing — cross-check simply skipped */ }
+
+function urlIsRealPage(url) {
+  try {
+    const u = new URL(url);
+    const p = u.pathname;
+    if (REDIRECT_SOURCES.has(p)) return false;   // this URL 301s elsewhere — submit the destination, not this
+    if (p === '/') return fs.existsSync(path.join(process.cwd(), 'index.html'));
+    const clean = p.replace(/^\/+|\/+$/g, '');
+    if (!clean) return false;
+    return fs.existsSync(path.join(process.cwd(), clean, 'index.html'));
+  } catch (e) {
+    return false;
+  }
+}
+
 // Build the prioritised submit list, skipping anything already sent today.
 function collectCandidates(state) {
   const submittedToday = new Set(state.submitted_today);
   const doneSlugs      = new Set(state.done_slugs);
   const out = [];
   const seen = new Set();
+  let skippedBroken = 0;
   // slug is set only for /jobs/ URLs (backlog tracking); hub pages have none.
   // kind: 'hub' | 'new' | 'backlog' — for accurate log counts only.
   const add = (url, slug, kind) => {
     if (!url || seen.has(url) || submittedToday.has(url)) return;
+    if (!urlIsRealPage(url)) { skippedBroken++; return; }
     seen.add(url);
     out.push({ url, slug: slug || null, kind });
   };
@@ -303,6 +341,7 @@ function collectCandidates(state) {
     add(`${SITE}/jobs/${slug}/`, slug, 'backlog');
   }
 
+  out.skippedBroken = skippedBroken;
   return out;
 }
 
@@ -369,6 +408,9 @@ async function publish(token, url) {
   }
 
   const candidates = collectCandidates(state);
+  if (candidates.skippedBroken) {
+    console.warn(`🛡️  Skipped ${candidates.skippedBroken} candidate URL(s) that don't resolve to a real page (redirect origin or missing index.html) — never submitted to Google.`);
+  }
   console.log(`📡 Google Indexing — day ${state.date} | used ${state.count_today}/${DAILY_CAP} | budget ${budget} | candidates ${candidates.length} | backlog left ${backlogLeft}`);
 
   const doneSet = new Set(state.done_slugs);

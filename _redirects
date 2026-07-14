@@ -111,7 +111,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ── STATE-JOBS SEO URLs (/state-jobs/{slug}/) ────────────────────
 # These serve the newly generated static pages directly
-/state-jobs/  /section/state-jobs/  301
+/state-jobs/  /  301
 
 # ── STATE /state/ card links: missing /jobs/ pages → state listing (no 404) ──
 # These state_jobs entries have no individual /jobs/{slug}/ page yet, so the
@@ -271,8 +271,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /view.html?section=B.Tech+Jobs                                    /section/btech-jobs/                          301
 /view.html?section=B.Tech%20Jobs                                  /section/btech-jobs/                          301
 /view.html?section=btech-jobs                                     /section/btech-jobs/                          301
-/view.html?section=B.Com+Jobs                                     /section/b-com/                               301
-/view.html?section=B.Com%20Jobs                                   /section/b-com/                               301
+/view.html?section=B.Com+Jobs  /  301
+/view.html?section=B.Com%20Jobs  /  301
 /view.html?section=Graduation+jobs                                /section/graduation-jobs/                     301
 /view.html?section=Graduation%20jobs                              /section/graduation-jobs/                     301
 /view.html?section=graduation-jobs                                /section/graduation-jobs/                     301
@@ -315,9 +315,9 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /view.html?section=Admit+cards+Exams+Date                         /section/admit-card/                          301
 /view.html?section=Admit%20cards%20Exams%20Date                   /section/admit-card/                          301
 /view.html?section=admit-card                                     /section/admit-card/                          301
-/view.html?section=SR_Admission                                   /section/admission/                           301
+/view.html?section=SR_Admission  /  301
 /view.html?section=Admission%2FEducation                          /section/admissions/                          301
-/view.html?section=admission                                      /section/admission/                           301
+/view.html?section=admission  /  301
 /view.html?section=admissions                                     /section/admissions/                          301
 /view.html?section=admission-form                                 /section/admissions/                          301
 /view.html?section=SR_Answer_Key                                  /section/answer-key/                          301
@@ -329,12 +329,12 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /view.html?section=offline-jobs                                   /section/offline-form/                        301
 /view.html?section=upcoming-jobs                                  /section/upcoming-jobs/                       301
 /view.html?section=Upcoming+Jobs                                  /section/upcoming-jobs/                       301
-/view.html?section=State+jobs                                     /section/state-jobs/                          301
-/view.html?section=State%20jobs                                   /section/state-jobs/                          301
-/view.html?section=state-jobs                                     /section/state-jobs/                          301
-/view.html?section=Central+jobs                                   /section/central-jobs/                        301
-/view.html?section=Central%20jobs                                 /section/central-jobs/                        301
-/view.html?section=central-jobs                                   /section/central-jobs/                        301
+/view.html?section=State+jobs  /  301
+/view.html?section=State%20jobs  /  301
+/view.html?section=state-jobs  /  301
+/view.html?section=Central+jobs  /  301
+/view.html?section=Central%20jobs  /  301
+/view.html?section=central-jobs  /  301
 /view.html?section=Haryana+All+State+Jobs                         /section/haryana-jobs/                        301
 /view.html?section=Haryana%20All%20State%20Jobs                   /section/haryana-jobs/                        301
 /view.html?section=haryana-all-state-jobs                         /section/haryana-jobs/                        301
@@ -349,7 +349,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /view.html?section=Top%2020%20Jobs                                /section/top-20-jobs/                         301
 /view.html?section=top-20-jobs                                    /section/top-20-jobs/                         301
 /view.html?section=latest-jobs-new                                /section/latest-jobs-new/                     301
-/view.html?section=ssc-jobs                                       /section/ssc-jobs/                            301
+/view.html?section=ssc-jobs  /  301
 /view.html?section=upsc-jobs                                      /section/upsc-jobs/                           301
 /view.html?section=latest-notifications                           /section/latest-notifications/                301
 /view.html?section=Latest+Notifications                           /section/latest-notifications/                301
@@ -433,13 +433,13 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /education-detail.html                                            /education/                                    301
 
 # ── category.html?group= → /category/{group}/ ──────────────────
-/category.html?group=popular                                      /category/popular/                            301
+/category.html?group=popular  /  301
 /category.html?group=study                                        /category/study/                              301
 /category.html?group=state                                        /state/                                       301
-/category.html?group=admissions                                   /category/admissions/                         301
-/category.html?group=admit-result                                 /category/admit-result/                       301
-/category.html?group=khabar                                       /category/khabar/                             301
-/category.html?group=study-material                               /category/study-material/                     301
+/category.html?group=admissions  /  301
+/category.html?group=admit-result  /  301
+/category.html?group=khabar  /  301
+/category.html?group=study-material  /  301
 
 # ── Legacy shortcut paths → canonical clean URLs ────────────────
 /latest-sarkari-jobs/                                             /section/latest-jobs/                         301
@@ -447,7 +447,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /upcoming-government-jobs/                                        /section/upcoming-jobs/                       301
 /all-india-government-jobs/                                       /section/latest-govt-jobs/                    301
 /jobs-with-last-date/                                             /section/last-date-reminder/                  301
-/ssc-jobs/                                                        /section/ssc-jobs/                            301
+/ssc-jobs/  /  301
 /upsc-jobs/                                                       /section/upsc-jobs/                           301
 /railway-jobs/                                                    /section/railway-jobs/                        301
 /bank-jobs/                                                       /section/bank-jobs/                           301
@@ -464,14 +464,14 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /graduation-jobs/                                                 /section/graduation-jobs/                     301
 /latest-jobs/                                                     /section/latest-jobs/                         301
 /upcoming-jobs/                                                   /section/upcoming-jobs/                       301
-/state-jobs/                                                      /section/state-jobs/                          301
-/central-jobs/                                                    /section/central-jobs/                        301
+/state-jobs/  /  301
+/central-jobs/  /  301
 /haryana-jobs/                                                    /section/haryana-jobs/                        301
 /results/                                                         /section/results/                             301
 /admit-card/                                                      /section/admit-card/                          301
 /answer-key/                                                      /section/answer-key/                          301
 /admissions/                                                      /section/admissions/                          301
-/admission/                                                       /section/admission/                           301
+/admission/  /  301
 /latest-govt-jobs/                                                /section/latest-govt-jobs/                    301
 
 # ── SPA routing rewrites (200 = serve template, URL unchanged) ──
@@ -2774,7 +2774,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ SEO FIX: state-page job slugs → canonical /jobs/ page or state listing (no 404) ══
 /jobs/aad-iit-roorkee-audiologist-and-speech-language-pathologist-aslp-assistant-1-pos/  /state/uttarakhand/  301
-/jobs/andaman-and-nicobar-police-group-b-ng-and-group-c-495-posts/  /state/andaman-and-nicobar/  301
+/jobs/andaman-and-nicobar-police-group-b-ng-and-group-c-495-posts/  /state/andaman-nicobar/  301
 /jobs/cdm-and-pho-balangir-physicianconsultant-medicine-nphce-and-mo-mbbs-3-posts/  /state/odisha/  301
 /jobs/dcil-fleet-personnel-and-trainees-45-posts/  /state/andhra-pradesh/  301
 /jobs/district-and-sessions-judge-angul-junior-clerk-cum-copyist-stenographer-and-more/  /state/odisha/  301

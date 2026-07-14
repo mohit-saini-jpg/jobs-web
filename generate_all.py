@@ -6164,12 +6164,18 @@ if not SJ_SEC:
 # Fix: Build FJA title→slug lookup, cross-match state_jobs items to correct FJA slug.
 # If no match, use _scraped_from URL as fallback.
 _fja_title_slug = {}
-for _fcat, _fjobs in (FJA_RAW or {}).items():
+# ROOT-CAUSE FIX (2026-07-14): must iterate FJA (garbage-title-filtered, the
+# SAME dict the write loop above uses) not FJA_RAW — else this can map to a
+# job that never gets a page written, producing a dead-end redirect/link.
+# Slug must come from get_canonical_slug() — the single source of truth also
+# used to actually write the page — not a fresh slugify(title) which can
+# diverge from the real on-disk slug (_canonical_slug/registry overrides).
+for _fcat, _fjobs in (FJA or {}).items():
     for _fj in (_fjobs or []):
         _fbd = (_fj.get('basic_details') or {})
         _ftit = _fbd.get('job_title','').strip().lower()
         if _ftit:
-            _fja_title_slug[_ftit] = slugify(_fbd.get('job_title',''))[:80]
+            _fja_title_slug[_ftit] = get_canonical_slug(_fj)
 
 def _state_item_slug(item):
     # Try: cross-match to FJA slug by keywords in name
@@ -6580,7 +6586,18 @@ def _title_tokens(t):
 # Build FJA token index: list of (frozenset_of_tokens, fja_slug, raw_title_lower)
 _fja_token_index = []   # list of (frozenset_of_tokens, fja_slug, raw_title_lower)
 
-for _fj in (CJ.get('freejobalert_unified',{}) or {}).get('deduped_jobs',[]):
+# ROOT-CAUSE FIX (2026-07-14): this used to iterate the UNFILTERED
+# freejobalert_unified.deduped_jobs list, which includes garbage-title jobs
+# and jobs never assigned to any FJA category. _find_fja_canonical() (below)
+# used this index to pick SARK→FJA cross-dedup redirect TARGETS — if the
+# target came from a job that is_garbage_title() filters out (or that never
+# lands in any FJA category), the redirect pointed at a slug that no page
+# was ever written for = dead-end 301 (exactly the 775-URL bug fixed this
+# session). Iterating FJA (the same garbage-filtered dict the write loop
+# above actually renders pages from) guarantees every candidate target here
+# corresponds 1:1 to a real, on-disk /jobs/{slug}/ page.
+for _fcat_ti, _fjobs_ti in (FJA or {}).items():
+  for _fj in (_fjobs_ti or []):
     _fbd = _fj.get('basic_details',{}) or {}
     _ft = _fbd.get('job_title','')
     if not _ft: continue
@@ -8895,6 +8912,77 @@ if os.path.exists(_dedup_rmap_path):
               f"({len(_new_lines)} new)")
     except Exception as _e:
         print(f"  [dedup_redirects] could not load redirect map: {_e}")
+
+# ── PERMANENT GUARD: heal every dead-end redirect destination ───────────────
+# Root cause of the 775-URL dead-end-301 bug (2026-07-14): several code paths
+# above compute a redirect TARGET slug independently of the slug actually
+# used to write the page (e.g. a fresh slugify(title) instead of
+# get_canonical_slug(), or a lookup built from an unfiltered job list that
+# includes titles never rendered to disk). Each of those has now been fixed
+# at its source — but new code added later could reintroduce the same class
+# of bug. This function is the single choke point EVERY redirect rule passes
+# through before the build finishes: any internal destination that doesn't
+# resolve to a real on-disk page gets healed to "/" (always safe) instead of
+# shipping a URL that 404s for users and for Google. This guarantees the
+# site can never again serve/index a redirect that dead-ends.
+def validate_and_heal_redirects():
+    rpath = str(ROOT/'_redirects')
+    if not os.path.exists(rpath):
+        return
+    lines = open(rpath, encoding='utf-8').read().splitlines()
+    _RULE_RE = re.compile(r'^(/\S+)\s+(/\S*)\s+(301!?)\s*$')
+    _KIND_DIR = {'jobs': 'jobs', 'section': 'section', 'state': 'state',
+                 'district': 'district', 'category': 'category'}
+    # Build the full source->dest map first so multi-hop chains (e.g.
+    # /view.html?x -> /section/old/ -> /section/new/) resolve correctly.
+    # middleware.js does ONE hop per request, but a browser/Googlebot follows
+    # the chain across requests — a chain that eventually lands on a real
+    # page is NOT broken and must not be flattened to "/".
+    _rule_map = {}
+    for _line in lines:
+        _stripped = _line.strip()
+        if _stripped.startswith('#'):
+            continue
+        _m = _RULE_RE.match(_stripped)
+        if _m:
+            _rule_map[_m.group(1)] = _m.group(2)
+    def _is_real_file(dest):
+        if dest == '/':
+            return True
+        m = re.match(r'^/(jobs|section|state|district|category)/([^/]+)/?$', dest)
+        if not m:
+            return True   # external / homepage-root / unrecognized scheme — leave as-is
+        slug = m.group(2)
+        if ':' in slug or '*' in slug:
+            return True   # Netlify dynamic placeholder rule (e.g. /state/:job/) — not literal
+        return os.path.exists(str(ROOT/_KIND_DIR[m.group(1)]/slug/'index.html'))
+    def _resolves(dest, _hops=0):
+        if _is_real_file(dest):
+            return True
+        if _hops >= 10:
+            return False   # cycle / absurdly long chain guard
+        _nxt = _rule_map.get(dest)
+        if _nxt is None:
+            return False   # dead end: not a real file, and no further rule
+        return _resolves(_nxt, _hops + 1)
+    healed = 0
+    out_lines = []
+    for line in lines:
+        stripped = line.strip()
+        m = None if stripped.startswith('#') else _RULE_RE.match(stripped)
+        if m:
+            src, dest, tag = m.groups()
+            if not _resolves(dest):
+                out_lines.append(f"{src}  /  {tag}")
+                healed += 1
+                continue
+        out_lines.append(line)
+    if healed:
+        with open(rpath, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(out_lines) + ('\n' if out_lines else ''))
+    print(f"  [redirect-guard] {len(lines)} rules checked, {healed} dead-end destination(s) healed -> /")
+
+validate_and_heal_redirects()
 
 _end = _time.time()
 VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
