@@ -75,7 +75,7 @@
     .switch input:checked + .slider-tg { background:var(--brand); }
     .switch input:checked + .slider-tg:before { transform:translateX(18px); }
     .mode-tabs { display:flex; gap:8px; margin-bottom:4px; flex-wrap:wrap; }
-    .mode-tab { flex:1; min-width:150px; padding:11px; border:1.5px solid var(--line); border-radius:10px; background:var(--white); cursor:pointer; font-weight:700; font-size:.84rem; color:var(--muted); text-align:center; transition:all .15s; }
+    .mode-tab { flex:1; min-width:120px; padding:9px 10px; border:1.5px solid var(--line); border-radius:10px; background:var(--white); cursor:pointer; font-weight:700; font-size:.8rem; color:var(--muted); text-align:center; transition:all .15s; }
     .mode-tab.active { border-color:var(--brand); background:var(--brand-light); color:var(--brand); }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
     .btn-primary { padding: 13px 28px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.94rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
@@ -196,18 +196,14 @@
   <div class="card hidden" id="settings-card">
     <h3>⚙️ Convert Settings</h3>
     <div class="mode-tabs">
-      <div class="mode-tab active" data-merge="single">📎 Merge into ONE PDF</div>
-      <div class="mode-tab" data-merge="zip">🗃️ Separate PDF per file (ZIP)</div>
+      <div class="mode-tab active" data-merge="single">📎 Merge (ONE PDF)</div>
+      <div class="mode-tab" data-merge="zip">🗃️ Separate (ZIP)</div>
     </div>
     <div class="form-grid" style="margin-top:16px">
-      <div class="form-group"><label>Page Size</label><select id="s-pagesize"><option value="a4">A4</option><option value="letter">Letter</option></select></div>
+      <div class="form-group"><label>Page Size</label><select id="s-pagesize"><option value="fit" selected>Fit (Same page size as image)</option><option value="a4">A4 (297x210 mm)</option><option value="letter">US Letter (215x279.4 mm)</option></select></div>
       <div class="form-group"><label>Orientation</label><select id="s-orient"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div>
-      <div class="form-group"><label>Margin (mm)</label><select id="s-margin"><option value="10">Narrow (10mm)</option><option value="18" selected>Normal (18mm)</option><option value="25">Wide (25mm)</option></select></div>
-      <div class="form-group"><label>Text Font Size</label><select id="s-fontsize"><option value="10">Small (10)</option><option value="12" selected>Normal (12)</option><option value="14">Large (14)</option></select></div>
-      <div class="form-group"><label>Image Fit</label><select id="s-imgfit"><option value="fit">Fit to Page Size</option><option value="actual">Actual Image Size</option></select></div>
-      <div class="form-group"><label>Render Quality</label><select id="s-quality"><option value="1.4">Standard</option><option value="2" selected>High</option></select></div>
     </div>
-    <div class="toggle-row"><label>📑 Cover Page add karein (file list ke saath) — sirf multiple files par</label><label class="switch"><input type="checkbox" id="s-cover"><span class="slider-tg"></span></label></div>
+    <div class="toggle-row" id="cover-row"><label>📑 Cover Page add karein (file list ke saath) — sirf multiple files par</label><label class="switch"><input type="checkbox" id="s-cover"><span class="slider-tg"></span></label></div>
     <div class="toggle-row"><label>🔢 Page numbers add karein (footer)</label><label class="switch"><input type="checkbox" id="s-pagenum" checked><span class="slider-tg"></span></label></div>
     <div class="action-row">
       <button class="btn-primary" id="convert-btn"><span>🚀</span> Convert to PDF</button>
@@ -265,7 +261,7 @@
     <div style="font-size:.87rem;color:var(--muted);line-height:1.8">
       <p><b>Any File to PDF Converter</b> ek free online tool hai jo <b>Word (DOCX), Excel (XLSX/XLS/CSV), PowerPoint (PPTX), Images (JPG/PNG/WEBP/GIF/BMP/SVG), TXT, Markdown, HTML, JSON, XML aur RTF</b> jaisi 20+ file types ko seedhe <b>PDF</b> me convert kar deta hai. Multiple files ek saath upload karke unhe <b>ek single PDF me merge</b> kiya ja sakta hai, ya har file ka <b>alag PDF (ZIP me)</b> bhi generate ho sakta hai. Poora conversion aapke browser ke andar hi hota hai — koi file server par upload nahi hoti, isliye <b>100% private aur secure</b>, na koi signup, na watermark.</p>
       <p style="margin-top:12px"><b>Government / Sarkari form ke liye kaam ka:</b> SSC, Railway, Banking (IBPS/SBI), State PSC, Police, Army Agniveer, UPSC jaisi recruitment applications me aksar documents <b>PDF format</b> me hi maange jaate hain — jaise marksheet, certificate, ya multiple photos/scans ek saath. Agar aapke paas Word resume, Excel data, PPT presentation ya kai saari JPG scans hain, to unhe yahan ek click me ek professional PDF bana sakte hain — file order set karke, cover page aur page numbers ke saath.</p>
-      <p style="margin-top:12px"><b>Advanced features:</b> Files ka <b>upload order</b> ↑↓ se adjust karein, <b>Page Size</b> (A4/Letter) aur <b>Orientation</b> (Portrait/Landscape) choose karein, <b>Margin</b> aur <b>Font Size</b> control karein, image files ke liye <b>Fit/Actual size</b> select karein. <b>Cover Page</b> add karke file list ke saath ek title page mil jaata hai, aur <b>Page Numbers</b> footer me auto-add hote hain. <b>Hindi/Hinglish (Devanagari)</b> text bhi TXT/JSON/CSV jaisi files me sahi render hota hai.</p>
+      <p style="margin-top:12px"><b>Advanced features:</b> Files ka <b>upload order</b> ↑↓ se adjust karein, <b>Page Size</b> (Fit/A4/US Letter) aur <b>Orientation</b> (Portrait/Landscape) choose karein. Multiple files ho to <b>Cover Page</b> add karke file list ke saath ek title page mil jaata hai, aur <b>Page Numbers</b> footer me auto-add hote hain. <b>Hindi/Hinglish (Devanagari)</b> text bhi TXT/JSON/CSV jaisi files me sahi render hota hai.</p>
       <p style="margin-top:12px">Ye tool <b>mobile aur desktop</b> dono par bilkul free chalta hai — sarkari naukri form bharne se le kar daily office/study document banane tak, koi bhi file type ho, ek hi jagah PDF me convert karein.</p>
     </div>
   </div>
@@ -337,6 +333,8 @@
   function renderQueue(){
     var list=$('q-list'); list.innerHTML='';
     $('q-count').textContent = QUEUE.length+' file'+(QUEUE.length===1?'':'s');
+    $('cover-row').style.display = QUEUE.length>1 ? 'flex' : 'none';
+    if(QUEUE.length<=1) $('s-cover').checked=false;
     QUEUE.forEach(function(item,idx){
       var row=document.createElement('div'); row.className='q-item';
       var statusCls = item.status==='done'?'ok':(item.status==='error'?'err':'');
@@ -371,21 +369,24 @@
     });
   });
   function readOptions(){
+    var pageSize=$('s-pagesize').value;
     return {
       mergeMode: MERGE_MODE,
-      pageSize: $('s-pagesize').value,
+      pageSize: pageSize,
       orientation: $('s-orient').value,
-      marginPt: mmToPt(+$('s-margin').value),
-      fontSize: +$('s-fontsize').value,
-      imgFit: $('s-imgfit').value,
-      scale: +$('s-quality').value,
+      marginPt: mmToPt(18),
+      fontSize: 12,
+      imgFit: pageSize==='fit' ? 'actual' : 'fit',
+      scale: 2,
       coverPage: $('s-cover').checked,
       pageNumbers: $('s-pagenum').checked
     };
   }
   function pageDimsPt(opts){
     var w,h;
-    if(opts.pageSize==='letter'){ w=612; h=792; } else { w=595.28; h=841.89; }
+    if(opts.pageSize==='letter'){ w=612; h=792; }
+    else if(opts.pageSize==='fit'){ w=595.28; h=841.89; } /* fallback A4 size for non-image content */
+    else { w=595.28; h=841.89; }
     if(opts.orientation==='landscape'){ var t=w; w=h; h=t; }
     return [w,h];
   }
