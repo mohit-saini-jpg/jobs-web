@@ -14,12 +14,29 @@
  * cap and NEVER submits the same URL twice in a day. It also drains the
  * backlog of older /jobs/ pages that were never submitted, a slice per day.
  *
+ * SELF-CORRECTING (2026-07-14): done_slugs only ever recorded pages *this
+ * script* submitted — but Google indexes plenty of pages organically via
+ * sitemap/internal-link crawling too, completely invisible to that record.
+ * A one-off GSC export showed 244 of 246 already-indexed /jobs/ pages had
+ * never been touched by this script, so they kept getting silently re-queued
+ * and wasted part of the daily quota on pages that needed no help. Now,
+ * before spending a real Indexing-API submission on a new/backlog candidate,
+ * the script asks Google's URL Inspection API (separate 2000/day quota,
+ * same already-verified service account) whether it's already indexed. If
+ * yes, it's recorded into done_slugs for free and skipped; only genuinely
+ * un-indexed pages consume the scarce 200/day submission budget. This keeps
+ * done_slugs continuously accurate with zero manual GSC exports going
+ * forward.
+ *
  * Priority order within each day's remaining budget:
- *   1. Hub/section pages (change daily — resubmitted once/day)
- *   2. NEW job pages (newest first from posted_jobs.txt) — fast indexing
- *   3. OLD backlog job pages (never submitted yet) — oldest coverage first
- * Once every /jobs/ page has been submitted once, only #1 + #2 remain, which
- * comfortably fit under the daily cap.
+ *   1. Hub/section pages (change daily — always submitted, never checked;
+ *      it's a "please recrawl, content changed" ping, not an index check)
+ *   2. NEW job pages (newest first from posted_jobs.txt) — checked, then
+ *      fast-indexed if not already
+ *   3. OLD backlog job pages (never submitted yet) — checked, then indexed
+ *      oldest-first if not already
+ * Once every /jobs/ page has been submitted or confirmed indexed, only #1 +
+ * #2 remain, which comfortably fit under the daily cap.
  *
  * Called by auto-update-jobs.yml via:  node .github/workflows/google-index-submit.js
  *
@@ -113,7 +130,17 @@ function buildAssertion() {
   const header = { alg: 'RS256', typ: 'JWT' };
   const claim = {
     iss:   CLIENT_EMAIL,
-    scope: 'https://www.googleapis.com/auth/indexing',
+    // webmasters.readonly added (2026-07-14) so the same already-verified
+    // service account (it must already be a Search Console OWNER for the
+    // indexing scope to work at all — see setup note above) can also call
+    // the URL Inspection API. That lets us ask Google directly "is this
+    // already indexed?" instead of guessing from our own submit history,
+    // which was drifting badly: a GSC export showed 244 of 246 indexed
+    // /jobs/ pages had never gone through this script (organic sitemap/
+    // link discovery), so they kept getting silently re-queued for
+    // submission, burning part of the 200/day quota on pages that needed
+    // no help.
+    scope: 'https://www.googleapis.com/auth/indexing https://www.googleapis.com/auth/webmasters.readonly',
     aud:   'https://oauth2.googleapis.com/token',
     iat:   now,
     exp:   now + 3600,
@@ -279,6 +306,34 @@ function collectCandidates(state) {
   return out;
 }
 
+// ── Ask Google directly: is this URL already indexed? ──────────────────────
+// URL Inspection API quota is a generous 2000 queries/day/property (separate
+// pool from the 200/day Indexing API cap), so checking before submitting
+// costs us nothing that matters. Returns true only on the unambiguous
+// "Submitted and indexed" coverage state — anything else (not yet crawled,
+// excluded, error, etc.) falls through to a real submission as before.
+async function isAlreadyIndexed(token, url) {
+  const body = JSON.stringify({ inspectionUrl: url, siteUrl: SITE + '/' });
+  const res = await httpsRequest({
+    hostname: 'searchconsole.googleapis.com',
+    path: '/v1/urlInspection/index:inspect',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token,
+      'Content-Length': Buffer.byteLength(body),
+    },
+  }, body);
+  if (res.status !== 200) return { indexed: false, checked: false };
+  try {
+    const coverage = JSON.parse(res.body)
+      ?.inspectionResult?.indexStatusResult?.coverageState || '';
+    return { indexed: coverage === 'Submitted and indexed', checked: true };
+  } catch (e) {
+    return { indexed: false, checked: false };
+  }
+}
+
 // ── Publish one URL notification ───────────────────────────────────────────
 async function publish(token, url) {
   const body = JSON.stringify({ url, type: 'URL_UPDATED' });
@@ -314,11 +369,39 @@ async function publish(token, url) {
   }
 
   const candidates = collectCandidates(state);
-  const toSubmit = candidates.slice(0, budget);
   console.log(`📡 Google Indexing — day ${state.date} | used ${state.count_today}/${DAILY_CAP} | budget ${budget} | candidates ${candidates.length} | backlog left ${backlogLeft}`);
 
   const doneSet = new Set(state.done_slugs);
   let ok = 0, hubOk = 0, newOk = 0, backlogOk = 0, quotaStopped = false, forbidden = 0, other = 0;
+  let inspected = 0, alreadyIndexed = 0;
+  const INSPECT_CAP = 500;  // stay well under the 2000/day, 600/min URL Inspection quota
+
+  // Pass 1: hub pages always submit unconditionally (freshness ping, not an
+  // "is it indexed" question) — never checked, never skipped.
+  const toSubmit = candidates.filter((c) => c.kind === 'hub').slice(0, budget);
+
+  // Pass 2: for new/backlog job pages, ask Google first. Already-indexed ones
+  // get recorded into done_slugs for free (no Indexing-API quota spent) so
+  // done_slugs stays continuously accurate instead of drifting like before.
+  // Genuinely not-indexed ones queue for a real submission.
+  for (const item of candidates) {
+    if (item.kind === 'hub') continue;
+    if (toSubmit.length >= budget) break;   // already have enough to fill today's budget
+    if (inspected >= INSPECT_CAP) break;    // hit the inspection safety cap for this run
+
+    inspected++;
+    const { indexed } = await isAlreadyIndexed(token, item.url);
+    if (indexed) {
+      alreadyIndexed++;
+      if (item.slug && !doneSet.has(item.slug)) {
+        doneSet.add(item.slug);
+        state.done_slugs.push(item.slug);
+      }
+      continue;
+    }
+    toSubmit.push(item);
+    if (inspected % 50 === 0) saveState(state);  // periodic save mid-inspection pass
+  }
 
   for (const item of toSubmit) {
     const res = await publish(token, item.url);
@@ -351,6 +434,7 @@ async function publish(token, url) {
 
   saveState(state);
   const backlogAfter = Math.max(0, totalJobs - state.done_slugs.length);
+  console.log(`🔎 Inspected ${inspected} candidate(s) — ${alreadyIndexed} already indexed by Google (recorded free, no quota spent)`);
   console.log(`✅ Google Indexing done — submitted ${ok} (hub ${hubOk}, new ${newOk}, backlog ${backlogOk}) | today ${state.count_today}/${DAILY_CAP} | quota-stopped ${quotaStopped ? 'yes' : 'no'} | forbidden ${forbidden} | other ${other}`);
   console.log(`   📊 Backlog: ${state.done_slugs.length}/${totalJobs} job pages ever submitted — ${backlogAfter} remaining.`);
   process.exit(0);
