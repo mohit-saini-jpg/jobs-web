@@ -3,9 +3,10 @@
 // 2-4 hours late on this repo because GitHub queues scheduled workflows
 // behind everyone else's crons during high-load minutes.
 //
-// Invoked by a Vercel Cron Job (see vercel.json `crons`), which runs on
-// Vercel's own scheduler — separate infrastructure from GitHub Actions'
-// scheduler, so it isn't subject to the same congestion.
+// Invoked by an external cron-ping service (e.g. cron-job.org) hitting this
+// URL at each workflow's scheduled time — Vercel's Hobby plan doesn't support
+// Vercel Cron Jobs, so scheduling lives outside Vercel entirely. Either way
+// this endpoint doesn't depend on GitHub Actions' own (congested) scheduler.
 //
 // The workflow's own internal `schedule:` cron is intentionally left in
 // place as a fallback: if this endpoint or the PAT ever breaks, the
