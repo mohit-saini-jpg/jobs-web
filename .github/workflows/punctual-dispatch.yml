@@ -1,0 +1,40 @@
+name: ⏱️ Punctual Dispatcher
+
+# GitHub's own schedule: trigger has been observed firing 2-4 hours late on
+# this repo during high-load minutes (:00/:30 UTC) -- confirmed across
+# scraper/auto-update/broken-links/ai-nightly. Polling every 5 minutes (the
+# shortest interval GitHub allows) and dispatching any workflow whose target
+# time has passed but hasn't run yet catches up far faster than waiting on
+# one precise daily slot -- no external service, no extra PAT, just this
+# workflow's own GITHUB_TOKEN.
+#
+# Window is 0-9 UTC (5:30 AM - 3:30 PM IST) since that covers every target
+# time in punctual_dispatcher.py with margin, rather than polling 24/7.
+
+on:
+  schedule:
+    - cron: '*/5 0-9 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: punctual-dispatcher
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check + dispatch due workflows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/workflows/punctual_dispatcher.py
