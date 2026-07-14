@@ -511,6 +511,40 @@ def _load_existing():
     return [], {}, {}, {}
 
 
+def _fja_article_id(url: str) -> int:
+    """Trailing numeric article ID from a /articles/...-NNNNNNN URL. FJA assigns
+    these sequentially at publish time, so higher ID == published more recently —
+    this is the site's own de-facto newest-first ordering key."""
+    m = _re_global.search(r'-(\d+)/?$', (url or '').rstrip('/'))
+    return int(m.group(1)) if m else 0
+
+
+def _insert_by_recency(lst: list, url: str) -> None:
+    """Insert url into lst keeping descending article-ID order (newest first),
+    matching the source site's own ordering.
+
+    ORDER BUG (2026-07-14): the old code always did lst.insert(0, url) for any
+    item missed by this run's listing-page capture, on the assumption a missed
+    item must be brand-new. That's only true when the item genuinely IS the
+    newest. When an OLDER job gets missed (e.g. it fell off this run's table
+    scrape for an unrelated reason) it was wrongly shoved to position 0 —
+    e.g. DFPD (article ~3049724) landed above IIT Delhi / AIIMS Delhi postings
+    from ~3057000-3058000, weeks newer, at the very top of the Delhi state
+    page. Inserting by article-ID rank fixes both cases: a truly-new item
+    still has the highest ID and lands at position 0 anyway; an old item
+    lands back where it chronologically belongs.
+    """
+    uid = _fja_article_id(url)
+    if uid == 0 or not lst:
+        lst.insert(0, url)
+        return
+    for i, existing in enumerate(lst):
+        if _fja_article_id(existing) < uid:
+            lst.insert(i, url)
+            return
+    lst.append(url)
+
+
 def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per_tag_order=None):
     """Secondary index: tag → [urls].
 
@@ -573,17 +607,18 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                         by_fja[tag].append(canonical_u)
                         _seen.add(canonical_u)
         # Safety: include any tags present in job.fja_categories but not in index.
-        # ORDER FIX (2026-07-13): same reasoning as the by_state fallback below —
-        # a job caught here was missed by this run's category-listing capture,
-        # almost always because it's brand-new (posted after that fetch).
-        # Prepend, don't append, so it lands at the top like the source site.
+        # ORDER FIX (2026-07-13, refined 2026-07-14): a job caught here was
+        # missed by this run's category-listing capture — could be brand-new
+        # (posted after that fetch) OR an older item missed for an unrelated
+        # reason. Insert by article-ID rank (see _insert_by_recency) instead of
+        # always prepending, so old items don't get wrongly shoved to the top.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for c in j.get("fja_categories", []):
                 if c not in by_fja:
                     by_fja[c] = []
                 if u not in by_fja[c]:
-                    by_fja[c].insert(0, u)
+                    _insert_by_recency(by_fja[c], u)
     else:
         # Fallback: derive from job tags (dedup order-preserving)
         by_fja = {}
@@ -607,21 +642,25 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                         by_state[state_name].append(canonical_u)
                         _seen.add(canonical_u)
         # Safety: include any tags present in job.state_tags but not in index.
-        # ORDER FIX (2026-07-13): a job lands here only when it was NOT seen in
-        # this run's state-table capture (state_per_tag_order) but IS tagged
-        # for this state some other way — almost always because it was posted
-        # on freejobalert.com in the brief window between this run's state-page
-        # fetch and its other phases, so the state table simply didn't have it
-        # yet. Since freejobalert lists state jobs NEWEST-FIRST, appending to
-        # the END put brand-new jobs at the BOTTOM — the opposite of correct.
-        # Prepend instead so they land at the top, matching source-site order.
+        # ORDER FIX (2026-07-13, refined 2026-07-14): a job lands here only
+        # when it was NOT seen in this run's state-table capture
+        # (state_per_tag_order) but IS tagged for this state some other way.
+        # That's usually a brand-new post (posted in the gap between this
+        # run's state-page fetch and its other phases) — but can also be an
+        # OLDER job that fell off this run's table capture for an unrelated
+        # reason. Blindly prepending (old behavior) fixed the first case but
+        # broke the second: e.g. DFPD (article ~3049724, weeks old) got
+        # shoved above IIT Delhi / AIIMS Delhi posts from ~3057000-3058000 at
+        # the very top of the Delhi state page. Insert by article-ID rank
+        # instead — a genuinely new item still has the highest ID and lands
+        # at the top anyway; an old item lands back where it belongs.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for s in j.get("state_tags", []) + j.get("inferred_states", []):
                 if s not in by_state:
                     by_state[s] = []
                 if u not in by_state[s]:
-                    by_state[s].insert(0, u)
+                    _insert_by_recency(by_state[s], u)
     else:
         # Fallback: derive from job tags
         by_state = {}
@@ -647,17 +686,18 @@ def build_index(jobs, fja_per_tag_order=None, state_url_order=None, district_per
                         by_dist[dist_name].append(canonical_u)
                         _seen.add(canonical_u)
         # Safety: include any tags present in job.district_tags but not in index.
-        # ORDER FIX (2026-07-13): same reasoning as the by_state fallback above —
-        # a job caught here was missed by this run's district-table capture,
-        # almost always because it's brand-new (posted after that fetch).
-        # Prepend, don't append, so it lands at the top like the source site.
+        # ORDER FIX (2026-07-13, refined 2026-07-14): same reasoning as the
+        # by_state fallback above — a job caught here was missed by this run's
+        # district-table capture, which could mean brand-new OR an older item
+        # missed for an unrelated reason. Insert by article-ID rank instead of
+        # always prepending, so old items don't get wrongly shoved to the top.
         for j in jobs:
             u = j.get("_scraped_from", "")
             for d in j.get("district_tags", []):
                 if d not in by_dist:
                     by_dist[d] = []
                 if u not in by_dist[d]:
-                    by_dist[d].insert(0, u)
+                    _insert_by_recency(by_dist[d], u)
     else:
         # Fallback: derive from job tags (old behavior — order matches jobs list,
         # NOT the district listing page's own order)
