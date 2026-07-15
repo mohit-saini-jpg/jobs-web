@@ -7438,20 +7438,58 @@ for _state_name, _districts in _DIST_BY_STATE.items():
                   f"check eligibility, dates and apply online.")
         _state_slug_d = STATE_SLUG_FIX.get(slugify(_state_name), slugify(_state_name))
         _state_url_d = f"/state/{_state_slug_d}/"
-        # SEO: empty district pages should still be useful.
-        # When no jobs exist, inject a friendly "no current jobs" message so
-        # Google doesn't see a thin/blank page. Include state link for nav.
-        _empty_top = '' if _djobs else (
-            f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
-            f'border-radius:10px;text-align:center">'
-            f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
-            f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
-            f'Abhi {e(_dname)} district ke liye koi active government job nahi hai.</p>'
-            f'<p style="font-size:.82rem;color:#0284c7;margin:0">'
-            f'{e(_state_name)} ke saare jobs dekhne ke liye: '
-            f'<a href="{_state_url_d}" style="color:#0369a1;font-weight:700;text-decoration:underline">'
-            f'{e(_state_name)} State Jobs →</a></p></div>'
-        )
+        # SEO (2026-07-15): this is a jobs site -- some districts have an
+        # active opening right now, others don't, purely because no
+        # recruiter has posted one for that district THIS WEEK. That's
+        # normal, not a defect, and the page must stay indexed (user-
+        # confirmed: do NOT noindex/remove empty district pages -- a future
+        # job will land here and the page needs to already be crawled/known).
+        # To keep an empty page from looking thin/duplicate to Google, show
+        # REAL, LIVE, page-specific content instead of generic boilerplate:
+        # which OTHER districts in this same state have active openings
+        # right now. _district_jobs is fully populated for every district
+        # before this loop starts, so this is genuine cross-district data,
+        # not a canned message -- and it gives users a useful next click
+        # instead of a dead end.
+        _empty_top = ''
+        if not _djobs:
+            _sibling_links = []
+            for _od in _districts:
+                _odname = _od.get('district', '')
+                if not _odname or _odname == _dname:
+                    continue
+                _ocount = len(_district_jobs.get(_odname, []))
+                if _ocount > 0:
+                    _sibling_links.append((_odname, _district_slug(_state_name, _odname), _ocount))
+            _sibling_links.sort(key=lambda x: -x[2])
+            _sibling_links = _sibling_links[:6]
+            _sibling_html = ''
+            if _sibling_links:
+                _chips = ''.join(
+                    f'<a href="/district/{e(_os)}/" style="display:inline-flex;align-items:center;gap:5px;'
+                    f'background:#fff;border:1px solid #bae6fd;color:#0369a1;padding:5px 12px;border-radius:20px;'
+                    f'font-size:.76rem;font-weight:700;text-decoration:none;margin:3px">{e(_on)} '
+                    f'<span style="background:#0369a1;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_oc}</span></a>'
+                    for _on, _os, _oc in _sibling_links
+                )
+                _sibling_html = (
+                    f'<p style="font-size:.82rem;color:#0284c7;margin:10px 0 6px;font-weight:600">'
+                    f'Active openings in nearby {e(_state_name)} districts right now:</p>'
+                    f'<div>{_chips}</div>'
+                )
+            _empty_top = (
+                f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
+                f'border-radius:10px;text-align:center">'
+                f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
+                f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
+                f'Abhi {e(_dname)} district ke liye koi active government job nahi hai — naya notification aate hi yahan turant show hoga.</p>'
+                f'<p style="font-size:.82rem;color:#0284c7;margin:0 0 4px">'
+                f'{e(_state_name)} ke saare jobs dekhne ke liye: '
+                f'<a href="{_state_url_d}" style="color:#0369a1;font-weight:700;text-decoration:underline">'
+                f'{e(_state_name)} State Jobs →</a></p>'
+                f'{_sibling_html}'
+                f'</div>'
+            )
         _dlisting = build_listing_page(
             f"{_dname} Govt Jobs ({_state_name})",
             _djobs,
