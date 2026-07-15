@@ -6623,7 +6623,27 @@ print(f"  [permanent-pages] {_existing_disk_pages} existing disk pages pre-loade
 # "gsssb-granthpal-1-posts"). Slug-only dedup misses these. A normalized-title
 # fingerprint catches the same job regardless of slug so only ONE /jobs/ page is
 # ever written. Listing pages still link every duplicate to this one canonical URL.
-_FP_STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs'}
+# ROOT-CAUSE FIX (2026-07-15): a comprehensive duplicate audit found ~400+
+# job pages that were the SAME posting under a second slug, because FJA
+# itself returns a slightly reworded title on a later scrape (e.g. "X
+# Recruitment 2026 - Apply Online" one day, "X Online Form" a few days
+# later for the identical posting) -- the old, narrow _FP_STOP left words
+# like "recruitment"/"form"/"notification"/"posts" in the fingerprint, so
+# the two titles produced DIFFERENT fingerprints and the existing seen_fp
+# dedup gate (which only checks EXACT fingerprint equality, so it's safe
+# from the false-positive risk a fuzzy/Jaccard matcher would carry) never
+# caught them. Deliberately does NOT strip "apply"/"online"/"offline" --
+# the audit also found a real case (AIIMS Delhi Project Technical Support)
+# with genuinely separate "Apply Online" and "Apply Offline" postings for
+# the same role; collapsing those into one fingerprint would silently drop
+# a real posting instead of just leaving a harmless duplicate, which is a
+# worse failure mode. Vacancy-count digits are never stripped either, so
+# two postings that genuinely differ only in post count (e.g. 32 vs 40)
+# still get different fingerprints.
+_FP_STOP = {'the','and','for','of','in','to','a','an','with','on','at','by','top','sarkari','jobs',
+            'recruitment','notification','out','check','details','post','posts',
+            'vacancy','form','registration','last','date','here','now','download','pdf',
+            '2024','2025','2026','2027','2028'}
 def _fingerprint(title):
     import re as _re
     t = _re.sub(r'[^a-z0-9\s]', ' ', safe(title).lower())
@@ -9428,6 +9448,139 @@ def validate_and_heal_redirects():
             f.write('\n'.join(out_lines) + ('\n' if out_lines else ''))
     print(f"  [redirect-guard] {len(lines)} rules checked, {healed} dead-end destination(s) healed -> /")
 
+# ── PERMANENT GUARD: auto-merge exact-fingerprint duplicate job pages ───────
+# Safety net for the _fingerprint()/_FP_STOP root-cause fix above: catches
+# ANY duplicate that still slips through (legacy pages predating that fix,
+# or a future edge case) using ONLY exact-fingerprint equality -- the same
+# method a comprehensive manual audit this session used for 419 of its 431
+# merges with zero false positives. Deliberately NOT a fuzzy/Jaccard
+# heuristic: that same audit found fuzzy matching alone produces real false
+# positives (it merged three different KGBV school locations and two
+# different AIIMS institutes before being caught by additional checks) --
+# not safe to run unattended. Two pages whose H1 collapses to the exact
+# same fingerprint are the same job by construction; the shorter-tail
+# duplicate is deleted and 301'd to the longer/more-complete slug (matches
+# how this session's manual merges picked "keep").
+_ROMAN_NUMERALS_DUP = {'i', 'ii', 'iii', 'iv', 'v'}
+def _post_numerals_dup(h1):
+    # Standalone roman-numeral tokens ANYWHERE in the title, e.g. "Project
+    # Associate I", "Young Professional II" -- these usually denote
+    # DIFFERENT specific posts within the same recruitment drive (post 1 of
+    # a batch vs post 2), not the same post re-scraped. _fingerprint()
+    # can't see this distinction on its own: single-char tokens like "i"
+    # are dropped by its `len(w) > 1` filter, so "Project Associate I" and
+    # bare "Project Associate" collapse to the SAME fingerprint even though
+    # they can be genuinely different posts -- this check is the guard
+    # against merging those.
+    _t = re.sub(r'[^a-zA-Z0-9\s\-/]', ' ', (h1 or '')).replace('-', ' ').replace('/', ' ')
+    return set(w for w in _t.lower().split() if w in _ROMAN_NUMERALS_DUP)
+
+_VAC_RE_DUP = re.compile(r'(\d{1,6})\s*(?:posts?|vacanc)', re.I)
+_DATE_RE_DUP = re.compile(r'(\d{1,2}[-/][\d]{1,2}[-/]20\d{2}|20\d{2}-\d{1,2}-\d{1,2})')
+_TABLE_RE_DUP = re.compile(r'<table class="data-table">(.*?)</table>', re.S)
+def _content_signature_dup(html):
+    # Structural content facts (vacancy detail table length + important
+    # dates) -- the manual audit found ~40% of same-fingerprint pairs that
+    # were numeral-safe STILL turned out to be different postings once
+    # actual content was checked (matching title, different data), so
+    # fingerprint + numeral safety alone isn't enough for an unattended
+    # auto-merge. Two pages are only treated as the same job if their
+    # detail table is near-identical length AND they share at least one date.
+    dates = set(_DATE_RE_DUP.findall(html[:8000]))
+    tables = _TABLE_RE_DUP.findall(html)
+    table_len = len(tables[0]) if tables else 0
+    return {'dates': dates, 'table_len': table_len}
+
+def _content_matches_dup(sig_a, sig_b):
+    ta, tb = sig_a['table_len'], sig_b['table_len']
+    if ta == 0 or tb == 0:
+        if ta != tb:
+            return False
+    elif abs(ta - tb) / max(ta, tb) > 0.05:
+        return False
+    da, db = sig_a['dates'], sig_b['dates']
+    if da and db and not (da & db):
+        return False
+    return True
+
+def merge_exact_duplicate_pages():
+    import glob as _g_dup
+    from itertools import combinations as _combos_dup
+    _H1_RE_DUP = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
+    _fp_to_slugs = {}
+    _slug_to_h1_dup = {}
+    _slug_to_sig_dup = {}
+    for _f_dup in _g_dup.glob(str(ROOT/'jobs'/'*'/'index.html')):
+        _slug_dup = os.path.basename(os.path.dirname(_f_dup))
+        try:
+            _h_dup = open(_f_dup, encoding='utf-8', errors='ignore').read()
+        except Exception:
+            continue
+        _m_dup = _H1_RE_DUP.search(_h_dup)
+        if not _m_dup:
+            continue
+        _title_dup = _m_dup.group(1)
+        _fp_dup = _fingerprint(_title_dup)
+        if not _fp_dup:
+            continue
+        _fp_to_slugs.setdefault(_fp_dup, []).append(_slug_dup)
+        _slug_to_h1_dup[_slug_dup] = _title_dup
+        _slug_to_sig_dup[_slug_dup] = _content_signature_dup(_h_dup)
+
+    _dup_clusters = {fp: slugs for fp, slugs in _fp_to_slugs.items() if len(slugs) >= 2}
+    # SAFETY: an unexpectedly large number of same-run duplicates suggests
+    # the fingerprint function itself broke (e.g. a bad future edit
+    # stripped too much), not that 100+ real duplicates suddenly appeared.
+    # Abort without deleting anything and surface it loudly instead.
+    if len(_dup_clusters) > 50:
+        print(f"  [dup-guard] SAFETY ABORT - {len(_dup_clusters)} duplicate clusters is "
+              f"suspiciously high (expected occasional stragglers) - skipping auto-merge, "
+              f"check _fingerprint()/_FP_STOP for a regression")
+        return
+
+    merged = 0
+    skipped_numeral = 0
+    skipped_content = 0
+    rpath_dup = str(ROOT/'_redirects')
+    existing_dup = open(rpath_dup, encoding='utf-8').read() if os.path.exists(rpath_dup) else ''
+    new_lines_dup = []
+    for _fp_dup, slugs in _dup_clusters.items():
+        # Any pairwise post-numeral conflict makes the WHOLE cluster
+        # untrustworthy (same reasoning as the manual audit's cluster-level
+        # validation) -- skip it entirely rather than guess which member is
+        # the odd one out.
+        if any(_post_numerals_dup(_slug_to_h1_dup[a]) != _post_numerals_dup(_slug_to_h1_dup[b])
+               for a, b in _combos_dup(slugs, 2)):
+            skipped_numeral += 1
+            continue
+        if any(not _content_matches_dup(_slug_to_sig_dup[a], _slug_to_sig_dup[b])
+               for a, b in _combos_dup(slugs, 2)):
+            skipped_content += 1
+            continue
+        keep = max(slugs, key=len)
+        for s in slugs:
+            if s == keep:
+                continue
+            try:
+                shutil.rmtree(str(ROOT/'jobs'/s))
+            except Exception:
+                continue
+            _dj_dup = ROOT/'jobs'/'data'/f'{s}.json'
+            if _dj_dup.exists():
+                _dj_dup.unlink()
+            _rule_dup = f"/jobs/{s}/  /jobs/{keep}/  301"
+            if _rule_dup not in existing_dup:
+                new_lines_dup.append(_rule_dup)
+            merged += 1
+    if new_lines_dup:
+        _block_dup = "\n# == auto: exact-fingerprint duplicate job pages -> canonical ==\n" + "\n".join(new_lines_dup) + "\n"
+        with open(rpath_dup, 'a', encoding='utf-8') as f:
+            f.write(_block_dup)
+    print(f"  [dup-guard] {merged} exact-duplicate job page(s) auto-merged, "
+          f"{skipped_numeral} skipped (post-numeral mismatch), "
+          f"{skipped_content} skipped (table/date content mismatch)")
+
+merge_exact_duplicate_pages()
 validate_and_heal_redirects()
 
 _end = _time.time()
