@@ -32,6 +32,30 @@ a, button, [role="button"] {
   --red:    #dc2626;
 }
 
+/* ── App Download Promo Bar (dismissible, pure-CSS: header.html is injected
+   via innerHTML which does NOT execute <script> tags, so the close button
+   must work without JS) ── */
+.app-promo-dismiss { position: absolute; opacity: 0; pointer-events: none; }
+.app-promo-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(90deg, #0d2257, #1a56db); color: #fff;
+  padding: 8px 12px; font-size: .74rem; font-weight: 700;
+}
+.app-promo-link { flex: 1; display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; min-width: 0; }
+.app-promo-link i.fa-mobile-screen-button { font-size: 1rem; flex-shrink: 0; }
+.app-promo-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-promo-cta {
+  flex-shrink: 0; background: #f59e0b; color: #0d2257; padding: 4px 10px;
+  border-radius: 20px; font-weight: 800; font-size: .68rem;
+  display: flex; align-items: center; gap: 3px;
+}
+.app-promo-close {
+  flex-shrink: 0; color: rgba(255,255,255,.75); font-size: .8rem;
+  padding: 6px; cursor: pointer; line-height: 1;
+}
+.app-promo-close:hover { color: #fff; }
+.app-promo-dismiss:checked ~ .app-promo-bar { display: none; }
+
 /* ── Top Utility Bar ── */
 .top-bar {
   background: var(--navy);
@@ -360,6 +384,21 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
 .soc-ig  { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; }
 .soc-sc  { background: #fef9c3; color: #a16207; border-color: #fef08a; }
 </style>
+
+<!-- ============================================================
+     APP DOWNLOAD PROMO BAR (dismissible, every page)
+============================================================ -->
+<input type="checkbox" id="appPromoDismiss" class="app-promo-dismiss">
+<div class="app-promo-bar">
+  <a href="/app/" class="app-promo-link">
+    <i class="fa-solid fa-mobile-screen-button"></i>
+    <span class="app-promo-text">Download our Android App – instant job alerts, free</span>
+  </a>
+  <a href="/app/" class="app-promo-cta">Download <i class="fa-solid fa-angle-right"></i></a>
+  <label for="appPromoDismiss" class="app-promo-close" aria-label="Dismiss app download banner">
+    <i class="fa-solid fa-xmark"></i>
+  </label>
+</div>
 
 <!-- ============================================================
      TOP UTILITY BAR

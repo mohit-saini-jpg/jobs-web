@@ -88,6 +88,7 @@ const HUB_PAGES = [
   `${SITE}/section/answer-key/`,
   `${SITE}/section/today-updates/`,
   `${SITE}/section/upcoming-jobs/`,
+  `${SITE}/app/`,
 ];
 
 // ── Load + validate the service-account credential ─────────────────────────

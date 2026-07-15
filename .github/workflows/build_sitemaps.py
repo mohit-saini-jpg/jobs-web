@@ -168,7 +168,7 @@ def main():
     core = [f"{BASE}/"]
     for p in ["about","contact","terms","privacy","disclaimer","helpdesk","sitemap",
               "tools","govt-services","resume-maker","search","education",
-              "state","state-jobs","district",
+              "state","state-jobs","district","app",
               "editorial-policy","fact-check-policy","correction-policy"]:
         d = os.path.join(ROOT, p)
         if os.path.isdir(d) and has_index(d):
