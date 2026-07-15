@@ -23,7 +23,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Prevents a late-firing native `schedule` event from redoing today's scan
+  # if punctual_dispatcher.py already ran it — see
+  # .github/actions/skip-daily-duplicate/action.yml.
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        uses: ./.github/actions/skip-daily-duplicate
+        with:
+          workflow-file: seo-guardian-fullscan.yml
+
   fullscan:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

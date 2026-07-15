@@ -26,7 +26,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Prevents a late-firing native `schedule` event from redoing today's
+  # regen if the push-trigger (new scraper data) or punctual_dispatcher.py
+  # already ran it — see .github/actions/skip-daily-duplicate/action.yml.
+  # push-triggered runs are NEVER affected by this — only bypasses schedule.
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        uses: ./.github/actions/skip-daily-duplicate
+        with:
+          workflow-file: auto-update-jobs.yml
+
   update:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:

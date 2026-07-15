@@ -1,0 +1,56 @@
+name: 'Skip redundant schedule trigger'
+description: >
+  If this run was triggered by GitHub's native `schedule` event, checks
+  whether the calling workflow already had ANY successful run earlier today
+  (via schedule, workflow_dispatch, push, or workflow_run) and outputs
+  skip=true if so.
+
+  WHY THIS EXISTS: GitHub's `schedule:` trigger can sit queued internally
+  for hours during platform congestion and isn't visible via the Actions
+  API until it actually starts running. punctual_dispatcher.py polls every
+  5 minutes and manually catches up any workflow whose target time has
+  passed with no run yet -- but it has no way to see a schedule event that
+  GitHub has already silently queued, so that queued event still fires
+  later, producing a second real run for the same day (the dispatcher's
+  catch-up run, then the delayed native cron run on top of it). This action
+  makes each workflow self-check right before doing real work, so the
+  late-firing native trigger becomes a harmless instant no-op instead of a
+  duplicate scrape/build/submission.
+
+  Runs triggered by workflow_dispatch, push, or workflow_run are NEVER
+  skipped -- those always represent an intentional dispatch (dispatcher
+  catch-up or manual/test run) or genuinely new data, not a duplicate daily
+  slot.
+inputs:
+  workflow-file:
+    description: 'Filename of the calling workflow, e.g. scraper-fja-education.yml'
+    required: true
+outputs:
+  skip:
+    description: "'true' if this run should be skipped as a same-day duplicate"
+    value: ${{ steps.check.outputs.skip }}
+runs:
+  using: composite
+  steps:
+    - id: check
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        if [ "${{ github.event_name }}" != "schedule" ]; then
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        TODAY=$(date -u +%Y-%m-%d)
+        COUNT=$(gh run list --repo "${{ github.repository }}" \
+          --workflow "${{ inputs.workflow-file }}" \
+          --status success --limit 15 \
+          --json createdAt,databaseId \
+          --jq "[.[] | select(.createdAt | startswith(\"$TODAY\")) | select(.databaseId != ${{ github.run_id }})] | length")
+        if [ "${COUNT:-0}" -gt 0 ]; then
+          echo "skip=true" >> "$GITHUB_OUTPUT"
+          echo "⏭️  ${{ inputs.workflow-file }} already succeeded $COUNT time(s) today (UTC $TODAY) — this late-firing native schedule trigger is redundant, skipping."
+        else
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "✅ First successful run of the day so far (UTC $TODAY) — proceeding."
+        fi

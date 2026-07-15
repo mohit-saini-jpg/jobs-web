@@ -37,7 +37,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Prevents a late-firing native `schedule` event from redoing today's
+  # patch if the workflow_run chain trigger or punctual_dispatcher.py
+  # already ran it — see .github/actions/skip-daily-duplicate/action.yml.
+  # workflow_run and workflow_dispatch (incl. manual slug tests) are NEVER
+  # affected by this.
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        uses: ./.github/actions/skip-daily-duplicate
+        with:
+          workflow-file: ai-patch-html.yml
+
   patch:
+    needs: guard
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -45,9 +64,11 @@ jobs:
 
     # Sirf chalao agar nightly succeeded ya manual trigger ya scheduled
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule' ||
-      github.event.workflow_run.conclusion == 'success'
+      needs.guard.outputs.skip != 'true' && (
+        github.event_name == 'workflow_dispatch' ||
+        github.event_name == 'schedule' ||
+        github.event.workflow_run.conclusion == 'success'
+      )
 
     steps:
       - name: 📥 Checkout (with full history for git push)

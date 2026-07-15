@@ -31,7 +31,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Especially important here: a duplicate run burns real Google Indexing
+  # API quota on 429s instead of steadily draining the backlog (see the
+  # header comment above) — the exact failure mode this workflow was split
+  # out to prevent in the first place. Prevents a late-firing native
+  # `schedule` event from redoing today's submission if
+  # punctual_dispatcher.py already ran it — see
+  # .github/actions/skip-daily-duplicate/action.yml.
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        uses: ./.github/actions/skip-daily-duplicate
+        with:
+          workflow-file: google-index-daily.yml
+
   submit:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
