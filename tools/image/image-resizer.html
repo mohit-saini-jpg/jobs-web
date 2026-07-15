@@ -679,15 +679,40 @@
     return{blob:best,ext:ext};
   }
 
-  // ── Optional AI Background Remove (shared engine) ─────────────────────────
-  var _bgLib=null,_bgCache=null;
-  function _loadBgLib(){
-    return new Promise(function(res,rej){
-      if(_bgLib){res(_bgLib);return;}
-      var urls=['https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm','https://esm.sh/@imgly/background-removal@1.4.5'];
-      (function t(i){ if(i>=urls.length){rej(new Error('Background-removal module load nahi hua'));return;}
-        import(urls[i]).then(function(m){_bgLib=m;res(m);}).catch(function(){t(i+1);}); })(0);
-    });
+  // ── Optional AI Background Remove (MediaPipe multiclass — hair/edge accurate) ──
+  var _bgCache=null;
+  var _mpVision=null,_mpSegmenter=null;
+  var MP_MODEL_URL='https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
+  async function _loadSegmenter(delegate){
+    delegate=delegate||'GPU';
+    if(_mpSegmenter)return _mpSegmenter;
+    var mod=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+    if(!_mpVision)_mpVision=await mod.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+    try{
+      _mpSegmenter=await mod.ImageSegmenter.createFromOptions(_mpVision,{baseOptions:{modelAssetPath:MP_MODEL_URL,delegate:delegate},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+    }catch(e){
+      if(delegate==='GPU')return _loadSegmenter('CPU');
+      throw e;
+    }
+    return _mpSegmenter;
+  }
+  function _smoothstep(e0,e1,x){var t=Math.min(1,Math.max(0,(x-e0)/(e1-e0)));return t*t*(3-2*t);}
+  async function _segmentToAlphaCanvas(c0,iw,ih){
+    var segmenter=await _loadSegmenter('GPU');
+    var result=segmenter.segment(c0);
+    var confidenceMasks=result.confidenceMasks;
+    if(!confidenceMasks||!confidenceMasks.length)throw new Error('AI mask nahi mila');
+    var bgMask=confidenceMasks[0],mw=bgMask.width,mh=bgMask.height,bgArr=bgMask.getAsFloat32Array();
+    var maskCanvas=document.createElement('canvas');maskCanvas.width=mw;maskCanvas.height=mh;
+    var mctx=maskCanvas.getContext('2d'),mdata=mctx.createImageData(mw,mh);
+    for(var i=0;i<bgArr.length;i++){var v=Math.round((1-bgArr[i])*255);mdata.data[i*4]=v;mdata.data[i*4+1]=v;mdata.data[i*4+2]=v;mdata.data[i*4+3]=255;}
+    mctx.putImageData(mdata,0,0);
+    var upCanvas=document.createElement('canvas');upCanvas.width=iw;upCanvas.height=ih;
+    var uctx=upCanvas.getContext('2d');uctx.imageSmoothingEnabled=true;uctx.imageSmoothingQuality='high';
+    uctx.drawImage(maskCanvas,0,0,iw,ih);
+    var maskFull=uctx.getImageData(0,0,iw,ih);
+    confidenceMasks.forEach(function(m){m.close();});
+    return maskFull;
   }
   function _refineCutout(canvas){
     try{
@@ -734,14 +759,19 @@
   }
   async function removeBgToCanvas(imgOrCanvas){
     if(_bgCache)return _bgCache;
-    var lib=await _loadBgLib();
     var iw=imgOrCanvas.naturalWidth||imgOrCanvas.width, ih=imgOrCanvas.naturalHeight||imgOrCanvas.height;
-    var c0=document.createElement('canvas');c0.width=iw;c0.height=ih;c0.getContext('2d').drawImage(imgOrCanvas,0,0);
-    var blob=await new Promise(function(r){c0.toBlob(r,'image/png');});
-    var resBlob=await lib.removeBackground(blob,{publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'});
-    var rbmp=await createImageBitmap(resBlob);
-    var c=document.createElement('canvas');c.width=rbmp.width;c.height=rbmp.height;c.getContext('2d').drawImage(rbmp,0,0);
-    _refineCutout(c); _bgCache=c; return c;
+    var c0=document.createElement('canvas');c0.width=iw;c0.height=ih;var c0ctx=c0.getContext('2d');c0ctx.drawImage(imgOrCanvas,0,0);
+    var srcData=c0ctx.getImageData(0,0,iw,ih);
+    var maskFull=await _segmentToAlphaCanvas(c0,iw,ih);
+    var srcPix=srcData.data, maskPix=maskFull.data;
+    var lo=0.35, hi=0.65; // edge sharpness thresholds (balanced default)
+    for(var p=0;p<iw*ih;p++){
+      var idx=p*4;
+      var alpha=_smoothstep(lo,hi,maskPix[idx]/255);
+      srcPix[idx+3]=Math.round(alpha*255);
+    }
+    c0ctx.putImageData(srcData,0,0);
+    _refineCutout(c0); _bgCache=c0; return c0;
   }
 
   var cropperInst=null, quadUI=null;
