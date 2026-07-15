@@ -621,36 +621,384 @@ def page_intent(job_obj):
     return 'article'
 
 # ── Qualification maps ────────────────────────────────────────
+# Low-to-high qualification sequence (user-specified, 2026-07-15) --
+# drives /category/study/ page-generation order AND the landing-page
+# card order, so the site always lists 4th Pass first through Retired
+# Staff last, matching how a candidate actually thinks about levels.
+QUAL_SLUG_ORDER = [
+    '4th_Pass',
+    '5th_Pass',
+    '6th_Pass',
+    '7th_Pass',
+    '8TH_Pass',
+    '9th_Pass',
+    '10TH_Pass',
+    'Intermediate',
+    '12TH_Pass',
+    'VHSE',
+    'ITI',
+    'Diploma',
+    'D_Pharm',
+    'DLT',
+    'D_El_Ed',
+    'D_P_Ed',
+    'DMLT',
+    'GNM',
+    'ANM',
+    'B_A',
+    'B_Com',
+    'B_Sc',
+    'BCA',
+    'BBA',
+    'BBM',
+    'B_Ed',
+    'B_El_Ed',
+    'B_Voc',
+    'B_Lib',
+    'BFA',
+    'BHA',
+    'BHM',
+    'B_Optom',
+    'BSW',
+    'BVA',
+    'BPEd',
+    'BASLP',
+    'BOT',
+    'BPMT',
+    'BSMS',
+    'BPT',
+    'BAMS',
+    'BHMS',
+    'BUMS',
+    'BVSC',
+    'BDS',
+    'MBBS',
+    'B_Pharma',
+    'BMLT',
+    'LLB',
+    'B_Plan',
+    'B_Arch',
+    'B_Des',
+    'B_Tech_BE',
+    'BFSc',
+    'BPO',
+    'BS',
+    'Any_Bachelors_Degree',
+    'Any_Graduate',
+    'Professional_Degree',
+    'CA',
+    'CS',
+    'ICWA',
+    'ICMAI',
+    'ICSI',
+    'Member_of_ICAI',
+    'MA',
+    'M_Com',
+    'M_Sc',
+    'MCA',
+    'MBA_PGDM',
+    'M_Ed',
+    'M_Lib',
+    'M_Voc',
+    'M_Des',
+    'M_Plan',
+    'M_Arch',
+    'M_E_MTech',
+    'M_Pharma',
+    'MSW',
+    'MS',
+    'MS_MD',
+    'MD_Pathology',
+    'M_Ch',
+    'DM',
+    'DNB',
+    'DNB_Pathology',
+    'MFSc',
+    'MVSC',
+    'Master_of_Dental_Surgery',
+    'MHA',
+    'Master_in_Health_Administration',
+    'MPH',
+    'MHS',
+    'MPA',
+    'MPT',
+    'MHM',
+    'M_P_Ed',
+    'MOT',
+    'MPO',
+    'MASLP',
+    'MFA',
+    'MCM',
+    'MLT',
+    'PGDMLT',
+    'PG_Diploma',
+    'PGDCA',
+    'PGDM',
+    'PGDBM',
+    'PGDBA',
+    'PGP',
+    'Any_Masters_Degree',
+    'Any_Post_Graduate',
+    'Intergrated_PG',
+    'LLM',
+    'MPhil_PhD',
+    'M_Th',
+    'Retired_Staff',
+]
 QUAL_SLUG = {
-    '10TH_Pass':'10th-pass','8TH_Pass':'8th-pass','12TH_Pass':'12th-pass',
-    '4th_Pass':'4th-pass','5th_Pass':'5th-pass','6th_Pass':'6th-pass',
-    '7th_Pass':'7th-pass','9th_Pass':'9th-pass','Intermediate':'intermediate',
-    'Diploma':'diploma','ITI':'iti','B_Tech_BE':'b-tech-be','B_Com':'b-com',
-    'Any_Graduate':'any-graduate','Any_Post_Graduate':'any-post-graduate',
-    'Railway_Jobs':'railway-jobs','Police_Defence':'police-defence',
-    'Teaching_Faculty':'teaching-faculty','Bank_Jobs':'bank-jobs',
-    'Medical_Hospital':'medical-hospital','Latest_Notifications':'latest-jobs',
+    'M_A':'m-a',  # legacy dup key (pre-existing, separate from 'MA' -- keep, has its own live page)
+    '4th_Pass':'4th-pass',
+    '5th_Pass':'5th-pass',
+    '6th_Pass':'6th-pass',
+    '7th_Pass':'7th-pass',
+    '8TH_Pass':'8th-pass',
+    '9th_Pass':'9th-pass',
+    '10TH_Pass':'10th-pass',
+    'Intermediate':'intermediate',
+    '12TH_Pass':'12th-pass',
+    'VHSE':'vhse',
+    'ITI':'iti',
+    'Diploma':'diploma',
+    'D_Pharm':'d-pharm',
+    'DLT':'dlt',
+    'D_El_Ed':'d-el-ed',
+    'D_P_Ed':'d-p-ed',
+    'DMLT':'dmlt',
+    'GNM':'gnm',
+    'ANM':'anm',
+    'B_A':'ba',
+    'B_Com':'b-com',
+    'B_Sc':'b-sc',
+    'BCA':'bca',
+    'BBA':'bba',
+    'BBM':'bbm',
+    'B_Ed':'b-ed',
+    'B_El_Ed':'beled',
+    'B_Voc':'bvoc',
+    'B_Lib':'blib',
+    'BFA':'bfa',
+    'BHA':'bha',
+    'BHM':'bhm',
+    'B_Optom':'boptom',
+    'BSW':'bsw',
+    'BVA':'bva',
+    'BPEd':'bped',
+    'BASLP':'baslp',
+    'BOT':'bot',
+    'BPMT':'bpmt',
+    'BSMS':'bsms',
+    'BPT':'bpt',
+    'BAMS':'bams',
+    'BHMS':'bhms',
+    'BUMS':'bums',
+    'BVSC':'bvsc',
+    'BDS':'bds',
+    'MBBS':'mbbs',
+    'B_Pharma':'b-pharma',
+    'BMLT':'bmlt',
+    'LLB':'llb',
+    'B_Plan':'bplan',
+    'B_Arch':'barch',
+    'B_Des':'bdes',
+    'B_Tech_BE':'b-tech-be',
+    'BFSc':'bfsc',
+    'BPO':'bpo',
+    'BS':'bs',
+    'Any_Bachelors_Degree':'any-bachelors-degree',
+    'Any_Graduate':'any-graduate',
+    'Professional_Degree':'professional-degree',
+    'CA':'ca',
+    'CS':'cs',
+    'ICWA':'icwa',
+    'ICMAI':'icmai',
+    'ICSI':'icsi',
+    'Member_of_ICAI':'member-of-icai',
+    'MA':'ma',
+    'M_Com':'m-com',
+    'M_Sc':'m-sc',
+    'MCA':'mca',
+    'MBA_PGDM':'mba-pgdm',
+    'M_Ed':'m-ed',
+    'M_Lib':'mlib',
+    'M_Voc':'mvoc',
+    'M_Des':'mdes',
+    'M_Plan':'mplan',
+    'M_Arch':'march',
+    'M_E_MTech':'me-mtech',
+    'M_Pharma':'m-pharma',
+    'MSW':'msw',
+    'MS':'ms',
+    'MS_MD':'ms-md',
+    'MD_Pathology':'md-pathology',
+    'M_Ch':'mch',
+    'DM':'dm',
+    'DNB':'dnb',
+    'DNB_Pathology':'dnb-pathology',
+    'MFSc':'mfsc',
+    'MVSC':'mvsc',
+    'Master_of_Dental_Surgery':'master-of-dental-surgery',
+    'MHA':'mha',
+    'Master_in_Health_Administration':'master-in-health-administration',
+    'MPH':'mph',
+    'MHS':'mhs',
+    'MPA':'mpa',
+    'MPT':'mpt',
+    'MHM':'mhm',
+    'M_P_Ed':'mped',
+    'MOT':'mot',
+    'MPO':'mpo',
+    'MASLP':'maslp',
+    'MFA':'mfa',
+    'MCM':'mcm',
+    'MLT':'mlt',
+    'PGDMLT':'pgdmlt',
+    'PG_Diploma':'pg-diploma',
+    'PGDCA':'pgdca',
+    'PGDM':'pgdm',
+    'PGDBM':'pgdbm',
+    'PGDBA':'pgdba',
+    'PGP':'pgp',
+    'Any_Masters_Degree':'any-masters-degree',
+    'Any_Post_Graduate':'any-post-graduate',
+    'Intergrated_PG':'intergrated-pg',
+    'LLM':'llm',
+    'MPhil_PhD':'mphil-phd',
+    'M_Th':'mth',
+    'Retired_Staff':'retired-staff',
+    'Railway_Jobs':'railway-jobs',
+    'Police_Defence':'police-defence',
+    'Teaching_Faculty':'teaching-faculty',
+    'Bank_Jobs':'bank-jobs',
+    'Medical_Hospital':'medical-hospital',
+    'Latest_Notifications':'latest-jobs',
     'Last_Date_Reminder':'last-date-reminder',
-    'GNM':'gnm','ANM':'anm','D_Pharm':'d-pharm','DMLT':'dmlt',
-    'D_El_Ed':'d-el-ed','D_P_Ed':'d-p-ed','B_Sc':'b-sc','BCA':'bca',
-    'MA':'ma','BBA':'bba','LLB':'llb','B_Ed':'b-ed','MBBS':'mbbs',
-    'B_Pharma':'b-pharma','BAMS':'bams','BDS':'bds','M_Sc':'m-sc',
-    'M_Com':'m-com','M_Ed':'m-ed','M_A':'m-a','M_E_MTech':'me-mtech',
-    'MCA':'mca','MBA_PGDM':'mba-pgdm','MS_MD':'ms-md','M_Pharma':'m-pharma',
-    'CA':'ca','CS':'cs','ICWA':'icwa','MPhil_PhD':'mphil-phd',
-    'VHSE':'vhse','DLT':'dlt',
 }
 QUAL_LABEL = {
-    '10TH_Pass':'10th Pass','8TH_Pass':'8th Pass','12TH_Pass':'12th Pass',
-    'Intermediate':'Intermediate','Diploma':'Diploma','ITI':'ITI',
-    'B_Tech_BE':'B.Tech / BE','B_Com':'B.Com','Any_Graduate':'Any Graduate',
-    'Any_Post_Graduate':'Any PG','Railway_Jobs':'Railway Jobs',
-    'Police_Defence':'Police / Defence','Teaching_Faculty':'Teaching / Faculty',
-    'Bank_Jobs':'Bank Jobs','Medical_Hospital':'Medical / Hospital',
-    'Latest_Notifications':'Latest Jobs','Last_Date_Reminder':'Last Date Reminder',
-    'GNM':'GNM','ANM':'ANM','MBBS':'MBBS','BDS':'BDS','BCA':'BCA',
-    'MCA':'MCA','MBA_PGDM':'MBA / PGDM','LLB':'LLB','CA':'CA','CS':'CS',
-    'VHSE':'VHSE','DLT':'DLT',
+    '4th_Pass':'4th',
+    '5th_Pass':'5th',
+    '6th_Pass':'6th',
+    '7th_Pass':'7th',
+    '8TH_Pass':'8th Pass',
+    '9th_Pass':'9th',
+    '10TH_Pass':'10th Pass',
+    'Intermediate':'Intermediate',
+    '12TH_Pass':'12th Pass',
+    'VHSE':'VHSE',
+    'ITI':'ITI',
+    'Diploma':'Diploma',
+    'D_Pharm':'D.Pharm',
+    'DLT':'DLT',
+    'D_El_Ed':'D.El.Ed',
+    'D_P_Ed':'D.P.Ed',
+    'DMLT':'DMLT',
+    'GNM':'GNM',
+    'ANM':'ANM',
+    'B_A':'B.A',
+    'B_Com':'B.Com',
+    'B_Sc':'B.Sc',
+    'BCA':'BCA',
+    'BBA':'B.B.A',
+    'BBM':'BBM',
+    'B_Ed':'B.Ed',
+    'B_El_Ed':'B.El.Ed',
+    'B_Voc':'B.Voc',
+    'B_Lib':'B.Lib',
+    'BFA':'BFA',
+    'BHA':'BHA',
+    'BHM':'BHM',
+    'B_Optom':'B.Optom',
+    'BSW':'BSW',
+    'BVA':'BVA',
+    'BPEd':'BPEd',
+    'BASLP':'BASLP',
+    'BOT':'BOT',
+    'BPMT':'BPMT',
+    'BSMS':'BSMS',
+    'BPT':'BPT',
+    'BAMS':'BAMS',
+    'BHMS':'BHMS',
+    'BUMS':'BUMS',
+    'BVSC':'BVSC',
+    'BDS':'BDS',
+    'MBBS':'MBBS',
+    'B_Pharma':'B.Pharma',
+    'BMLT':'BMLT',
+    'LLB':'LLB',
+    'B_Plan':'B.Plan',
+    'B_Arch':'B.Arch',
+    'B_Des':'B.Des',
+    'B_Tech_BE':'B.Tech / BE',
+    'BFSc':'BFSc',
+    'BPO':'BPO',
+    'BS':'BS',
+    'Any_Bachelors_Degree':'Any Bachelors Degree',
+    'Any_Graduate':'Any Graduate',
+    'Professional_Degree':'Professional Degree',
+    'CA':'CA',
+    'CS':'CS',
+    'ICWA':'ICWA',
+    'ICMAI':'ICMAI',
+    'ICSI':'ICSI',
+    'Member_of_ICAI':'Member of ICAI',
+    'MA':'M.A',
+    'M_Com':'M.Com',
+    'M_Sc':'M.Sc',
+    'MCA':'MCA',
+    'MBA_PGDM':'MBA / PGDM',
+    'M_Ed':'M.Ed',
+    'M_Lib':'M.Lib',
+    'M_Voc':'M.Voc',
+    'M_Des':'M.Des',
+    'M_Plan':'M.Plan',
+    'M_Arch':'M.Arch',
+    'M_E_MTech':'M.E/M.Tech',
+    'M_Pharma':'M.Pharma',
+    'MSW':'MSW',
+    'MS':'MS',
+    'MS_MD':'MS/MD',
+    'MD_Pathology':'MD Pathology',
+    'M_Ch':'M.Ch',
+    'DM':'DM',
+    'DNB':'DNB',
+    'DNB_Pathology':'DNB Pathology',
+    'MFSc':'MFSc',
+    'MVSC':'MVSC',
+    'Master_of_Dental_Surgery':'Master of Dental Surgery',
+    'MHA':'MHA',
+    'Master_in_Health_Administration':'Master in Health Administration',
+    'MPH':'MPH',
+    'MHS':'MHS',
+    'MPA':'MPA',
+    'MPT':'MPT',
+    'MHM':'MHM',
+    'M_P_Ed':'M.P.Ed',
+    'MOT':'MOT',
+    'MPO':'MPO',
+    'MASLP':'MASLP',
+    'MFA':'MFA',
+    'MCM':'MCM',
+    'MLT':'MLT',
+    'PGDMLT':'PGDMLT',
+    'PG_Diploma':'PG Diploma',
+    'PGDCA':'PGDCA',
+    'PGDM':'PGDM',
+    'PGDBM':'PGDBM',
+    'PGDBA':'PGDBA',
+    'PGP':'PGP',
+    'Any_Masters_Degree':'Any Masters Degree',
+    'Any_Post_Graduate':'Any PG',
+    'Intergrated_PG':'Intergrated PG',
+    'LLM':'LLM',
+    'MPhil_PhD':'M.Phil/Ph.D',
+    'M_Th':'M.Th',
+    'Retired_Staff':'Retired Staff',
+    'Railway_Jobs':'Railway Jobs',
+    'Police_Defence':'Police / Defence',
+    'Teaching_Faculty':'Teaching / Faculty',
+    'Bank_Jobs':'Bank Jobs',
+    'Medical_Hospital':'Medical / Hospital',
+    'Latest_Notifications':'Latest Jobs',
+    'Last_Date_Reminder':'Last Date Reminder',
 }
 # N6: Qualification priority for breadcrumb selection
 QUAL_PRIORITY_MAP = {
@@ -7604,6 +7952,21 @@ if _edu_landing_jobs:
 # 5. CATEGORY/STUDY PAGES
 print("Generating /category/study/ pages...")
 _cat_listing_jobs = {}  # cat_slug → list of jobs (for listing page)
+# Pre-seed EVERY known qualification (low-to-high sequence) so its
+# /category/study/{slug}/ page exists and is indexed even when 0 jobs are
+# currently classified into it -- same principle as /district/: a jobs site
+# legitimately has categories with nothing active right now (a recruiter
+# just hasn't posted for that qualification this week), the page must stay
+# live/crawlable since a future job needs to land on an already-known URL
+# (user-confirmed 2026-07-15, same reasoning as the district-page fix).
+_QUAL_ORDER_INDEX = {}
+for _qi, _qkey in enumerate(QUAL_SLUG_ORDER):
+    _qslug = QUAL_SLUG.get(_qkey, slugify(_qkey))
+    _QUAL_ORDER_INDEX[_qslug] = _qi
+    _cat_listing_jobs[_qslug] = {
+        'label': QUAL_LABEL.get(_qkey, _qkey.replace('_', ' ').title()),
+        'jobs': [], 'seen_slugs': set(),
+    }
 for cat, jobs_list in FJA.items():
     if not isinstance(jobs_list, list): continue
     cat_slug  = QUAL_SLUG.get(cat, slugify(cat))
@@ -7638,15 +8001,59 @@ _listing_count = 0
 for cat_slug, cat_data in _cat_listing_jobs.items():
     cat_label = cat_data['label']
     jobs = cat_data['jobs']
-    if not jobs: continue
     cat_canon = f"{BASE_URL}/category/study/{cat_slug}/"
     bc_listing = [('Home', '/'), ('Study Wise Jobs', '/category/study/')]
+    # SEO (2026-07-15): empty qualification pages stay index,follow (same
+    # reasoning as /district/) but show REAL, LIVE data instead of generic
+    # boilerplate -- other qualifications (nearest in the low-to-high
+    # sequence first) that currently DO have active jobs, as real clickable
+    # chips with counts. Computed fresh every run from _cat_listing_jobs, so
+    # whichever qualification happens to be empty on a given day gets this
+    # automatically, and it stops the moment that qualification gets its
+    # own posting.
+    _empty_top = ''
+    if not jobs:
+        _my_order = _QUAL_ORDER_INDEX.get(cat_slug, 999)
+        _sibling_links = [
+            (_sd['label'], _ss, len(_sd['jobs']))
+            for _ss, _sd in _cat_listing_jobs.items()
+            if _ss != cat_slug and _sd['jobs']
+        ]
+        _sibling_links.sort(key=lambda t: abs(_QUAL_ORDER_INDEX.get(t[1], 999) - _my_order))
+        _sibling_links = _sibling_links[:6]
+        _sib_html = ''
+        if _sibling_links:
+            _chips = ''.join(
+                f'<a href="/category/study/{e(_ss)}/" style="display:inline-flex;align-items:center;gap:5px;'
+                f'background:#fff;border:1px solid #bae6fd;color:#0369a1;padding:5px 12px;border-radius:20px;'
+                f'font-size:.76rem;font-weight:700;text-decoration:none;margin:3px">{e(_sl)} '
+                f'<span style="background:#0369a1;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_sc}</span></a>'
+                for _sl, _ss, _sc in _sibling_links
+            )
+            _sib_html = (
+                f'<p style="font-size:.82rem;color:#0284c7;margin:10px 0 6px;font-weight:600">'
+                f'Active openings by qualification right now:</p><div>{_chips}</div>'
+            )
+        _empty_top = (
+            f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
+            f'border-radius:10px;text-align:center">'
+            f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
+            f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
+            f'Abhi {e(cat_label)} qualification ke liye koi active government job nahi hai — naya notification aate hi yahan turant show hoga.</p>'
+            f'<p style="font-size:.82rem;color:#0284c7;margin:0 0 4px">'
+            f'Saare qualification jobs dekhne ke liye: '
+            f'<a href="/category/study/" style="color:#0369a1;font-weight:700;text-decoration:underline">'
+            f'All Qualification Jobs →</a></p>'
+            f'{_sib_html}'
+            f'</div>'
+        )
     listing_html = build_listing_page(
         f"{cat_label} Government Jobs {YEAR}",
         jobs,
         cat_canon,
         bc_listing,
-        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily."
+        f"Latest {cat_label} government job notifications {YEAR}. Find all sarkari naukri for {cat_label} candidates updated daily.",
+        top_html=_empty_top,
     )
     write(str(ROOT/'category'/'study'/cat_slug/'index.html'), listing_html)
     _listing_count += 1
@@ -7681,26 +8088,27 @@ with open(ROOT / 'Qualification_Wise_Jobs.json', 'w', encoding='utf-8') as _qf:
 print(f"  Qualification_Wise_Jobs.json: {len(_qual_sections)} sections")
 
 # 5b. /category/study/ LANDING INDEX — links to every /category/study/{slug}/ page
+# Lists ALL qualifications in the low-to-high sequence (user-specified,
+# 2026-07-15) -- 4th Pass through Retired Staff -- including ones with 0
+# active jobs right now, same as every individual page now always existing.
 _study_landing_jobs = []
-for cat_slug, cat_data in _cat_listing_jobs.items():
-    if cat_slug in _NON_STUDY:
-        continue
-    _cjobs = cat_data.get('jobs', [])
-    if not _cjobs:
-        continue
-    _clabel = cat_data.get('label', cat_slug.replace('-', ' ').title())
+for _qkey in QUAL_SLUG_ORDER:
+    _qslug = QUAL_SLUG.get(_qkey, slugify(_qkey))
+    _cdata = _cat_listing_jobs.get(_qslug) or {'label': QUAL_LABEL.get(_qkey, _qkey), 'jobs': []}
+    _clabel = _cdata.get('label', _qslug.replace('-', ' ').title())
+    _cjobs = _cdata.get('jobs', [])
     _study_landing_jobs.append({
         'basic_details': {'job_title': f"{_clabel} Government Jobs {YEAR}",
                           'organization_name': _clabel,
                           'total_vacancies': str(len(_cjobs))},
-        '_listing_url': f"/category/study/{cat_slug}/"})
+        '_listing_url': f"/category/study/{_qslug}/"})
 if _study_landing_jobs:
     write(str(ROOT/'category'/'study'/'index.html'), build_listing_page(
         f"Qualification Wise Government Jobs {YEAR}",
         _study_landing_jobs,
         f"{BASE_URL}/category/study/",
         [('Home','/'),('Study Wise Jobs','/category/study/')],
-        f"Find government jobs by qualification {YEAR}: 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate and more. Updated daily."))
+        f"Find government jobs by qualification {YEAR}: 4th Pass, 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate, PhD and 100+ more qualifications. Updated daily."))
     print(f"  /category/study/ landing: {len(_study_landing_jobs)} qualifications")
 
 # 6. SECTION LISTING PAGES
