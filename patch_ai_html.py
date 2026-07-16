@@ -84,32 +84,45 @@ def brand_help_faq(job_obj):
     return {"question": q, "answer": a}
 
 def sec_card(heading, icon, grad, body):
-    """Exact same HTML as generate_all.py sec_card()"""
+    """Exact same HTML as generate_all.py sec_card() (2026 facts-first
+    redesign: 'lightBgHex,#accentHex' calm tint, not a saturated gradient).
+    <h2> stays attribute-free — generate_all.py's dedup/pairing regexes match
+    a bare `<h2>...</h2>`."""
+    _bg, _sep, _accent = grad.partition(',')
+    _bg = _bg if _bg.startswith('#') else f'#{_bg}'
+    _accent = _accent or '#4a5578'
     return (
         f'<section class="sec-card">'
-        f'<div class="sec-head" style="background:linear-gradient(135deg,#{grad})">'
-        f'<i class="fa-solid {icon}"></i><h2>{e(heading)}</h2></div>'
+        f'<div class="sec-head" style="background:{_bg};border-left:4px solid {_accent}">'
+        f'<i class="fa-solid {icon}" style="color:{_accent}"></i><h2>{e(heading)}</h2></div>'
         f'<div class="sec-body">{body}</div></section>\n'
     )
 
 def render_ai_sections(job):
-    """Same as generate_all._render_ai_sections()"""
-    out = ""
+    """Same as generate_all._render_ai_sections(): consolidate every AI
+    commentary field into ONE accordion card ('More About This
+    Recruitment') instead of one full-width sec_card per topic."""
     ai_cards = [
-        ("ai_overview",             "Overview",           "fa-circle-info",        "1d4ed8,#3b82f6"),
-        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "7c3aed,#a855f7"),
-        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "0f766e,#0891b2"),
-        ("ai_preparation_tips",     "Preparation Tips",   "fa-list-check",         "047857,#10b981"),
-        ("ai_salary_insights",      "Salary Insights",    "fa-indian-rupee-sign",  "b45309,#f59e0b"),
-        ("ai_job_profile_analysis", "Job Profile",        "fa-briefcase",          "475569,#334155"),
-        ("ai_selection_strategy",   "Selection Strategy", "fa-bullseye",           "be123c,#f43f5e"),
+        ("ai_overview",             "Overview",           "fa-circle-info",        "eef3fc,#2452c4"),
+        ("ai_expert_analysis",      "Expert Analysis",    "fa-lightbulb",          "f1eefc,#5b3fa0"),
+        ("ai_who_should_apply",     "Who Should Apply",   "fa-user-check",         "eaf6f4,#0f766e"),
+        ("ai_preparation_tips",     "Preparation Tips",   "fa-list-check",         "eaf7ef,#15803d"),
+        ("ai_salary_insights",      "Salary Insights",    "fa-indian-rupee-sign",  "fceef1,#9d2449"),
+        ("ai_job_profile_analysis", "Job Profile",        "fa-briefcase",          "f3f4f8,#4a5578"),
+        ("ai_selection_strategy",   "Selection Strategy", "fa-bullseye",           "fcf3e7,#b4650a"),
     ]
-    for key, heading, icon, color in ai_cards:
+    items = ""
+    for key, heading, icon, _color in ai_cards:
         val = safe(job.get(key) or "")
         if val and len(val) > 20:
-            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
-            out += sec_card(heading, icon, color, body)
-    return out
+            _open = " open" if not items else ""
+            items += (f'<details class="ai-item"{_open}><summary><i class="fa-solid {icon}"></i> {e(heading)}'
+                      f'<i class="fa-solid fa-chevron-down ai-chev" aria-hidden="true"></i></summary>'
+                      f'<div class="ai-item-body">{e(val)}</div></details>')
+    if not items:
+        return ""
+    return sec_card("More About This Recruitment", "fa-wand-magic-sparkles", "f7f7fa,#6b7488",
+                     f'<div class="ai-acc">{items}</div>')
 
 def render_faq(faq_list):
     """Same as generate_all.render_faq()"""
@@ -175,8 +188,16 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
             )
             changes.append(f"replaced AI block ({ai_html.count('sec-card')} section(s))")
         else:
-            # First injection: insert before first <section class="sec-card">
-            pos = html.find('<section class="sec-card">')
+            # First injection: facts-first (2026) — insert just before the
+            # base page's own FAQ section, not the first sec-card, so
+            # commentary never buries Important Dates/Fee/Eligibility.
+            _faq_m = re.search(
+                r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
+                html, re.S)
+            # _faq_m.start() IS the FAQ card's own opening tag position (the
+            # pattern is anchored there) — do NOT rfind() an "earlier"
+            # sec-card, that lands before the PRECEDING card (off-by-one).
+            pos = _faq_m.start() if _faq_m else html.find('<section class="sec-card">')
             if pos != -1:
                 html = html[:pos] + wrapped_ai + html[pos:]
                 changes.append(f"injected {ai_html.count('sec-card')} AI section(s)")

@@ -1379,7 +1379,21 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              the SAME facts a second time (admissions.json pages carry both
 #              a raw `sections` array AND normalized important_dates/
 #              application_fee/age_limit dicts for the same underlying data).
-TEMPLATE_VERSION = '20260713.2-seoaudit'
+# 20260716.1 — Facts-first layout redesign: SECTION_ORDER reordered (Job
+#              Overview → Dates+Age paired → Fee+Salary paired → Eligibility →
+#              Vacancy → detailed tables → How to Apply/Links → AI commentary
+#              → FAQ), section headers switched from saturated colour bands to
+#              calm light tints (SECTION_META + sec_card()), AI cards
+#              consolidated into one accordion moved next to FAQ, Job Overview
+#              capped to a compact fact strip, header CTA now prefers the
+#              Notification PDF with an apply/official-site fallback. Bump
+#              forces every existing page to re-render with the new layout.
+# 20260716.2 — fixed an off-by-one in the AI-block "insert before FAQ" anchor
+#              (both here in _preserve_ai_blocks() and in the two external
+#              patch scripts): rfind()-ing an "earlier" sec-card landed the
+#              block before the PRECEDING card (e.g. before How to Apply)
+#              instead of immediately before FAQ where it belongs.
+TEMPLATE_VERSION = '20260716.2-factsfirst'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1417,6 +1431,18 @@ def _preserve_ai_blocks(old_html, new_html):
     if not cards:
         return new_html
     inject = ''.join(f'\n{_AI_MARKER}\n{b}{_AI_MARKER}\n' for b in cards)
+    # Facts-first layout (2026): commentary — AI or otherwise — belongs just
+    # before FAQ, not at the top where it used to bury Important Dates/Fee/
+    # Eligibility. Anchor on the FAQ section's own markup (present regardless
+    # of which code path rendered it) rather than "first sec-card", so
+    # preserved externally-enriched blocks land in the same spot as the
+    # in-template AI commentary instead of jumping back above the facts.
+    _faq_m = re.search(r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)', new_html, re.S)
+    if _faq_m:
+        # _faq_m.start() IS the position of the FAQ card's own opening tag
+        # (the pattern is anchored there) — do NOT rfind() for an "earlier"
+        # sec-card here, that finds the PRECEDING card instead (off-by-one).
+        return new_html[:_faq_m.start()] + inject + new_html[_faq_m.start():]
     pos = new_html.find('<section class="sec-card">')
     if pos != -1:
         return new_html[:pos] + inject + new_html[pos:]
@@ -1535,34 +1561,40 @@ def render_smart_table(rows):
     return f'<div class="tbl-scroll"><table class="data-table"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
 
 # ── Section card builder ──────────────────────────────────────
+# Colour convention (2026 facts-first redesign): each pair is now
+# 'lightBgHex,#accentHex' — a calm pastel background + one accent colour for
+# the icon/border, NOT a saturated gradient. sec_card() renders dark text on
+# these light backgrounds. Only genuinely urgent values (the last-date cell,
+# via .date-last) still get a bold red treatment — section HEADS stay calm
+# so the page doesn't visually shout at the reader before they've read it.
 SECTION_META = {
-    'basic_details':        ('Job Overview',              'fa-circle-info',        '1e40af,#3b82f6'),
-    'important_dates':      ('Important Dates',           'fa-calendar-check',     'b91c1c,#dc2626'),
-    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
-    'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
-    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
-    'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    '4338ca,#6366f1'),
-    'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '4338ca,#6366f1'),
-    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
-    'vacancy_breakdown':    ('Vacancy Breakdown',         'fa-table-list',         '0f766e,#0d9488'),
-    'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          '15803d,#16a34a'),
-    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
-    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
-    'selection_process':    ('Selection Process',         'fa-list-check',         '5b21b6,#7c3aed'),
-    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '0369a1,#0284c7'),
-    'syllabus':             ('Syllabus',                  'fa-book',               '4338ca,#6366f1'),
-    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           'be123c,#e11d48'),
-    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
-    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'b45309,#ca8a04'),
-    'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
-    'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
-    'tables':               ('Details',                   'fa-table',              '0f766e,#0891b2'),
-    'data_tables':          ('Additional Details',        'fa-table-list',         '0f766e,#0891b2'),
-    'all_links':            ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
-    'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#3b82f6'),
-    'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
-    'useful_links':         ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
-    'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
+    'basic_details':        ('Job Overview',              'fa-circle-info',        'eef3fc,#2452c4'),
+    'important_dates':      ('Important Dates',           'fa-calendar-check',     'eaf1fe,#2452c4'),
+    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'fcf3e7,#b4650a'),
+    'age_limit':            ('Age Limit',                 'fa-user-clock',         'eaf6f4,#0f766e'),
+    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    'f1eefc,#5b3fa0'),
+    'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    'f1eefc,#5b3fa0'),
+    'course_details':       ('Course-wise Eligibility',    'fa-list-check',         'f1eefc,#5b3fa0'),
+    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          'eaf7ef,#15803d'),
+    'vacancy_breakdown':    ('Vacancy Breakdown',         'fa-table-list',         'eaf7ef,#15803d'),
+    'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          'eaf7ef,#15803d'),
+    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          'eaf7ef,#15803d'),
+    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  'fceef1,#9d2449'),
+    'selection_process':    ('Selection Process',         'fa-list-check',         'f3f4f8,#4a5578'),
+    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         'f3f4f8,#4a5578'),
+    'syllabus':             ('Syllabus',                  'fa-book',               'f3f4f8,#4a5578'),
+    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           'f3f4f8,#4a5578'),
+    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     'eaf1fe,#2452c4'),
+    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'fcf3e7,#92620a'),
+    'important_links':      ('Important Links',           'fa-link',               'eef1fa,#33417a'),
+    'faq':                  ('FAQs',                      'fa-circle-question',    'f3f4f8,#4a5578'),
+    'tables':               ('Details',                   'fa-table',              'f3f4f8,#4a5578'),
+    'data_tables':          ('Additional Details',        'fa-table-list',         'f3f4f8,#4a5578'),
+    'all_links':            ('Useful Links',              'fa-link',               'eef1fa,#33417a'),
+    'details_page_content': ('Scholarship Details',       'fa-circle-info',        'eef3fc,#2452c4'),
+    'text_sections':        ('How to Apply',              'fa-clipboard-list',     'eaf1fe,#2452c4'),
+    'useful_links':         ('Useful Links',              'fa-link',               'eef1fa,#33417a'),
+    'sections':             ('Details',                   'fa-circle-info',        'eef3fc,#2452c4'),
 }
 
 # ── DYNAMIC SEO HEADINGS ─────────────────────────────────────────────────────
@@ -1650,34 +1682,40 @@ def sec_card(key_or_title, icon, grad, body, total_count=None):
     meta = SECTION_META.get(key_or_title)
     title = meta[0] if meta else (key_or_title if isinstance(key_or_title, str) else key_label(key_or_title))
     count_html = f'<span class="sec-count">{total_count}</span>' if total_count else ''
+    # grad is 'lightBgHex,#accentHex' (calm pastel bg + one accent colour) —
+    # see SECTION_META comment for why headers are no longer saturated bands.
+    _bg, _sep, _accent = grad.partition(',')
+    _bg = _bg if _bg.startswith('#') else f'#{_bg}'
+    _accent = _accent or '#4a5578'
+    # NOTE: <h2> stays attribute-free (colour comes from the .sec-head h2 CSS
+    # rule) — _dedup_section_cards()/_pair_and_reorder_section_cards() match
+    # duplicate/paired headings via a bare `<h2>...</h2>` regex; an inline
+    # style attribute here would silently break that matching.
     return (f'<section class="sec-card">'
-            f'<div class="sec-head" style="background:linear-gradient(135deg,#{grad})">'
-            f'<i class="fa-solid {icon}"></i><h2>{e(title)}</h2>{count_html}</div>'
+            f'<div class="sec-head" style="background:{_bg};border-left:4px solid {_accent}">'
+            f'<i class="fa-solid {icon}" style="color:{_accent}"></i><h2>{e(title)}</h2>{count_html}</div>'
             f'<div class="sec-body">{body}</div></section>\n')
 
 # ── Renderers ─────────────────────────────────────────────────
 
 def render_basic_details(bd):
+    # Facts-first (2026): Job Overview is a compact strip, not a long dump —
+    # every other real field (dates/fee/age/vacancy/eligibility) already gets
+    # its OWN card right below, and vacancies/apply-mode/location are already
+    # shown in the header's stats-bar. The old unbounded "any other non-empty
+    # key" fallback made this section balloon on messy source data — capped
+    # here to the handful of fields that give genuine "what/who is this"
+    # context (org, notification/advt no, post name, official site).
     if not bd or not isinstance(bd, dict): return ''
-    SKIP = {'job_title','short_information'}
-    PRIO = ['organization_name','post_name','total_vacancies','application_mode',
-            'job_location','job_type','notification_number','advt_no','official_website','last_updated']
+    PRIO = ['organization_name','notification_number','advt_no','post_name','official_website']
     rows = ''
-    done = set(SKIP)
     for k in PRIO:
         v = safe(bd.get(k,''))
-        if not v or k in done: continue
-        done.add(k)
+        if not v: continue
         rows += f'<tr><th>{e(key_label(k))}</th><td>{e(v)}</td></tr>'
-    for k, v in bd.items():
-        if k in done: continue
-        sv = safe(v)
-        if not sv: continue
-        done.add(k)
-        rows += f'<tr><th>{e(key_label(k))}</th><td>{e(sv)}</td></tr>'
     si = sanitize_short_info(safe(bd.get('short_information','')))
     si_html = f'<div class="short-info"><i class="fa-solid fa-circle-info"></i> {e(si)}</div>' if si else ''
-    return si_html + (f'<table class="kv-table"><tbody>{rows}</tbody></table>' if rows else '')
+    return si_html + (f'<table class="kv-table compact-kv"><tbody>{rows}</tbody></table>' if rows else '')
 
 def render_dates(obj):
     if not obj or not isinstance(obj, dict): return ''
@@ -3173,67 +3211,71 @@ def render_sarkari_sections(sections_list, existing_il=None, already_covered=Non
                 cleaned_raw.append(raw_sec)
         data['raw'] = cleaned_raw
 
+    # Colours below mirror SECTION_META's calm-light palette for the matching
+    # key (kept as separate literals here since this path builds cards from
+    # titled scraper sections rather than SECTION_ORDER, but the reader must
+    # see the SAME soft look regardless of which path rendered a given card).
     html = ''
     if data['dates']:
         lis = render_list_items(data['dates'])
         if lis:
-            html += sec_card('important_dates','fa-calendar-check','b91c1c,#dc2626', lis)
+            html += sec_card('important_dates','fa-calendar-check','eaf1fe,#2452c4', lis)
             if already_covered is not None: already_covered.add('important_dates')
     if data['fee']:
         lis = render_list_items(data['fee'])
         if lis:
-            html += sec_card('application_fee','fa-indian-rupee-sign','c2410c,#ea580c', lis)
+            html += sec_card('application_fee','fa-indian-rupee-sign','fcf3e7,#b4650a', lis)
             if already_covered is not None: already_covered.add('application_fee')
     if data['age']:
         lis = render_list_items(data['age'])
         if lis:
-            html += sec_card('age_limit','fa-user-clock','0f766e,#0891b2', lis)
+            html += sec_card('age_limit','fa-user-clock','eaf6f4,#0f766e', lis)
             if already_covered is not None: already_covered.add('age_limit')
     if data['sel']:
-        html += sec_card('selection_process','fa-list-check','5b21b6,#7c3aed', render_selection(data['sel']))
+        html += sec_card('selection_process','fa-list-check','f3f4f8,#4a5578', render_selection(data['sel']))
     for tbl in data['vac_tables']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
-            if rendered: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', rendered)
+            if rendered: html += sec_card('vacancy_details','fa-chart-pie','eaf7ef,#15803d', rendered)
         elif isinstance(tbl, dict) and tbl.get('_phys_table'):
             # Physical eligibility table — render in physical section
             rendered = render_smart_table(tbl['_phys_table'])
-            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', rendered)
+            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','f3f4f8,#4a5578', rendered)
         elif isinstance(tbl, dict) and tbl.get('_qual_table'):
             rendered = render_smart_table(tbl['_qual_table'])
-            if rendered: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', rendered)
+            if rendered: html += sec_card('qualification','fa-graduation-cap','f1eefc,#5b3fa0', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','eaf7ef,#15803d', lis)
     for tbl in data['cat_vac']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
-            if rendered: html += sec_card('category_wise_vacancy','fa-chart-bar','15803d,#16a34a', rendered)
+            if rendered: html += sec_card('category_wise_vacancy','fa-chart-bar','eaf7ef,#15803d', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','eaf7ef,#15803d', lis)
     if data['salary']:
         salary_items = [x for x in data['salary'] if isinstance(x, str)]
         salary_tables = [x for x in data['salary'] if isinstance(x, list)]
         sal_body = render_list_items(salary_items) + ''.join(render_smart_table(t) for t in salary_tables)
-        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', sal_body)
+        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','fceef1,#9d2449', sal_body)
     if data['exam']:
         items = [x for x in data['exam'] if isinstance(x,str)]
         tables = [x for x in data['exam'] if isinstance(x,list)]
         body = render_list_items(items) + ''.join(render_smart_table(t) for t in tables)
-        if body: html += sec_card('exam_pattern','fa-file-lines','0369a1,#0284c7', body)
+        if body: html += sec_card('exam_pattern','fa-file-lines','f3f4f8,#4a5578', body)
     if data['syllabus']:
         lis = render_list_items(data['syllabus'])
-        if lis: html += sec_card('syllabus','fa-book','4338ca,#6366f1', lis)
+        if lis: html += sec_card('syllabus','fa-book','f3f4f8,#4a5578', lis)
     if data['physical']:
         lis = render_list_items(data['physical'])
-        if lis: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', lis)
+        if lis: html += sec_card('physical_eligibility','fa-dumbbell','f3f4f8,#4a5578', lis)
     if data['hta']:
-        html += sec_card('how_to_apply','fa-clipboard-list','0f766e,#0891b2', render_hta(data['hta']))
+        html += sec_card('how_to_apply','fa-clipboard-list','eaf1fe,#2452c4', render_hta(data['hta']))
     if data['inst']:
         items = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(s)}</span></div>'
                         for s in data['inst'] if s)
-        if items: html += sec_card('important_instructions','fa-circle-exclamation','b45309,#ca8a04', items)
+        if items: html += sec_card('important_instructions','fa-circle-exclamation','fcf3e7,#92620a', items)
     if data['also_read'] and not (existing_il and any(v for v in existing_il.values() if v)):
         btns = ''
         for row in data['also_read']:
@@ -3258,11 +3300,11 @@ def render_sarkari_sections(sections_list, existing_il=None, already_covered=Non
                     btns += (f'<div class="lk-row"><span class="lk-label">{e(lbl[:60])}</span>'
                              f'<a href="{e(url)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
                              f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
-        if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-rows">{btns}</div>')
+        if btns: html += sec_card('important_links','fa-link','eef1fa,#33417a', f'<div class="links-rows">{btns}</div>')
     # Wrap raw sections in proper sec-card — prevents orphan edu-sec blocks floating outside cards
     raw_html = render_edu_sections(data['raw'])
     if raw_html.strip():
-        html += sec_card('Details', 'fa-circle-info', '0369a1,#0284c7', raw_html)
+        html += sec_card('Details', 'fa-circle-info', 'f3f4f8,#4a5578', raw_html)
     return html
 
 
@@ -3374,9 +3416,18 @@ SKIP_KEYS = {'seo_tags','category','slug','source_url','url','_slug',
              'fja_categories','state_tags','district_tags',  # tag-only, no page value
              }
 
-SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit',
-                 'qualification','eligibility_section','course_details','vacancy_details','vacancy_breakdown','subject_wise_vacancy','category_wise_vacancy','salary_details',
-                 'selection_process','exam_pattern','syllabus','physical_eligibility',
+# Facts-first order (2026 redesign): (1) basic_details = compact Job Overview,
+# right after the header; (2) important_dates/age_limit/application_fee/
+# salary_details = the "core info" cluster — build_all_sections() pairs
+# dates+age and fee+salary into side-by-side .pair-grid cards via
+# _pair_and_reorder_section_cards(), then eligibility, then vacancy; (3) the
+# heavier detail (course-wise tables, selection process, exam pattern,
+# syllabus, physical eligibility, misc tables) follows; (4) how_to_apply +
+# important_links; (5) AI commentary is relocated next to faq by the same
+# post-processing pass (see TSJ_AI_BLOCK_START/END handling); (6) faq last.
+SECTION_ORDER = ['basic_details','important_dates','age_limit','application_fee','salary_details',
+                 'eligibility_section','qualification','vacancy_details','vacancy_breakdown','subject_wise_vacancy','category_wise_vacancy',
+                 'course_details','selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections',
                  'how_to_apply','important_instructions','important_links','faq']
 # NOTE: 'useful_links' & 'all_links' are intentionally NOT in SECTION_ORDER.
@@ -3520,27 +3571,35 @@ def _render_unknown_list(val):
     return '<ul class="val-list">' + ''.join(f'<li>{e(it)}</li>' for it in items) + '</ul>'
 
 def _render_ai_sections(job_obj):
-    """Phase 5: render the AI-generated content sections (overview, expert
-    analysis, etc.) as section cards — ONLY when the AI field is present.
-    Additive: a job with no AI content renders nothing here, exactly as before.
-    Facts (tables/dates/fees) are never produced here — those stay fact-sourced."""
-    out = ''
-    # (key, heading, icon, color)
+    """Phase 5: render the AI-generated commentary (overview, expert analysis,
+    who should apply, etc.) as ONE consolidated accordion card, 'More About
+    This Recruitment' — ONLY when at least one AI field is present. Additive:
+    a job with no AI content renders nothing here, exactly as before.
+    Facts (tables/dates/fees) are never produced here — those stay fact-sourced.
+    Consolidated (rather than one full-width sec_card per topic) and moved
+    next to FAQ by build_all_sections()'s TSJ_AI_BLOCK_START/END handling, so
+    commentary never buries the facts a visitor came for."""
     ai_cards = [
-        ('ai_overview',            'Overview',              'fa-circle-info',       '1d4ed8,#3b82f6'),
-        ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '7c3aed,#a855f7'),
-        ('ai_who_should_apply',    'Who Should Apply',      'fa-user-check',        '0f766e,#0891b2'),
-        ('ai_preparation_tips',    'Preparation Tips',      'fa-list-check',        '047857,#10b981'),
-        ('ai_salary_insights',     'Salary Insights',       'fa-indian-rupee-sign', 'b45309,#f59e0b'),
-        ('ai_job_profile_analysis','Job Profile',           'fa-briefcase',         '475569,#334155'),
-        ('ai_selection_strategy',  'Selection Strategy',    'fa-bullseye',          'be123c,#f43f5e'),
+        ('ai_overview',            'Overview',              'fa-circle-info'),
+        ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb'),
+        ('ai_who_should_apply',    'Who Should Apply',      'fa-user-check'),
+        ('ai_preparation_tips',    'Preparation Tips',      'fa-list-check'),
+        ('ai_salary_insights',     'Salary Insights',       'fa-indian-rupee-sign'),
+        ('ai_job_profile_analysis','Job Profile',           'fa-briefcase'),
+        ('ai_selection_strategy',  'Selection Strategy',    'fa-bullseye'),
     ]
-    for key, heading, icon, color in ai_cards:
+    items = ''
+    for key, heading, icon in ai_cards:
         val = safe(job_obj.get(key, '') or '')
         if val and len(val) > 20:
-            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
-            out += sec_card(heading, icon, color, body)
-    return out
+            _open = ' open' if not items else ''
+            items += (f'<details class="ai-item"{_open}><summary><i class="fa-solid {icon}"></i> '
+                      f'{e(heading)}<i class="fa-solid fa-chevron-down ai-chev" aria-hidden="true"></i></summary>'
+                      f'<div class="ai-item-body">{e(val)}</div></details>')
+    if not items:
+        return ''
+    return sec_card('More About This Recruitment', 'fa-wand-magic-sparkles', 'f7f7fa,#6b7488',
+                     f'<div class="ai-acc">{items}</div>')
 
 
 # ── FJA content_sections renderer (dynamic, complete, un-mixed titled tables) ──
@@ -3661,7 +3720,7 @@ def build_all_sections(job_obj):
         if _bd and _bd != {}:
             _bd_body = render_basic_details(_bd)
             if _bd_body and _bd_body.strip():
-                _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', '1e40af,#3b82f6'))
+                _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', 'eef3fc,#2452c4'))
                 html += sec_card(_dyn_section_heading('basic_details', job_obj), _bm[1], _bm[2], _bd_body)
                 rendered.add('basic_details')
         html += render_content_sections_all(_cs)
@@ -3688,7 +3747,7 @@ def build_all_sections(job_obj):
             elif _pre_key == 'application_fee': _pre_body = render_fee(_pre_val)
             else: continue
             if _pre_body and _pre_body.strip():
-                _pre_meta = SECTION_META.get(_pre_key, (_pre_key.replace('_',' ').title(), 'fa-circle-info', '1d4ed8,#2563eb'))
+                _pre_meta = SECTION_META.get(_pre_key, (_pre_key.replace('_',' ').title(), 'fa-circle-info', 'eef3fc,#2452c4'))
                 html += sec_card(_dyn_section_heading(_pre_key, job_obj), _pre_meta[1], _pre_meta[2], _pre_body)
         # Now render the edu content sections
         html += render_edu_sections(sections)
@@ -4401,7 +4460,7 @@ def build_all_sections(job_obj):
         if len(_auto) >= 2:  # show if we have at least a couple real FAQs
             _auto_body = render_faq(_auto)
             if _auto_body and _auto_body.strip():
-                _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','4338ca,#6366f1'))
+                _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','f3f4f8,#4a5578'))
                 html += sec_card('faq', _m[1], _m[2], _auto_body)
                 rendered.add('faq')
 
@@ -4411,6 +4470,64 @@ def build_all_sections(job_obj):
     html = _dedup_section_cards(html)
 
     return html
+
+_AI_BLOCK_RE = re.compile(r'<!-- TSJ_AI_BLOCK_START -->.*?<!-- TSJ_AI_BLOCK_END -->\n?', re.S)
+
+def _extract_card_by_h2(chunks, patterns):
+    """Pop and return the first chunk whose <h2> text matches any regex in
+    `patterns` (case-insensitive substring search). Mutates `chunks` in place."""
+    for i, c in enumerate(chunks):
+        m = re.search(r'<h2>([^<]*)</h2>', c)
+        if m and any(re.search(p, m.group(1), re.I) for p in patterns):
+            return chunks.pop(i)
+    return ''
+
+def _pair_and_reorder_section_cards(html):
+    """Facts-first layout pass (2026 redesign): (1) float the Job Overview
+    card to the very front; (2) pair Important Dates + Age Limit, and
+    Application Fee + Salary & Pay Scale, into side-by-side .pair-grid cards
+    so a visitor sees all four without scrolling; (3) relocate the AI
+    commentary block (TSJ_AI_BLOCK_START/END sentinel) to sit just before
+    FAQ instead of at the very top, where it used to bury the facts.
+
+    Operates on the fully-assembled sections_html string using the same
+    'split on sec-card boundary, inspect <h2> text' technique already used by
+    _dedup_section_cards() below — deliberately NOT touching the three
+    separate section-rendering code paths (the generic SECTION_ORDER loop,
+    render_sarkari_sections, render_edu_sections), each of which has its own
+    intricate per-field extraction logic built up over many data-shape edge
+    cases. This way every job page gets the same facts-first shape regardless
+    of which path rendered its cards."""
+    if not html or 'sec-card' not in html:
+        return html
+    ai_block = ''
+    m = _AI_BLOCK_RE.search(html)
+    if m:
+        ai_block = m.group(0)
+        html = html[:m.start()] + html[m.end():]
+    if 'sec-card' not in html:
+        return html + ai_block
+    chunks = re.split(r'(?=<(?:div|section) class="sec-card")', html)
+    pre = ''
+    if chunks and not re.match(r'\s*<(?:div|section) class="sec-card"', chunks[0]):
+        pre = chunks.pop(0)
+    overview_c = _extract_card_by_h2(chunks, [r'\boverview\b'])
+    dates_c    = _extract_card_by_h2(chunks, [r'\bimportant dates\b'])
+    age_c      = _extract_card_by_h2(chunks, [r'\bage limit\b'])
+    fee_c      = _extract_card_by_h2(chunks, [r'\bapplication fee\b'])
+    salary_c   = _extract_card_by_h2(chunks, [r'\bpay scale\b'])
+    pairs = ''
+    if dates_c or age_c:
+        pairs += f'<div class="pair-grid">{dates_c}{age_c}</div>'
+    if fee_c or salary_c:
+        pairs += f'<div class="pair-grid">{fee_c}{salary_c}</div>'
+    if ai_block:
+        faq_idx = next((i for i, c in enumerate(chunks) if 'faq-item' in c or 'faq-q-text' in c), None)
+        if faq_idx is not None:
+            chunks = chunks[:faq_idx] + [ai_block] + chunks[faq_idx:]
+        else:
+            chunks.append(ai_block)
+    return pre + overview_c + pairs + ''.join(chunks)
 
 def _dedup_section_cards(html):
     """Remove duplicate sec-card blocks that share the same <h2> heading,
@@ -4827,14 +4944,18 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 @media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:none}.stat:nth-child(3){border-top:1px solid #e2e8f0}.stat:nth-child(4){border-top:1px solid #e2e8f0;border-right:none}}
 .short-info{background:#eff6ff;border-left:4px solid #1d4ed8;padding:10px 14px;font-size:.84rem;color:#1e293b;line-height:1.7;margin-bottom:10px;border-radius:0 8px 8px 0;display:flex;gap:8px;align-items:flex-start}
 .sec-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.sec-head{display:flex;align-items:center;gap:8px;padding:10px 14px;color:#fff;font-size:.86rem;font-weight:700}
-.sec-head h2{margin:0;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.01em}
-.sec-head .sec-count{margin-left:auto;font-size:.75rem;font-weight:600;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.sec-head{display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:.86rem;font-weight:700}
+.sec-head h2{margin:0;font-size:1.02rem;font-weight:800;letter-spacing:.01em;color:#1b2440}
+.sec-head .sec-count{margin-left:auto;font-size:.75rem;font-weight:700;background:rgba(0,0,0,.06);color:#4a5578;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .sec-body{padding:0}
+.pair-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
+.pair-grid .sec-card{margin-bottom:0}
 .kv-table{width:100%;border-collapse:collapse;font-size:.82rem}
 .kv-table th{background:#f8fafc;color:#374151;font-weight:700;padding:9px 13px;text-align:left;border-bottom:1px solid #e9eef4;width:38%;vertical-align:top;word-break:break-word}
 .kv-table td{padding:9px 13px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word;line-height:1.6}
 .kv-table tr:last-child th,.kv-table tr:last-child td{border-bottom:none}
+.compact-kv{font-size:.78rem}
+.compact-kv th,.compact-kv td{padding:6px 13px}
 .kv-stack-head{background:#eef2ff;color:#3730a3;font-weight:800;padding:9px 13px;text-align:left;border-bottom:1px solid #e0e7ff;font-size:.84rem}
 .kv-stack-body{padding:10px 13px 12px;border-bottom:1px solid #e9eef4}
 .kv-numlist{margin:0;padding-left:0;list-style:none;counter-reset:kvn}
@@ -4881,6 +5002,15 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .faq-q{display:flex;gap:9px;align-items:flex-start;font-weight:700;color:#0f172a;font-size:.84rem;line-height:1.5;margin-bottom:7px}
 .faq-icon{background:#1d4ed8;color:#fff;border-radius:5px;padding:2px 7px;font-size:.71rem;font-weight:800;flex-shrink:0;margin-top:1px}
 .faq-a{display:flex;gap:9px;align-items:flex-start;font-size:.82rem;color:#475569;line-height:1.7}
+.ai-acc{padding:2px 4px}
+.ai-item{border-bottom:1px solid #eef0f5}
+.ai-item:last-child{border-bottom:none}
+.ai-item summary{list-style:none;cursor:pointer;padding:11px 12px;font-size:.83rem;font-weight:700;color:#454e63;display:flex;align-items:center;gap:8px}
+.ai-item summary::-webkit-details-marker{display:none}
+.ai-item summary i:first-child{color:#6b7488;width:16px;text-align:center}
+.ai-chev{margin-left:auto;color:#97a0b4;font-size:.78rem;transition:transform .15s}
+.ai-item[open] .ai-chev{transform:rotate(180deg)}
+.ai-item-body{padding:0 14px 13px 38px;font-size:.82rem;color:#5b6478;line-height:1.75}
 .edu-sec{padding:11px 14px;border-bottom:1px solid #f1f5f9}.edu-sec:last-child{border-bottom:none}
 .edu-sec-h{font-size:.85rem;font-weight:700;color:#1e293b;margin:0 0 8px}
 .edu-para{font-size:.82rem;color:#374151;line-height:1.7;margin:0 0 7px}
@@ -5309,7 +5439,15 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         bc_html += f'<span class="bc-sep">›</span><a href="{e(url)}">{e(lbl)}</a>'
     bc_html += f'<span class="bc-sep">›</span><span aria-current="page">{e(title[:55])}{"…" if len(title)>55 else ""}</span></nav>'
 
-    # Quick apply link
+    # Header CTA: prefer the official Notification PDF when one exists (that's
+    # the single most-wanted link right after the title); fall back to the
+    # existing apply/official-website chain and its intent-aware label
+    # (Result/Admit Card/Answer Key pages read better with their own label
+    # than a blanket "Notification Download"). Uses _prepare_il() fresh here
+    # (not the raw `il` from job_obj.get('important_links')) so list/labels/
+    # all_official_links merging is applied — see _prepare_il() docstring.
+    _il_hdr = _prepare_il(job_obj)
+    _notif_pdf = _il_url(_il_hdr.get('notification_pdf'))
     apply_url = safe(_il_url(il.get('apply_online')) or _il_url(il.get('registration_link')) or bd.get('official_website',''))
     _CTA_LABEL_BY_INTENT = {
         'result': 'Check Result / Official Website', 'admitcard': 'Download Admit Card',
@@ -5317,7 +5455,10 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         'scheme': 'Apply / Official Website',
     }
     apply_banner = ''
-    if apply_url and not is_blocked(apply_url):
+    if _notif_pdf and not is_blocked(_notif_pdf):
+        apply_banner = (f'<a href="{e(_notif_pdf)}" target="_blank" rel="nofollow noopener noreferrer" class="apply-cta">'
+                       f'<i class="fa-solid fa-download"></i> Notification Download ↗</a>')
+    elif apply_url and not is_blocked(apply_url):
         _cta_lbl = _CTA_LABEL_BY_INTENT.get(page_intent(job_obj), 'Apply Online / Official Website')
         apply_banner = (f'<a href="{e(apply_url)}" target="_blank" rel="nofollow noopener noreferrer" class="apply-cta">'
                        f'<i class="fa-solid fa-paper-plane"></i> {e(_cta_lbl)} ↗</a>')
@@ -5388,6 +5529,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     sections_html = build_all_sections(job_obj)
     if not sections_html.strip():
         sections_html = '<div class="sec-card"><div class="sec-body" style="padding:24px;text-align:center;color:#94a3b8"><i class="fa-solid fa-clock" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>Detailed information will be updated soon. Please visit the official website.</div></div>'
+    sections_html = _pair_and_reorder_section_cards(sections_html)
 
     # ❹ Related Jobs — internal links to other /jobs/ pages (same cat/org/qual/state)
     _rj_org = safe(bd.get('organization','') or bd.get('department','') or job_obj.get('organization',''))
