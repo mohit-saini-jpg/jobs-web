@@ -1379,7 +1379,16 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              the SAME facts a second time (admissions.json pages carry both
 #              a raw `sections` array AND normalized important_dates/
 #              application_fee/age_limit dicts for the same underlying data).
-TEMPLATE_VERSION = '20260713.2-seoaudit'
+# 20260716.3 — AI commentary cards (Expert Analysis/Who Should Apply/Prep
+#              Tips/Salary Insights/Job Profile/Selection Strategy) moved
+#              from the top of the page to just before FAQ. Position only —
+#              _render_ai_sections()'s own cards/icons/colors and every other
+#              section/order are unchanged. Same shift applied to
+#              _preserve_ai_blocks() and the two external AI-enrichment
+#              scripts (ai_html_enricher.py, patch_ai_html.py) so both
+#              existing pages and future AI-injected data land in the same
+#              spot.
+TEMPLATE_VERSION = '20260716.3-aishift'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
@@ -1417,6 +1426,14 @@ def _preserve_ai_blocks(old_html, new_html):
     if not cards:
         return new_html
     inject = ''.join(f'\n{_AI_MARKER}\n{b}{_AI_MARKER}\n' for b in cards)
+    # Shift only: anchor just before FAQ instead of the first sec-card (same
+    # preserved card HTML/markers as before, only the insertion point moved).
+    _faq_m = re.search(
+        r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
+        new_html, re.S)
+    if _faq_m:
+        # _faq_m.start() IS the FAQ card's own opening tag position.
+        return new_html[:_faq_m.start()] + inject + new_html[_faq_m.start():]
     pos = new_html.find('<section class="sec-card">')
     if pos != -1:
         return new_html[:pos] + inject + new_html[pos:]
@@ -3625,11 +3642,12 @@ def render_content_sections_all(sections):
 def build_all_sections(job_obj):
     html = ''
     rendered = set()
-    # ── AI LAYER (Phase 5): AI content sections render FIRST (prominent), only
-    # when present. Pure addition — no effect on jobs without AI content. ──
+    # ── AI LAYER (Phase 5): AI content sections — same cards/colors as
+    # _render_ai_sections() always produced, only the POSITION changed: they
+    # used to render FIRST (before facts), now inserted just before FAQ
+    # (see the end of this function) so they no longer bury Important
+    # Dates/Fee/Eligibility/Vacancy under commentary. ──
     _ai_secs_html = _render_ai_sections(job_obj)
-    if _ai_secs_html:
-        html += f'<!-- TSJ_AI_BLOCK_START -->\n{_ai_secs_html}<!-- TSJ_AI_BLOCK_END -->\n'
     # AI overview replaces the old short-info card: if ai_overview exists, mark
     # short_information as "already handled" so we don't show both (no dup).
     if safe(job_obj.get('ai_overview', '') or ''):
@@ -4404,6 +4422,19 @@ def build_all_sections(job_obj):
                 _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','4338ca,#6366f1'))
                 html += sec_card('faq', _m[1], _m[2], _auto_body)
                 rendered.add('faq')
+
+    # AI content shift: insert just before FAQ instead of at the very top —
+    # same _render_ai_sections() cards/colors, only the position moved.
+    if _ai_secs_html:
+        _ai_block = f'<!-- TSJ_AI_BLOCK_START -->\n{_ai_secs_html}<!-- TSJ_AI_BLOCK_END -->\n'
+        _faq_m = re.search(
+            r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
+            html, re.S)
+        if _faq_m:
+            # _faq_m.start() IS the FAQ card's own opening tag position.
+            html = html[:_faq_m.start()] + _ai_block + html[_faq_m.start():]
+        else:
+            html += _ai_block
 
     # ── Safety net: drop any sec-card whose heading already appeared earlier ──
     # (guards against a field rendering both inside `sections` and as a top-level

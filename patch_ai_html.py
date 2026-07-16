@@ -175,8 +175,13 @@ def patch_html(html: str, job: dict) -> tuple[str, list]:
             )
             changes.append(f"replaced AI block ({ai_html.count('sec-card')} section(s))")
         else:
-            # First injection: insert before first <section class="sec-card">
-            pos = html.find('<section class="sec-card">')
+            # First injection: shift only — insert just before the base
+            # page's own FAQ section instead of the first sec-card (same
+            # cards/colors as before, only the position moved).
+            _faq_m = re.search(
+                r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
+                html, re.S)
+            pos = _faq_m.start() if _faq_m else html.find('<section class="sec-card">')
             if pos != -1:
                 html = html[:pos] + wrapped_ai + html[pos:]
                 changes.append(f"injected {ai_html.count('sec-card')} AI section(s)")

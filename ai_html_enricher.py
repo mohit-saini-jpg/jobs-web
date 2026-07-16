@@ -612,8 +612,14 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
     if ai_html:
         # Wrap in markers so we can find/replace on next run
         ai_block = f"\n{AI_MARKER}\n{ai_html}{AI_MARKER}\n"
-        # Insert BEFORE first sec-card
-        pos = html.find('<section class="sec-card">')
+        # Shift only: insert just before the base page's own FAQ section
+        # instead of the first sec-card (same cards/colors as before, only
+        # the position moved) — falls back to "before first sec-card" if no
+        # FAQ section is found yet.
+        _faq_m = re.search(
+            r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
+            html, re.S)
+        pos = _faq_m.start() if _faq_m else html.find('<section class="sec-card">')
         if pos != -1:
             html = html[:pos] + ai_block + html[pos:]
         else:
