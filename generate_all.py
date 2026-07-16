@@ -9504,16 +9504,26 @@ def _content_matches_dup(sig_a, sig_b):
     return True
 
 def merge_exact_duplicate_pages():
-    import glob as _g_dup
+    import glob as _g_dup, time as _time_dup
     from itertools import combinations as _combos_dup
+    _t0_dup = _time_dup.time()
     _H1_RE_DUP = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
     _fp_to_slugs = {}
     _slug_to_h1_dup = {}
-    _slug_to_sig_dup = {}
+    # PASS 1 (cheap, every job page): only read enough of each file to find
+    # the H1 (near the top) and compute its fingerprint. Capped reads keep
+    # this pass fast across 4000+ pages -- reading full file content for
+    # EVERY page here (as an earlier version of this guard did) added
+    # several minutes to generate_all.py's runtime and caused a real
+    # workflow timeout/cancellation in production (2026-07-16).
     for _f_dup in _g_dup.glob(str(ROOT/'jobs'/'*'/'index.html')):
         _slug_dup = os.path.basename(os.path.dirname(_f_dup))
         try:
-            _h_dup = open(_f_dup, encoding='utf-8', errors='ignore').read()
+            # H1 sits after the whole <head> (meta/JSON-LD/CSS), typically
+            # ~15-19KB in -- measured across the live page set. 25000 gives
+            # comfortable margin while still reading well under half of an
+            # average (~43KB) page, unlike a full-file read.
+            _h_dup = open(_f_dup, encoding='utf-8', errors='ignore').read(25000)
         except Exception:
             continue
         _m_dup = _H1_RE_DUP.search(_h_dup)
@@ -9525,7 +9535,6 @@ def merge_exact_duplicate_pages():
             continue
         _fp_to_slugs.setdefault(_fp_dup, []).append(_slug_dup)
         _slug_to_h1_dup[_slug_dup] = _title_dup
-        _slug_to_sig_dup[_slug_dup] = _content_signature_dup(_h_dup)
 
     _dup_clusters = {fp: slugs for fp, slugs in _fp_to_slugs.items() if len(slugs) >= 2}
     # SAFETY: an unexpectedly large number of same-run duplicates suggests
@@ -9537,6 +9546,21 @@ def merge_exact_duplicate_pages():
               f"suspiciously high (expected occasional stragglers) - skipping auto-merge, "
               f"check _fingerprint()/_FP_STOP for a regression")
         return
+
+    # PASS 2 (expensive full-content read): only for the small number of
+    # pages actually inside a candidate cluster -- expected to be a
+    # handful, since the whole point of pass 1 + the _FP_STOP fix is that
+    # this stays near-empty in normal operation.
+    _slug_to_sig_dup = {}
+    for _slugs_c in _dup_clusters.values():
+        for _s_c in _slugs_c:
+            if _s_c in _slug_to_sig_dup:
+                continue
+            try:
+                _h_full = open(str(ROOT/'jobs'/_s_c/'index.html'), encoding='utf-8', errors='ignore').read()
+            except Exception:
+                _h_full = ''
+            _slug_to_sig_dup[_s_c] = _content_signature_dup(_h_full)
 
     merged = 0
     skipped_numeral = 0
@@ -9578,7 +9602,8 @@ def merge_exact_duplicate_pages():
             f.write(_block_dup)
     print(f"  [dup-guard] {merged} exact-duplicate job page(s) auto-merged, "
           f"{skipped_numeral} skipped (post-numeral mismatch), "
-          f"{skipped_content} skipped (table/date content mismatch)")
+          f"{skipped_content} skipped (table/date content mismatch), "
+          f"{_time_dup.time() - _t0_dup:.1f}s")
 
 merge_exact_duplicate_pages()
 validate_and_heal_redirects()
