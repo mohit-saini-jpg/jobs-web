@@ -557,32 +557,43 @@
     ]);
   }
 
+  // Reads ffmpeg.js's own source to find whatever numbered worker-chunk
+  // filename THIS exact build actually references (e.g. 814.ffmpeg.js).
+  // Hardcoding that number breaks silently whenever the CDN build changes
+  // it, so we resolve it fresh every time instead.
+  async function resolveWorkerChunkURL(ffmpegBase) {
+    const resp = await fetch(`${ffmpegBase}/ffmpeg.js`);
+    if (!resp.ok) throw new Error('ffmpeg.js fetch failed: ' + resp.status);
+    const text = await resp.text();
+    const m = text.match(/([\w-]*\d[\w-]*\.ffmpeg\.js)/);
+    if (!m) throw new Error('Worker chunk filename ffmpeg.js mein nahi mila');
+    return toBlobURL(`${ffmpegBase}/${m[1]}`, 'text/javascript');
+  }
+
   async function getFFmpeg() {
     if (ffmpegInstance) return ffmpegInstance;
     const { FFmpeg } = FFmpegWASM;
 
     // Two CDN mirrors as fallback in case one is slow/blocked/stale.
-    const coreBases = [
-      'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd',
-      'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd'
+    const pairs = [
+      { core: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd', ffmpeg: 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd' },
+      { core: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd', ffmpeg: 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd' }
     ];
 
     let lastErr = null;
-    for (const coreBase of coreBases) {
+    for (const { core: coreBase, ffmpeg: ffmpegBase } of pairs) {
       const instance = new FFmpeg();
       instance.on('log', ({ message }) => console.log('[ffmpeg]', message));
       try {
         const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
         const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
-        // NOTE: intentionally NOT passing classWorkerURL here. The official
-        // ffmpeg.wasm docs load with just {coreURL, wasmURL} — the library
-        // resolves its own worker chunk internally. A previous version of
-        // this file hardcoded a numbered chunk file (e.g. 814.ffmpeg.js) as
-        // classWorkerURL; that filename is a webpack build hash that can
-        // silently drift between @ffmpeg/ffmpeg releases, and when it did,
-        // instance.load() would hang forever with no error — exactly the
-        // "engine load ho raha hai..." freeze this fixes.
-        await withTimeout(instance.load({ coreURL, wasmURL }), 30000, 'FFmpeg engine load');
+        // classWorkerURL IS required: browsers refuse to construct a Worker
+        // from a cross-origin CDN script, and this library doesn't reject
+        // its load() promise when that silently fails — it just hangs.
+        // Fetching the worker chunk ourselves and handing it back as a
+        // same-origin blob URL avoids that entirely.
+        const classWorkerURL = await withTimeout(resolveWorkerChunkURL(ffmpegBase), 20000, 'Worker script resolve');
+        await withTimeout(instance.load({ coreURL, wasmURL, classWorkerURL }), 30000, 'FFmpeg engine load');
         ffmpegInstance = instance;
         return ffmpegInstance;
       } catch (err) {
@@ -748,7 +759,7 @@
 
     let ffmpeg;
     try {
-      ffmpeg = await getFFmpeg();
+      ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load (overall)');
     } catch (err) {
       console.error('FFmpeg load error:', err);
       showAlert('❌ FFmpeg load nahi ho paya: ' + (err.message || 'Unknown error') + '. Page reload karke phir try karein.', 'error');
