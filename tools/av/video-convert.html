@@ -560,24 +560,39 @@
   async function getFFmpeg() {
     if (ffmpegInstance) return ffmpegInstance;
     const { FFmpeg } = FFmpegWASM;
-    const instance = new FFmpeg();
-    instance.on('log', ({ message }) => console.log('[ffmpeg]', message));
 
-    // All URLs MUST match the main @ffmpeg/ffmpeg script version loaded below (0.12.10)
-    const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
-    const ffmpegBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd';
+    // Two CDN mirrors as fallback in case one is slow/blocked/stale.
+    const coreBases = [
+      'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd',
+      'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd'
+    ];
 
-    const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
-    const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
-    // The library spawns its own Worker from a numbered chunk file (e.g. 814.ffmpeg.js).
-    // Browsers block Workers loaded cross-origin from a CDN, so we fetch it and
-    // hand it back as a same-origin blob URL via classWorkerURL.
-    const classWorkerURL = await withTimeout(toBlobURL(`${ffmpegBase}/814.ffmpeg.js`, 'text/javascript'), 20000, 'Worker script fetch');
-
-    await withTimeout(instance.load({ coreURL, wasmURL, classWorkerURL }), 30000, 'FFmpeg engine load');
-    ffmpegInstance = instance;
-    return ffmpegInstance;
+    let lastErr = null;
+    for (const coreBase of coreBases) {
+      const instance = new FFmpeg();
+      instance.on('log', ({ message }) => console.log('[ffmpeg]', message));
+      try {
+        const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
+        const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
+        // NOTE: intentionally NOT passing classWorkerURL here. The official
+        // ffmpeg.wasm docs load with just {coreURL, wasmURL} — the library
+        // resolves its own worker chunk internally. A previous version of
+        // this file hardcoded a numbered chunk file (e.g. 814.ffmpeg.js) as
+        // classWorkerURL; that filename is a webpack build hash that can
+        // silently drift between @ffmpeg/ffmpeg releases, and when it did,
+        // instance.load() would hang forever with no error — exactly the
+        // "engine load ho raha hai..." freeze this fixes.
+        await withTimeout(instance.load({ coreURL, wasmURL }), 30000, 'FFmpeg engine load');
+        ffmpegInstance = instance;
+        return ffmpegInstance;
+      } catch (err) {
+        console.warn('FFmpeg load failed from', coreBase, err);
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error('FFmpeg kisi bhi CDN se load nahi hua');
   }
+
 
   async function fetchFile(file) {
     const buf = await file.arrayBuffer();
