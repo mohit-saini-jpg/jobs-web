@@ -3878,7 +3878,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/issa-paid-internship-recruitment-2026-apply-online-for-25-posts-m-e-mtech/  /jobs/issa-paid-internship-recruitment-2026-apply-online-for-25-posts/  301
 /jobs/eil-associate-engineer-41-posts/  /jobs/engineers-india-limited-recruitment-2026-apply-online-for-associate-engineer-on/  301
 /jobs/nabfins-customer-service-executive-1-posts/  /  301
-/jobs/nabfins-customer-service-executive-recruitment-2026-apply-online/  /  301
 /jobs/rri-personal-secretary-and-assistant-7-posts/  /jobs/rri-recruitment-2026-apply-online-for-personal-secretary-and-assistant-posts/  301
 /jobs/paradip-port-authority-deputy-chief-engineer-recruitment-2026-apply-online/  /  301
 /jobs/paradip-port-authority-deputy-chief-engineer-1-posts/  /  301
@@ -5952,7 +5951,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/apssb-chsl-12th-level-207-posts/  /jobs/apssb-chsle-recruitment-2026-207-group-c-vacancies-apply-online-20-july-to-10-au/  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
-/jobs/bihar-bsusc-assistant-professor-recruitment-2026/  /jobs/bihar-assistant-professor-recruitment-2026-notification-out-apply-online-for-3/  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 
@@ -6648,7 +6646,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/esic-model-hospital-phulwarisharif-specialists-recruitment-2026-walkin-latest-no/  /  301
 /jobs/pau-junior-fieldlab-helper-recruitment-2026-apply-offline/  /  301
 /jobs/gsssb-jamadar-recruitment-2026-apply-online-latest-notifications/  /  301
-/jobs/iit-guwahati-associate-project-scientist-recruitment-2026-apply-online/  /  301
 /jobs/icar-nipb-research-associate-recruitment-2026-walkin/  /  301
 /jobs/hnbgu-junior-project-fellow-recruitment-2026-walkin/  /  301
 /jobs/district-sessions-judge-yamuna-nagar-peon-recruitment-2026-apply-offline-for-10-/  /  301
@@ -6763,7 +6760,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/cabinet-secretariat-senior-field-officer-recruitment-2026-apply-offline-for-25/  /jobs/cabinet-secretariat-senior-field-officer-recruitment-2026-apply-offline-for-25-p/  301
 /jobs/calcutta-university-result-2026-bcom-semester-iii-result-date-direct-link-how-to/  /jobs/calcutta-university-result-2026-b-com-semester-iii-result-date-direct-link-how-t/  301
 /jobs/calicut-university-bed-admission-2026/  /jobs/calicut-university-b-ed-admission-2026/  301
-/jobs/cari-recruitment-2026-walkin-for-yoga-therapist-and-project-technical-support/  /jobs/cari-recruitment-2026-walkin-for-yoga-therapist-and-project-technical-support-ii/  301
 /jobs/categories-for-iit-mtech-admission-without-gate-2026/  /jobs/categories-for-iit-m-tech-admission-without-gate-2026/  301
 /jobs/cci-148-jr-assistant-mt-am-jce/  /jobs/cci-148-jr-assistant-mt-am-jce-online-form/  301
 /jobs/cdpo-batwara-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi/  /jobs/cdpo-batwara-recruitment-2026-apply-offline-for-anganwadi-worker-and-anganwadi-h/  301
@@ -7078,3 +7074,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/tripura-university-result-2025-tripura-university-ba-bcom-and-bsc-results-out/  /jobs/tripura-university-result-2025-tripura-university-ba-b-com-and-b-sc-results-out/  301
 /jobs/up-police-sub-inspector-si-advt-no-03-2025-recruitment-2025-exam-date-2026/  /jobs/up-police-sub-inspector-si-advt-no-032025-recruitment-2025-exam-date-2026-for-45/  301
 /jobs/wbsetcl-recruitment-2026-apply-offline-for-chief-medical-officer-special-offic/  /jobs/wbsetcl-recruitment-2026-apply-offline-for-chief-medical-officer-special-officer/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/rrc-central-railway-sports-quota-recruitment-2026/  /jobs/rrc-central-railway-sports-quota-recruitment-2026-notification-out-apply-onlin/  301
+/jobs/rrc-central-railway-scouts-guides-quota-recruitment-2026/  /jobs/rrc-central-railway-recruitment-2026-apply-online-for-12-scouts-guides-quota-p/  301
