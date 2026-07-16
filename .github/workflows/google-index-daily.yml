@@ -77,42 +77,18 @@ jobs:
         run: node .github/workflows/google-index-submit.js
 
       - name: 💾 Commit Google-index state
-        run: |
-          git add data/google_index_state.json 2>/dev/null || true
-          if ! git diff --staged --quiet; then
-            git -c user.name="github-actions[bot]" \
-                -c user.email="github-actions[bot]@users.noreply.github.com" \
-                commit -m "🔎 Google index state ($(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M') IST) [skip ci]"
-
-            # ROOT CAUSE FIX (2026-07-14): the old 3-attempt loop treated a
-            # rebase conflict as "give up" (bare `|| break`, no exit 1) --
-            # today's submitted_today/done_slugs update (192 newly-submitted
-            # URLs) silently never reached origin because another workflow
-            # pushed at the same moment, and the job still reported "success".
-            # Tomorrow's run would then re-submit the same 192 URLs instead of
-            # draining fresh backlog. Same robust pattern as ai-patch-html.yml:
-            # more retries, rebase-then-merge-ours fallback, and a hard exit 1
-            # so a real failure is visible instead of silently swallowed.
-            push_ok=0
-            for i in 1 2 3 4 5; do
-              if git push origin main; then push_ok=1; break; fi
-              echo "push rejected (attempt $i/5) — syncing with origin/main…"
-              git fetch origin main || true
-              if ! git rebase origin/main; then
-                git rebase --abort 2>/dev/null || true
-                git merge -X ours --no-edit origin/main || true
-              fi
-              sleep 4
-            done
-            if [ "$push_ok" = "1" ]; then
-              echo "✅ Google-index state pushed"
-            else
-              echo "❌ push failed after 5 attempts — today's submitted/done_slugs update was lost"
-              exit 1
-            fi
-          else
-            echo "No state change to commit."
-          fi
+        # ROOT CAUSE FIX (2026-07-16): git-level rebase/merge on this file
+        # was fragile under concurrent pushes — on 2026-07-16 it failed 5/5
+        # retries (one hit a git-identity edge case in the merge fallback)
+        # and silently lost a real 200-URL Google Indexing API submission
+        # from the day's tracking, which cascaded into a second run wasting
+        # the day's remaining real Google quota on redundant work. Replaced
+        # with save-google-index-state.js: a SEMANTIC (JSON-level) merge —
+        # union the URL lists with whatever is on origin right now, then
+        # `git reset --hard origin/main` + recommit — so there is no git
+        # conflict state to get stuck in, no matter how many processes push
+        # around the same time. See that file's header comment for detail.
+        run: node .github/workflows/save-google-index-state.js
 
       - name: 📊 Summary
         run: |

@@ -11,9 +11,14 @@ on:
 jobs:
   submit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
@@ -24,3 +29,14 @@ jobs:
         env:
           GOOGLE_INDEXING_SA_JSON: ${{ secrets.GOOGLE_INDEXING_SA_JSON }}
         run: node .github/workflows/google-index-submit.js
+
+      # FIX (2026-07-16): this workflow used to never persist submitted
+      # URLs at all — every manual run's Google submissions vanished from
+      # done_slugs/submitted_today the moment the job ended, so a manual
+      # trigger close to the daily scheduled run had no way to tell the
+      # guard "already done today", and future runs could re-submit the
+      # same backlog URLs. Same race-safe JSON-merge save used by the daily
+      # workflow (see that script's header comment for why it replaced a
+      # plain git rebase/merge).
+      - name: 💾 Commit Google-index state
+        run: node .github/workflows/save-google-index-state.js
