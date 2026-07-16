@@ -55,18 +55,10 @@ _DONT_MISS_RE = re.compile(r"DON[''']?T\s+MISS.*", re.I | re.S)
 def _sanitize(text): return _DONT_MISS_RE.sub("", str(text or "")).strip()
 
 def sec_card(heading, icon, grad, body):
-    # grad is 'lightBgHex,#accentHex' — calm pastel bg + one accent colour,
-    # matching generate_all.py's sec_card() (2026 facts-first redesign: no
-    # more saturated gradient bands). <h2> stays attribute-free so
-    # generate_all.py's _dedup_section_cards()/_pair_and_reorder_section_cards()
-    # regexes (bare `<h2>...</h2>`) keep matching these externally-patched cards.
-    _bg, _sep, _accent = grad.partition(',')
-    _bg = _bg if _bg.startswith('#') else f'#{_bg}'
-    _accent = _accent or '#4a5578'
     return (
         f'<section class="sec-card">'
-        f'<div class="sec-head" style="background:{_bg};border-left:4px solid {_accent}">'
-        f'<i class="fa-solid {icon}" style="color:{_accent}"></i><h2>{e(heading)}</h2></div>'
+        f'<div class="sec-head" style="background:linear-gradient(135deg,#{grad})">'
+        f'<i class="fa-solid {icon}"></i><h2>{e(heading)}</h2></div>'
         f'<div class="sec-body">{body}</div></section>\n'
     )
 
@@ -568,13 +560,13 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
     # 1. Build AI sections HTML (FAQ alag rakha jaayega — wo hamesha page ke
     #    sabse last mein jaata hai, baaki cards ke saath nahi)
     ai_cards = [
-        ("ai_overview",             "fa-circle-info",        "eef3fc,#2452c4"),
-        ("ai_expert_analysis",      "fa-lightbulb",          "f1eefc,#5b3fa0"),
-        ("ai_who_should_apply",     "fa-user-check",         "eaf6f4,#0f766e"),
-        ("ai_preparation_tips",     "fa-list-check",         "eaf7ef,#15803d"),
-        ("ai_salary_insights",      "fa-indian-rupee-sign",  "fceef1,#9d2449"),
-        ("ai_job_profile_analysis", "fa-briefcase",          "f3f4f8,#4a5578"),
-        ("ai_selection_strategy",   "fa-bullseye",           "fcf3e7,#b4650a"),
+        ("ai_overview",             "fa-circle-info",        "1d4ed8,#3b82f6"),
+        ("ai_expert_analysis",      "fa-lightbulb",          "7c3aed,#a855f7"),
+        ("ai_who_should_apply",     "fa-user-check",         "0f766e,#0891b2"),
+        ("ai_preparation_tips",     "fa-list-check",         "047857,#10b981"),
+        ("ai_salary_insights",      "fa-indian-rupee-sign",  "b45309,#f59e0b"),
+        ("ai_job_profile_analysis", "fa-briefcase",          "475569,#334155"),
+        ("ai_selection_strategy",   "fa-bullseye",           "be123c,#f43f5e"),
     ]
     # Non-job intents repurpose the salary/profile fields for non-money
     # content (cutoff trends, exam-center rules, etc.) — swap the icon so a
@@ -590,13 +582,7 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
     }
     headings = get_headings(intent)
     intent_icons = ICON_OVERRIDE.get(intent, {})
-    # Facts-first (2026): consolidate every AI commentary field into ONE
-    # accordion card ("More About This Recruitment") instead of one
-    # full-width sec_card per topic — mirrors generate_all.py's
-    # _render_ai_sections(), so externally-patched pages look the same as
-    # freshly-generated ones. The accordion is placed just before FAQ below
-    # (not at the top) so it never buries Important Dates/Fee/Eligibility.
-    ai_items = ""
+    ai_html = ""
     for key, icon, color in ai_cards:
         if key == "ai_overview" and base_has_overview:
             continue   # base page mein already Overview section hai — skip, duplicate mat banao
@@ -609,12 +595,8 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
         if val and len(val) > 20:
             icon = intent_icons.get(key, icon)
             heading = headings[key].format(t=job_title) if job_title else key.replace("ai_", "").replace("_", " ").title()
-            _open = " open" if not ai_items else ""
-            ai_items += (f'<details class="ai-item"{_open}><summary><i class="fa-solid {icon}"></i> {e(heading)}'
-                        f'<i class="fa-solid fa-chevron-down ai-chev" aria-hidden="true"></i></summary>'
-                        f'<div class="ai-item-body">{e(val)}</div></details>')
-    ai_html = (sec_card("More About This Recruitment", "fa-wand-magic-sparkles", "f7f7fa,#6b7488",
-                        f'<div class="ai-acc">{ai_items}</div>') if ai_items else "")
+            body = f'<div class="edu-sec" style="line-height:1.7">{e(val)}</div>'
+            ai_html += sec_card(heading, icon, color, body)
 
     # FAQ — banaya yahin, insert baad mein alag se page ke end mein hoga.
     # Agar base page mein already ek FAQ section hai (JSON se generated),
@@ -624,23 +606,14 @@ def patch_html(original: str, result: dict, facts: dict | None = None, intent: s
     faq_block = ""
     if faq_html:
         faq_heading = f"{job_title} FAQs" if job_title else "FAQs"
-        faq_block = sec_card(faq_heading, "fa-circle-question", "f3f4f8,#4a5578",
+        faq_block = sec_card(faq_heading, "fa-circle-question", "0f172a,#1e293b",
                               f'<div class="faq-wrap">{faq_html}</div>')
 
     if ai_html:
         # Wrap in markers so we can find/replace on next run
         ai_block = f"\n{AI_MARKER}\n{ai_html}{AI_MARKER}\n"
-        # Facts-first (2026): commentary belongs just before FAQ, not at the
-        # top where it used to bury Important Dates/Fee/Eligibility — anchor
-        # on the base page's own FAQ section (present on nearly every page,
-        # generate_all.py always renders one) rather than "first sec-card".
-        _faq_m = re.search(
-            r'<(?:div|section) class="sec-card">(?:(?!<(?:div|section) class="sec-card">).)*?faq-(?:item|q-text)',
-            html, re.S)
-        # _faq_m.start() IS the FAQ card's own opening tag position (the
-        # pattern is anchored there) — do NOT rfind() an "earlier" sec-card,
-        # that lands before the PRECEDING card instead (off-by-one).
-        pos = _faq_m.start() if _faq_m else html.find('<section class="sec-card">')
+        # Insert BEFORE first sec-card
+        pos = html.find('<section class="sec-card">')
         if pos != -1:
             html = html[:pos] + ai_block + html[pos:]
         else:
