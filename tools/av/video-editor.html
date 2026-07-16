@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
+  <title>Video Editing (Merge & Trim) Free Online | Top Sarkari Jobs</title>
+  <meta name="description" content="Multiple videos ko ek saath jodein (merge) aur trim karein — free online video editing tool. Clips reorder karein, har clip trim karein, ek single video banayein. 100% browser-based.">
+  <meta name="keywords" content="video editing, video merge, join videos online, combine videos, video editor free">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://www.topsarkarijobs.com/tools/av/video-editor.html">
+  <meta property="og:title" content="Video Editing (Merge & Trim) Free Online | Top Sarkari Jobs">
+  <meta property="og:description" content="Multiple videos ko ek saath jodein aur trim karein — free, browser-based video editing tool. Koi upload nahi, koi signup nahi.">
+  <meta property="og:url" content="https://www.topsarkarijobs.com/tools/av/video-editor.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #345de6; --brand-dark: #2949b4; --brand-light: #eef4ff;
+      --ink: #101828; --muted: #6B7280; --line: #E5E7EB; --mist: #F8FAFC;
+      --white: #ffffff; --success: #10B981; --warn: #F59E0B; --error: #EF4444;
+      --radius: 12px; --shadow: 0 4px 24px rgba(15,23,42,0.08);
+    }
+    body { font-family: 'Noto Sans', sans-serif; color: var(--ink); background: var(--mist); min-height: 100vh; }
+    h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; }
+    .navbar { background: var(--white); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; height: 58px; display: flex; align-items: center; gap: 8px; }
+    .nav-brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--brand); text-decoration: none; }
+    .nav-sep { color: var(--line); margin: 0 4px; }
+    .nav-crumb { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+    .nav-crumb:hover { color: var(--brand); }
+    .nav-tools-link { margin-left: auto; padding: 6px 14px; border-radius: 8px; background: var(--brand-light); color: var(--brand); font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+    .nav-tools-link:hover { background: var(--brand); color: white; }
+    .tool-hero { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; padding: 50px 20px 40px; text-align: center; position: relative; overflow: hidden; }
+    .tool-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(52,93,230,0.35) 0%, transparent 55%), radial-gradient(ellipse at 75% 50%, rgba(79,123,255,0.2) 0%, transparent 55%); }
+    .hero-icon { width: 76px; height: 76px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 2rem; position: relative; z-index: 1; }
+    .tool-hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
+    .main-container { max-width: 960px; margin: 0 auto; padding: 28px 20px 56px; }
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+    .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 44px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--mist); }
+    .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
+    .upload-zone.dragover { border-color: var(--brand); background: var(--brand-light); }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+    .upload-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .upload-sub { font-size: 0.82rem; color: var(--muted); }
+    .upload-sub b { color: var(--brand); }
+    .clip-list { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .clip-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: var(--mist); border: 1.5px solid var(--line); border-radius: 10px; }
+    .clip-item.dragging { opacity: 0.4; }
+    .clip-item.dragover-item { border-color: var(--brand); background: var(--brand-light); }
+    .clip-handle { cursor: grab; color: var(--muted); font-size: 1.1rem; padding: 4px 2px; user-select: none; touch-action: none; }
+    .clip-num { width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .clip-body { flex: 1; min-width: 0; }
+    .clip-name { font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .clip-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .clip-trim { display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+    .clip-trim label { font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .clip-trim input { width: 70px; padding: 5px 8px; border: 1.5px solid var(--line); border-radius: 6px; font-size: 0.8rem; font-family: inherit; }
+    .clip-trim input:focus { border-color: var(--brand); outline: none; }
+    .clip-actions { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+    .clip-move, .clip-remove { background: white; border: 1.5px solid var(--line); border-radius: 6px; cursor: pointer; font-size: 0.85rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+    .clip-move:hover { border-color: var(--brand); color: var(--brand); }
+    .clip-remove:hover { border-color: var(--error); color: var(--error); }
+    .add-more-btn { margin-top: 12px; padding: 9px 16px; background: var(--brand-light); color: var(--brand); border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .add-more-btn:hover { background: var(--brand); color: white; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
+    .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .btn-primary:hover:not(:disabled) { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+    .progress-wrap { display: none; margin-top: 14px; }
+    .progress-bar-bg { background: var(--line); border-radius: 10px; height: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), #7ca1ff); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+    .progress-msg { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .progress-percent { display: inline-block; font-weight: 700; color: var(--brand); }
+    .alert { padding: 12px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+    .alert.show { display: block; }
+    .alert.error { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+    .alert.warn { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+    .alert.success { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .result-card { display: none; }
+    .result-card.show { display: block; }
+    .result-ok { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 600; margin-bottom: 14px; }
+    .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .stat-box { background: var(--mist); border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 100px; text-align: center; }
+    .stat-val { font-size: 1.2rem; font-weight: 700; color: var(--ink); font-family: 'Space Grotesk', sans-serif; }
+    .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .btn-dl { padding: 12px 24px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-dl:hover { filter: brightness(1.08); }
+    .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
+    .step { text-align: center; padding: 18px 10px; }
+    .step-n { width: 38px; height: 38px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; }
+    .step h4 { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+    .step p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 6px; }
+    .feat { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 8px; background: var(--mist); }
+    .feat-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .feat h4 { font-size: 0.84rem; font-weight: 600; margin-bottom: 3px; }
+    .feat p { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: inherit; }
+    .faq-q .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
+    .faq-q.open .faq-arrow { transform: rotate(45deg); }
+    .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s; }
+    .faq-a.open { max-height: 220px; padding-bottom: 12px; }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
+    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 10px; border-radius: 10px; border: 1.5px solid var(--line); text-decoration: none; color: var(--ink); transition: all 0.2s; text-align: center; }
+    .rel-item:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-2px); }
+    .rel-item .ri { font-size: 1.5rem; }
+    .rel-item span { font-size: 0.78rem; font-weight: 600; }
+    .secure-note { background: var(--brand-light); border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 20px; }
+    .secure-note p { font-size: 0.82rem; color: var(--brand); font-weight: 600; }
+    .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
+    .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
+    .tool-footer a:hover { color: white; }
+    @media(max-width:640px){
+      .form-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr 1fr; }
+      .related-grid { grid-template-columns: repeat(3, 1fr); }
+      .card { padding: 18px 14px; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .stat-row { flex-direction: column; }
+      .clip-trim input { width: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">TopSarkariJobs</a>
+    <span class="nav-sep">›</span>
+    <a class="nav-crumb" href="/tools/">Tools</a>
+    <span class="nav-sep">›</span>
+    <a class="nav-crumb" href="/tools/tools-audio-video.html">AV Tools</a>
+    <a class="nav-tools-link" href="/tools/">All Tools</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="tool-hero">
+  <div class="hero-icon" style="background:linear-gradient(135deg,#0072ff,#00c6ff)">🎬</div>
+  <h1>Video Editing (Merge & Trim)</h1>
+  <p>Multiple videos ko ek saath jodein aur har clip ko trim karein — sab kuch browser mein, bina kisi software ke. Clips reorder karein aur ek single video banayein.</p>
+  <div class="badges">
+    <span class="badge">Free</span>
+    <span class="badge">Merge + Trim</span>
+    <span class="badge">Drag to Reorder</span>
+    <span class="badge">Browser Only</span>
+    <span class="badge">FFmpeg Powered</span>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="main-container">
+
+  <!-- ALERT -->
+  <div class="alert" id="alert"></div>
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <h3>📂 Video Clips Upload Karein</h3>
+    <input type="file" id="main-file" accept="video/*" multiple style="display:none">
+    <div class="upload-zone" id="dropzone" onclick="document.getElementById('main-file').click()">
+      <span class="upload-icon">⬆️</span>
+      <div class="upload-title">Videos Yahan Drop Karein</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke 2 ya zyada videos select karein (Max 500MB total)</div>
+      <div class="upload-sub" style="margin-top:6px;font-size:0.72rem">⏱️ Zyada/bade clips mein processing time lagega — browser tab open rakhein</div>
+    </div>
+
+    <div class="clip-list" id="clip-list"></div>
+    <button type="button" class="add-more-btn" id="add-more-btn" style="display:none">➕ Aur Clips Add Karein</button>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="card" id="options-card" style="display:none">
+    <h3>⚙️ Merge Settings</h3>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Output Format</label>
+        <select id="output-format">
+          <option value="mp4">MP4 (H.264)</option>
+          <option value="mkv">MKV (H.264)</option>
+          <option value="mov">MOV (H.264)</option>
+          <option value="webm">WebM (VP9)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Resolution</label>
+        <select id="resolution">
+          <option value="1080p">1080p (1920×1080)</option>
+          <option value="720p" selected>720p (1280×720)</option>
+          <option value="480p">480p (854×480)</option>
+          <option value="360p">360p (640×360)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Video Quality</label>
+        <select id="quality">
+          <option value="high">High (8Mbps)</option>
+          <option value="medium" selected>Medium (4Mbps)</option>
+          <option value="low">Low (2Mbps)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Frame Rate</label>
+        <select id="framerate">
+          <option value="30" selected>30 FPS</option>
+          <option value="24">24 FPS (Cinema)</option>
+          <option value="60">60 FPS</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Audio</label>
+        <select id="audio-opt">
+          <option value="keep" selected>Keep Audio</option>
+          <option value="remove">Remove Audio (Video Only)</option>
+        </select>
+      </div>
+    </div>
+    <p style="font-size:0.74rem;color:var(--muted);margin-top:10px">ℹ️ Sabhi clips ek jaisi resolution/FPS mein normalize ho jaayenge taaki smoothly merge ho sakein. Har clip ka audio track auto-detect hota hai — agar kisi clip mein audio nahi hai, to uski jagah automatically silent audio daal diya jaata hai taaki merge fail na ho.</p>
+
+    <div class="action-row" style="margin-top:18px;">
+      <button class="btn-primary" id="process-btn">
+        <span>🚀</span> Merge Karein
+      </button>
+      <button class="btn-secondary" id="reset-btn">↺ Reset</button>
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
+      <div class="progress-msg" id="pmsg">
+        Processing... <span class="progress-percent" id="ppercent">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card result-card" id="result-card">
+    <div class="result-ok">✅ Videos Successfully Merge Ho Gaye!</div>
+    <div class="stat-row" id="stat-row"></div>
+    <button class="btn-dl" id="dl-btn">⬇️ Download Video</button>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="card">
+    <h3>📖 Kaise Use Karein</h3>
+    <div class="how-steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h4>Clips Upload</h4>
+        <p>2 ya zyada video files select karein</p>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h4>Reorder</h4>
+        <p>Drag karke ya arrows se sequence set karein</p>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h4>Trim (Optional)</h4>
+        <p>Har clip ka start/end second set karein</p>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <h4>Settings</h4>
+        <p>Format, resolution, quality choose karein</p>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <h4>Merge & Download</h4>
+        <p>Button dabayein aur final video download karein</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="card">
+    <h3>✨ Features</h3>
+    <div class="features-grid">
+      <div class="feat">
+        <span class="feat-icon">🔀</span>
+        <div><h4>Multiple Clips Merge</h4><p>2 ya usse zyada videos ek saath jodein</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">↕️</span>
+        <div><h4>Drag to Reorder</h4><p>Clips ka sequence apni marzi se set karein</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">✂️</span>
+        <div><h4>Per-Clip Trim</h4><p>Har clip ka start/end alag se trim karein</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">📐</span>
+        <div><h4>Auto Resolution Match</h4><p>Alag-alag size ke clips auto normalize hote hain</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🎵</span>
+        <div><h4>Audio Control</h4><p>Audio keep karein ya poori tarah remove karein</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🔒</span>
+        <div><h4>100% Secure</h4><p>Browser-based, koi upload nahi</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🆓</span>
+        <div><h4>Bilkul Free</h4><p>Koi hidden charges nahi</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🎬</span>
+        <div><h4>FFmpeg Powered</h4><p>Professional-grade video processing engine</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h3>❓ Aksar Puche Jane Wale Sawal</h3>
+    <div class="faq-item">
+      <button class="faq-q">Kitne videos ek saath merge kar sakte hain?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">Aap jitne chahe utne videos add kar sakte hain, lekin bade/zyada clips mein processing time aur browser memory zyada lagega. Best experience ke liye 2-6 clips recommended hain.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Agar clips ki resolution alag-alag ho to?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">Koi problem nahi. Tool automatically har clip ko aapke selected resolution mein scale aur pad karke same size mein normalize kar deta hai, taaki merge clean dikhe.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Trim optional hai kya?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">Haan. Agar aap start/end second khali chhodte hain to poora clip use hoga. Trim sirf tab apply hota hai jab aap values daalte hain.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Mera data safe rahega?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">Bilkul! Sab processing aapke browser mein hoti hai. Koi file server par upload nahi hoti. 100% secure aur private.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Agar kisi clip mein audio nahi hai to error aayega?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">Nahi. Tool automatically har clip ko analyze karke check karta hai ki usmein audio track hai ya nahi (ffprobe-style detection). Jis clip mein audio nahi milta, uski jagah automatically silent audio insert ho jaata hai — isse "Keep Audio" mode kisi bhi mix (kuch clips audio ke saath, kuch bina) mein bina error ke chal jaata hai.</div>
+    </div>
+  </div>
+
+  <!-- RELATED -->
+  <div class="card">
+    <h3>🔗 Related Tools</h3>
+    <div class="related-grid">
+      <a href="/tools/av/video-trim.html" class="rel-item"><span class="ri">✂️</span><span>Video Trim</span></a>
+      <a href="/tools/av/video-convert.html" class="rel-item"><span class="ri">🔄</span><span>Video Convert</span></a>
+      <a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
+      <a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
+      <a href="/tools/av/audio-merge.html" class="rel-item"><span class="ri">🎤</span><span>Audio Merge</span></a>
+      <a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
+      <a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a>
+      <a href="/tools/image/image-merge.html" class="rel-item"><span class="ri">🖼️</span><span>Image Merge</span></a>
+    </div>
+  </div>
+
+  <!-- SECURE NOTE -->
+  <div class="secure-note">
+    <p>🔒 100% Browser-Based — Aapki files sirf aapke browser mein process hoti hain. Koi bhi file server par upload nahi hoti.</p>
+  </div>
+
+</div>
+
+<footer class="tool-footer">
+  <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free Hain</div>
+  <div style="margin-top:6px">
+    <a href="/tools/">All Tools</a>
+    <a href="/about/">About</a>
+    <a href="/privacy/">Privacy Policy</a>
+    <a href="/contact/">Contact</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script>
+  // FFmpeg is loaded lazily inside performMerge() so a CDN/init failure
+  // can NEVER block file upload, drag-drop, reorder, or the rest of the UI.
+  let ffmpegInstance = null;
+
+  async function toBlobURL(url, mimeType) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Failed to fetch FFmpeg core: ' + resp.status);
+    const buf = await resp.arrayBuffer();
+    return URL.createObjectURL(new Blob([buf], { type: mimeType }));
+  }
+
+  function withTimeout(promise, ms, label) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(label + ' timeout ho gaya. Internet slow hai ya CDN blocked hai.')), ms))
+    ]);
+  }
+
+  // Reads ffmpeg.js's own source to find whatever numbered worker-chunk
+  // filename THIS exact build actually references (e.g. 814.ffmpeg.js).
+  async function resolveWorkerChunkURL(ffmpegBase) {
+    const resp = await fetch(`${ffmpegBase}/ffmpeg.js`);
+    if (!resp.ok) throw new Error('ffmpeg.js fetch failed: ' + resp.status);
+    const text = await resp.text();
+    const m = text.match(/\.u\((\d+)\)/) || text.match(/(\d+)\.ffmpeg\.js/);
+    if (!m) throw new Error('Worker chunk id ffmpeg.js mein nahi mila');
+    return toBlobURL(`${ffmpegBase}/${m[1]}.ffmpeg.js`, 'text/javascript');
+  }
+
+  async function getFFmpeg() {
+    if (ffmpegInstance) return ffmpegInstance;
+    const { FFmpeg } = FFmpegWASM;
+
+    const pairs = [
+      { core: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm', ffmpeg: 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd' },
+      { core: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm', ffmpeg: 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd' }
+    ];
+
+    let lastErr = null;
+    for (const { core: coreBase, ffmpeg: ffmpegBase } of pairs) {
+      const instance = new FFmpeg();
+      instance.on('log', ({ message }) => console.log('[ffmpeg]', message));
+      try {
+        const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
+        const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
+        const classWorkerURL = await withTimeout(resolveWorkerChunkURL(ffmpegBase), 20000, 'Worker script resolve');
+        await withTimeout(instance.load({ coreURL, wasmURL, classWorkerURL }), 30000, 'FFmpeg engine load');
+        ffmpegInstance = instance;
+        return ffmpegInstance;
+      } catch (err) {
+        console.warn('FFmpeg load failed from', coreBase, err);
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error('FFmpeg kisi bhi CDN se load nahi hua');
+  }
+
+  async function fetchFile(file) {
+    const buf = await file.arrayBuffer();
+    return new Uint8Array(buf);
+  }
+
+  // ffprobe-style detection: ffmpeg.wasm has no separate ffprobe binary,
+  // so we run `ffmpeg -i <file>` with no output. It always exits non-zero
+  // ("At least one output file must be specified"), but before that it
+  // prints full stream + duration info via the 'log' event, which we
+  // capture and parse instead of relying on a real ffprobe.
+  async function probeClip(ffmpeg, inputName) {
+    let logs = '';
+    const handler = ({ message }) => { logs += message + '\n'; };
+    ffmpeg.on('log', handler);
+    try {
+      await ffmpeg.exec(['-i', inputName]);
+    } catch (e) {
+      // Expected: ffmpeg exits non-zero when no output is given.
+    }
+    ffmpeg.off('log', handler);
+
+    const hasAudio = /Stream #\d+:\d+[^\n]*Audio:/i.test(logs);
+    const durMatch = logs.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/);
+    let duration = null;
+    if (durMatch) {
+      duration = parseInt(durMatch[1], 10) * 3600 + parseInt(durMatch[2], 10) * 60 + parseFloat(durMatch[3]);
+    }
+    return { hasAudio, duration };
+  }
+
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+
+  function showAlert(message, type = 'info') {
+    const alert = document.getElementById('alert');
+    alert.textContent = message;
+    alert.className = `alert show ${type}`;
+    setTimeout(() => alert.classList.remove('show'), 5000);
+  }
+
+  // ---- Clip state ----
+  // each clip: { id, file, start, end }
+  let clips = [];
+  let clipSeq = 0;
+
+  const clipListEl = document.getElementById('clip-list');
+  const optionsCard = document.getElementById('options-card');
+  const addMoreBtn = document.getElementById('add-more-btn');
+  const mainFileInput = document.getElementById('main-file');
+  const dropzone = document.getElementById('dropzone');
+
+  function addFiles(fileList) {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('video/') || /\.(mp4|mkv|mov|avi|webm|flv|wmv|m4v|3gp|ts)$/i.test(f.name));
+    if (files.length === 0) {
+      showAlert('❌ Koi valid video file nahi mili!', 'error');
+      return;
+    }
+    files.forEach(f => {
+      clips.push({ id: 'c' + (clipSeq++), file: f, start: '', end: '' });
+    });
+    renderClipList();
+    showAlert(`✅ ${files.length} clip(s) add ho gaye`, 'success');
+  }
+
+  function renderClipList() {
+    clipListEl.innerHTML = '';
+    clips.forEach((clip, idx) => {
+      const item = document.createElement('div');
+      item.className = 'clip-item';
+      item.draggable = true;
+      item.dataset.id = clip.id;
+      item.innerHTML = `
+        <span class="clip-handle" title="Drag to reorder">⠿</span>
+        <span class="clip-num">${idx + 1}</span>
+        <div class="clip-body">
+          <div class="clip-name">${clip.file.name}</div>
+          <div class="clip-meta">${formatBytes(clip.file.size)}</div>
+          <div class="clip-trim">
+            <label>Start (sec)</label>
+            <input type="number" min="0" step="0.1" placeholder="0" class="trim-start" value="${clip.start}">
+            <label>End (sec)</label>
+            <input type="number" min="0" step="0.1" placeholder="Full" class="trim-end" value="${clip.end}">
+          </div>
+        </div>
+        <div class="clip-actions">
+          <button type="button" class="clip-move move-up" title="Move Up">▲</button>
+          <button type="button" class="clip-move move-down" title="Move Down">▼</button>
+          <button type="button" class="clip-remove" title="Remove">✕</button>
+        </div>
+      `;
+
+      item.querySelector('.trim-start').addEventListener('input', e => { clip.start = e.target.value; });
+      item.querySelector('.trim-end').addEventListener('input', e => { clip.end = e.target.value; });
+      item.querySelector('.move-up').addEventListener('click', () => moveClip(idx, idx - 1));
+      item.querySelector('.move-down').addEventListener('click', () => moveClip(idx, idx + 1));
+      item.querySelector('.clip-remove').addEventListener('click', () => removeClip(idx));
+
+      // Drag & drop reorder
+      item.addEventListener('dragstart', () => { item.classList.add('dragging'); item.dataset.dragging = '1'; });
+      item.addEventListener('dragend', () => { item.classList.remove('dragging'); renderClipList(); });
+      item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('dragover-item'); });
+      item.addEventListener('dragleave', () => item.classList.remove('dragover-item'));
+      item.addEventListener('drop', e => {
+        e.preventDefault();
+        item.classList.remove('dragover-item');
+        const draggingEl = clipListEl.querySelector('.dragging');
+        if (!draggingEl || draggingEl === item) return;
+        const fromId = draggingEl.dataset.id, toId = item.dataset.id;
+        const fromIdx = clips.findIndex(c => c.id === fromId);
+        const toIdx = clips.findIndex(c => c.id === toId);
+        moveClip(fromIdx, toIdx);
+      });
+
+      clipListEl.appendChild(item);
+    });
+
+    optionsCard.style.display = clips.length >= 1 ? 'block' : 'none';
+    addMoreBtn.style.display = clips.length >= 1 ? 'inline-block' : 'none';
+    if (clips.length === 1) {
+      showAlert('ℹ️ Kam se kam 2 clips add karein merge karne ke liye', 'warn');
+    }
+  }
+
+  function moveClip(fromIdx, toIdx) {
+    if (toIdx < 0 || toIdx >= clips.length || fromIdx === toIdx) return;
+    const [moved] = clips.splice(fromIdx, 1);
+    clips.splice(toIdx, 0, moved);
+    renderClipList();
+  }
+
+  function removeClip(idx) {
+    clips.splice(idx, 1);
+    renderClipList();
+  }
+
+  mainFileInput.addEventListener('change', e => { addFiles(e.target.files); mainFileInput.value = ''; });
+  addMoreBtn.addEventListener('click', () => mainFileInput.click());
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    addFiles(e.dataTransfer.files);
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    clips = [];
+    renderClipList();
+    document.getElementById('progress-wrap').style.display = 'none';
+    document.getElementById('result-card').classList.remove('show');
+  });
+
+  const RES_MAP = { '1080p': [1920, 1080], '720p': [1280, 720], '480p': [854, 480], '360p': [640, 360] };
+  const QUALITY_BITRATE = { high: '8M', medium: '4M', low: '2M' };
+  const FORMAT_CONF = {
+    mp4:  { ext: 'mp4',  mime: 'video/mp4',        vcodec: 'libx264', acodec: 'aac' },
+    mkv:  { ext: 'mkv',  mime: 'video/x-matroska', vcodec: 'libx264', acodec: 'aac' },
+    mov:  { ext: 'mov',  mime: 'video/quicktime',  vcodec: 'libx264', acodec: 'aac' },
+    webm: { ext: 'webm', mime: 'video/webm',       vcodec: 'libvpx-vp9', acodec: 'libopus' },
+  };
+
+  async function performMerge() {
+    if (clips.length < 2) {
+      showAlert('❌ Kam se kam 2 clips add karein!', 'error');
+      return;
+    }
+
+    const outputFormat = document.getElementById('output-format').value;
+    const resolutionKey = document.getElementById('resolution').value;
+    const quality = document.getElementById('quality').value;
+    const fps = document.getElementById('framerate').value;
+    const keepAudio = document.getElementById('audio-opt').value === 'keep';
+    const [W, H] = RES_MAP[resolutionKey];
+    const vBitrate = QUALITY_BITRATE[quality];
+    const fmt = FORMAT_CONF[outputFormat];
+
+    const progressWrap = document.getElementById('progress-wrap');
+    const pbar = document.getElementById('pbar');
+    const ppercent = document.getElementById('ppercent');
+    const pmsg = document.getElementById('pmsg');
+    const processBtn = document.getElementById('process-btn');
+
+    progressWrap.style.display = 'block';
+    pbar.style.width = '0%';
+    ppercent.textContent = '0%';
+    pmsg.textContent = 'FFmpeg engine load ho raha hai (pehli baar thoda time lagega)...';
+    processBtn.disabled = true;
+    document.getElementById('result-card').classList.remove('show');
+
+    let ffmpeg;
+    try {
+      ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load (overall)');
+    } catch (err) {
+      console.error('FFmpeg load error:', err);
+      showAlert('❌ FFmpeg load nahi ho paya: ' + (err.message || 'Unknown error') + '. Page reload karke phir try karein.', 'error');
+      progressWrap.style.display = 'none';
+      processBtn.disabled = false;
+      return;
+    }
+
+    const onProgress = ({ progress }) => {
+      const pct = Math.max(0, Math.min(100, Math.round(progress * 100)));
+      pbar.style.width = pct + '%';
+      ppercent.textContent = pct + '%';
+    };
+    ffmpeg.on('progress', onProgress);
+
+    const inputNames = [];
+    try {
+      pmsg.textContent = 'Clips load ho rahe hain...';
+      for (let i = 0; i < clips.length; i++) {
+        const c = clips[i];
+        const inName = `in${i}.${(c.file.name.split('.').pop() || 'mp4')}`;
+        await ffmpeg.writeFile(inName, await fetchFile(c.file));
+        inputNames.push(inName);
+      }
+
+      // Auto-detect (ffprobe-style) whether each clip actually has an
+      // audio stream + its total duration, so "Keep Audio" never fails
+      // on a silent clip — we substitute silent audio for it instead.
+      if (keepAudio) {
+        pmsg.textContent = 'Clips analyze ho rahe hain (audio detect)...';
+        for (let i = 0; i < clips.length; i++) {
+          const probe = await probeClip(ffmpeg, inputNames[i]);
+          clips[i]._hasAudio = probe.hasAudio;
+          clips[i]._duration = probe.duration;
+        }
+        const silentCount = clips.filter(c => !c._hasAudio).length;
+        if (silentCount > 0) {
+          showAlert(`ℹ️ ${silentCount} clip(s) mein audio nahi mila — un mein silent audio auto-add ho raha hai.`, 'warn');
+        }
+      }
+
+      pmsg.textContent = 'Videos merge ho rahe hain (thoda time lagega)...';
+
+      const args = [];
+      inputNames.forEach(n => { args.push('-i', n); });
+
+      let filter = '';
+      const vLabels = [];
+      const aLabels = [];
+      clips.forEach((c, i) => {
+        const start = c.start && !isNaN(parseFloat(c.start)) ? parseFloat(c.start) : 0;
+        const end = c.end && !isNaN(parseFloat(c.end)) ? parseFloat(c.end) : null;
+        const trimExpr = end !== null && end > start ? `trim=start=${start}:end=${end}` : `trim=start=${start}`;
+        filter += `[${i}:v]${trimExpr},setpts=PTS-STARTPTS,scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=${fps}[v${i}];`;
+        vLabels.push(`[v${i}]`);
+        if (keepAudio) {
+          if (c._hasAudio) {
+            const atrimExpr = end !== null && end > start ? `atrim=start=${start}:end=${end}` : `atrim=start=${start}`;
+            filter += `[${i}:a]${atrimExpr},asetpts=PTS-STARTPTS,aresample=async=1[a${i}];`;
+          } else {
+            // No audio track detected — generate matching-length silence
+            // so the concat filter's stream layout stays consistent.
+            let segDuration;
+            if (end !== null && end > start) segDuration = end - start;
+            else if (c._duration) segDuration = Math.max(0.1, c._duration - start);
+            else segDuration = 15; // safety fallback when duration couldn't be parsed
+            filter += `anullsrc=channel_layout=stereo:sample_rate=44100:d=${segDuration.toFixed(2)}[a${i}];`;
+          }
+          aLabels.push(`[a${i}]`);
+        }
+      });
+
+
+      if (keepAudio) {
+        let pairs = '';
+        clips.forEach((c, i) => { pairs += `${vLabels[i]}${aLabels[i]}`; });
+        filter += `${pairs}concat=n=${clips.length}:v=1:a=1[outv][outa]`;
+      } else {
+        filter += `${vLabels.join('')}concat=n=${clips.length}:v=1:a=0[outv]`;
+      }
+
+      args.push('-filter_complex', filter, '-map', '[outv]');
+      if (keepAudio) args.push('-map', '[outa]');
+
+      args.push('-c:v', fmt.vcodec, '-b:v', vBitrate);
+      if (fmt.vcodec === 'libx264') args.push('-preset', 'fast', '-pix_fmt', 'yuv420p');
+      if (keepAudio) {
+        args.push('-c:a', fmt.acodec, '-b:a', '128k');
+      } else {
+        args.push('-an');
+      }
+      if (outputFormat === 'mp4') args.push('-movflags', '+faststart');
+
+      const outputName = `merged.${fmt.ext}`;
+      args.push(outputName);
+
+      await ffmpeg.exec(args);
+      const outData = await ffmpeg.readFile(outputName);
+
+      // Cleanup virtual FS
+      for (const n of inputNames) { try { await ffmpeg.deleteFile(n); } catch (e) {} }
+      try { await ffmpeg.deleteFile(outputName); } catch (e) {}
+      ffmpeg.off('progress', onProgress);
+
+      pbar.style.width = '100%';
+      ppercent.textContent = '100%';
+      pmsg.textContent = 'Done!';
+
+      const blob = new Blob([outData.buffer], { type: fmt.mime });
+      const totalOriginal = clips.reduce((s, c) => s + c.file.size, 0);
+
+      const rc = document.getElementById('result-card');
+      rc.classList.add('show');
+      document.getElementById('stat-row').innerHTML = `
+        <div class="stat-box"><div class="stat-val">${clips.length}</div><div class="stat-lbl">Clips Merged</div></div>
+        <div class="stat-box"><div class="stat-val">${formatBytes(totalOriginal)}</div><div class="stat-lbl">Original Total</div></div>
+        <div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>
+      `;
+      document.getElementById('dl-btn').onclick = () => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = outputName; a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      showAlert('✅ Videos successfully merge ho gaye!', 'success');
+    } catch (err) {
+      console.error('Merge error:', err);
+      showAlert('❌ Merge fail ho gaya: ' + (err.message || 'Unknown error') + '. Trim values check karein ya "Remove Audio" try karein.', 'error');
+      try { ffmpeg.off('progress', onProgress); } catch (e) {}
+    } finally {
+      processBtn.disabled = false;
+    }
+  }
+
+  document.getElementById('process-btn').addEventListener('click', performMerge);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(b => {
+    b.addEventListener('click', () => {
+      b.classList.toggle('open');
+      b.nextElementSibling.classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>
