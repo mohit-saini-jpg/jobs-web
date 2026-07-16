@@ -317,37 +317,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="step-panel active" id="panel-0">
   <div class="card">
     <div class="card-title">📐 Photo Size Chunein</div>
-    <div class="size-grid" id="sizeGrid">
-      <div class="size-card active" data-w="413" data-h="531" data-label="India Passport (35×45mm)" onclick="selectSize(this)">
-        <canvas class="size-demo" width="35" height="45" style="width:35px;height:45px"></canvas>
-        <div class="sc-title">35 × 45 mm</div><div class="sc-mm">413 × 531 px @ 300 DPI</div>
-        <div class="sc-country">India, UK, Australia, Europe</div>
-      </div>
-      <div class="size-card" data-w="600" data-h="600" data-label="USA Visa (2×2 inch)" onclick="selectSize(this)">
-        <canvas class="size-demo" width="45" height="45" style="width:45px;height:45px"></canvas>
-        <div class="sc-title">2 × 2 Inch</div><div class="sc-mm">600 × 600 px @ 300 DPI</div>
-        <div class="sc-country">USA, Philippines</div>
-      </div>
-      <div class="size-card" data-w="590" data-h="826" data-label="Canada Passport" onclick="selectSize(this)">
-        <canvas class="size-demo" width="36" height="50" style="width:36px;height:50px"></canvas>
-        <div class="sc-title">50 × 70 mm</div><div class="sc-mm">590 × 826 px @ 300 DPI</div>
-        <div class="sc-country">Canada</div>
-      </div>
-      <div class="size-card" data-w="295" data-h="413" data-label="PAN / Aadhaar" onclick="selectSize(this)">
-        <canvas class="size-demo" width="25" height="35" style="width:25px;height:35px"></canvas>
-        <div class="sc-title">25 × 35 mm</div><div class="sc-mm">295 × 413 px @ 300 DPI</div>
-        <div class="sc-country">PAN Card / Aadhaar</div>
-      </div>
-      <div class="size-card" data-w="200" data-h="230" data-label="SSC / IBPS Form" onclick="selectSize(this)">
-        <canvas class="size-demo" width="35" height="40" style="width:35px;height:40px"></canvas>
-        <div class="sc-title">200 × 230 px</div><div class="sc-mm">SSC / IBPS Standard</div>
-        <div class="sc-country">Sarkari Form Upload</div>
-      </div>
-      <div class="size-card" data-w="0" data-h="0" data-label="Custom" onclick="selectSize(this)">
-        <canvas class="size-demo" width="40" height="40" style="width:40px;height:40px;background:#fde68a;border-color:#f59e0b"></canvas>
-        <div class="sc-title">Custom</div><div class="sc-mm">Apna size daalo</div>
-        <div class="sc-country" style="color:var(--warn)">Width × Height</div>
-      </div>
+    <div class="form-group" style="margin-bottom:14px"><label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Size Preset (Passport / Social / Print)</label>
+      <select id="sizePreset" onchange="onSizePresetChange()" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:var(--ink)"></select>
     </div>
     <div class="custom-size-row" id="customRow" style="display:none">
       <label>Width</label>
@@ -707,16 +678,61 @@ function goStep(n){
 function unlock(n){if(n>S.maxUnlocked)S.maxUnlocked=n;}
 
 // ── SIZE ───────────────────────────────────────────────
-function selectSize(el){
-  document.querySelectorAll('.size-card').forEach(function(c){c.classList.remove('active');});
-  el.classList.add('active');
-  var w=parseInt(el.dataset.w),h=parseInt(el.dataset.h),isC=(w===0&&h===0);
+var SIZE_PRESET_GROUPS=[
+  {g:'Passport / ID',items:[
+    ['India / UK / Australia / Europe — 35×45mm',413,531],
+    ['USA / Philippines — 2×2 Inch',600,600],
+    ['Canada Passport — 50×70mm',590,826],
+    ['PAN Card / Aadhaar — 25×35mm',295,413],
+    ['SSC / IBPS Form — 200×230px',200,230]
+  ]},
+  {g:'Social Media',items:[
+    ['Instagram Square (1080×1080)',1080,1080],
+    ['Instagram Profile (320×320)',320,320],
+    ['Facebook Profile (170×170)',170,170],
+    ['LinkedIn Photo (400×400)',400,400],
+    ['WhatsApp DP (500×500)',500,500],
+    ['Twitter / X Profile (400×400)',400,400]
+  ]},
+  {g:'Print',items:[
+    ['Postcard 6×4in (1800×1200)',1800,1200],
+    ['4×6 Photo (1200×1800)',1200,1800],
+    ['5×7 Photo (1500×2100)',1500,2100],
+    ['8×10 Photo (2400×3000)',2400,3000],
+    ['A4 (2480×3508)',2480,3508]
+  ]}
+];
+function populateSizePresets(){
+  var sel=document.getElementById('sizePreset');if(!sel)return;
+  var custOpt=document.createElement('option');custOpt.value='custom';custOpt.textContent='Custom — Apna size daalo (Width × Height)';sel.appendChild(custOpt);
+  SIZE_PRESET_GROUPS.forEach(function(grp){
+    var og=document.createElement('optgroup');og.label=grp.g;
+    grp.items.forEach(function(it){
+      var o=document.createElement('option');
+      o.value=it[1]+'x'+it[2];
+      o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);o.setAttribute('data-label',it[0]);
+      o.textContent=it[0]+' — '+it[1]+'×'+it[2]+'px';
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  sel.selectedIndex=1; // default: first Passport/ID item (India 35×45mm)
+  onSizePresetChange();
+}
+function onSizePresetChange(){
+  var sel=document.getElementById('sizePreset');if(!sel)return;
+  var opt=sel.options[sel.selectedIndex];
+  var isC=(sel.value==='custom');
   document.getElementById('customRow').style.display=isC?'flex':'none';
-  if(!isC){S.targetW=w;S.targetH=h;S.label=el.dataset.label;}
-  else updateCustomPx();
+  if(!isC){
+    S.targetW=parseInt(opt.getAttribute('data-w'));
+    S.targetH=parseInt(opt.getAttribute('data-h'));
+    S.label=opt.getAttribute('data-label');
+  } else updateCustomPx();
   document.getElementById('ratioHint').textContent=S.label;
   if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(S.targetW/S.targetH);
 }
+populateSizePresets();
 function updateCustomPx(){
   var w=parseFloat(document.getElementById('customW').value)||400;
   var h=parseFloat(document.getElementById('customH').value)||500;
@@ -1018,47 +1034,34 @@ function cropAndNext(){
 }
 
 // ══════════════════════════════════════════════════════
-// BACKGROUND REMOVAL — using @imgly/background-removal (CDN ESM)
-// Pure WASM, runs 100% in browser, no API key
+// BACKGROUND REMOVAL — using MediaPipe multiclass selfie segmentation (CDN)
+// Pure WASM/GPU, runs 100% in browser, no API key, hair/edge-precise
 // ══════════════════════════════════════════════════════
-var bgRemoveLib=null;
-var bgLibLoading=false;
-var bgLibCallbacks=[];
+var mpVision=null;
+var mpSegmenter=null;
+var MP_MODEL_URL='https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
 
 function loadBgLib(cb){
-  if(bgRemoveLib){cb(null,bgRemoveLib);return;}
-  if(bgLibLoading){bgLibCallbacks.push(cb);return;}
-  bgLibLoading=true;
-  bgLibCallbacks.push(cb);
-  // Load the ESM module. IMPORTANT: the raw dist/index.mjs has BARE imports
-  // (lodash, ndarray, onnxruntime-web) that a browser cannot resolve, so a direct
-  // import() of it fails. Use CDN endpoints that pre-bundle/rewrite those deps into
-  // browser-loadable ESM: jsdelivr "+esm", with esm.sh as a fallback.
-  var cdnUrls=[
-    'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm',
-    'https://esm.sh/@imgly/background-removal@1.4.5'
-  ];
-  (function tryLoad(i){
-    if(i>=cdnUrls.length){
-      bgLibLoading=false;
-      var e=new Error('Background-removal module kisi bhi CDN se load nahi hua');
-      bgLibCallbacks.forEach(function(fn){fn(e,null);});
-      bgLibCallbacks=[];
-      return;
+  if(mpSegmenter){cb(null,mpSegmenter);return;}
+  (async function(delegate){
+    try{
+      var mod=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+      if(!mpVision)mpVision=await mod.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+      try{
+        mpSegmenter=await mod.ImageSegmenter.createFromOptions(mpVision,{baseOptions:{modelAssetPath:MP_MODEL_URL,delegate:delegate},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+      }catch(gpuErr){
+        if(delegate==='GPU'){
+          mpSegmenter=await mod.ImageSegmenter.createFromOptions(mpVision,{baseOptions:{modelAssetPath:MP_MODEL_URL,delegate:'CPU'},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+        } else { throw gpuErr; }
+      }
+      cb(null,mpSegmenter);
+    }catch(err){
+      cb(err,null);
     }
-    import(cdnUrls[i])
-      .then(function(mod){
-        bgRemoveLib=mod;
-        bgLibLoading=false;
-        bgLibCallbacks.forEach(function(fn){fn(null,mod);});
-        bgLibCallbacks=[];
-      })
-      .catch(function(err){
-        console.warn('bg-removal CDN failed:',cdnUrls[i],err&&err.message);
-        tryLoad(i+1);   // next CDN
-      });
-  })(0);
+  })('GPU');
 }
+
+function smoothstep(e0,e1,x){var t=Math.min(1,Math.max(0,(x-e0)/(e1-e0)));return t*t*(3-2*t);}
 
 function onBgRemoveToggle(){
   var checked=document.getElementById('bgRemoveToggle').checked;
@@ -1145,9 +1148,9 @@ function doBgRemove(){
   if(!S.croppedCanvas)return;
   var loader=document.getElementById('bgLoader');
   loader.classList.add('show');
-  document.getElementById('bgLoaderMsg').textContent='AI model load ho raha hai (first time ~10-15 sec)...';
+  document.getElementById('bgLoaderMsg').textContent='AI model load ho raha hai (first time ~5-10 sec)...';
 
-  loadBgLib(function(err,lib){
+  loadBgLib(function(err,segmenter){
     if(err){
       loader.classList.remove('show');
       alert('Background removal load nahi hua. Internet connection check karein aur dobara try karein.\n\nError: '+err.message);
@@ -1156,41 +1159,52 @@ function doBgRemove(){
       return;
     }
     document.getElementById('bgLoaderMsg').textContent='Background remove ho raha hai...';
-    // Convert canvas to blob
-    S.croppedCanvas.toBlob(function(blob){
-      lib.removeBackground(blob,{
-        // Model + WASM data live on the official @imgly data CDN (chunked/hashed).
-        // The old jsdelivr /dist/ path did NOT host these files → removal failed.
-        publicPath:'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-        progress:function(key,current,total){
-          var pct=total>0?Math.round(current/total*100):0;
-          document.getElementById('bgLoaderMsg').textContent='Processing: '+pct+'%';
-        }
-      }).then(function(resultBlob){
-        // Convert result blob → canvas with transparency
-        var url=URL.createObjectURL(resultBlob);
-        var img=new Image();
-        img.onload=function(){
-          var c=document.createElement('canvas');
-          c.width=S.targetW;c.height=S.targetH;
-          var ctx=c.getContext('2d');
-          ctx.clearRect(0,0,c.width,c.height);
-          ctx.drawImage(img,0,0,c.width,c.height);
-          URL.revokeObjectURL(url);
-          refineCutout(c);   // sharpen mask + de-fringe → no old-bg halo on edges
-          S.removedBgCanvas=c;
-          loader.classList.remove('show');
-          showRemovedPreview(c);
-          renderBgFinalPreview();
-        };
-        img.src=url;
-      }).catch(function(e){
-        loader.classList.remove('show');
-        alert('Background remove karne mein error aaya: '+e.message);
-        document.getElementById('bgRemoveToggle').checked=false;
-        S.bgRemoveEnabled=false;
-      });
-    },'image/png');
+    try{
+      var iw=S.croppedCanvas.width,ih=S.croppedCanvas.height;
+      var result=segmenter.segment(S.croppedCanvas);
+      var confidenceMasks=result.confidenceMasks;
+      if(!confidenceMasks||!confidenceMasks.length)throw new Error('AI mask nahi mila');
+      var bgMask=confidenceMasks[0],mw=bgMask.width,mh=bgMask.height,bgArr=bgMask.getAsFloat32Array();
+
+      var maskCanvas=document.createElement('canvas');maskCanvas.width=mw;maskCanvas.height=mh;
+      var mctx=maskCanvas.getContext('2d'),mdata=mctx.createImageData(mw,mh);
+      for(var i=0;i<bgArr.length;i++){var v=Math.round((1-bgArr[i])*255);mdata.data[i*4]=v;mdata.data[i*4+1]=v;mdata.data[i*4+2]=v;mdata.data[i*4+3]=255;}
+      mctx.putImageData(mdata,0,0);
+
+      var upCanvas=document.createElement('canvas');upCanvas.width=iw;upCanvas.height=ih;
+      var uctx=upCanvas.getContext('2d');uctx.imageSmoothingEnabled=true;uctx.imageSmoothingQuality='high';
+      uctx.drawImage(maskCanvas,0,0,iw,ih);
+      var maskFull=uctx.getImageData(0,0,iw,ih);
+      confidenceMasks.forEach(function(m){m.close();});
+
+      var srcCtx=S.croppedCanvas.getContext('2d');
+      var srcData=srcCtx.getImageData(0,0,iw,ih);
+      var srcPix=srcData.data,maskPix=maskFull.data;
+      var lo=0.35,hi=0.65;
+      for(var p=0;p<iw*ih;p++){
+        var idx=p*4;
+        var alpha=smoothstep(lo,hi,maskPix[idx]/255);
+        srcPix[idx+3]=Math.round(alpha*255);
+      }
+
+      var c=document.createElement('canvas');
+      c.width=S.targetW;c.height=S.targetH;
+      var ctx=c.getContext('2d');
+      var tmp=document.createElement('canvas');tmp.width=iw;tmp.height=ih;
+      tmp.getContext('2d').putImageData(srcData,0,0);
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.drawImage(tmp,0,0,c.width,c.height);
+      refineCutout(c);   // sharpen mask + de-fringe → no old-bg halo on edges
+      S.removedBgCanvas=c;
+      loader.classList.remove('show');
+      showRemovedPreview(c);
+      renderBgFinalPreview();
+    }catch(e){
+      loader.classList.remove('show');
+      alert('Background remove karne mein error aaya: '+e.message);
+      document.getElementById('bgRemoveToggle').checked=false;
+      S.bgRemoveEnabled=false;
+    }
   });
 }
 
