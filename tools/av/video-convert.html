@@ -559,25 +559,31 @@
 
   // Reads ffmpeg.js's own source to find whatever numbered worker-chunk
   // filename THIS exact build actually references (e.g. 814.ffmpeg.js).
-  // Hardcoding that number breaks silently whenever the CDN build changes
-  // it, so we resolve it fresh every time instead.
   async function resolveWorkerChunkURL(ffmpegBase) {
     const resp = await fetch(`${ffmpegBase}/ffmpeg.js`);
     if (!resp.ok) throw new Error('ffmpeg.js fetch failed: ' + resp.status);
     const text = await resp.text();
-    const m = text.match(/([\w-]*\d[\w-]*\.ffmpeg\.js)/);
-    if (!m) throw new Error('Worker chunk filename ffmpeg.js mein nahi mila');
-    return toBlobURL(`${ffmpegBase}/${m[1]}`, 'text/javascript');
+    // Webpack bundles this as e.u(814) → "814.ffmpeg.js", not a literal
+    // string, so we match the bare chunk-id call instead of a filename.
+    const m = text.match(/\.u\((\d+)\)/) || text.match(/(\d+)\.ffmpeg\.js/);
+    if (!m) throw new Error('Worker chunk id ffmpeg.js mein nahi mila');
+    return toBlobURL(`${ffmpegBase}/${m[1]}.ffmpeg.js`, 'text/javascript');
   }
 
   async function getFFmpeg() {
     if (ffmpegInstance) return ffmpegInstance;
     const { FFmpeg } = FFmpegWASM;
 
-    // Two CDN mirrors as fallback in case one is slow/blocked/stale.
+    // IMPORTANT: passing classWorkerURL makes this library spin up the
+    // worker with {type:"module"}. That worker's own code path needs an
+    // ES-module-flavoured ffmpeg-core (dist/esm), NOT the classic dist/umd
+    // build — pairing classWorkerURL with a umd core is what was silently
+    // hanging before. @ffmpeg/core@0.12.10's esm build also has a known,
+    // reported bug (ffmpegwasm/ffmpeg.wasm#868); 0.12.6 esm is the
+    // confirmed-working pairing with @ffmpeg/ffmpeg@0.12.10.
     const pairs = [
-      { core: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd', ffmpeg: 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd' },
-      { core: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd', ffmpeg: 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd' }
+      { core: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm', ffmpeg: 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd' },
+      { core: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm', ffmpeg: 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd' }
     ];
 
     let lastErr = null;
@@ -587,11 +593,6 @@
       try {
         const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'), 20000, 'Core JS fetch');
         const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'), 30000, 'Core WASM fetch');
-        // classWorkerURL IS required: browsers refuse to construct a Worker
-        // from a cross-origin CDN script, and this library doesn't reject
-        // its load() promise when that silently fails — it just hangs.
-        // Fetching the worker chunk ourselves and handing it back as a
-        // same-origin blob URL avoids that entirely.
         const classWorkerURL = await withTimeout(resolveWorkerChunkURL(ffmpegBase), 20000, 'Worker script resolve');
         await withTimeout(instance.load({ coreURL, wasmURL, classWorkerURL }), 30000, 'FFmpeg engine load');
         ffmpegInstance = instance;
