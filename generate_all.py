@@ -1260,15 +1260,17 @@ _JSONLD_RE = re.compile(
 def _patch_jsonld(page_path, new_html):
     """Replace JSON-LD <script> blocks in existing page with fresh ones.
     All other page content is preserved. Fixes schema fields on permanent pages.
+    Returns True if the file was actually rewritten (thread-safe: does NOT
+    touch any shared/global counter itself — callers that run this from a
+    worker pool must aggregate the return value on the main thread).
     """
-    global _schema_patched
     try:
         old_html = page_path.read_text(encoding='utf-8')
     except Exception:
-        return
+        return False
     new_blocks = _JSONLD_RE.findall(new_html)
     if not new_blocks:
-        return
+        return False
     # Build one replacement string with all new JSON-LD blocks
     replacement = '\n'.join(new_blocks)
     # Strip all existing JSON-LD from old page
@@ -1281,12 +1283,12 @@ def _patch_jsonld(page_path, new_html):
     else:
         patched = replacement + stripped
     if patched == old_html:
-        return  # no change needed
+        return False  # no change needed
     try:
         page_path.write_text(patched, encoding='utf-8')
-        _schema_patched += 1
+        return True
     except Exception:
-        pass
+        return False
 
 _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 
@@ -1429,7 +1431,7 @@ def write(path, html_content, skip_if_exists=False):
     skip_if_exists=True  -> job detail pages: skip if content hash unchanged
     skip_if_exists=False -> listing/category/section pages: always fully rewrite
     """
-    global written
+    global written, _schema_patched
     p = Path(path)
     # ── JUNK-SLUG GUARD: never CREATE a brand-new junk /jobs/<slug>/ page (the
     # source of future 404s). Fires ONLY when the file is absent, so every page
@@ -1445,7 +1447,8 @@ def write(path, html_content, skip_if_exists=False):
             existing_bytes = p.read_bytes()
             existing_m = _HASH_RE.search(existing_bytes.decode('utf-8', errors='replace'))
             if existing_m and existing_m.group(1) == new_m.group(1):
-                _patch_jsonld(p, html_content)
+                if _patch_jsonld(p, html_content):
+                    _schema_patched += 1
                 return  # content hash unchanged; JSON-LD patch only
             # Hash differs → rewrite. But FIRST carry over any AI-injected CARDS
             # blocks (Expert Analysis / Overview / Salary Insights etc.) so the
@@ -1462,7 +1465,8 @@ def write(path, html_content, skip_if_exists=False):
             existing_has_ai = b'ai_overview' in existing_bytes or b'fa-circle-info' in existing_bytes
             new_has_ai = 'ai_overview' in html_content or 'Expert Analysis' in html_content
             if not (new_has_ai and not existing_has_ai):
-                _patch_jsonld(p, html_content)
+                if _patch_jsonld(p, html_content):
+                    _schema_patched += 1
                 return
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, 'w', encoding='utf-8') as f:
@@ -6570,52 +6574,82 @@ sindex       = {}  # for sections-index.json
 # Iska matlab: JSON se job remove ho jaye to bhi uska HTML page kabhi delete
 # nahi hoga. Sirf naye jobs ke pages banenge. Category listing har baar update
 # hogi (kyunki woh skip_if_exists=False se likhte hain).
+#
+# PERF: this touches every existing job page (thousands) every single run, and
+# each page needs its own file read + build_schemas() + a possible file write —
+# almost all wall-clock time here is disk I/O + independent per-file CPU work,
+# with no cross-file dependency. That makes it a clean fit for a thread pool:
+# CPython releases the GIL during file I/O, so concurrent reads/writes overlap
+# instead of serializing. _preload_one() below does NOT touch any shared dict —
+# it returns a plain result tuple, and only the main thread (iterating
+# as_completed) writes to seen_jobs/seen_fp/jobs_index, so no locking is needed.
 import glob as _glob_preload
+import time as _time_preload_diag
+from concurrent.futures import ThreadPoolExecutor as _TPE_preload, as_completed as _as_completed_preload
+_t_preload_start = _time_preload_diag.time()   # kept: cheap, useful ops signal in CI logs
 _H1_RE_PRELOAD = re.compile(r'<h1 class="detail-h1">([^<]+)</h1>')
 _existing_disk_pages = 0
-for _existing_html in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html')):
+
+def _preload_one(_existing_html):
     _eslug = os.path.basename(os.path.dirname(_existing_html))
-    if not _eslug or _eslug in seen_jobs:
-        continue
-    # Title fingerprint bhi register karo — cross-source dedup ke liye
+    if not _eslug:
+        return None
     try:
         _eh = open(_existing_html, encoding='utf-8', errors='ignore').read(30000)
         _em = _H1_RE_PRELOAD.search(_eh)
-        if _em:
-            _etitle = _em.group(1).strip()
-            # Register fingerprint for cross-source dedup (prevents two JSON sources
-            # from building two pages for the same job). Do NOT add to seen_jobs —
-            # that would block the FJA/SARK loops from rebuilding existing pages
-            # when content changes (hash differs or page has no TSJ_HASH yet).
-            _efp = _fingerprint(_etitle) if '_fingerprint' in globals() else ''
-            if _efp and _efp not in seen_fp:
-                seen_fp[_efp] = _eslug
-            jobs_index[_eslug] = {'cat': '__disk__', 'title': _etitle[:120], 'last_date': ''}
-            _existing_disk_pages += 1
-            # ── SCHEMA PATCH: load saved job JSON and patch JSON-LD in-place ──
-            # This ensures pages NOT regenerated this deploy still get
-            # updated baseSalary, addressRegion, postalCode, validThrough.
-            try:
-                _data_json = ROOT / 'jobs' / 'data' / f'{_eslug}.json'
-                if _data_json.exists():
-                    with open(_data_json, encoding='utf-8') as _djf:
-                        _djob = json.load(_djf)
-                else:
-                    # No saved JSON (old/orphan page) — reconstruct from HTML
-                    _djob = _reconstruct_job_from_html(_eh, _etitle, _eslug)
-                _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
-                _dhtml  = build_schemas(_djob, _dcanon, [], _eslug)
-                _patch_jsonld(Path(_existing_html), _dhtml)
-            except Exception:
-                pass
-        else:
+        if not _em:
             # H1 nahi mila — phir bhi slug ko seen maano taaki overwrite na ho
-            seen_jobs[_eslug] = '__disk__'
-            _existing_disk_pages += 1
+            return ('no_h1', _eslug, None, None, False)
+        _etitle = _em.group(1).strip()
+        # Title fingerprint bhi register karo — cross-source dedup ke liye.
+        # Do NOT add to seen_jobs — that would block the FJA/SARK loops from
+        # rebuilding existing pages when content changes (hash differs or
+        # page has no TSJ_HASH yet).
+        _efp = _fingerprint(_etitle) if '_fingerprint' in globals() else ''
+        _patched = False
+        # ── SCHEMA PATCH: load saved job JSON and patch JSON-LD in-place ──
+        # This ensures pages NOT regenerated this deploy still get
+        # updated baseSalary, addressRegion, postalCode, validThrough.
+        try:
+            _data_json = ROOT / 'jobs' / 'data' / f'{_eslug}.json'
+            if _data_json.exists():
+                with open(_data_json, encoding='utf-8') as _djf:
+                    _djob = json.load(_djf)
+            else:
+                # No saved JSON (old/orphan page) — reconstruct from HTML
+                _djob = _reconstruct_job_from_html(_eh, _etitle, _eslug)
+            _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
+            _dhtml  = build_schemas(_djob, _dcanon, [], _eslug)
+            _patched = _patch_jsonld(Path(_existing_html), _dhtml)
+        except Exception:
+            pass
+        return ('ok', _eslug, _etitle, _efp, _patched)
     except Exception:
-        seen_jobs[_eslug] = '__disk__'
-        _existing_disk_pages += 1
-print(f"  [permanent-pages] {_existing_disk_pages} existing disk pages pre-loaded (will never be deleted or regenerated)")
+        return ('error', _eslug, None, None, False)
+
+_preload_files = [f for f in _glob_preload.glob(str(ROOT / 'jobs' / '*' / 'index.html'))
+                   if os.path.basename(os.path.dirname(f)) not in seen_jobs]
+with _TPE_preload(max_workers=min(32, (os.cpu_count() or 4) * 4)) as _pool_preload:
+    _preload_futs = [_pool_preload.submit(_preload_one, _f) for _f in _preload_files]
+    for _fut in _as_completed_preload(_preload_futs):
+        _pres = _fut.result()
+        if _pres is None:
+            continue
+        _pkind, _peslug, _petitle, _pefp, _ppatched = _pres
+        if _peslug in seen_jobs:
+            continue
+        if _pkind == 'ok':
+            if _pefp and _pefp not in seen_fp:
+                seen_fp[_pefp] = _peslug
+            jobs_index[_peslug] = {'cat': '__disk__', 'title': (_petitle or '')[:120], 'last_date': ''}
+            _existing_disk_pages += 1
+            if _ppatched:
+                _schema_patched += 1
+        else:
+            seen_jobs[_peslug] = '__disk__'
+            _existing_disk_pages += 1
+print(f"  [permanent-pages] {_existing_disk_pages} existing disk pages pre-loaded in "
+      f"{_time_preload_diag.time() - _t_preload_start:.1f}s (will never be deleted or regenerated)")
 
 # ── One Job = One URL: content fingerprint ───────────────────────────────────
 # The same recruitment appears in multiple sources (sarkari + state + education)
@@ -6808,11 +6842,30 @@ def _versioned_slug(base_slug, job):
         suffix = year
     else:
         suffix = sig                     # fallback: short hash keeps it unique
-    cand = clean_slug(f'{base_slug}-{suffix}')[:80].strip('-')
+
+    def _slug_with_suffix(sfx):
+        # Reserve room for the suffix BEFORE truncating to 80 chars. The old
+        # code truncated f'{base_slug}-{suffix}-{n}' to 80 chars AS A WHOLE —
+        # once base_slug alone was already ~80 chars (long titles), the '-{n}'
+        # tail got sliced clean off on EVERY iteration, so `cand` came out
+        # byte-for-byte identical no matter what n was. That made the retry
+        # loop below spin forever (`cand in seen_jobs` never turns False) —
+        # a genuine infinite loop burning 100% CPU with zero I/O, which is
+        # what caused generate_all.py to hang for 19-25+ min in production
+        # whenever a long-titled job needed a version-suffixed slug.
+        _sfx = f'-{sfx}'
+        _room = max(1, 80 - len(_sfx))
+        return clean_slug(base_slug[:_room].rstrip('-') + _sfx)
+
+    cand = _slug_with_suffix(suffix)
     n = 2
-    while cand in seen_jobs:
-        cand = clean_slug(f'{base_slug}-{suffix}-{n}')[:80].strip('-')
+    while cand in seen_jobs and n < 1000:
+        cand = _slug_with_suffix(f'{suffix}-{n}')
         n += 1
+    if cand in seen_jobs:
+        # Defense in depth: guarantee termination even if some other edge
+        # case defeats the suffix-uniqueness logic above.
+        cand = _slug_with_suffix(_vh_hash.md5(f'{base_slug}{suffix}{n}'.encode()).hexdigest()[:8])
     known[sig] = cand
     versioned_variant_slugs.add(cand)   # protect this new-version page from H1 prune
     return cand
@@ -7164,7 +7217,10 @@ def _normalize_sarkari_job(job):
 # Dict of SARK duplicate slugs that should redirect to FJA canonical
 _dedup_sark_slugs = {}   # sark_slug → fja_canonical_slug
 
+import time as _time_sark_diag
+_t_sark_loop_start = _time_sark_diag.time()
 for job in SARK:
+    _t_job_start = _time_sark_diag.time()
     job = _normalize_sarkari_job(job)
     title = safe(job.get('title',''))
     if not title: continue
@@ -7327,12 +7383,20 @@ for job in SARK:
     _bc_lbl, _bc_url = _SARK_BC.get(_jcat, ('Latest Jobs', '/section/latest-jobs/'))
     bc = [(_bc_lbl, f"{BASE_URL}{_bc_url}")]
 
-    write(str(ROOT/'jobs'/slug/'index.html'), build_detail_page(full, slug, canon, bc), skip_if_exists=True)
+    _built_html = build_detail_page(full, slug, canon, bc)
+    write(str(ROOT/'jobs'/slug/'index.html'), _built_html, skip_if_exists=True)
     ld = safe(imp_dates.get('last_date_to_apply','') or imp_dates.get('last_date',''))
     jobs_index[slug] = {'cat':job.get('category',''),'title':title[:120],'last_date':ld[:30]}
     j_count += 1
+    # Safety-net: a single SARK job should never take this long (this caught a
+    # real infinite loop in _versioned_slug's dedup-retry fallback — see fix
+    # there). If this ever fires again, it flags a NEW pathological case fast
+    # instead of silently eating the whole GH Actions timeout budget.
+    _t_job_elapsed = _time_sark_diag.time() - _t_job_start
+    if _t_job_elapsed > 2.0:
+        print(f"  [perf-warn] SARK job slug={slug!r} title={title[:80]!r} took {_t_job_elapsed:.1f}s (unexpectedly slow)")
 
-print(f"  All /jobs/: {j_count}")
+print(f"  All /jobs/: {j_count} (SARK loop {_time_sark_diag.time()-_t_sark_loop_start:.1f}s)")
 
 # ── CROSS-SOURCE DEDUP REDIRECTS: write all SARK→FJA redirects ───────────────
 # _dedup_sark_slugs = {sark_slug: fja_slug} collected above
