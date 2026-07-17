@@ -76,6 +76,7 @@ a{color:inherit}
 .tl-clip.selected{border-color:var(--brand)}
 .tl-clip.dragging{opacity:.4}
 .tl-clip-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);font-size:0.6rem;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-clip-dur{position:absolute;bottom:14px;left:2px;font-size:0.6rem;background:rgba(52,93,230,.85);padding:0 4px;border-radius:3px;color:#fff}
 .tl-clip-num{position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--brand);color:#fff;border-radius:50%;font-size:0.6rem;display:flex;align-items:center;justify-content:center;font-weight:700}
 .tl-clip-rm{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;font-size:0.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .tl-trim{position:absolute;top:0;bottom:0;width:9px;background:rgba(52,93,230,.9);cursor:ew-resize;z-index:2}
@@ -305,6 +306,10 @@ a{color:inherit}
       <div class="tl-controls">
         <button id="play-btn">▶️</button>
         <span class="tl-time"><span id="tl-current">00:00.0</span> / <span id="tl-total">00:00.0</span></span>
+        <div style="flex:1"></div>
+        <span style="font-size:0.7rem;color:var(--muted)">Zoom</span>
+        <button id="tl-zoom-out" title="Zoom Out">➖</button>
+        <button id="tl-zoom-in" title="Zoom In">➕</button>
       </div>
       <div class="tl-tracks" id="tl-tracks">
         <div class="tl-add" id="tl-add-btn" title="Add clips">➕</div>
@@ -417,8 +422,25 @@ const stageWrap = document.getElementById('stage-wrap');
 const previewVideo = document.createElement('video');
 previewVideo.muted = false;
 previewVideo.playsInline = true;
-previewVideo.style.display = 'none';
+previewVideo.setAttribute('playsinline', '');
+// IMPORTANT: display:none videos do NOT reliably decode frames for canvas
+// drawImage() in Chrome/Firefox — the canvas ends up frozen/black. Keep it
+// in normal rendering flow but positioned off-screen instead.
+previewVideo.style.position = 'fixed';
+previewVideo.style.left = '-99999px';
+previewVideo.style.top = '0';
+previewVideo.style.width = '2px';
+previewVideo.style.height = '2px';
+previewVideo.style.opacity = '0';
+previewVideo.style.pointerEvents = 'none';
 document.body.appendChild(previewVideo);
+
+// Surface any JS error as a visible alert instead of failing silently —
+// this is what made earlier versions look like "nothing works".
+window.addEventListener('error', (e)=>{
+  console.error('App error:', e.error || e.message);
+  showAlert('⚠️ Kuch technical error aaya: ' + (e.message || 'unknown') + ' (console check karein: F12)', 'error');
+});
 
 function showAlert(msg, type){
   const a = document.getElementById('alert');
@@ -471,6 +493,20 @@ function drawFrame(){
       try { ctx.drawImage(previewVideo, sx, sy, sw, sh, rx, ry, rw, rh); } catch(e){}
       ctx.restore();
     }
+  } else if (!clips.length) {
+    ctx.fillStyle = '#444';
+    ctx.font = '28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('📁 Left panel se video clip add karein', ST.W/2, ST.H/2);
+    ctx.textAlign = 'left';
+  } else if (clips.length && previewVideo.readyState < 2) {
+    ctx.fillStyle = '#444';
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⏳ Video load ho raha hai...', ST.W/2, ST.H/2);
+    ctx.textAlign = 'left';
   }
 
   ST.texts.forEach(t=>{
@@ -621,6 +657,7 @@ mainFileInput.addEventListener('change', e=>{ addFiles(e.target.files); mainFile
 function addFiles(fileList){
   const files = Array.from(fileList).filter(f=>f.type.startsWith('video/') || /\.(mp4|mkv|mov|avi|webm|flv|wmv|m4v|3gp|ts)$/i.test(f.name));
   if (!files.length){ showAlert('❌ Koi valid video file nahi mili!', 'error'); return; }
+  const hadNoClipsBefore = clips.length === 0;
   let pending = files.length;
   files.forEach(f=>{
     const clip = { id:'c'+(clipSeq++), file:f, start:'', end:'', duration:null, _hasAudio:null, thumb:null };
@@ -628,7 +665,7 @@ function addFiles(fileList){
     genThumb(clip, ()=>{ pending--; if(pending===0) renderTimeline(); });
   });
   renderTimeline();
-  if (clips.length===1) loadClipIntoPreview(0);
+  if (hadNoClipsBefore){ activeClipIndex = 0; loadClipIntoPreview(0); }
   showAlert(`✅ ${files.length} clip(s) add ho gaye`, 'success');
 }
 
@@ -650,6 +687,8 @@ function genThumb(clip, cb){
   v.addEventListener('error', ()=>cb());
 }
 
+let tlZoomPxPerSec = 14; // controlled by zoom in/out buttons
+
 function renderTimeline(){
   tlTracks.querySelectorAll('.tl-clip').forEach(el=>el.remove());
   const emptyMsg = document.getElementById('clip-empty-msg');
@@ -657,7 +696,10 @@ function renderTimeline(){
 
   clips.forEach((clip, idx)=>{
     const dur = clip.duration || 5;
-    const widthPx = Math.max(64, Math.min(220, dur*14));
+    const start = parseFloat(clip.start)||0;
+    const end = clip.end!=='' ? parseFloat(clip.end) : dur;
+    const trimmedDur = Math.max(0.2, end-start);
+    const widthPx = Math.max(50, trimmedDur*tlZoomPxPerSec);
     const el = document.createElement('div');
     el.className = 'tl-clip' + (idx===activeClipIndex?' selected':'');
     el.style.width = widthPx+'px';
@@ -668,6 +710,7 @@ function renderTimeline(){
       <div class="tl-clip-num">${idx+1}</div>
       <div class="tl-clip-rm">✕</div>
       <div class="tl-clip-label">${clip.file.name}</div>
+      <div class="tl-clip-dur">${trimmedDur.toFixed(1)}s</div>
       <div class="tl-trim left"></div>
       <div class="tl-trim right"></div>
     `;
@@ -690,24 +733,24 @@ function renderTimeline(){
     });
 
     // drag-trim handles
-    bindTrimHandle(el.querySelector('.tl-trim.left'), clip, 'start', widthPx);
-    bindTrimHandle(el.querySelector('.tl-trim.right'), clip, 'end', widthPx);
+    bindTrimHandle(el, el.querySelector('.tl-trim.left'), clip, 'start');
+    bindTrimHandle(el, el.querySelector('.tl-trim.right'), clip, 'end');
 
     tlTracks.appendChild(el);
   });
   tlTracks.appendChild(tlAddBtn);
 }
 
-function bindTrimHandle(handleEl, clip, which, blockWidthPx){
+function bindTrimHandle(blockEl, handleEl, clip, which){
   handleEl.addEventListener('pointerdown', e=>{
     e.preventDefault(); e.stopPropagation();
     const startX = e.clientX;
     const dur = clip.duration || 5;
-    const pxPerSec = blockWidthPx/dur;
     const origStart = parseFloat(clip.start)||0;
     const origEnd = clip.end!=='' ? parseFloat(clip.end) : dur;
+    const durLabel = blockEl.querySelector('.tl-clip-dur');
     function onMove(ev){
-      const deltaSec = (ev.clientX-startX)/pxPerSec;
+      const deltaSec = (ev.clientX-startX)/tlZoomPxPerSec;
       if (which==='start'){
         let ns = Math.min(Math.max(origStart+deltaSec, 0), origEnd-0.2);
         clip.start = ns.toFixed(2);
@@ -715,30 +758,59 @@ function bindTrimHandle(handleEl, clip, which, blockWidthPx){
         let ne = Math.min(Math.max(origEnd+deltaSec, origStart+0.2), dur);
         clip.end = ne.toFixed(2);
       }
+      // live visual feedback without a full re-render mid-drag
+      const s = parseFloat(clip.start)||0;
+      const en = clip.end!=='' ? parseFloat(clip.end) : dur;
+      const trimmedDur = Math.max(0.2, en-s);
+      blockEl.style.width = Math.max(50, trimmedDur*tlZoomPxPerSec)+'px';
+      if (durLabel) durLabel.textContent = trimmedDur.toFixed(1)+'s';
     }
-    function onUp(){ document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp); }
+    function onUp(){
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      renderTimeline(); // sync everything (widths, indices) once drag finishes
+      if (clips[activeClipIndex] === clip) loadClipIntoPreview(activeClipIndex);
+    }
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp);
   });
 }
 
-function loadClipIntoPreview(idx){
+function loadClipIntoPreview(idx, onReady){
   const clip = clips[idx];
   if (!clip) return;
+  if (previewVideo.src && previewVideo.src.startsWith('blob:')){
+    try { URL.revokeObjectURL(previewVideo.src); } catch(e){}
+  }
   previewVideo.src = URL.createObjectURL(clip.file);
-  previewVideo.currentTime = parseFloat(clip.start)||0;
+  const startAt = parseFloat(clip.start)||0;
+  const handleReady = () => {
+    previewVideo.removeEventListener('loadedmetadata', handleReady);
+    try { previewVideo.currentTime = startAt; } catch(e){}
+    if (typeof onReady === 'function') onReady();
+  };
+  previewVideo.addEventListener('loadedmetadata', handleReady);
   previewVideo.load();
 }
 
 /* =========================================================
    PLAYBACK (through timeline sequence)
 ========================================================= */
+document.getElementById('tl-zoom-in').addEventListener('click', ()=>{
+  tlZoomPxPerSec = Math.min(80, tlZoomPxPerSec * 1.4);
+  renderTimeline();
+});
+document.getElementById('tl-zoom-out').addEventListener('click', ()=>{
+  tlZoomPxPerSec = Math.max(4, tlZoomPxPerSec / 1.4);
+  renderTimeline();
+});
 document.getElementById('play-btn').addEventListener('click', ()=>{
   if (!clips.length) { showAlert('❌ Pehle clips add karein!', 'error'); return; }
   if (isPlaying){ previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️'; return; }
   isPlaying = true; document.getElementById('play-btn').textContent='⏸️';
-  loadClipIntoPreview(activeClipIndex);
-  previewVideo.play().catch(()=>{});
+  loadClipIntoPreview(activeClipIndex, ()=>{
+    if (isPlaying) previewVideo.play().catch(err=>{ console.warn('play() failed', err); showAlert('⚠️ Video play nahi ho paya — dobara try karein.', 'warn'); });
+  });
 });
 previewVideo.addEventListener('timeupdate', ()=>{
   document.getElementById('tl-current').textContent = formatTime(previewVideo.currentTime);
@@ -749,12 +821,7 @@ previewVideo.addEventListener('timeupdate', ()=>{
     if (activeClipIndex < clips.length-1){
       activeClipIndex++;
       renderTimeline();
-      previewVideo.src = URL.createObjectURL(clips[activeClipIndex].file);
-      previewVideo.addEventListener('loadedmetadata', function once(){
-        previewVideo.currentTime = parseFloat(clips[activeClipIndex].start)||0;
-        previewVideo.removeEventListener('loadedmetadata', once);
-        if (isPlaying) previewVideo.play().catch(()=>{});
-      });
+      loadClipIntoPreview(activeClipIndex, ()=>{ if (isPlaying) previewVideo.play().catch(()=>{}); });
     } else {
       previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️';
     }
