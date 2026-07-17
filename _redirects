@@ -6542,7 +6542,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/isi-project-linked-person-recruitment-2026-apply-online/  /  301
 /jobs/gonda-district-yoga-instructor-recruitment-2026-apply-offline-latest-notificatio/  /  301
 /jobs/yil-company-secretary-recruitment-2026-apply-offline/  /  301
-/jobs/jipmer-project-technical-support-recruitment-2026-apply-online/  /  301
 /jobs/mpsedc-get-program-30-2026-apply-online-for-150-graduate-engineer-trainee-posts/  /  301
 /jobs/nit-uttarakhand-temporary-faculty-recruitment-2026-apply-online-latest-notificat/  /  301
 /jobs/dhs-ramanathapuram-recruitment-2026-apply-offline-for-ictc-counsellors-and-ictc/  /  301
@@ -6684,7 +6683,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
-/jobs/patna-high-court-computer-operator-cum-typist-recruitment-2026-admit-card/  /jobs/meghalaya-high-court-recruitment-2026-apply-offline-for-computer-operator-and/  301
 /jobs/visakhapatnam-port-authority-fire-officer-vacancy-2026-check-eligibility-how-to/  /jobs/visakhapatnam-port-authority-fire-officer-recruitment-2026-apply-offline/  301
 /jobs/iocl-panipat-refinery-apprentice-recruitment-2026-apply-for-1450-posts/  /jobs/iocl-panipat-apprentice-recruitment-2026-apply-online-for-1450-posts/  301
 
@@ -7214,3 +7212,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/uttar-pradesh-up-anganwadi-worker-bharti-online-form-2026/  /jobs/up-uttar-pradesh-anganwadi-worker-bharti-recruitment-2026-apply-online-district/  301
 /jobs/wcd-odisha-jobs-2026-anganwadi-worker-and-helper-last-date-05-may-2026/  /jobs/wcd-odisha-recruitment-2026-apply-online-for-anganwadi-worker-and-helper-posts/  301
 /jobs/yamuna-nagar-tubewell-operator-vacancy-2026-free-application-form-apply-now/  /jobs/yamuna-nagar-tubewell-operator-recruitment-2026-free-application-form-apply/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/haryana-anganwadi-recruitment-2026-rewari-apply-online-for-454-anganwadi-worke/  301
