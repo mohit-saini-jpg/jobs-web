@@ -6,14 +6,19 @@
 name: 🌙 AI Content Enrichment (Nightly)
 
 on:
-  # Bonus trigger: fires right after "Check & Fix Broken Job Links" finishes,
-  # IF GitHub actually delivers the workflow_run event (observed unreliable
-  # in this repo — see check-broken-links.yml for details). The cron below
-  # is the real, proven-reliable trigger.
-  workflow_run:
-    workflows: ["🔍 Check & Fix Broken Job Links"]
-    types: [completed]
-
+  # ROOT CAUSE FIX (2026-07-17): the workflow_run "bonus" trigger (fired
+  # after "Check & Fix Broken Job Links" completes) is REMOVED. It was
+  # already documented as unreliable, but the real problem it caused was
+  # worse than "sometimes doesn't fire" — when it DID fire while
+  # punctual_dispatcher.py's punctual workflow_dispatch run was still
+  # in progress, cancel-in-progress:true (see below) killed that in-progress
+  # run outright. Then the native schedule cron (delayed, as GH's cron
+  # always is here) fired ~7 minutes later and cancelled THAT one too.
+  # Confirmed happening every single day (2026-07-16 and 2026-07-17 show
+  # the identical dispatch→cancelled, workflow_run→cancelled, schedule→
+  # success pattern) — two of every three runs were pure waste. The cron
+  # below is the proven-reliable trigger; punctual_dispatcher.py's
+  # workflow_dispatch is the punctual one. Two triggers, not three.
   schedule:
     - cron: '0 4 * * *'    # Daily 9:30 AM IST — after Check & Fix Broken
                             # Links' 9:00 AM fallback
@@ -35,21 +40,25 @@ on:
 
 concurrency:
   group: ai-nightly
-  # PERF FIX: was false — if a run ever gets stuck/orphaned (e.g. a stale
-  # workflow_run-triggered instance queued forever), every future cron/dispatch
-  # trigger queues silently behind it and NEVER runs, with zero error visible
-  # anywhere. Confirmed this happened: the 9:30 AM cron fired daily but
-  # produced zero commits for over a day. cancel-in-progress: true guarantees
-  # the newest trigger always gets to run (checkpoint commits every 10 pages
-  # mean a cancelled run loses at most ~3 min of work, not the whole day).
-  cancel-in-progress: true
+  # ROOT CAUSE FIX (2026-07-17): was true — see the git history for the
+  # original "PERF FIX" rationale (a stale workflow_run-triggered instance
+  # once got stuck and silently blocked every later trigger for a day).
+  # That failure mode required a workflow_run-triggered run to exist at
+  # all; now that trigger is removed entirely (see `on:` above), so there
+  # is nothing left that can get silently stuck behind a dead workflow_run
+  # queue slot. false means a same-day dispatcher run and the (usually
+  # late-firing) native cron now QUEUE instead of cancelling each other —
+  # whichever runs second hits the `guard` job's "already succeeded today"
+  # check and exits in seconds instead of destroying the first run's
+  # in-progress work. timeout-minutes: 170 below is still the hard backstop
+  # against a truly hung run blocking the queue forever.
+  cancel-in-progress: false
 
 jobs:
   # Prevents a late-firing native `schedule` event from redoing today's
-  # enrichment if the workflow_run chain trigger or punctual_dispatcher.py
-  # already ran it — see .github/actions/skip-daily-duplicate/action.yml.
-  # workflow_run and workflow_dispatch (incl. manual test runs with custom
-  # inputs) are NEVER affected by this.
+  # enrichment if punctual_dispatcher.py's workflow_dispatch already ran it
+  # — see .github/actions/skip-daily-duplicate/action.yml. workflow_dispatch
+  # (incl. manual test runs with custom inputs) is NEVER affected by this.
   guard:
     runs-on: ubuntu-latest
     permissions:
@@ -69,12 +78,7 @@ jobs:
     timeout-minutes: 170       # room for 300 pages @ 3 RPM (~100 min) + 429 waits
     permissions:
       contents: write
-    if: >
-      needs.guard.outputs.skip != 'true' && (
-        github.event_name == 'workflow_dispatch' ||
-        github.event_name == 'schedule' ||
-        github.event.workflow_run.conclusion == 'success'
-      )
+    if: needs.guard.outputs.skip != 'true'
 
     steps:
       - name: 📥 Checkout
