@@ -337,6 +337,15 @@ jobs:
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
           git add _redirects 2>/dev/null || true
+          # ROOT CAUSE FIX (2026-07-18): build_redirect_map.py (step above) regenerates
+          # redirect-map.js from _redirects on every run, but it was never staged here —
+          # so every new/changed redirect since commit 77e8ad30448 silently never made it
+          # to git, meaning Vercel's edge middleware (middleware.js, which reads this file
+          # for all exact-literal 301s since vercel.json caps at 1024) kept serving the
+          # OLD map forever. Confirmed live: 130 redirects added for the GSC 404 fix were
+          # 404-ing in production despite being correct in _redirects. This one line closes
+          # that gap permanently.
+          git add redirect-map.js 2>/dev/null || true
           git add seo_guardian_report.json 2>/dev/null || true
           git add education/ 2>/dev/null || true
           git add haryana/ andhra-pradesh/ arunachal-pradesh/ assam/ bihar/ 2>/dev/null || true
