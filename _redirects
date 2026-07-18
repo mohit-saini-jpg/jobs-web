@@ -7237,3 +7237,12 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/haryana-all-state-jobs/  /state/haryana/  301
 /state-jobs/dadra-and-nagar-haveli/  /state/dadra-nh/  301
 /state-jobs/andaman-and-nicobar/  /state/andaman-nicobar/  301
+
+# ══ Bare /jobs/{utility}.html (no job slug in front) — same widget-leak family, different shape ══
+/jobs/resume-maker.html  /resume-maker/  301
+/jobs/helpdesk.html  /helpdesk/  301
+/jobs/category.html  /category.html  301
+/jobs/tools.html  /tools/  301
+/jobs/view.html  /  301
+/jobs/govt-services.html  /govt-services/  301
+/jobs/index.html  /  301
