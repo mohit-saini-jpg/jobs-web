@@ -502,6 +502,55 @@ previewVideo.style.opacity = '0';
 previewVideo.style.pointerEvents = 'none';
 document.body.appendChild(previewVideo);
 
+// =========================================================
+// LIVE AUDIO GRAPH (Web Audio API) — real EQ + real volume boost
+// =========================================================
+// A plain HTMLMediaElement's `.volume` property is HARD-CAPPED at 1.0
+// (100%) by every browser — setting it higher has literally zero effect,
+// which is exactly why "500% volume" and the equalizer sliders appeared
+// to do nothing in the live preview. A Web Audio GainNode has no such
+// cap, and BiquadFilterNodes give a genuine real-time 10-band EQ. This
+// graph mirrors the same processing (order, frequencies, gain range)
+// that gets baked into the final export via ffmpeg, so what you hear in
+// the preview matches the exported file.
+let audioCtx = null, mediaSourceNode = null, eqFilterNodes = [], volumeGainNode = null;
+function ensureLiveAudioGraph(){
+  if (audioCtx) {
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    return;
+  }
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // createMediaElementSource can only ever be called ONCE per <video>
+    // element for its entire lifetime — safe here since previewVideo is
+    // a single element we reuse for every clip (only .src changes).
+    mediaSourceNode = audioCtx.createMediaElementSource(previewVideo);
+    let node = mediaSourceNode;
+    EQ_FREQS.forEach((freq, i) => {
+      const filt = audioCtx.createBiquadFilter();
+      filt.type = 'peaking';
+      filt.frequency.value = freq;
+      filt.Q.value = 1;
+      filt.gain.value = ST.fx.eq[i] || 0;
+      node.connect(filt);
+      node = filt;
+      eqFilterNodes.push(filt);
+    });
+    volumeGainNode = audioCtx.createGain();
+    volumeGainNode.gain.value = ST.fx.includeAudio ? ST.fx.volume : 0;
+    node.connect(volumeGainNode);
+    volumeGainNode.connect(audioCtx.destination);
+    // Now that audio is routed through Web Audio, keep the element itself
+    // at neutral 1.0/unmuted — actual loudness/mute is controlled by
+    // volumeGainNode instead (which supports real boosts above 100%).
+    previewVideo.volume = 1;
+    previewVideo.muted = false;
+  } catch(e){
+    console.warn('Web Audio graph could not be created:', e);
+  }
+}
+
+
 // Surface any JS error as a visible alert instead of failing silently —
 // this is what made earlier versions look like "nothing works".
 window.addEventListener('error', (e)=>{
@@ -1085,6 +1134,7 @@ document.getElementById('tl-zoom-fit').addEventListener('click', ()=>{
 ========================================================= */
 document.getElementById('play-btn').addEventListener('click', ()=>{
   if (!clips.length) { showAlert('❌ Pehle clips add karein!', 'error'); return; }
+  ensureLiveAudioGraph(); // must run inside a user-gesture handler (browser autoplay policy)
   if (isPlaying){ previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️'; return; }
   isPlaying = true; document.getElementById('play-btn').textContent='⏸️';
   loadClipIntoPreview(activeClipIndex, ()=>{
@@ -1180,11 +1230,14 @@ document.getElementById('bg-color').addEventListener('input', e=>{ ST.bgColor = 
 /* =========================================================
    AUDIO FX PANEL
 ========================================================= */
-document.getElementById('fx-include-audio').addEventListener('change', e=>{ ST.fx.includeAudio = e.target.checked; previewVideo.muted = !e.target.checked; });
+document.getElementById('fx-include-audio').addEventListener('change', e=>{
+  ST.fx.includeAudio = e.target.checked;
+  if (volumeGainNode) volumeGainNode.gain.value = e.target.checked ? ST.fx.volume : 0;
+});
 document.getElementById('fx-volume').addEventListener('input', e=>{
   ST.fx.volume = parseInt(e.target.value)/100;
   document.getElementById('volume-val').textContent = e.target.value;
-  previewVideo.volume = Math.min(1, ST.fx.volume);
+  if (volumeGainNode) volumeGainNode.gain.value = ST.fx.includeAudio ? ST.fx.volume : 0;
 });
 document.getElementById('fx-pitch').addEventListener('input', e=>{
   ST.fx.pitch = parseFloat(e.target.value);
@@ -1227,6 +1280,7 @@ function renderEqBands(){
       ST.fx.eq[i] = parseInt(e.target.value, 10);
       gainLabel.textContent = (ST.fx.eq[i]>0?'+':'') + ST.fx.eq[i];
       document.getElementById('eq-preset').value = matchingPresetName() || 'default';
+      if (eqFilterNodes[i]) eqFilterNodes[i].gain.value = ST.fx.eq[i];
     });
     track.appendChild(slider);
     const freqLabel = document.createElement('div');
@@ -1248,6 +1302,7 @@ document.getElementById('eq-preset').addEventListener('change', e=>{
   const preset = EQ_PRESETS[e.target.value] || EQ_PRESETS.default;
   ST.fx.eq = preset.slice();
   renderEqBands();
+  eqFilterNodes.forEach((node, i) => { node.gain.value = ST.fx.eq[i]; });
 });
 renderEqBands();
 
@@ -1541,7 +1596,15 @@ async function performExport(){
         const eqChain = EQ_FREQS.map((f,i) => `equalizer=f=${f}:width_type=o:width=1:g=${ST.fx.eq[i]}`).join(',');
         steps.push(eqChain);
       }
-      if (ST.fx.volume !== 1) steps.push(`volume=${ST.fx.volume.toFixed(2)}`);
+      if (ST.fx.volume !== 1) {
+        steps.push(`volume=${ST.fx.volume.toFixed(2)}`);
+        // A volume boost above 100% can easily push samples past full
+        // scale, causing harsh digital clipping that can SOUND like "no
+        // boost" (just distorted noise) rather than genuinely louder
+        // audio. A limiter keeps the boost clearly audible without that
+        // crackling distortion.
+        if (ST.fx.volume > 1) steps.push('alimiter=limit=0.95');
+      }
       if (ST.fx.pitch !== 1){
         steps.push(`asetrate=44100*${ST.fx.pitch.toFixed(3)}`, `aresample=44100`, atempoChain(1/ST.fx.pitch));
       }
