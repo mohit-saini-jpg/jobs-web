@@ -23,7 +23,23 @@ on:
 
 concurrency:
   group: data-pipeline
-  cancel-in-progress: true
+  # ROOT CAUSE FIX (2026-07-18): was true. This workflow is dispatched from
+  # several places the moment new data lands (merge-sr.yml after an SR
+  # upload, scraper-fja-education.yml after a scrape, punctual_dispatcher.py
+  # as a 01:30 UTC backstop) AND has its own native schedule cron at the same
+  # 01:30 UTC target — so a genuinely-important workflow_dispatch run (e.g.
+  # today's SR merge) can start, and a few minutes later the delayed native
+  # cron fires and cancel-in-progress:true kills it mid-regen before it ever
+  # commits. Confirmed happening 2026-07-18: merge-sr.yml's dispatch run was
+  # 1m35s into checkout+generate when the schedule trigger cancelled it, and
+  # the schedule run that killed it then got guard-skipped itself (thinking
+  # unrelated earlier runs today already covered it) — so the SR data sat
+  # merged in Complete_Jobs_Full_Data.json but the site never regenerated.
+  # false means overlapping triggers queue instead of cancelling each other;
+  # a genuinely redundant later schedule fire still gets skipped in seconds
+  # by the guard job below, but never at the cost of killing real work.
+  # timeout-minutes: 25 on the update job is the backstop against a hang.
+  cancel-in-progress: false
 
 jobs:
   # Prevents a late-firing native `schedule` event from redoing today's
