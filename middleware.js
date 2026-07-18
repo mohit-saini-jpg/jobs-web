@@ -40,7 +40,7 @@ export const config = {
 // they still show up in Search Console as "Not found (404)". The widget is
 // gone, but the URLs Google already knows about still need a real redirect
 // to actually resolve — this catches ANY job slug + any of these filenames.
-const JOBS_SLUG_HTML_LEAK = /^\/jobs\/[^/]+\/(index|category|helpdesk|tools|view|govt-services)\.html$/;
+const JOBS_SLUG_HTML_LEAK = /^\/jobs\/[^/]+\/(index|category|helpdesk|tools|view|govt-services|resume-maker)\.html$/;
 const LEAK_TARGET = {
   index: '/',
   category: '/category.html',
@@ -48,6 +48,7 @@ const LEAK_TARGET = {
   tools: '/tools/',
   view: '/',
   'govt-services': '/govt-services/',
+  'resume-maker': '/resume-maker/',
 };
 
 function redirect(origin, dest, search) {

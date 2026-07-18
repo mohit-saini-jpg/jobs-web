@@ -7220,3 +7220,20 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/indian-army-ssc-jag-125th-entry-form-april-2027/  /jobs/indian-army-jag-entry-scheme-125th-course-2026-ssc-jag-notification-for-law-grad/  301
 /jobs/indian-army-ssc-jag-125th-entry-online-form/  /jobs/indian-army-jag-entry-scheme-125th-course-2026-ssc-jag-notification-for-law-grad/  301
+
+# ══ Category/section/state pages — old /jobs/ and /state-jobs/ prefixes renamed (GSC 404 fix, 2026-07-18) ══
+/jobs/govt-scheme-yojna/  /section/govt-scheme-yojna/  301
+/jobs/upcoming-jobs/  /section/upcoming-jobs/  301
+/jobs/latest-jobs/  /section/latest-jobs/  301
+/jobs/latest-results/  /section/results/  301
+/jobs/police-jobs/  /section/police-jobs/  301
+/jobs/post-graduation-jobs/  /section/post-graduation-jobs/  301
+/jobs/diploma-jobs/  /section/diploma-jobs/  301
+/jobs/10th-pass-jobs/  /section/10th-pass-jobs/  301
+/jobs/b-a-pass-jobs/  /section/ba-pass/  301
+/jobs/teacher-jobs/  /section/teaching-jobs/  301
+/jobs/medical-healthcare-jobs/  /section/healthcare-jobs/  301
+/jobs/army-navy-air-force-jobs/  /section/army-jobs/  301
+/jobs/haryana-all-state-jobs/  /state/haryana/  301
+/state-jobs/dadra-and-nagar-haveli/  /state/dadra-nh/  301
+/state-jobs/andaman-and-nicobar/  /state/andaman-nicobar/  301
