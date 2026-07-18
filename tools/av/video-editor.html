@@ -170,6 +170,13 @@
 
   <!-- ALERT -->
   <div class="alert" id="alert"></div>
+  <div id="error-details-wrap" style="display:none;margin:0 0 14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" id="error-details-toggle">
+      <strong style="font-size:0.78rem;color:#991B1B">🔧 Technical Details (FFmpeg log)</strong>
+      <span style="font-size:0.75rem;color:#991B1B">▼ Show/Hide</span>
+    </div>
+    <pre id="error-details-text" style="display:none;margin-top:8px;font-size:0.68rem;color:#991B1B;white-space:pre-wrap;max-height:220px;overflow-y:auto;background:#fff;padding:8px;border-radius:6px"></pre>
+  </div>
 
   <!-- UPLOAD -->
   <div class="card">
@@ -624,6 +631,7 @@
       showAlert('❌ Kam se kam 2 clips add karein!', 'error');
       return;
     }
+    document.getElementById('error-details-wrap').style.display = 'none';
 
     const outputFormat = document.getElementById('output-format').value;
     const resolutionKey = document.getElementById('resolution').value;
@@ -647,16 +655,42 @@
     processBtn.disabled = true;
     document.getElementById('result-card').classList.remove('show');
 
+    // Captures every ffmpeg log line during this attempt so failures can
+    // show the REAL underlying reason in the UI — no devtools needed.
+    let capturedLogs = [];
+    const globalLogHandler = ({ message }) => {
+      capturedLogs.push(message);
+      if (capturedLogs.length > 200) capturedLogs.shift();
+    };
+    function showTechnicalDetails(extra) {
+      const wrap = document.getElementById('error-details-wrap');
+      const text = document.getElementById('error-details-text');
+      const tail = capturedLogs.slice(-30).join('\n');
+      text.textContent = (extra ? extra + '\n\n' : '') + (tail || '(koi ffmpeg log capture nahi hua)');
+      wrap.style.display = 'block';
+    }
+    // Ensure whatever we throw/reject always has a real .message.
+    function toError(err) {
+      if (err instanceof Error && err.message) return err;
+      const fallbackMsg = (typeof err === 'string' && err) ? err
+        : (err && err.message) ? err.message
+        : (capturedLogs.length ? 'FFmpeg internal error — technical details neeche dekhein.' : 'Unknown error (no details captured)');
+      return new Error(fallbackMsg);
+    }
+
     let ffmpeg;
     try {
       ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load (overall)');
     } catch (err) {
+      const e = toError(err);
       console.error('FFmpeg load error:', err);
-      showAlert('❌ FFmpeg load nahi ho paya: ' + (err.message || 'Unknown error') + '. Page reload karke phir try karein.', 'error');
+      showAlert('❌ FFmpeg load nahi ho paya: ' + e.message + '. Page reload karke phir try karein.', 'error');
       progressWrap.style.display = 'none';
       processBtn.disabled = false;
       return;
     }
+
+    ffmpeg.on('log', globalLogHandler);
 
     const onProgress = ({ progress }) => {
       const pct = Math.max(0, Math.min(100, Math.round(progress * 100)));
@@ -746,13 +780,26 @@
       const outputName = `merged.${fmt.ext}`;
       args.push(outputName);
 
-      await ffmpeg.exec(args);
-      const outData = await ffmpeg.readFile(outputName);
+      console.log('FFmpeg merge args:', args.join(' '));
+      const exitCode = await ffmpeg.exec(args);
+      if (typeof exitCode === 'number' && exitCode !== 0) {
+        throw new Error(`FFmpeg exit code ${exitCode} (fail). Technical details neeche dekhein.`);
+      }
+      let outData;
+      try {
+        outData = await ffmpeg.readFile(outputName);
+      } catch (readErr) {
+        throw new Error('Output file nahi bani — FFmpeg render step fail hua. Technical details neeche dekhein.');
+      }
+      if (!outData || !outData.buffer || outData.byteLength === 0) {
+        throw new Error('Output file khaali (0 bytes) bani — render fail hua. Technical details neeche dekhein.');
+      }
 
       // Cleanup virtual FS
       for (const n of inputNames) { try { await ffmpeg.deleteFile(n); } catch (e) {} }
       try { await ffmpeg.deleteFile(outputName); } catch (e) {}
       ffmpeg.off('progress', onProgress);
+      ffmpeg.off('log', globalLogHandler);
 
       pbar.style.width = '100%';
       ppercent.textContent = '100%';
@@ -777,13 +824,20 @@
 
       showAlert('✅ Videos successfully merge ho gaye!', 'success');
     } catch (err) {
-      console.error('Merge error:', err);
-      showAlert('❌ Merge fail ho gaya: ' + (err.message || 'Unknown error') + '. Trim values check karein ya "Remove Audio" try karein.', 'error');
-      try { ffmpeg.off('progress', onProgress); } catch (e) {}
+      const e = toError(err);
+      console.error('Merge error:', e, '\nFull ffmpeg log:', capturedLogs.join('\n'));
+      showAlert('❌ Merge fail ho gaya: ' + e.message + '. Trim values check karein ya "Remove Audio" try karein.', 'error');
+      showTechnicalDetails('Error: ' + e.message);
+      try { ffmpeg.off('progress', onProgress); ffmpeg.off('log', globalLogHandler); } catch (e2) {}
     } finally {
       processBtn.disabled = false;
     }
   }
+
+  document.getElementById('error-details-toggle').addEventListener('click', () => {
+    const t = document.getElementById('error-details-text');
+    t.style.display = t.style.display === 'none' ? 'block' : 'none';
+  });
 
   document.getElementById('process-btn').addEventListener('click', performMerge);
 

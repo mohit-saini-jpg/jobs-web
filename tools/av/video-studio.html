@@ -175,6 +175,13 @@ a{color:inherit}
 </nav>
 
 <div class="alert" id="alert"></div>
+<div id="error-details-wrap" style="display:none;margin:0 16px 10px;background:#1a1010;border:1px solid #7f1d1d;border-radius:8px;padding:10px 12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" id="error-details-toggle">
+    <strong style="font-size:0.78rem;color:#fca5a5">🔧 Technical Details (FFmpeg log)</strong>
+    <span style="font-size:0.75rem;color:#fca5a5">▼ Show/Hide</span>
+  </div>
+  <pre id="error-details-text" style="display:none;margin-top:8px;font-size:0.68rem;color:#fca5a5;white-space:pre-wrap;max-height:220px;overflow-y:auto;background:#0d0808;padding:8px;border-radius:6px"></pre>
+</div>
 
 <div class="app">
 
@@ -1266,6 +1273,7 @@ const FORMAT_CONF = {
 async function performExport(){
   if (!clips.length){ showAlert('❌ Pehle clips add karein!', 'error'); return; }
   sanitizeExportState();
+  document.getElementById('error-details-wrap').style.display = 'none';
 
   const outputFormat = document.getElementById('out-format').value;
   const resKey = document.getElementById('out-resolution').value;
@@ -1275,6 +1283,7 @@ async function performExport(){
   let W = outW, H = Math.round(outW/canvasAspect);
   if (canvasAspect < 1){ H = outW; W = Math.round(outW*canvasAspect); } // portrait
   W = W - (W%2); H = H - (H%2);
+  if (W < 2 || H < 2 || !Number.isFinite(W) || !Number.isFinite(H)){ W = 1280; H = 720; }
 
   const fmt = FORMAT_CONF[outputFormat];
   const overlay = document.getElementById('progress-overlay');
@@ -1283,15 +1292,46 @@ async function performExport(){
   pbar.style.width='0%'; ppercent.textContent='0';
   document.getElementById('export-btn').disabled = true;
 
+  // Captures every ffmpeg log line during this whole export attempt so
+  // that on failure we can show the REAL underlying reason in the UI
+  // itself — no browser devtools needed to debug what went wrong.
+  let capturedLogs = [];
+  const globalLogHandler = ({message}) => {
+    capturedLogs.push(message);
+    if (capturedLogs.length > 200) capturedLogs.shift();
+  };
+
+  function showTechnicalDetails(extra){
+    const wrap = document.getElementById('error-details-wrap');
+    const text = document.getElementById('error-details-text');
+    const tail = capturedLogs.slice(-30).join('\n');
+    text.textContent = (extra ? extra + '\n\n' : '') + (tail || '(koi ffmpeg log capture nahi hua)');
+    wrap.style.display = 'block';
+  }
+
+  // Ensure whatever we throw/reject always has a real .message — ffmpeg.wasm
+  // sometimes rejects with a plain string or a bare object, which previously
+  // showed up as a useless "Unknown error" with zero debugging info.
+  function toError(err){
+    if (err instanceof Error && err.message) return err;
+    const fallbackMsg = (typeof err === 'string' && err) ? err
+      : (err && err.message) ? err.message
+      : (capturedLogs.length ? 'FFmpeg internal error — technical details neeche dekhein.' : 'Unknown error (no details captured)');
+    return new Error(fallbackMsg);
+  }
+
   let ffmpeg;
   try {
     pmsg.textContent = 'FFmpeg engine load ho raha hai...';
     ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load');
   } catch(err){
-    showAlert('❌ FFmpeg load nahi ho paya: '+(err.message||'Unknown error'), 'error');
+    const e = toError(err);
+    showAlert('❌ FFmpeg load nahi ho paya: '+e.message, 'error');
     overlay.classList.remove('show'); document.getElementById('export-btn').disabled=false;
     return;
   }
+
+  ffmpeg.on('log', globalLogHandler);
 
   const onProgress = ({progress})=>{
     const pct = Math.max(0, Math.min(100, Math.round(progress*100)));
@@ -1321,11 +1361,11 @@ async function performExport(){
 
     pmsg.textContent = 'Video render ho raha hai (thoda time lagega)...';
 
-    const speed = ST.fx.speed || 1;
-    let DW = Math.max(2, Math.round(ST.dest.w*W)); DW -= (DW%2);
-    let DH = Math.max(2, Math.round(ST.dest.h*H)); DH -= (DH%2);
-    const DX = Math.round(ST.dest.x*W);
-    const DY = Math.round(ST.dest.y*H);
+    const speed = (Number.isFinite(ST.fx.speed) && ST.fx.speed > 0) ? ST.fx.speed : 1;
+    let DW = Math.max(2, Math.round(ST.dest.w*W)); DW -= (DW%2); if (DW<2) DW=2;
+    let DH = Math.max(2, Math.round(ST.dest.h*H)); DH -= (DH%2); if (DH<2) DH=2;
+    const DX = Math.round(ST.dest.x*W) || 0;
+    const DY = Math.round(ST.dest.y*H) || 0;
 
     const args = [];
     inputNames.forEach(n=>args.push('-i', n));
@@ -1337,7 +1377,8 @@ async function performExport(){
     clips.forEach((c,i)=>{
       const start = c.start && !isNaN(parseFloat(c.start)) ? parseFloat(c.start) : 0;
       const end = c.end && !isNaN(parseFloat(c.end)) ? parseFloat(c.end) : null;
-      const segDur = (end!==null && end>start) ? (end-start) : Math.max(0.5, (c._duration||c.duration||5)-start);
+      let segDur = (end!==null && end>start) ? (end-start) : Math.max(0.5, (c._duration||c.duration||5)-start);
+      if (!Number.isFinite(segDur) || segDur <= 0) segDur = 5; // guard: never let a bad clip poison total duration
       totalDur += segDur/speed;
 
       const trimExpr = end!==null && end>start ? `trim=start=${start}:end=${end}` : `trim=start=${start}`;
@@ -1360,6 +1401,8 @@ async function performExport(){
       }
     });
 
+    if (!Number.isFinite(totalDur) || totalDur <= 0) totalDur = 1; // guard: color filter's d= must be a valid positive number
+
     if (keepAudio){
       let pairs=''; clips.forEach((c,i)=>{ pairs += `${vLabels[i]}${aLabels[i]}`; });
       filter += `${pairs}concat=n=${clips.length}:v=1:a=1[vcat][acat];`;
@@ -1368,7 +1411,7 @@ async function performExport(){
     }
 
     // Composite dest box onto full canvas background (handles placement + opacity together)
-    const bgHex = ST.bgColor.replace('#','0x');
+    const bgHex = /^#[0-9a-fA-F]{6}$/.test(ST.bgColor) ? ST.bgColor.replace('#','0x') : '0x000000';
     filter += `color=c=${bgHex}:s=${W}x${H}:d=${totalDur.toFixed(2)}[bgcol];`;
     filter += `[vcat]format=rgba,colorchannelmixer=aa=${ST.fx.opacity.toFixed(2)}[vfg];`;
     filter += `[bgcol][vfg]overlay=x=${DX}:y=${DY}:format=auto[vcomp];`;
@@ -1413,7 +1456,7 @@ async function performExport(){
     // to ffmpeg, so we get a clear message instead of a cryptic FS abort.
     if (/,,|;;|,;|;,/.test(filter) || /\[\s*\]/.test(filter)){
       console.error('Malformed filter_complex detected:', filter);
-      throw new Error('Filter graph mein internal error mila (empty segment). Console mein filter string dekhein.');
+      throw new Error('Filter graph mein internal error mila (empty segment). Filter string console mein bhi print hui hai.');
     }
 
     // filter string is now fully built (video + text + audio steps) — push once.
@@ -1423,8 +1466,12 @@ async function performExport(){
     // fetch reliable universal font for drawtext (only if text layers exist)
     if (ST.texts.length){
       pmsg.textContent = 'Font load ho raha hai...';
-      const fontData = await fetchFile2Url('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/arial.ttf');
-      await ffmpeg.writeFile('arialfont.ttf', fontData);
+      try {
+        const fontData = await withTimeout(fetchFile2Url('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/arial.ttf'), 20000, 'Font download');
+        await ffmpeg.writeFile('arialfont.ttf', fontData);
+      } catch(fontErr){
+        throw new Error('Text font download fail hui: '+(fontErr.message||fontErr)+'. Internet connection check karein.');
+      }
     }
 
     args.push('-c:v', fmt.vcodec, '-b:v', '4M');
@@ -1436,12 +1483,26 @@ async function performExport(){
     const outputName = `studio_output.${fmt.ext}`;
     args.push(outputName);
 
-    await ffmpeg.exec(args);
-    const outData = await ffmpeg.readFile(outputName);
+    console.log('FFmpeg export args:', args.join(' '));
+    const exitCode = await ffmpeg.exec(args);
+    if (typeof exitCode === 'number' && exitCode !== 0){
+      throw new Error(`FFmpeg exit code ${exitCode} (fail). Technical details neeche dekhein.`);
+    }
+
+    let outData;
+    try {
+      outData = await ffmpeg.readFile(outputName);
+    } catch(readErr){
+      throw new Error('Output file nahi bani — FFmpeg render step fail hua. Technical details neeche dekhein.');
+    }
+    if (!outData || !outData.buffer || outData.byteLength === 0){
+      throw new Error('Output file khaali (0 bytes) bani — render fail hua. Technical details neeche dekhein.');
+    }
 
     for (const n of inputNames){ try{ await ffmpeg.deleteFile(n); }catch(e){} }
     try{ await ffmpeg.deleteFile(outputName); }catch(e){}
     ffmpeg.off('progress', onProgress);
+    ffmpeg.off('log', globalLogHandler);
 
     const blob = new Blob([outData.buffer], {type:fmt.mime});
     overlay.classList.remove('show');
@@ -1453,13 +1514,20 @@ async function performExport(){
     document.getElementById('result-panel').classList.add('show');
     showAlert('✅ Export successful!', 'success');
   } catch(err){
-    console.error('Export error:', err);
-    showAlert('❌ Export fail ho gaya: '+(err.message||'Unknown error'), 'error');
+    const e = toError(err);
+    console.error('Export error:', e, '\nFull ffmpeg log:', capturedLogs.join('\n'));
+    showAlert('❌ Export fail ho gaya: '+e.message, 'error');
+    showTechnicalDetails('Error: '+e.message);
     overlay.classList.remove('show');
+    try { ffmpeg.off('progress', onProgress); ffmpeg.off('log', globalLogHandler); } catch(e2){}
   } finally {
     document.getElementById('export-btn').disabled = false;
   }
 }
+document.getElementById('error-details-toggle').addEventListener('click', ()=>{
+  const t = document.getElementById('error-details-text');
+  t.style.display = t.style.display === 'none' ? 'block' : 'none';
+});
 async function fetchFile2Url(url){ const resp = await fetch(url); const buf = await resp.arrayBuffer(); return new Uint8Array(buf); }
 
 document.getElementById('export-btn').addEventListener('click', performExport);
