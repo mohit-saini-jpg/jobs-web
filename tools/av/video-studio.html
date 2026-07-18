@@ -1451,6 +1451,15 @@ async function performExport(){
       }
     }
 
+    // ROOT CAUSE FIX: ffmpeg.wasm's bundled engine (ffmpeg 5.1.4) is
+    // stricter than modern desktop ffmpeg about a trailing semicolon at
+    // the end of -filter_complex. Every chain we build above ends with
+    // ";", which desktop ffmpeg silently tolerates but ffmpeg.wasm parses
+    // as "one more empty filter chain" and aborts with
+    // "No such filter: ''" — this was confirmed by direct reproduction
+    // against the exact ffmpeg.wasm core binary this app loads.
+    filter = filter.replace(/;\s*$/, '');
+
     // Sanity check: catch a malformed filter graph (e.g. stray double
     // comma/semicolon producing an empty filter name) before handing it
     // to ffmpeg, so we get a clear message instead of a cryptic FS abort.

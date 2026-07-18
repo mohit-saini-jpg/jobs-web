@@ -765,6 +765,12 @@
         filter += `${vLabels.join('')}concat=n=${clips.length}:v=1:a=0[outv]`;
       }
 
+      // Defensive: ffmpeg.wasm's bundled engine is stricter than desktop
+      // ffmpeg about a trailing semicolon in -filter_complex — it can be
+      // parsed as an extra empty filter chain and abort with
+      // "No such filter: ''". Always strip a trailing ';' before exec.
+      filter = filter.replace(/;\s*$/, '');
+
       args.push('-filter_complex', filter, '-map', '[outv]');
       if (keepAudio) args.push('-map', '[outa]');
 
