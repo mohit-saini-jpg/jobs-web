@@ -1,20 +1,26 @@
 {
-  "timestamp": "2026-07-18T02:25:52.821657+00:00",
+  "timestamp": "2026-07-18T05:00:29.278123+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 5029,
+  "files_scanned": 5057,
   "issues_found_by_check": {
-    "ai_marker_integrity": 6,
+    "ai_marker_integrity": 7,
     "jobposting_schema": 30,
-    "sitemap_sync": 83
+    "sitemap_sync": 28
   },
-  "issues_auto_fixed": 112,
+  "issues_auto_fixed": 57,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
     },
     {
       "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
@@ -59,5 +65,5 @@
     "broken_links: No new redirects needed — all links OK",
     "build_sitemaps:   sitemap.xml                     107 urls [ok]"
   ],
-  "duration_sec": 16.5
+  "duration_sec": 27.1
 }
