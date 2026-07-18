@@ -490,31 +490,58 @@ setAspect('16:9');
 /* =========================================================
    RENDER LOOP (true live canvas)
 ========================================================= */
+// Where the FULL (uncropped) source video is actually drawn on the canvas,
+// within the destination box, aspect-fit (letterboxed). Crop is applied
+// only at export time (and as a dimming overlay here) — it never shrinks
+// this rect — so the crop selection box always lines up with what's on
+// screen, no matter the video's own aspect ratio vs the canvas aspect.
+function getVideoDisplayRect(){
+  const dw = ST.dest.w*ST.W, dh = ST.dest.h*ST.H, dx = ST.dest.x*ST.W, dy = ST.dest.y*ST.H;
+  if (!previewVideo.videoWidth || !previewVideo.videoHeight){
+    return { xPx:dx, yPx:dy, wPx:dw, hPx:dh, x:ST.dest.x, y:ST.dest.y, w:ST.dest.w, h:ST.dest.h };
+  }
+  const srcAR = previewVideo.videoWidth/previewVideo.videoHeight, dstAR = dw/dh;
+  let rw=dw, rh=dh, rx=dx, ry=dy;
+  if (srcAR > dstAR){ rh = dw/srcAR; ry = dy + (dh-rh)/2; }
+  else { rw = dh*srcAR; rx = dx + (dw-rw)/2; }
+  return { xPx:rx, yPx:ry, wPx:rw, hPx:rh, x:rx/ST.W, y:ry/ST.H, w:rw/ST.W, h:rh/ST.H };
+}
+
 function drawFrame(){
   ctx.save();
   ctx.fillStyle = ST.bgColor;
   ctx.fillRect(0,0,ST.W,ST.H);
 
   if (clips.length && previewVideo.readyState >= 2 && previewVideo.videoWidth){
-    const dx = ST.dest.x*ST.W, dy = ST.dest.y*ST.H, dw = ST.dest.w*ST.W, dh = ST.dest.h*ST.H;
-    let sx=0, sy=0, sw=previewVideo.videoWidth, sh=previewVideo.videoHeight;
-    if (ST.crop.active){ sx = ST.crop.x*sw; sy = ST.crop.y*sh; sw = ST.crop.w*sw; sh = ST.crop.h*sh; }
-    const srcAR = sw/sh, dstAR = dw/dh;
-    let rw=dw, rh=dh, rx=dx, ry=dy;
-    if (srcAR > dstAR){ rh = dw/srcAR; ry = dy + (dh-rh)/2; }
-    else { rw = dh*srcAR; rx = dx + (dw-rw)/2; }
+    const vr = getVideoDisplayRect();
+    const rx=vr.xPx, ry=vr.yPx, rw=vr.wPx, rh=vr.hPx;
+    const sw=previewVideo.videoWidth, sh=previewVideo.videoHeight;
 
     ctx.globalAlpha = ST.fx.opacity;
     ctx.filter = ST.fx.grayscale ? 'grayscale(1)' : 'none';
-    try { ctx.drawImage(previewVideo, sx, sy, sw, sh, rx, ry, rw, rh); } catch(e){}
+    try { ctx.drawImage(previewVideo, 0, 0, sw, sh, rx, ry, rw, rh); } catch(e){}
     ctx.filter = 'none'; ctx.globalAlpha = 1;
+
+    // Crop selection: dim everything OUTSIDE the selected region so the
+    // user can clearly see exactly what will be kept — the video itself
+    // is never live-clipped, only the export applies the actual crop.
+    if (ST.crop.active){
+      const cx = rx + ST.crop.x*rw, cy = ry + ST.crop.y*rh, cw = ST.crop.w*rw, ch = ST.crop.h*rh;
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.fillRect(rx, ry, rw, cy-ry);                      // top band
+      ctx.fillRect(rx, cy+ch, rw, (ry+rh)-(cy+ch));         // bottom band
+      ctx.fillRect(rx, cy, cx-rx, ch);                      // left band
+      ctx.fillRect(cx+cw, cy, (rx+rw)-(cx+cw), ch);         // right band
+      ctx.restore();
+    }
 
     if (ST.logo.active){
       const lx=ST.logo.x*ST.W, ly=ST.logo.y*ST.H, lw=ST.logo.w*ST.W, lh=ST.logo.h*ST.H;
       ctx.save();
       ctx.beginPath(); ctx.rect(lx,ly,lw,lh); ctx.clip();
       ctx.filter = 'blur(14px)';
-      try { ctx.drawImage(previewVideo, sx, sy, sw, sh, rx, ry, rw, rh); } catch(e){}
+      try { ctx.drawImage(previewVideo, 0, 0, sw, sh, rx, ry, rw, rh); } catch(e){}
       ctx.restore();
     }
   } else if (!clips.length) {
@@ -569,30 +596,42 @@ function renderOverlays(){
 function makeBox(kind, model, label, isSecondary){
   const box = document.createElement('div');
   box.className = 'ov-box' + (kind==='crop'?' crop':'') + (kind==='logo'?' logo':'');
-  box.style.left = pct(model.x); box.style.top = pct(model.y);
-  box.style.width = pct(model.w); box.style.height = pct(model.h);
+  // Crop coordinates are fractions of the VISIBLE VIDEO rect (not the full
+  // canvas), since the video itself may be letterboxed inside the canvas.
+  // dest/logo stay relative to the full canvas as before.
+  const parent = (kind === 'crop') ? getVideoDisplayRect() : { x:0, y:0, w:1, h:1 };
+  const absX = parent.x + model.x*parent.w;
+  const absY = parent.y + model.y*parent.h;
+  const absW = model.w*parent.w;
+  const absH = model.h*parent.h;
+  box.style.left = pct(absX); box.style.top = pct(absY);
+  box.style.width = pct(absW); box.style.height = pct(absH);
   const lbl = document.createElement('div'); lbl.className='ov-label'; lbl.textContent = label;
   box.appendChild(lbl);
   ['n','s','e','w','nw','ne','sw','se'].forEach(pos=>{
     const h = document.createElement('div'); h.className = 'ov-handle '+pos;
-    h.addEventListener('pointerdown', e=>startResize(e, model, pos));
+    h.addEventListener('pointerdown', e=>startResize(e, model, pos, parent));
     box.appendChild(h);
   });
   box.addEventListener('pointerdown', e=>{
     if (e.target.classList.contains('ov-handle')) return;
-    startMove(e, model);
+    startMove(e, model, parent);
   });
   stageWrap.appendChild(box);
 }
 
-function startMove(e, model){
+function startMove(e, model, parent){
+  parent = parent || { x:0, y:0, w:1, h:1 };
   e.preventDefault();
   const rect = stageWrap.getBoundingClientRect();
-  if (!rect.width || !rect.height) return;
+  if (!rect.width || !rect.height || !parent.w || !parent.h) return;
   const startX = e.clientX, startY = e.clientY;
   const origX = model.x, origY = model.y;
   function onMove(ev){
-    const dx = (ev.clientX-startX)/rect.width, dy = (ev.clientY-startY)/rect.height;
+    // Mouse delta is in full-canvas fractions; convert into the model's
+    // own coordinate space (fraction of its parent rect, e.g. the video).
+    const dx = ((ev.clientX-startX)/rect.width) / parent.w;
+    const dy = ((ev.clientY-startY)/rect.height) / parent.h;
     const nx = Math.min(Math.max(origX+dx, 0), 1-model.w);
     const ny = Math.min(Math.max(origY+dy, 0), 1-model.h);
     if (!Number.isFinite(nx) || !Number.isFinite(ny)) return;
@@ -604,14 +643,16 @@ function startMove(e, model){
   document.addEventListener('pointerup', onUp);
 }
 
-function startResize(e, model, pos){
+function startResize(e, model, pos, parent){
+  parent = parent || { x:0, y:0, w:1, h:1 };
   e.preventDefault(); e.stopPropagation();
   const rect = stageWrap.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; // guard: never divide by a zero-size stage
+  if (!rect.width || !rect.height || !parent.w || !parent.h) return; // guard: never divide by zero
   const startX = e.clientX, startY = e.clientY;
   const orig = { x: model.x, y: model.y, w: model.w, h: model.h };
   function onMove(ev){
-    const dx = (ev.clientX-startX)/rect.width, dy = (ev.clientY-startY)/rect.height;
+    const dx = ((ev.clientX-startX)/rect.width) / parent.w;
+    const dy = ((ev.clientY-startY)/rect.height) / parent.h;
     let {x,y,w,h} = orig;
     if (pos.includes('e')) w = Math.min(Math.max(orig.w+dx, 0.05), 1-orig.x);
     if (pos.includes('s')) h = Math.min(Math.max(orig.h+dy, 0.05), 1-orig.y);
