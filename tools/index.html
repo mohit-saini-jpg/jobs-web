@@ -403,7 +403,18 @@
 
   <!-- POPULAR TOOLS -->
   <div class="sec-heading"><i class="fa-solid fa-fire" style="color:#dc2626;"></i> Most Used Tools</div>
-  <div class="pop-grid" id="popularGrid"></div>
+  <p style="font-size:.8rem;color:var(--muted);margin:-6px 0 14px;">Sarkari naukri ka form bharte waqt sabse zyada kaam aane wale tools — photo/signature resize se lekar PDF banane tak.</p>
+  <div class="pop-grid" id="popularGrid">
+    <a class="pop-card" href="/tools/image/image-resizer.html" title="Photo Resize"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-crop-simple"></i></div><div class="pop-card-name">Photo Resize</div><div class="pop-card-desc">Photo ko job application ke exact size/KB mein resize karein</div><span class="pop-badge badge-hot"><i class="fa-solid fa-star"></i> Most Used</span></a>
+    <a class="pop-card" href="/tools/image/signature-resizer.html" title="Signature Resizer"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-pen-nib"></i></div><div class="pop-card-name">Signature Resizer</div><div class="pop-card-desc">Signature ko form ke required size/KB mein resize karein</div><span class="pop-badge badge-hot"><i class="fa-solid fa-star"></i> Most Used</span></a>
+    <a class="pop-card" href="/tools/image/photo-editor.html" title="Add Name & Date in Photo"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-signature"></i></div><div class="pop-card-name">Add Name &amp; Date in Photo</div><div class="pop-card-desc">Photo par naam aur date add karein exam/document ke liye</div><span class="pop-badge badge-pop"><i class="fa-solid fa-star"></i> Popular</span></a>
+    <a class="pop-card" href="/tools/image/background-remove.html" title="Background Remover"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="pop-card-name">Background Remover</div><div class="pop-card-desc">Photo ka background ek click mein hatayein</div><span class="pop-badge badge-free"><i class="fa-solid fa-star"></i> Free</span></a>
+    <a class="pop-card" href="/tools/image/convert-any-format.html" title="Convert Any Image Format"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-arrows-rotate"></i></div><div class="pop-card-name">Convert Any Image Format</div><div class="pop-card-desc">JPG, PNG, WEBP — kisi bhi format mein convert karein</div><span class="pop-badge badge-free"><i class="fa-solid fa-star"></i> Free</span></a>
+    <a class="pop-card" href="/tools/image/document-scanner.html" title="Document Scanner"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-camera"></i></div><div class="pop-card-name">Document Scanner</div><div class="pop-card-desc">Mobile camera se document scan karke clean PDF/image banayein</div><span class="pop-badge badge-pop"><i class="fa-solid fa-star"></i> Popular</span></a>
+    <a class="pop-card" href="/tools/image/image-merge.html" title="Image Merge"><div class="pop-card-icon" style="background:#f0fdf4;color:#059669;border:1px solid #f0fdf4;"><i class="fa-solid fa-images"></i></div><div class="pop-card-name">Image Merge</div><div class="pop-card-desc">Multiple images ko ek saath merge karein</div><span class="pop-badge badge-free"><i class="fa-solid fa-star"></i> Free</span></a>
+    <a class="pop-card" href="/tools/pdf/any-file-to-pdf.html" title="Any File to PDF Converter"><div class="pop-card-icon" style="background:#fff5f5;color:#dc2626;border:1px solid #fff5f5;"><i class="fa-solid fa-file-pdf"></i></div><div class="pop-card-name">Any File to PDF Converter</div><div class="pop-card-desc">Image ya document — kisi bhi file ko PDF mein convert karein</div><span class="pop-badge badge-hot"><i class="fa-solid fa-star"></i> Most Used</span></a>
+    <a class="pop-card" href="/tools/pdf/merge-pdf.html" title="Merge PDF"><div class="pop-card-icon" style="background:#fff5f5;color:#dc2626;border:1px solid #fff5f5;"><i class="fa-solid fa-file-circle-plus"></i></div><div class="pop-card-name">Merge PDF</div><div class="pop-card-desc">Multiple PDF files ko ek file mein joinen</div><span class="pop-badge badge-hot"><i class="fa-solid fa-star"></i> Most Used</span></a>
+  </div>
 
   <!-- SEO BOX -->
   <div class="seo-box">
@@ -518,38 +529,6 @@
     </nav>
   </aside>
 
-<script>
-var POPULAR = [
-  { name:'JPG to PDF',        desc:'Images ko PDF mein convert karein',     url:'tools-pdf.html',           icon:'fa-file-pdf',        color:'#dc2626', bg:'#fff5f5', badge:'badge-hot',  bl:'Most Used' },
-  { name:'Compress PDF',      desc:'PDF size kam karein upload ke liye',    url:'tools-pdf.html',           icon:'fa-file-zipper',     color:'#dc2626', bg:'#fff5f5', badge:'badge-hot',  bl:'Must Use'  },
-  { name:'Merge PDF',         desc:'Multiple PDFs ek file mein joinen',     url:'tools-pdf.html',           icon:'fa-file-circle-plus',color:'#dc2626', bg:'#fff5f5', badge:'badge-pop',  bl:'Popular'   },
-  { name:'Resize to KB',      desc:'Image ko exact KB size pe resize karein',url:'tools-image.html',        icon:'fa-compress',        color:'#059669', bg:'#f0fdf4', badge:'badge-hot',  bl:'Most Used' },
-  { name:'Passport Photo',    desc:'Passport/ID size photo banayein',       url:'tools-image.html',         icon:'fa-id-badge',        color:'#059669', bg:'#f0fdf4', badge:'badge-hot',  bl:'Govt Forms'},
-  { name:'Compress Image',    desc:'JPEG/PNG image ko compress karein',     url:'tools-image.html',         icon:'fa-image',           color:'#059669', bg:'#f0fdf4', badge:'badge-pop',  bl:'Popular'   },
-  { name:'MP4 to MP3',        desc:'Video se audio extract karein',         url:'tools-audio-video.html',   icon:'fa-music',           color:'#7c3aed', bg:'#faf5ff', badge:'badge-hot',  bl:'Most Used' },
-  { name:'Compress Video',    desc:'Video file size reduce karein',         url:'tools-audio-video.html',   icon:'fa-file-zipper',     color:'#7c3aed', bg:'#faf5ff', badge:'badge-pop',  bl:'Popular'   },
-  { name:'Background Remove', desc:'Image ka background hatayein',          url:'tools-image.html',         icon:'fa-wand-magic-sparkles',color:'#059669',bg:'#f0fdf4',badge:'badge-free', bl:'Free'      },
-  { name:'PDF to JPG',        desc:'PDF pages ko images mein convert karein',url:'tools-pdf.html',          icon:'fa-file-image',      color:'#dc2626', bg:'#fff5f5', badge:'badge-free', bl:'Free'      },
-  { name:'Signature Resize',  desc:'Signature image resize karein forms ke liye',url:'tools-image.html',   icon:'fa-pen-nib',         color:'#059669', bg:'#f0fdf4', badge:'badge-pop',  bl:'Govt Use'  },
-  { name:'MP3 Cutter',        desc:'Audio file trim/cut karein',            url:'tools-audio-video.html',   icon:'fa-scissors',        color:'#7c3aed', bg:'#faf5ff', badge:'badge-free', bl:'Free'      },
-];
-
-(function(){
-  var g = document.getElementById('popularGrid');
-  POPULAR.forEach(function(t){
-    var a = document.createElement('a');
-    a.className = 'pop-card';
-    a.href = t.url;
-    a.title = t.name;
-    a.innerHTML =
-      '<div class="pop-card-icon" style="background:'+t.bg+';color:'+t.color+';border:1px solid '+t.bg+';"><i class="fa-solid '+t.icon+'"></i></div>'+
-      '<div class="pop-card-name">'+t.name+'</div>'+
-      '<div class="pop-card-desc">'+t.desc+'</div>'+
-      '<span class="pop-badge '+t.badge+'"><i class="fa-solid fa-star"></i> '+t.bl+'</span>';
-    g.appendChild(a);
-  });
-})();
-</script>
 <script src="script.js" defer></script>
 <script src="/tsj-version.js"?v=20260530023112 defer></script>
 </body>
