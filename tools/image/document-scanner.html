@@ -530,7 +530,7 @@ function QuadCropUI(containerEl,imgEl,onChange){
     handles=[];
     for(var i=0;i<4;i++){
       var c=document.createElementNS(svgNS,'circle');
-      c.setAttribute('r','16');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+      c.setAttribute('r','22');c.setAttribute('fill','#2f7dff');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
       c.style.cursor='grab';c.style.touchAction='none';
       (function(idx,circle){
         circle.addEventListener('pointerdown',function(ev){
@@ -565,7 +565,39 @@ function QuadCropUI(containerEl,imgEl,onChange){
       handles.push(c);
     }
     pointers={};panDrag=false;
+    // BUG FIX (root cause): a corner circle is only 44px wide, and on a real
+    // phone screen a finger touch very often lands a few px outside its exact
+    // hit area — SVG hit-testing is pixel-precise, no built-in slop. When
+    // that happens the raw pointerdown event's target is the <svg> background
+    // itself (not the circle), so it fell into the pan branch below and the
+    // WHOLE IMAGE moved instead of the corner the user was trying to drag —
+    // exactly what was reported ("crop karte hain to puri image hilti hai").
+    // Fix: before deciding to pan, check whether the touch landed within a
+    // generous radius of any corner regardless of which element it actually
+    // hit, and drag that corner instead. This makes corner-dragging reliable
+    // even for an imprecise touch, without needing pixel-perfect aim.
+    var HANDLE_HIT_R=34;
     svg.addEventListener('pointerdown',function(ev){
+      // Only treat this as a possible handle-drag for the FIRST finger of a
+      // new gesture — if one finger is already down (pan or mid-pinch-setup),
+      // a second finger landing near a corner must still count toward the
+      // 2-pointer pinch-zoom detection below, not hijack the corner.
+      if(Object.keys(pointers).length===0){
+        var r=containerEl.getBoundingClientRect();
+        var sx=ev.clientX-r.left,sy=ev.clientY-r.top;
+        var sp=pts.map(toScreen);
+        var nearestIdx=-1,nearestDist=Infinity;
+        for(var hi=0;hi<sp.length;hi++){
+          var dd=Math.hypot(sp[hi].x-sx,sp[hi].y-sy);
+          if(dd<nearestDist){nearestDist=dd;nearestIdx=hi;}
+        }
+        if(nearestDist<=HANDLE_HIT_R){
+          ev.preventDefault();
+          dragIdx=nearestIdx;
+          try{svg.setPointerCapture(ev.pointerId);}catch(e){}
+          return;
+        }
+      }
       pointers[ev.pointerId]={x:ev.clientX,y:ev.clientY};
       var ids=Object.keys(pointers);
       if(ids.length===1){
@@ -581,6 +613,17 @@ function QuadCropUI(containerEl,imgEl,onChange){
       }
     });
     svg.addEventListener('pointermove',function(ev){
+      if(dragIdx!==-1){
+        ev.preventDefault();
+        var rr=containerEl.getBoundingClientRect();
+        var bsx=ev.clientX-rr.left,bsy=ev.clientY-rr.top;
+        var b=toBase(bsx,bsy);
+        b.x=Math.max(0,Math.min(baseW,b.x));
+        b.y=Math.max(0,Math.min(baseH,b.y));
+        pts[dragIdx]=b;
+        render();
+        return;
+      }
       if(!(ev.pointerId in pointers))return;
       pointers[ev.pointerId]={x:ev.clientX,y:ev.clientY};
       var ids=Object.keys(pointers);
@@ -608,6 +651,7 @@ function QuadCropUI(containerEl,imgEl,onChange){
       var left=Object.keys(pointers).length;
       if(left<2)pinchStartDist=0;
       if(left===0)panDrag=false;
+      dragIdx=-1;
       try{svg.releasePointerCapture(ev.pointerId);}catch(e){}
     }
     svg.addEventListener('pointerup',endPointer);
