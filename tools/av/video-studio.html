@@ -302,6 +302,18 @@ a{color:inherit}
       <span>Reduce Noise</span>
       <label class="switch"><input type="checkbox" id="fx-noise-reduce"><span class="slider-tog"></span></label>
     </div>
+    <div class="field" id="noise-strength-field" style="display:none">
+      <label>Noise Reduction Strength (<span id="noise-strength-val">12</span> dB)</label>
+      <input type="range" id="fx-noise-strength" min="1" max="40" step="1" value="12">
+    </div>
+    <div class="field" id="noise-mode-field" style="display:none">
+      <label>Mode</label>
+      <select id="fx-noise-mode">
+        <option value="standard">Standard (Background Hiss)</option>
+        <option value="voice">Voice Focus (Aggressive)</option>
+        <option value="gentle">Gentle (Preserve Detail)</option>
+      </select>
+    </div>
     <div class="toggle-row">
       <span>Reverse Audio</span>
       <label class="switch"><input type="checkbox" id="fx-reverse-audio"><span class="slider-tog"></span></label>
@@ -322,7 +334,7 @@ a{color:inherit}
       <div class="eq-bands" id="eq-bands"><!-- 10 bands injected by JS --></div>
     </div>
 
-    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px">ℹ️ Ye effects poori audio track par lagte hain (per-clip nahi) — phase 1 mein simple/global rakha gaya hai.</p>
+    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px">ℹ️ Ye effects poori audio track par lagte hain (per-clip nahi) — phase 1 mein simple/global rakha gaya hai. Pitch aur Reduce Noise ka live preview ek real-time approximation hai; final exported video mein studio-grade processing (proper pitch-shift, spectral noise removal) lagti hai jo preview se behtar sunegi.</p>
   </div>
 
   <!-- MAIN AREA -->
@@ -471,7 +483,7 @@ const ST = {
   fx: {
     speed: 1, opacity: 1, grayscale: false,
     includeAudio: true, volume: 1, pitch: 1,
-    vocalRemove: false, noiseReduce: false, reverseAudio: false,
+    vocalRemove: false, noiseReduce: false, noiseReduceStrength: 12, noiseReduceMode: 'standard', reverseAudio: false,
     eq: [0,0,0,0,0,0,0,0,0,0] // gain in dB per band, see EQ_FREQS below
   },
   texts: [],
@@ -513,7 +525,95 @@ document.body.appendChild(previewVideo);
 // graph mirrors the same processing (order, frequencies, gain range)
 // that gets baked into the final export via ffmpeg, so what you hear in
 // the preview matches the exported file.
-let audioCtx = null, mediaSourceNode = null, eqFilterNodes = [], volumeGainNode = null;
+// ---------------------------------------------------------
+// Live pitch-shift + noise-gate processor
+// ---------------------------------------------------------
+// Real independent pitch shifting (changing pitch WITHOUT changing speed)
+// has no built-in Web Audio node — the export path gets true studio-grade
+// results via ffmpeg's asetrate+atempo trick, but for an audible LIVE
+// preview we use a standard real-time "granular overlap-add" pitch
+// shifter: two overlapping ~46ms grains are read from a short rolling
+// history buffer at `pitchRatio` speed and crossfaded with a Hann window,
+// each grain resetting to "now minus one grain" whenever it finishes —
+// this keeps output perfectly in sync with real time (no drift, no
+// growing latency) while its internal playback rate raises/lowers pitch.
+// The noise gate here is a lightweight envelope-follower approximation
+// (quick preview feedback only) — the real export uses ffmpeg's proper
+// spectral denoiser (afftdn), which is far higher quality.
+function createLiveAudioProcessorNode(ctx){
+  const bufferSize = 4096;
+  const node = ctx.createScriptProcessor(bufferSize, 1, 1);
+
+  const grainSize = 2048; // ~46ms @ 44.1kHz — standard low-latency grain length
+  const historyLen = grainSize * 4;
+  const history = new Float32Array(historyLen);
+  let writeCount = 0;
+  let grainPhase1 = 0, grainPhase2 = 0.5;
+  let grainStart1 = -grainSize, grainStart2 = -Math.floor(grainSize/2);
+  let envelope = 0;
+
+  function hann(t){ return 0.5 - 0.5*Math.cos(2*Math.PI*t); }
+  function readHistory(idx){
+    const i0 = Math.floor(idx);
+    const frac = idx - i0;
+    const a = history[((i0 % historyLen)+historyLen) % historyLen];
+    const b = history[(((i0+1) % historyLen)+historyLen) % historyLen];
+    return a + (b-a)*frac;
+  }
+
+  node.pitchRatio = 1.0;
+  node.noiseGateEnabled = false;
+  node.noiseGateThreshold = 0.02; // linear amplitude (~ -34dB)
+  node.noiseGateFloor = 0.15;     // residual gain applied to material below threshold
+
+  node.onaudioprocess = function(e){
+    const input = e.inputBuffer.getChannelData(0);
+    const output = e.outputBuffer.getChannelData(0);
+    const pitchRatio = node.pitchRatio;
+    const bypassPitch = Math.abs(pitchRatio - 1.0) < 0.001;
+
+    for (let i=0; i<input.length; i++){
+      history[writeCount % historyLen] = input[i];
+
+      let sampleOut;
+      if (bypassPitch){
+        sampleOut = input[i];
+        // Keep grain pointers anchored to "now" so turning pitch shift
+        // back on later doesn't produce a jarring jump/click.
+        grainStart1 = writeCount - grainSize; grainPhase1 = 0;
+        grainStart2 = writeCount - Math.floor(grainSize/2); grainPhase2 = 0.5;
+      } else {
+        const readPos1 = grainStart1 + grainPhase1*grainSize;
+        const readPos2 = grainStart2 + grainPhase2*grainSize;
+        const s1 = readHistory(readPos1);
+        const s2 = readHistory(readPos2);
+        sampleOut = s1*hann(grainPhase1) + s2*hann(grainPhase2);
+
+        grainPhase1 += pitchRatio/grainSize;
+        grainPhase2 += pitchRatio/grainSize;
+        if (grainPhase1 >= 1){ grainPhase1 -= 1; grainStart1 = writeCount - grainSize; }
+        if (grainPhase2 >= 1){ grainPhase2 -= 1; grainStart2 = writeCount - grainSize; }
+      }
+
+      if (node.noiseGateEnabled){
+        const absVal = Math.abs(sampleOut);
+        const coeff = absVal > envelope ? 0.6 : 0.02; // fast attack, slow release
+        envelope += (absVal - envelope) * coeff;
+        if (envelope < node.noiseGateThreshold){
+          const g = node.noiseGateFloor + (1-node.noiseGateFloor) * (envelope/node.noiseGateThreshold);
+          sampleOut *= g;
+        }
+      }
+
+      output[i] = sampleOut;
+      writeCount++;
+    }
+  };
+
+  return node;
+}
+
+let audioCtx = null, mediaSourceNode = null, eqFilterNodes = [], volumeGainNode = null, liveProcessorNode = null;
 function ensureLiveAudioGraph(){
   if (audioCtx) {
     if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
@@ -536,6 +636,11 @@ function ensureLiveAudioGraph(){
       node = filt;
       eqFilterNodes.push(filt);
     });
+    liveProcessorNode = createLiveAudioProcessorNode(audioCtx);
+    liveProcessorNode.pitchRatio = ST.fx.pitch || 1;
+    liveProcessorNode.noiseGateEnabled = !!ST.fx.noiseReduce;
+    node.connect(liveProcessorNode);
+    node = liveProcessorNode;
     volumeGainNode = audioCtx.createGain();
     volumeGainNode.gain.value = ST.fx.includeAudio ? ST.fx.volume : 0;
     node.connect(volumeGainNode);
@@ -1242,9 +1347,36 @@ document.getElementById('fx-volume').addEventListener('input', e=>{
 document.getElementById('fx-pitch').addEventListener('input', e=>{
   ST.fx.pitch = parseFloat(e.target.value);
   document.getElementById('pitch-val').textContent = ST.fx.pitch.toFixed(2);
+  if (liveProcessorNode) liveProcessorNode.pitchRatio = ST.fx.pitch;
 });
 document.getElementById('fx-vocal-remove').addEventListener('change', e=>{ ST.fx.vocalRemove = e.target.checked; });
-document.getElementById('fx-noise-reduce').addEventListener('change', e=>{ ST.fx.noiseReduce = e.target.checked; });
+
+const noiseStrengthField = document.getElementById('noise-strength-field');
+const noiseModeField = document.getElementById('noise-mode-field');
+function updateNoiseGateLive(){
+  if (!liveProcessorNode) return;
+  liveProcessorNode.noiseGateEnabled = ST.fx.noiseReduce;
+  // Map the 1-40 dB "strength" onto the gate's threshold/floor so the
+  // slider gives audibly stronger gating as it's increased, roughly
+  // tracking the aggressiveness of the real afftdn export settings.
+  const t = ST.fx.noiseReduceStrength / 40; // 0..1
+  liveProcessorNode.noiseGateThreshold = 0.008 + t*0.05;
+  liveProcessorNode.noiseGateFloor = Math.max(0.02, 0.35 - t*0.3);
+}
+document.getElementById('fx-noise-reduce').addEventListener('change', e=>{
+  ST.fx.noiseReduce = e.target.checked;
+  noiseStrengthField.style.display = e.target.checked ? 'block' : 'none';
+  noiseModeField.style.display = e.target.checked ? 'block' : 'none';
+  updateNoiseGateLive();
+});
+document.getElementById('fx-noise-strength').addEventListener('input', e=>{
+  ST.fx.noiseReduceStrength = parseInt(e.target.value, 10);
+  document.getElementById('noise-strength-val').textContent = ST.fx.noiseReduceStrength;
+  updateNoiseGateLive();
+});
+document.getElementById('fx-noise-mode').addEventListener('change', e=>{
+  ST.fx.noiseReduceMode = e.target.value;
+});
 document.getElementById('fx-reverse-audio').addEventListener('change', e=>{ ST.fx.reverseAudio = e.target.checked; });
 
 /* =========================================================
@@ -1410,6 +1542,9 @@ function sanitizeExportState(){
   if (!Number.isFinite(ST.fx.volume) || ST.fx.volume < 0) ST.fx.volume = 1;
   ST.fx.volume = Math.min(5, ST.fx.volume); // 500% max
   if (!Number.isFinite(ST.fx.pitch) || ST.fx.pitch <= 0) ST.fx.pitch = 1;
+  if (!Number.isFinite(ST.fx.noiseReduceStrength) || ST.fx.noiseReduceStrength <= 0) ST.fx.noiseReduceStrength = 12;
+  ST.fx.noiseReduceStrength = Math.max(1, Math.min(40, ST.fx.noiseReduceStrength));
+  if (!['standard','voice','gentle'].includes(ST.fx.noiseReduceMode)) ST.fx.noiseReduceMode = 'standard';
   if (!Array.isArray(ST.fx.eq) || ST.fx.eq.length !== 10){
     ST.fx.eq = [0,0,0,0,0,0,0,0,0,0];
   } else {
@@ -1591,7 +1726,21 @@ async function performExport(){
     if (keepAudio){
       const steps = [];
       if (ST.fx.vocalRemove) steps.push('pan=stereo|c0=c0-c1|c1=c1-c0');
-      if (ST.fx.noiseReduce) steps.push('afftdn');
+      if (ST.fx.noiseReduce) {
+        const strength = ST.fx.noiseReduceStrength;
+        if (ST.fx.noiseReduceMode === 'voice') {
+          // Voice Focus: cut low-frequency rumble first (mic handling noise,
+          // AC hum, room boom), then apply stronger denoising with a
+          // higher noise floor — good for spoken-word/vlogging clips.
+          steps.push('highpass=f=100', `afftdn=nr=${Math.min(40, strength+5).toFixed(2)}:nf=-30`);
+        } else if (ST.fx.noiseReduceMode === 'gentle') {
+          // Gentle: lighter reduction with a lower noise floor threshold,
+          // preserves more detail/ambience at the cost of less cleanup.
+          steps.push(`afftdn=nr=${(strength*0.6).toFixed(2)}:nf=-60`);
+        } else {
+          steps.push(`afftdn=nr=${strength.toFixed(2)}`);
+        }
+      }
       if (Array.isArray(ST.fx.eq) && ST.fx.eq.some(g => g !== 0)){
         const eqChain = EQ_FREQS.map((f,i) => `equalizer=f=${f}:width_type=o:width=1:g=${ST.fx.eq[i]}`).join(',');
         steps.push(eqChain);
