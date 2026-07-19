@@ -109,8 +109,10 @@
     .card-hd-row .btn-secondary { padding: 7px 14px; font-size: 0.78rem; }
     .thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; }
     .thumb-card { position: relative; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--white); }
-    .thumb-img-wrap { width: 100%; aspect-ratio: 1/1; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .thumb-img { width: 100%; height: 100%; object-fit: contain; transition: filter .12s linear; }
+    .thumb-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-light); }
+    .thumb-img-wrap { width: 100%; aspect-ratio: 1/1; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
+    .thumb-img { width: 100%; height: 100%; object-fit: contain; transition: filter .12s linear, transform .15s ease; }
+    .thumb-active-badge { position: absolute; bottom: 4px; left: 4px; background: var(--brand); color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
     .thumb-meta { padding: 6px 7px; }
     .thumb-name { font-size: 0.66rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .thumb-size { font-size: 0.64rem; color: var(--muted); }
@@ -253,6 +255,7 @@
 
   <div class="card hidden" id="adjust-card">
     <h3>🌟 Photo Adjust Karein</h3>
+    <p style="font-size:.78rem;color:var(--muted);margin:-10px 0 16px">Upar "Uploaded Images" list mein kisi bhi photo par click karke usko select karein — har photo ka apna alag Brightness/Contrast/Saturation/Sharpness/Rotate set kar sakte hain.</p>
     <div class="adjust-layout">
       <div class="adjust-preview-col">
         <div class="live-preview-wrap">
@@ -431,15 +434,19 @@
     }
     if(skipped>0)toast(skipped+' file(s) skip ki gayi (image nahi thi).');
     if(!incoming.length)return;
+    var firstNewId=null;
     incoming.forEach(function(f){
-      var item={id:++QID,file:f,url:URL.createObjectURL(f),img:null,natW:0,natH:0,error:false,loading:true};
+      var item={id:++QID,file:f,url:URL.createObjectURL(f),img:null,natW:0,natH:0,error:false,loading:true,adjust:defaultAdjust()};
+      if(firstNewId===null)firstNewId=item.id;
       QUEUE.push(item);
       loadImageForItem(item);
     });
+    if(activeId===null)activeId=firstNewId;
     G('queue-card').classList.remove('hidden');
     G('adjust-card').classList.remove('hidden');
     G('settings-card').classList.remove('hidden');
     renderThumbs();
+    syncAdjustUIFromActive();
     updatePdfModeVisibility();
   }
 
@@ -456,62 +463,113 @@
     img.src=item.url;
   }
 
-  function filterCss(){return 'brightness('+ST.bright+'%) contrast('+ST.contrast+'%) saturate('+ST.sat+'%)';}
+  function filterCss(adj){adj=adj||defaultAdjust();return 'brightness('+adj.bright+'%) contrast('+adj.contrast+'%) saturate('+adj.sat+'%)';}
 
   function renderThumbs(){
     var grid=G('thumb-grid');
     G('q-count').textContent=QUEUE.length;
     grid.innerHTML='';
-    var f=filterCss();
     QUEUE.forEach(function(item,idx){
-      var card=document.createElement('div');card.className='thumb-card';
+      var card=document.createElement('div');card.className='thumb-card'+(item.id===activeId?' active':'');
+      card.setAttribute('data-id',item.id);
       var errBadge=item.error?'<div class="thumb-err">Load nahi hui</div>':'';
+      var rot=(item.adjust&&item.adjust.rotate)||0;
       card.innerHTML=
-        '<div class="thumb-img-wrap"><img class="thumb-img" src="'+item.url+'" style="filter:'+f+'" alt=""></div>'+
+        '<div class="thumb-img-wrap"><img class="thumb-img" src="'+item.url+'" style="filter:'+filterCss(item.adjust)+';transform:rotate('+rot+'deg)" alt=""></div>'+
         '<div class="thumb-meta"><div class="thumb-name">'+esc(item.file.name)+'</div><div class="thumb-size">'+fmtBytes(item.file.size)+(item.natW?' · '+item.natW+'×'+item.natH:'')+'</div></div>'+
         '<div class="thumb-actions">'+
           (idx>0?'<button class="thumb-btn" data-act="up" title="Up">↑</button>':'')+
           (idx<QUEUE.length-1?'<button class="thumb-btn" data-act="down" title="Down">↓</button>':'')+
           '<button class="thumb-btn" data-act="rm" title="Remove">✕</button>'+
-        '</div>'+errBadge;
+        '</div>'+
+        (item.id===activeId?'<div class="thumb-active-badge">✓ Adjusting</div>':'')+
+        errBadge;
+      var wrap=card.querySelector('.thumb-img-wrap');
+      wrap.onclick=function(){setActiveItem(item.id);};
       var upBtn=card.querySelector('[data-act="up"]');if(upBtn)upBtn.onclick=function(){var t=QUEUE[idx-1];QUEUE[idx-1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
       var downBtn=card.querySelector('[data-act="down"]');if(downBtn)downBtn.onclick=function(){var t=QUEUE[idx+1];QUEUE[idx+1]=QUEUE[idx];QUEUE[idx]=t;renderThumbs();};
-      card.querySelector('[data-act="rm"]').onclick=function(){QUEUE.splice(idx,1);renderThumbs();updatePdfModeVisibility();if(!QUEUE.length){G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');}};
+      card.querySelector('[data-act="rm"]').onclick=function(){
+        var wasActive=item.id===activeId;
+        QUEUE.splice(idx,1);
+        if(wasActive)activeId=QUEUE.length?QUEUE[0].id:null;
+        renderThumbs();updatePdfModeVisibility();syncAdjustUIFromActive();renderAdjPreview();
+        if(!QUEUE.length){G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');}
+      };
       grid.appendChild(card);
     });
   }
 
   function clearAll(){
     QUEUE.forEach(function(it){try{URL.revokeObjectURL(it.url);}catch(e){}});
-    QUEUE=[];renderThumbs();
+    QUEUE=[];activeId=null;renderThumbs();
     G('queue-card').classList.add('hidden');G('adjust-card').classList.add('hidden');G('settings-card').classList.add('hidden');
     G('result-card').classList.remove('show');G('progress-wrap').style.display='none';G('pbar').style.width='0%';
   }
 
-  /* ══════════════ Photo Adjust ══════════════ */
-  var ST={bright:100,contrast:100,sat:100,sharp:0,rotate:0};
-  function applyLiveFilter(){var f=filterCss();document.querySelectorAll('.thumb-img').forEach(function(im){im.style.filter=f;});}
+  /* ══════════════ Photo Adjust (PER-IMAGE — each queued photo keeps its
+     own Brightness/Contrast/Saturation/Sharpness/Rotate, not one shared
+     setting for the whole batch) ══════════════ */
+  function defaultAdjust(){return {bright:100,contrast:100,sat:100,sharp:0,rotate:0};}
+  var activeId=null;
+  function getActiveItem(){
+    var it=QUEUE.find(function(x){return x.id===activeId;});
+    return it||(QUEUE.length?QUEUE[0]:null);
+  }
+  function setActiveItem(id){
+    activeId=id;
+    renderThumbs();
+    syncAdjustUIFromActive();
+    renderAdjPreview();
+  }
+  // Sliders/presets are just a "window" onto whichever photo is active —
+  // switching photos must repaint them to THAT photo's stored values,
+  // otherwise adjusting photo 2 would look like it's still showing photo 1's
+  // settings (this was the reported bug: only the first photo was editable).
+  function syncAdjustUIFromActive(){
+    var item=getActiveItem();
+    var adj=item?item.adjust:defaultAdjust();
+    G('s-bright').value=adj.bright;G('v-bright').textContent=adj.bright+'%';
+    G('s-contrast').value=adj.contrast;G('v-contrast').textContent=adj.contrast+'%';
+    G('s-sat').value=adj.sat;G('v-sat').textContent=adj.sat+'%';
+    G('s-sharp').value=adj.sharp;G('v-sharp').textContent=adj.sharp;
+    G('rot-val').textContent=(adj.rotate||0)+'°';
+    document.querySelectorAll('.adj-preset').forEach(function(b){b.classList.remove('active');});
+    ['bright','contrast','sat','sharp'].forEach(function(t){
+      document.querySelectorAll('.adj-preset[data-target="'+t+'"]').forEach(function(b){
+        if(+b.getAttribute('data-val')===adj[t])b.classList.add('active');
+      });
+    });
+  }
+  // Updates only the active photo's OWN thumbnail filter live while a
+  // slider is being dragged (cheap style tweak) — a full renderThumbs()
+  // rebuild on every drag tick would be wasteful and janky.
+  function applyLiveFilter(){
+    var item=getActiveItem();if(!item)return;
+    var card=document.querySelector('.thumb-card[data-id="'+item.id+'"] .thumb-img');
+    if(card)card.style.filter=filterCss(item.adjust);
+  }
   function clearActive(target){document.querySelectorAll('.adj-preset[data-target="'+target+'"]').forEach(function(b){b.classList.remove('active');});}
 
   // Big single-photo live preview (passport-photo.html-style layout) — shows
-  // the first successfully-loaded queue image so users can see Brightness/
-  // Contrast/Saturation/Rotate at real size before it's applied to the whole
-  // batch, instead of judging the effect off tiny thumbnails only.
+  // the currently SELECTED (active) queue image at real size so users can
+  // judge Brightness/Contrast/Saturation/Rotate before it's applied, instead
+  // of judging the effect off tiny thumbnails only.
   function renderAdjPreview(){
     var canvas=G('adjPreviewCanvas');
     if(!canvas)return;
-    var item=QUEUE.find(function(it){return it.img&&!it.error;});
+    var item=getActiveItem();
     var fname=G('preview-fname');
-    if(!item){canvas.width=0;canvas.height=0;if(fname)fname.textContent='—';return;}
+    if(!item||!item.img||item.error){canvas.width=0;canvas.height=0;if(fname)fname.textContent='—';return;}
     if(fname)fname.textContent=item.file.name;
-    var rot=ST.rotate||0,swap=(rot===90||rot===270);
+    var adj=item.adjust;
+    var rot=adj.rotate||0,swap=(rot===90||rot===270);
     var maxSide=640;
     var scale=Math.min(1,maxSide/Math.max(item.natW,item.natH));
     var dw=Math.max(1,Math.round(item.natW*scale)),dh=Math.max(1,Math.round(item.natH*scale));
     canvas.width=swap?dh:dw;canvas.height=swap?dw:dh;
     var ctx=canvas.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    ctx.filter=filterCss();
+    ctx.filter=filterCss(adj);
     ctx.save();
     ctx.translate(canvas.width/2,canvas.height/2);
     ctx.rotate(rot*Math.PI/180);
@@ -521,18 +579,29 @@
   }
 
   var rotLeftBtn=G('rot-left-btn'),rotRightBtn=G('rot-right-btn');
-  if(rotLeftBtn)rotLeftBtn.addEventListener('click',function(){ST.rotate=((ST.rotate||0)+360-90)%360;G('rot-val').textContent=ST.rotate+'°';renderAdjPreview();});
-  if(rotRightBtn)rotRightBtn.addEventListener('click',function(){ST.rotate=((ST.rotate||0)+90)%360;G('rot-val').textContent=ST.rotate+'°';renderAdjPreview();});
+  if(rotLeftBtn)rotLeftBtn.addEventListener('click',function(){
+    var item=getActiveItem();if(!item)return;
+    item.adjust.rotate=((item.adjust.rotate||0)+360-90)%360;
+    G('rot-val').textContent=item.adjust.rotate+'°';
+    renderAdjPreview();renderThumbs();
+  });
+  if(rotRightBtn)rotRightBtn.addEventListener('click',function(){
+    var item=getActiveItem();if(!item)return;
+    item.adjust.rotate=((item.adjust.rotate||0)+90)%360;
+    G('rot-val').textContent=item.adjust.rotate+'°';
+    renderAdjPreview();renderThumbs();
+  });
 
-  G('s-bright').addEventListener('input',function(){ST.bright=+this.value;G('v-bright').textContent=ST.bright+'%';clearActive('bright');applyLiveFilter();renderAdjPreview();});
-  G('s-contrast').addEventListener('input',function(){ST.contrast=+this.value;G('v-contrast').textContent=ST.contrast+'%';clearActive('contrast');applyLiveFilter();renderAdjPreview();});
-  G('s-sat').addEventListener('input',function(){ST.sat=+this.value;G('v-sat').textContent=ST.sat+'%';clearActive('sat');applyLiveFilter();renderAdjPreview();});
-  G('s-sharp').addEventListener('input',function(){ST.sharp=+this.value;G('v-sharp').textContent=ST.sharp;clearActive('sharp');});
+  G('s-bright').addEventListener('input',function(){var item=getActiveItem();if(!item)return;item.adjust.bright=+this.value;G('v-bright').textContent=item.adjust.bright+'%';clearActive('bright');applyLiveFilter();renderAdjPreview();});
+  G('s-contrast').addEventListener('input',function(){var item=getActiveItem();if(!item)return;item.adjust.contrast=+this.value;G('v-contrast').textContent=item.adjust.contrast+'%';clearActive('contrast');applyLiveFilter();renderAdjPreview();});
+  G('s-sat').addEventListener('input',function(){var item=getActiveItem();if(!item)return;item.adjust.sat=+this.value;G('v-sat').textContent=item.adjust.sat+'%';clearActive('sat');applyLiveFilter();renderAdjPreview();});
+  G('s-sharp').addEventListener('input',function(){var item=getActiveItem();if(!item)return;item.adjust.sharp=+this.value;G('v-sharp').textContent=item.adjust.sharp;clearActive('sharp');});
 
   document.querySelectorAll('.adj-preset').forEach(function(btn){
     btn.addEventListener('click',function(){
+      var item=getActiveItem();if(!item)return;
       var target=btn.getAttribute('data-target'),val=+btn.getAttribute('data-val');
-      ST[target]=val;
+      item.adjust[target]=val;
       if(target==='bright'){G('s-bright').value=val;G('v-bright').textContent=val+'%';}
       if(target==='contrast'){G('s-contrast').value=val;G('v-contrast').textContent=val+'%';}
       if(target==='sat'){G('s-sat').value=val;G('v-sat').textContent=val+'%';}
@@ -545,16 +614,10 @@
 
   var adjResetBtn=G('adjust-reset-btn');
   if(adjResetBtn)adjResetBtn.addEventListener('click',function(){
-    ST={bright:100,contrast:100,sat:100,sharp:0,rotate:0};
-    G('s-bright').value=100;G('v-bright').textContent='100%';
-    G('s-contrast').value=100;G('v-contrast').textContent='100%';
-    G('s-sat').value=100;G('v-sat').textContent='100%';
-    G('s-sharp').value=0;G('v-sharp').textContent='0';
-    G('rot-val').textContent='0°';
-    document.querySelectorAll('.adj-preset').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('.adj-preset[data-val="100"]').forEach(function(b){if(b.getAttribute('data-target')!=='sharp')b.classList.add('active');});
-    document.querySelectorAll('.adj-preset[data-target="sharp"][data-val="0"]').forEach(function(b){b.classList.add('active');});
-    applyLiveFilter();
+    var item=getActiveItem();if(!item)return;
+    item.adjust=defaultAdjust();
+    syncAdjustUIFromActive();
+    renderThumbs();
     renderAdjPreview();
   });
 
@@ -603,17 +666,18 @@
 
   /* ══════════════ Render canvas per item (rotate/flip + Photo Adjust) ══════════════ */
   function renderCanvasForItem(item,fmt){
-    var rot=ST.rotate||0,flip=G('flip').value,swap=(rot===90||rot===270);
+    var adj=item.adjust||defaultAdjust();
+    var rot=adj.rotate||0,flip=G('flip').value,swap=(rot===90||rot===270);
     var cw=swap?item.natH:item.natW, ch=swap?item.natW:item.natH;
     var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;var ctx=cv.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     ctx.filter='none';fillBG(ctx,fmt,cw,ch);
-    ctx.filter=filterCss();
+    ctx.filter=filterCss(adj);
     ctx.translate(cw/2,ch/2);ctx.rotate(rot*Math.PI/180);
     if(flip==='h')ctx.scale(-1,1);if(flip==='v')ctx.scale(1,-1);
     ctx.drawImage(item.img,-item.natW/2,-item.natH/2,item.natW,item.natH);
     ctx.setTransform(1,0,0,1,0,0);ctx.filter='none';
-    if(ST.sharp>0)applySharpen(ctx,cw,ch,ST.sharp);
+    if(adj.sharp>0)applySharpen(ctx,cw,ch,adj.sharp);
     return cv;
   }
 
