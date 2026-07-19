@@ -137,6 +137,15 @@
     .adj-preset { padding: 5px 13px; border: 1.5px solid var(--line); border-radius: 20px; background: #fff; font-size: 0.76rem; font-weight: 700; cursor: pointer; color: var(--ink); font-family: inherit; transition: all 0.15s; }
     .adj-preset:hover { border-color: var(--brand); }
     .adj-preset.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .card-title-sub { font-size: 0.84rem; font-weight: 800; margin: 22px 0 12px; padding-top: 18px; border-top: 2px dashed var(--line); }
+    .cs-enable-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
+    .cs-controls { opacity: 0.45; pointer-events: none; transition: opacity 0.2s; }
+    .cs-controls.on { opacity: 1; pointer-events: auto; }
+    .cs-row { display: flex; gap: 10px; }
+    .cs-field { flex: 1; }
+    .cs-field label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .cs-field input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; }
+    .cs-lock-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; margin-top: 10px; cursor: pointer; }
     .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 11px 22px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; max-width: 90vw; text-align: center; }
     .toast.show { opacity: 1; }
     @media(max-width:640px){
@@ -312,6 +321,23 @@
           <button class="btn-secondary" id="adjust-reset-btn">↺ Adjustments Reset Karein</button>
         </div>
         <p style="font-size:.76rem;color:var(--muted);margin-top:10px">Brightness/Contrast/Saturation/Rotate ka live preview yahan aur thumbnails me turant dikhta hai. Sharpness ka effect final download par apply hota hai. Sab adjustment ek saath sabhi images par apply hote hain.</p>
+
+        <div class="card-title-sub">📐 Custom Size (Optional)</div>
+        <label class="cs-enable-row">
+          <input type="checkbox" id="cs-enable">
+          Is photo ka size custom (px mein) set karein
+        </label>
+        <div class="cs-controls" id="cs-controls">
+          <div class="cs-row">
+            <div class="cs-field"><label>Width (px)</label><input type="number" id="cs-w" min="1" max="10000"></div>
+            <div class="cs-field"><label>Height (px)</label><input type="number" id="cs-h" min="1" max="10000"></div>
+          </div>
+          <label class="cs-lock-row"><input type="checkbox" id="cs-lock-ar" checked> Aspect Ratio Lock Karein</label>
+          <div class="action-row" style="margin-top:12px">
+            <button type="button" class="btn-secondary" id="cs-reset-btn">↺ Original Size Use Karein</button>
+          </div>
+        </div>
+        <p style="font-size:.76rem;color:var(--muted);margin-top:10px">Har photo ka apna alag custom size set kar sakte hain — jaise ek photo 800×600 aur doosri 1200×900. Enable na karein to photo apni original size mein hi rahegi.</p>
       </div>
     </div>
   </div>
@@ -436,7 +462,7 @@
     if(!incoming.length)return;
     var firstNewId=null;
     incoming.forEach(function(f){
-      var item={id:++QID,file:f,url:URL.createObjectURL(f),img:null,natW:0,natH:0,error:false,loading:true,adjust:defaultAdjust()};
+      var item={id:++QID,file:f,url:URL.createObjectURL(f),img:null,natW:0,natH:0,error:false,loading:true,adjust:defaultAdjust(),size:defaultSize()};
       if(firstNewId===null)firstNewId=item.id;
       QUEUE.push(item);
       loadImageForItem(item);
@@ -458,7 +484,13 @@
 
   function loadImageForItem(item){
     var img=new Image();
-    img.onload=function(){item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;renderThumbs();renderAdjPreview();};
+    img.onload=function(){
+      item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;
+      if(!item.size.w)item.size.w=item.natW;
+      if(!item.size.h)item.size.h=item.natH;
+      renderThumbs();renderAdjPreview();
+      if(item.id===activeId)syncAdjustUIFromActive();
+    };
     img.onerror=function(){item.error=true;item.loading=false;renderThumbs();renderAdjPreview();};
     img.src=item.url;
   }
@@ -510,6 +542,16 @@
      own Brightness/Contrast/Saturation/Sharpness/Rotate, not one shared
      setting for the whole batch) ══════════════ */
   function defaultAdjust(){return {bright:100,contrast:100,sat:100,sharp:0,rotate:0};}
+  // Custom Size (px) — also per-image, same "window onto whichever photo is
+  // active" model as adjust. w/h start at 0 and get filled in with the
+  // image's natural dimensions once it loads (see loadImageForItem), so the
+  // number inputs show sensible values even before the user enables this.
+  function defaultSize(){return {enabled:false,w:0,h:0,lockAR:true};}
+  function getBaseSize(item){
+    var s=item.size;
+    if(s&&s.enabled&&s.w>0&&s.h>0)return{w:s.w,h:s.h};
+    return{w:item.natW,h:item.natH};
+  }
   var activeId=null;
   function getActiveItem(){
     var it=QUEUE.find(function(x){return x.id===activeId;});
@@ -539,6 +581,18 @@
         if(+b.getAttribute('data-val')===adj[t])b.classList.add('active');
       });
     });
+    var sizeCfg=item?item.size:defaultSize();
+    var csEnable=G('cs-enable'),csW=G('cs-w'),csH=G('cs-h'),csLock=G('cs-lock-ar');
+    if(csEnable)csEnable.checked=!!sizeCfg.enabled;
+    if(csW)csW.value=sizeCfg.w||(item?item.natW:'')||'';
+    if(csH)csH.value=sizeCfg.h||(item?item.natH:'')||'';
+    if(csLock)csLock.checked=sizeCfg.lockAR!==false;
+    syncSizeControlsEnabled();
+  }
+  function syncSizeControlsEnabled(){
+    var item=getActiveItem();
+    var ctrl=G('cs-controls');
+    if(ctrl)ctrl.classList.toggle('on',!!(item&&item.size&&item.size.enabled));
   }
   // Updates only the active photo's OWN thumbnail filter live while a
   // slider is being dragged (cheap style tweak) — a full renderThumbs()
@@ -562,10 +616,11 @@
     if(!item||!item.img||item.error){canvas.width=0;canvas.height=0;if(fname)fname.textContent='—';return;}
     if(fname)fname.textContent=item.file.name;
     var adj=item.adjust;
+    var base=getBaseSize(item);
     var rot=adj.rotate||0,swap=(rot===90||rot===270);
     var maxSide=640;
-    var scale=Math.min(1,maxSide/Math.max(item.natW,item.natH));
-    var dw=Math.max(1,Math.round(item.natW*scale)),dh=Math.max(1,Math.round(item.natH*scale));
+    var scale=Math.min(1,maxSide/Math.max(base.w,base.h));
+    var dw=Math.max(1,Math.round(base.w*scale)),dh=Math.max(1,Math.round(base.h*scale));
     canvas.width=swap?dh:dw;canvas.height=swap?dw:dh;
     var ctx=canvas.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -621,6 +676,45 @@
     renderAdjPreview();
   });
 
+  /* ══════════════ Custom Size (per-image, px) ══════════════ */
+  var csEnableEl=G('cs-enable'),csWEl=G('cs-w'),csHEl=G('cs-h'),csLockEl=G('cs-lock-ar'),csResetBtn=G('cs-reset-btn');
+  if(csEnableEl)csEnableEl.addEventListener('change',function(){
+    var item=getActiveItem();if(!item)return;
+    item.size.enabled=csEnableEl.checked;
+    syncSizeControlsEnabled();
+    renderAdjPreview();
+  });
+  if(csWEl)csWEl.addEventListener('input',function(){
+    var item=getActiveItem();if(!item)return;
+    var w=Math.max(1,parseInt(csWEl.value,10)||1);
+    item.size.w=w;
+    if(item.size.lockAR&&item.natW&&item.natH){
+      var h=Math.max(1,Math.round(w*item.natH/item.natW));
+      item.size.h=h;csHEl.value=h;
+    }
+    renderAdjPreview();
+  });
+  if(csHEl)csHEl.addEventListener('input',function(){
+    var item=getActiveItem();if(!item)return;
+    var h=Math.max(1,parseInt(csHEl.value,10)||1);
+    item.size.h=h;
+    if(item.size.lockAR&&item.natW&&item.natH){
+      var w=Math.max(1,Math.round(h*item.natW/item.natH));
+      item.size.w=w;csWEl.value=w;
+    }
+    renderAdjPreview();
+  });
+  if(csLockEl)csLockEl.addEventListener('change',function(){
+    var item=getActiveItem();if(!item)return;
+    item.size.lockAR=csLockEl.checked;
+  });
+  if(csResetBtn)csResetBtn.addEventListener('click',function(){
+    var item=getActiveItem();if(!item||!item.natW)return;
+    item.size.w=item.natW;item.size.h=item.natH;
+    syncAdjustUIFromActive();
+    renderAdjPreview();
+  });
+
   /* ══════════════ Encoders (reused) ══════════════ */
   function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
   function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('Library load fail'));};document.head.appendChild(s);});}
@@ -667,15 +761,16 @@
   /* ══════════════ Render canvas per item (rotate/flip + Photo Adjust) ══════════════ */
   function renderCanvasForItem(item,fmt){
     var adj=item.adjust||defaultAdjust();
+    var base=getBaseSize(item);
     var rot=adj.rotate||0,flip=G('flip').value,swap=(rot===90||rot===270);
-    var cw=swap?item.natH:item.natW, ch=swap?item.natW:item.natH;
+    var cw=swap?base.h:base.w, ch=swap?base.w:base.h;
     var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;var ctx=cv.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
     ctx.filter='none';fillBG(ctx,fmt,cw,ch);
     ctx.filter=filterCss(adj);
     ctx.translate(cw/2,ch/2);ctx.rotate(rot*Math.PI/180);
     if(flip==='h')ctx.scale(-1,1);if(flip==='v')ctx.scale(1,-1);
-    ctx.drawImage(item.img,-item.natW/2,-item.natH/2,item.natW,item.natH);
+    ctx.drawImage(item.img,-base.w/2,-base.h/2,base.w,base.h);
     ctx.setTransform(1,0,0,1,0,0);ctx.filter='none';
     if(adj.sharp>0)applySharpen(ctx,cw,ch,adj.sharp);
     return cv;
