@@ -11,6 +11,8 @@
   <meta property="og:title" content="Signature Resizer Free Online – Resize to KB and Pixels | Top Sarkari Jobs"><meta property="og:description" content="Resize your signature image to exact KB size and pixel dimensions for government job online forms. Free tool, no signup required."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>(function(){var l=document.createElement("link");l.rel="preload";l.as="style";l.href="/fonts/fa/all.min.css?v=20260705fix";l.onload=function(){this.onload=null;this.rel="stylesheet"};document.head.appendChild(l);})();</script>
+  <noscript><link rel="stylesheet" href="/fonts/fa/all.min.css?v=20260705fix"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 <style id="cropper-touch-fix">
 /* ===== Mobile-friendly Cropper.js touch targets (crop line/handles ko bada + easy-to-grab banaya) ===== */
@@ -770,12 +772,27 @@
     var ctx=c.getContext('2d');ctx.drawImage(imgOrCanvas,0,0);
     var img=ctx.getImageData(0,0,iw,ih),d=img.data,n=iw*ih,i,x,y,p;
     // estimate paper colour = average of border pixels
+    // BUG FIX: a rotated crop (Cropper's rotateTo/rotate) exposes empty
+    // corners inside the crop box that render as alpha=0 -- if those get
+    // averaged in here they drag the "paper colour" reference toward black,
+    // which then makes the REAL paper look "far from paper" and nothing
+    // gets removed at all. Skip already-transparent border pixels so the
+    // average only reflects real paper.
     var br=0,bg=0,bb=0,bc=0,sx=Math.max(1,(iw/60)|0),sy=Math.max(1,(ih/60)|0);
-    for(x=0;x<iw;x+=sx){p=x*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=((ih-1)*iw+x)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
-    for(y=0;y<ih;y+=sy){p=(y*iw)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=(y*iw+iw-1)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
+    function sampleBorder(p){if(d[p+3]>=128){br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}}
+    for(x=0;x<iw;x+=sx){sampleBorder(x*4);sampleBorder(((ih-1)*iw+x)*4);}
+    for(y=0;y<ih;y+=sy){sampleBorder((y*iw)*4);sampleBorder((y*iw+iw-1)*4);}
+    if(bc===0){ // whole sampled border was transparent (heavy rotation) -- fall back to unfiltered average
+      for(x=0;x<iw;x+=sx){p=x*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=((ih-1)*iw+x)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
+      for(y=0;y<ih;y+=sy){p=(y*iw)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;p=(y*iw+iw-1)*4;br+=d[p];bg+=d[p+1];bb+=d[p+2];bc++;}
+    }
     br/=bc;bg/=bc;bb/=bc;
     var LO=30,HI=95;   // colour-distance from paper -> alpha ramp
     for(i=0;i<n;i++){
+      // a pixel that was ALREADY transparent (rotation-exposed empty corner)
+      // must stay transparent -- otherwise its black RGB reads as "far from
+      // paper colour" and gets turned into solid black ink in the output.
+      if(d[i*4+3]<10)continue;
       var r=d[i*4],g=d[i*4+1],b=d[i*4+2];
       var dr=r-br,dg=g-bg,db=b-bb,dist=Math.sqrt(dr*dr+dg*dg+db*db),a;
       if(dist<=LO)a=0;else if(dist>=HI)a=255;else a=(255*(dist-LO)/(HI-LO))|0;
