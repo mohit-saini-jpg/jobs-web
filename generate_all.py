@@ -6014,7 +6014,7 @@ def _page_exists_on_disk(slug):
                               for p in _g.glob(str(ROOT / 'jobs' / '*' / 'index.html')))
     return slug in _DISK_JOB_SLUGS
 
-def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html='', list_noun='Jobs'):
+def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html='', list_noun='Jobs', render_cards=True):
     # _DISK_JOB_SLUGS freezes on its first-ever call (often triggered early,
     # mid-way through the detail-page write loop, by the "Related Jobs" widget).
     # Force a fresh glob here so every listing page sees ALL detail pages
@@ -6246,13 +6246,16 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             )
     except Exception: pass
 
+    _search_and_cards = (
+        f'<div class="search-bar" style="margin:0 10px 12px">'
+        f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
+        f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+    ) if render_cards else ''
     body = (f'<div class="cat-wrap">'
             f'<h1 class="cat-h1" style="margin:12px 10px 4px">{e(title)}</h1>'
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
             f'{top_html}'
-            f'<div class="search-bar" style="margin:0 10px 12px">'
-            f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
-            f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+            f'{_search_and_cards}'
             f'{_seo_listing_content(title, jobs, canon_url)}'
             f'{_related_links_html}'
             f'<div style="padding:0 10px">{REL_CATS_HTML}</div></div>'
@@ -8217,14 +8220,80 @@ for _qkey in QUAL_SLUG_ORDER:
                           'organization_name': _clabel,
                           'total_vacancies': str(len(_cjobs))},
         '_listing_url': f"/category/study/{_qslug}/"})
+
+# UX/SEO FIX (2026-07-19): the landing page used to render all 118 qualifications
+# as one full-width card per row (build_listing_page's default cards_html) --
+# a huge, un-grouped scroll with zero descriptive content, bad for both users
+# ("scroll km krna pade" — user's own words) and SEO (no real H2 structure, no
+# unique body copy beyond a title/description meta pair). QUAL_GROUPS partitions
+# every QUAL_SLUG_ORDER key (validated 1:1, no gaps/dupes) into qualification
+# tiers a Sarkari-jobs candidate actually thinks in, each rendered as a compact
+# wrapping chip-grid (icon-badge only shows for tiers with any live jobs) under
+# a real <h2> + a short unique description paragraph -- far less vertical space
+# than 118 stacked cards, and real crawlable heading/paragraph structure per tier.
+QUAL_GROUPS = [
+    ("Below 10th Pass", ['4th_Pass','5th_Pass','6th_Pass','7th_Pass','8TH_Pass','9th_Pass'],
+     "Sarkari naukri for candidates who have passed 4th, 5th, 6th, 7th, 8th or 9th class — mostly Group D, Peon, Watchman, Safai Karamchari and other entry-level government jobs."),
+    ("10th & 12th Pass", ['10TH_Pass','Intermediate','12TH_Pass','VHSE'],
+     "Government jobs open to 10th Pass, 12th Pass and Intermediate/VHSE candidates — Railway, SSC, Police Constable, Anganwadi, Postal and many more recruitment notifications 2026."),
+    ("ITI / Diploma / Para-Medical Diploma", ['ITI','Diploma','D_Pharm','DLT','D_El_Ed','D_P_Ed','DMLT','GNM','ANM'],
+     "Sarkari jobs for ITI, Diploma, D.Pharm, D.El.Ed, GNM and ANM qualified candidates — Technician, Junior Engineer, Staff Nurse and para-medical government vacancies."),
+    ("Graduate / Bachelor's Degree", ['B_A','B_Com','B_Sc','BCA','BBA','BBM','B_Ed','B_El_Ed','B_Voc','B_Lib','BFA','BHA','BHM','B_Optom','BSW','BVA','BPEd','BASLP','BOT','BPMT','BSMS','BPT','BFSc','BPO','BS','Any_Bachelors_Degree','Any_Graduate'],
+     "Government jobs for B.A, B.Com, B.Sc, BCA, BBA and other graduate degree holders — Bank PO/Clerk, SSC CGL, UPSC, teaching and administrative Sarkari posts 2026."),
+    ("Engineering (B.Tech / BE)", ['B_Tech_BE'],
+     "Government engineering jobs for B.Tech / BE graduates across Civil, Mechanical, Electrical, Computer Science and other branches — PSU, Railway and state engineering service recruitments."),
+    ("Medical & Para-Medical (Bachelor's)", ['BAMS','BHMS','BUMS','BVSC','BDS','MBBS','B_Pharma','BMLT'],
+     "Government medical jobs for MBBS, BDS, BAMS, BHMS, BUMS, B.Pharma and BVSc graduates — Medical Officer, Pharmacist and Veterinary Officer vacancies."),
+    ("Law & Professional Courses", ['LLB','B_Plan','B_Arch','B_Des','Professional_Degree','CA','CS','ICWA','ICMAI','ICSI','Member_of_ICAI'],
+     "Sarkari jobs for LLB, CA, CS, ICWA and other professional qualification holders — Legal Officer, Judicial Service and Finance/Accounts government posts."),
+    ("Post Graduate / Master's Degree", ['MA','M_Com','M_Sc','MCA','MBA_PGDM','M_Ed','M_Lib','M_Voc','M_Des','M_Plan','M_Arch','M_E_MTech','M_Pharma','MSW','Any_Masters_Degree','Any_Post_Graduate','Intergrated_PG'],
+     "Government jobs for M.A, M.Com, M.Sc, MBA, M.Tech and other post-graduate degree holders — Lecturer, Manager, Scientist and specialist Sarkari positions 2026."),
+    ("Medical Post Graduate & Super Specialty", ['MS','MS_MD','MD_Pathology','M_Ch','DM','DNB','DNB_Pathology','MFSc','MVSC','Master_of_Dental_Surgery','MHA','Master_in_Health_Administration','MPH','MHS','MPA','MPT','MHM','M_P_Ed','MOT','MPO','MASLP','MFA','MCM'],
+     "Government jobs for MD, MS, DM, DNB and other medical post-graduate / super-specialty doctors — Senior Resident, Specialist and Consultant vacancies in government hospitals."),
+    ("PG Diploma", ['MLT','PGDMLT','PG_Diploma','PGDCA','PGDM','PGDBM','PGDBA','PGP'],
+     "Government jobs for candidates holding a Post Graduate Diploma — PGDCA, PGDM, PGDBM and similar qualifications."),
+    ("PhD / LLM / M.Phil & Others", ['LLM','MPhil_PhD','M_Th','Retired_Staff'],
+     "Highest-qualification government jobs — LLM, M.Phil, PhD and re-employment openings for retired staff."),
+]
+_qkey_to_slugcount = {}
+for _qkey in QUAL_SLUG_ORDER:
+    _qslug = QUAL_SLUG.get(_qkey, slugify(_qkey))
+    _cdata = _cat_listing_jobs.get(_qslug) or {'label': QUAL_LABEL.get(_qkey, _qkey), 'jobs': []}
+    _qkey_to_slugcount[_qkey] = (_qslug, _cdata.get('label', _qslug.replace('-', ' ').title()), len(_cdata.get('jobs', [])))
+
+_study_group_sections = []
+for _gname, _gkeys, _gdesc in QUAL_GROUPS:
+    _chips = []
+    for _gk in _gkeys:
+        if _gk not in _qkey_to_slugcount: continue
+        _gslug, _glabel, _gcount = _qkey_to_slugcount[_gk]
+        _badge = (f'<span style="background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:1px 7px;'
+                  f'font-size:.66rem;font-weight:800;margin-left:5px">{_gcount}</span>') if _gcount else ''
+        _chips.append(
+            f'<a href="/category/study/{e(_gslug)}/" style="display:inline-flex;align-items:center;'
+            f'background:#fff;border:1px solid #e2e8f0;color:#0d2257;padding:7px 12px;border-radius:20px;'
+            f'font-size:.8rem;font-weight:700;text-decoration:none;margin:0">{e(_glabel)}{_badge}</a>'
+        )
+    if not _chips: continue
+    _study_group_sections.append(
+        f'<section style="margin:0 10px 20px">'
+        f'<h2 style="font-size:1rem;font-weight:800;color:#0d2257;margin:0 0 4px">{e(_gname)}</h2>'
+        f'<p style="font-size:.8rem;color:#64748b;margin:0 0 10px;line-height:1.55">{e(_gdesc)}</p>'
+        f'<div style="display:flex;flex-wrap:wrap;gap:8px">{"".join(_chips)}</div>'
+        f'</section>'
+    )
+_study_groups_html = ''.join(_study_group_sections)
+
 if _study_landing_jobs:
     write(str(ROOT/'category'/'study'/'index.html'), build_listing_page(
         f"Qualification Wise Government Jobs {YEAR}",
         _study_landing_jobs,
         f"{BASE_URL}/category/study/",
         [('Home','/'),('Study Wise Jobs','/category/study/')],
-        f"Find government jobs by qualification {YEAR}: 4th Pass, 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate, PhD and 100+ more qualifications. Updated daily."))
-    print(f"  /category/study/ landing: {len(_study_landing_jobs)} qualifications")
+        f"Find government jobs by qualification {YEAR}: 4th Pass, 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate, PhD and 100+ more qualifications. Updated daily.",
+        top_html=_study_groups_html,
+        render_cards=False))
+    print(f"  /category/study/ landing: {len(_study_landing_jobs)} qualifications, {len(_study_group_sections)} groups")
 
 # 6. SECTION LISTING PAGES
 print("Generating /section/ pages...")
