@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-  <title>Audio Format Converter Free Online | Top Sarkari Jobs</title>
-  <meta name="description" content="Convert audio to any format online for free — MP3 to WAV, OGG to MP3, AAC to MP3 and more. Fast conversion, no signup required.">
-  <meta name="keywords" content="audio format convert, free online audio format convert, audio format convert tool">
+  <title>Audio Format Converter Free Online — Trim, Effects, Equalizer | Top Sarkari Jobs</title>
+  <meta name="description" content="Convert audio to MP3, WAV, OGG, AAC, FLAC, Opus, AIFF free online. Live waveform trim, Volume, Pitch, Vocal Remover, Noise Reduction, Reverse Audio aur 10-band Equalizer — sab browser mein hi, koi upload nahi.">
+  <meta name="keywords" content="audio format convert, audio converter, audio trim, vocal remover, noise reduction, audio equalizer, reverse audio">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/av/audio-convert.html">
-  <meta property="og:title" content="Audio Format Converter Free Online | Top Sarkari Jobs">
-  <meta property="og:description" content="Convert audio to any format online for free — MP3 to WAV, OGG to MP3, AAC to MP3 and more. Fast conversion, no signup required.">
+  <meta property="og:title" content="Audio Format Converter Free Online — Trim, Effects, Equalizer | Top Sarkari Jobs">
+  <meta property="og:description" content="Convert audio to MP3, WAV, OGG, AAC, FLAC, Opus, AIFF free online. Live waveform trim, Vocal Remover, Noise Reduction, Equalizer — sab browser mein hi.">
   <meta property="og:url" content="https://www.topsarkarijobs.com/tools/av/audio-convert.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -21,7 +21,7 @@
     :root {
       --brand: #345de6; --brand-dark: #2949b4; --brand-light: #eef4ff;
       --ink: #101828; --muted: #6B7280; --line: #E5E7EB; --mist: #F8FAFC;
-      --white: #ffffff; --success: #10B981; --radius: 12px;
+      --white: #ffffff; --success: #10B981; --warn: #F59E0B; --error: #EF4444; --radius: 12px;
       --shadow: 0 4px 24px rgba(15,23,42,0.08);
     }
     body { font-family: 'Noto Sans', sans-serif; color: var(--ink); background: var(--mist); min-height: 100vh; }
@@ -38,12 +38,13 @@
     .tool-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(52,93,230,0.35) 0%, transparent 55%), radial-gradient(ellipse at 75% 50%, rgba(79,123,255,0.2) 0%, transparent 55%); }
     .hero-icon { width: 76px; height: 76px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 2rem; position: relative; z-index: 1; }
     .tool-hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
-    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
+    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
     .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
     .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
     .main-container { max-width: 960px; margin: 0 auto; padding: 28px 20px 56px; }
     .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
     .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+    .card h3 .card-sub { font-size: 0.72rem; font-weight: 500; color: var(--muted); margin-left: auto; }
     .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 44px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--mist); }
     .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
     .upload-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
@@ -60,14 +61,16 @@
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
-    .range-wrap { position: relative; }
     .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
     .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
     .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
     .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+    .btn-small { padding: 7px 14px; background: var(--brand-light); color: var(--brand); border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-small:hover { background: var(--brand); color: white; }
     .progress-wrap { display: none; margin-top: 14px; }
     .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), #7ca1ff); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
@@ -81,6 +84,10 @@
     .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
     .btn-dl { padding: 12px 24px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
     .btn-dl:hover { filter: brightness(1.08); }
+    .err-box { display:none; margin-top:14px; padding:12px 14px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px; color:#B91C1C; font-size:0.82rem; }
+    .err-box.show { display:block; }
+    .err-toggle { background:none; border:none; color:#B91C1C; text-decoration:underline; cursor:pointer; font-size:0.78rem; padding:0; margin-top:6px; font-family:inherit; }
+    .err-tech { display:none; margin-top:8px; white-space:pre-wrap; font-family:monospace; font-size:0.7rem; max-height:160px; overflow:auto; background:#fff; border-radius:6px; padding:8px; }
     .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
     .step { text-align: center; padding: 18px 10px; }
     .step-n { width: 38px; height: 38px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; }
@@ -97,7 +104,7 @@
     .faq-q .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
     .faq-q.open .faq-arrow { transform: rotate(45deg); }
     .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s; }
-    .faq-a.open { max-height: 200px; padding-bottom: 12px; }
+    .faq-a.open { max-height: 260px; padding-bottom: 12px; }
     .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
     .rel-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 10px; border-radius: 10px; border: 1.5px solid var(--line); text-decoration: none; color: var(--ink); transition: all 0.2s; text-align: center; }
     .rel-item:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-2px); }
@@ -108,6 +115,55 @@
     .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
     .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
     .tool-footer a:hover { color: white; }
+
+    /* ── Trim / waveform (dark "player" panel) ── */
+    .trim-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+    .trim-toolbar .t-time { font-size:0.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .trim-panel { background:#0d1224; border-radius:10px; padding:14px 16px 18px; position:relative; }
+    .trim-panel.disabled { opacity:.4; pointer-events:none; }
+    .wave-labels { display:flex; justify-content:space-between; font-size:0.68rem; color:#7d89b3; font-variant-numeric:tabular-nums; margin-bottom:4px; }
+    .wave-wrap { position:relative; height:90px; border-radius:6px; overflow:hidden; background:#111834; }
+    .wave-wrap canvas { display:block; width:100%; height:100%; }
+    .wave-dim { position:absolute; top:0; bottom:0; background:rgba(0,0,0,.55); }
+    .wave-dim.left { left:0; }
+    .wave-dim.right { right:0; }
+    .wave-handle { position:absolute; top:0; bottom:0; width:4px; background:#5fd0ff; cursor:ew-resize; touch-action:none; }
+    .wave-handle::before { content:''; position:absolute; top:-6px; left:-6px; width:16px; height:16px; background:#5fd0ff; border-radius:4px; }
+    .wave-handle.end::before { left:-10px; }
+    .wave-playhead { position:absolute; top:0; bottom:0; width:2px; background:#fff; opacity:.8; pointer-events:none; display:none; }
+    .trim-sel-info { display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:0.76rem; color:#a9b4d6; }
+    .trim-sel-info b { color:#fff; }
+    .trim-fallback { display:none; margin-top:6px; }
+    .trim-fallback.show { display:block; }
+    .trim-fallback .field-row { display:flex; gap:10px; }
+    .trim-fallback label { display:block; font-size:0.7rem; color:#a9b4d6; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+    .trim-fallback input[type=text] { width:100%; padding:7px 9px; border-radius:6px; border:1px solid #2a3358; background:#111834; color:#fff; font-size:0.82rem; }
+
+    /* ── Effects panel ── */
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.86rem; }
+    .toggle-row:last-child { border-bottom:none; }
+    .switch { position:relative; width:40px; height:23px; flex-shrink:0; }
+    .switch input { opacity:0; width:0; height:0; }
+    .slider-tog { position:absolute; cursor:pointer; inset:0; background:var(--line); border-radius:23px; transition:.2s; }
+    .slider-tog::before { content:''; position:absolute; width:17px; height:17px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+    .switch input:checked + .slider-tog { background:var(--brand); }
+    .switch input:checked + .slider-tog::before { transform:translateX(17px); }
+    .fx-field { margin-bottom:16px; }
+    .fx-field label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+    .fx-field select { width:100%; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:0.85rem; font-family:inherit; background:#fff; }
+    .fx-sub-field { display:none; margin:10px 0 0 0; padding-left:2px; }
+    .fx-sub-field.show { display:block; }
+    .eq-wrap { margin-top:8px; }
+    .eq-preset-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .eq-preset-row label { font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .eq-preset-row select { border:1.5px solid var(--line); border-radius:8px; padding:6px 10px; font-size:0.82rem; font-family:inherit; background:#fff; }
+    .eq-bands { display:flex; justify-content:space-between; gap:2px; height:150px; padding:4px 0; background:var(--mist); border-radius:8px; }
+    .eq-band { display:flex; flex-direction:column; align-items:center; flex:1; gap:4px; padding-top:6px; }
+    .eq-band-gain { font-size:0.62rem; color:var(--brand); font-weight:700; height:12px; }
+    .eq-slider-track { position:relative; flex:1; width:100%; display:flex; align-items:center; justify-content:center; }
+    .eq-slider-track input[type=range] { writing-mode: vertical-lr; direction: rtl; -webkit-appearance: slider-vertical; appearance: slider-vertical; width:5px; height:110px; accent-color:var(--brand); cursor:pointer; background:transparent; }
+    .eq-band-freq { font-size:0.62rem; color:var(--muted); padding-bottom:6px; }
+
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -115,6 +171,8 @@
       .card { padding: 18px 14px; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
+      .eq-bands { height:130px; }
+      .eq-slider-track input[type=range] { height:90px; }
     }
 </style>
 
@@ -165,7 +223,7 @@
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Any",
     "url": "https://www.topsarkarijobs.com/tools/av/audio-convert.html",
-    "description": "Audio ko kisi bhi format mein convert karein — MP3 to WAV, OGG to MP3, AAC to MP3 aur bahut kuch bilkul free.",
+    "description": "Audio ko MP3, WAV, OGG, AAC, FLAC, Opus, AIFF mein convert karein — saath mein live waveform trim, Volume, Pitch, Vocal Remover, Noise Reduction, Reverse Audio aur 10-band Equalizer, bilkul free.",
     "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
     "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
   }
@@ -200,8 +258,8 @@
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#f7971e,#ffd200)">🔄</div>
   <h1>Audio Format Convert</h1>
-  <p>Audio format instantly change karein. MP3, WAV, OGG, AAC, FLAC — koi bhi format mein convert karein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">MP3 WAV OGG AAC FLAC</span> <span class="badge">Bitrate Control</span> <span class="badge">Fast</span></div>
+  <p>Audio format instantly change karein — MP3, WAV, OGG, AAC, FLAC, Opus, AIFF. Live waveform trim, Volume, Pitch, Vocal Remover, Noise Reduction, Reverse Audio aur 10-band Equalizer, sab ek hi jagah.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">7 Formats</span> <span class="badge">Live Trim</span> <span class="badge">Vocal Remover</span> <span class="badge">Equalizer</span> <span class="badge">100% Browser</span></div>
 </section>
 
 <!-- MAIN -->
@@ -212,30 +270,142 @@
     <h3>📂 File Upload Karein</h3>
     <div class="upload-zone" id="dropzone">
       <span class="upload-icon">⬆️</span>
-      <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein</div>
+      <div class="upload-title">Audio File Yahan Drop Karein</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein — MP3, WAV, OGG, M4A, FLAC, Opus, AIFF supported</div>
     </div>
     <div class="file-preview" id="file-preview">
-      <span>📄</span>
+      <span>🎵</span>
       <span class="file-name">—</span>
       <span class="file-size">—</span>
       <button class="file-remove" title="Remove">✕</button>
     </div>
   </div>
-  <input type="file" id="main-file" style="display:none">
+  <input type="file" id="main-file" accept="audio/*" style="display:none">
 
-  <!-- OPTIONS -->
-  <div class="card">
-    <h3>⚙️ Settings</h3>
-    
-      <div class="form-grid">
-        <div class="form-group"><label>Output Format</label><select><option>MP3</option><option>WAV</option><option>OGG</option><option>AAC (.m4a)</option><option>FLAC (Lossless)</option><option>AIFF</option></select></div>
-        <div class="form-group"><label>Bitrate</label><select><option>320 kbps</option><option>256 kbps</option><option>192 kbps</option><option>128 kbps</option><option>96 kbps</option></select></div>
-        <div class="form-group"><label>Sample Rate</label><select><option>44100 Hz (CD Quality)</option><option>48000 Hz (Video Standard)</option><option>22050 Hz</option></select></div>
-        <div class="form-group"><label>Channels</label><select><option>Same as Input</option><option>Stereo (2ch)</option><option>Mono (1ch)</option></select></div>
+  <!-- TRIM / WAVEFORM -->
+  <div class="card" id="trim-card" style="display:none">
+    <h3>✂️ Live Cut / Trim <span class="card-sub" id="trim-duration">—</span></h3>
+    <div class="trim-panel disabled" id="trim-panel">
+      <div class="wave-labels"><span id="wave-lbl-start">00:00.0</span><span id="wave-lbl-total">00:00.0</span></div>
+      <div class="wave-wrap" id="wave-wrap">
+        <canvas id="wave-canvas"></canvas>
+        <div class="wave-dim left" id="dim-left"></div>
+        <div class="wave-dim right" id="dim-right"></div>
+        <div class="wave-playhead" id="wave-playhead"></div>
+        <div class="wave-handle start" id="handle-start" title="Start point — drag karein"></div>
+        <div class="wave-handle end" id="handle-end" title="End point — drag karein"></div>
       </div>
-    
-    <div class="action-row" style="margin-top:18px;">
+      <div class="trim-sel-info">
+        <span>Selected: <b id="trim-sel-range">0:00 – 0:00</b> (<b id="trim-sel-dur">0s</b>)</span>
+        <button class="btn-small" id="preview-trim-btn">▶️ Preview Cut</button>
+      </div>
+      <div class="trim-fallback" id="trim-fallback">
+        <div class="field-row">
+          <div><label>Start (mm:ss)</label><input type="text" id="trim-start-txt" value="0:00"></div>
+          <div><label>End (mm:ss)</label><input type="text" id="trim-end-txt" value="0:00"></div>
+        </div>
+      </div>
+    </div>
+    <audio id="preview-audio" style="display:none" preload="none"></audio>
+  </div>
+
+  <!-- OUTPUT SETTINGS -->
+  <div class="card">
+    <h3>⚙️ Output Settings</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Output Format</label>
+        <select id="opt-format">
+          <option value="mp3">MP3</option>
+          <option value="wav">WAV (Lossless)</option>
+          <option value="ogg">OGG (Vorbis)</option>
+          <option value="m4a">AAC (.m4a)</option>
+          <option value="flac">FLAC (Lossless)</option>
+          <option value="opus">Opus</option>
+          <option value="aiff">AIFF (Lossless)</option>
+        </select>
+      </div>
+      <div class="form-group" id="bitrate-field"><label>Bitrate</label>
+        <select id="opt-bitrate">
+          <option value="320k">320 kbps</option>
+          <option value="256k">256 kbps</option>
+          <option value="192k" selected>192 kbps</option>
+          <option value="128k">128 kbps</option>
+          <option value="96k">96 kbps</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Sample Rate</label>
+        <select id="opt-samplerate">
+          <option value="same">Same as Input</option>
+          <option value="44100">44100 Hz (CD Quality)</option>
+          <option value="48000">48000 Hz (Video Standard)</option>
+          <option value="22050">22050 Hz</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Channels</label>
+        <select id="opt-channels">
+          <option value="same">Same as Input</option>
+          <option value="2">Stereo (2ch)</option>
+          <option value="1">Mono (1ch)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO EFFECTS -->
+  <div class="card">
+    <h3>🎚️ Audio Effects</h3>
+    <div class="fx-field">
+      <label>Volume (<span id="volume-val">100</span>%)</label>
+      <input type="range" id="fx-volume" min="0" max="500" value="100">
+    </div>
+    <div class="fx-field">
+      <label>Pitch (<span id="pitch-val">1.0</span>x)</label>
+      <input type="range" id="fx-pitch" min="0.5" max="2" step="0.05" value="1">
+    </div>
+    <div class="toggle-row">
+      <span>Vocal Remover</span>
+      <label class="switch"><input type="checkbox" id="fx-vocal-remove"><span class="slider-tog"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span>Reduce Noise</span>
+      <label class="switch"><input type="checkbox" id="fx-noise-reduce"><span class="slider-tog"></span></label>
+    </div>
+    <div class="fx-sub-field" id="noise-strength-field">
+      <label>Noise Reduction Strength (<span id="noise-strength-val">12</span> dB)</label>
+      <input type="range" id="fx-noise-strength" min="1" max="40" step="1" value="12">
+    </div>
+    <div class="fx-sub-field" id="noise-mode-field">
+      <label>Mode</label>
+      <select id="fx-noise-mode">
+        <option value="standard">Standard (Background Hiss)</option>
+        <option value="voice">Voice Focus (Aggressive)</option>
+        <option value="gentle">Gentle (Preserve Detail)</option>
+      </select>
+    </div>
+    <div class="toggle-row">
+      <span>Reverse Audio</span>
+      <label class="switch"><input type="checkbox" id="fx-reverse-audio"><span class="slider-tog"></span></label>
+    </div>
+
+    <div class="eq-wrap">
+      <div class="eq-preset-row">
+        <label>Equalizer</label>
+        <select id="eq-preset">
+          <option value="default">Default</option>
+          <option value="bass">Bass Boost</option>
+          <option value="treble">Treble Boost</option>
+          <option value="vocal">Vocal Boost</option>
+          <option value="podcast">Podcast/Speech</option>
+          <option value="flat">Flat (Reset)</option>
+        </select>
+      </div>
+      <div class="eq-bands" id="eq-bands"><!-- 10 bands injected by JS --></div>
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px">ℹ️ Vocal Remover sirf stereo audio par kaam karta hai jismein vocals center-panned hon (studio recordings mein zyada effective). Noise Reduction ek spectral denoiser hai — halki background hiss/hum ke liye best.</p>
+  </div>
+
+  <div class="card">
+    <div class="action-row">
       <button class="btn-primary" id="process-btn">
         <span>🚀</span> Process Karein
       </button>
@@ -245,11 +415,16 @@
       <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
       <div class="progress-msg" id="pmsg">Processing...</div>
     </div>
+    <div class="err-box" id="err-box">
+      <div id="err-msg">Kuch galat ho gaya.</div>
+      <button class="err-toggle" id="err-toggle">Technical details dikhayein</button>
+      <div class="err-tech" id="err-tech"></div>
+    </div>
   </div>
 
   <!-- RESULT -->
   <div class="card result-card" id="result-card">
-    <div class="result-ok">✅ Successfully Processed!</div>
+    <div class="result-ok">✅ Successfully Converted!</div>
     <div class="stat-row" id="stat-row"></div>
     <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
   </div>
@@ -258,8 +433,8 @@
   <div class="card">
     <h3>📖 Kaise Use Karein</h3>
     <div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Audio file choose karein</p></div>
-<div class="step"><div class="step-n">2</div><h4>Format</h4><p>Output format choose karein</p></div>
-<div class="step"><div class="step-n">3</div><h4>Quality</h4><p>Bitrate set karein</p></div>
+<div class="step"><div class="step-n">2</div><h4>Trim</h4><p>Waveform pe drag karke cut karein (optional)</p></div>
+<div class="step"><div class="step-n">3</div><h4>Effects & Format</h4><p>Effects lagayein, output format/quality choose karein</p></div>
 <div class="step"><div class="step-n">4</div><h4>Download</h4><p>Converted audio download karein</p></div>
 </div>
   </div>
@@ -267,12 +442,15 @@
   <!-- FEATURES -->
   <div class="card">
     <h3>✨ Features</h3>
-    <div class="features-grid"><div class="feat"><span class="feat-icon">🔄</span><div><h4>All Formats</h4><p>MP3, WAV, OGG, AAC, FLAC</p></div></div>
-<div class="feat"><span class="feat-icon">🎚️</span><div><h4>Bitrate</h4><p>320kbps tak quality</p></div></div>
-<div class="feat"><span class="feat-icon">🎛️</span><div><h4>Sample Rate</h4><p>44.1kHz to 48kHz</p></div></div>
-<div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser only</p></div></div>
+    <div class="features-grid"><div class="feat"><span class="feat-icon">🔄</span><div><h4>7 Formats</h4><p>MP3, WAV, OGG, AAC, FLAC, Opus, AIFF</p></div></div>
+<div class="feat"><span class="feat-icon">✂️</span><div><h4>Live Waveform Trim</h4><p>Drag karke cut points set karein, preview sunein</p></div></div>
+<div class="feat"><span class="feat-icon">🎚️</span><div><h4>Volume & Pitch</h4><p>0-500% volume, 0.5x-2x pitch shift</p></div></div>
+<div class="feat"><span class="feat-icon">🎙️</span><div><h4>Vocal Remover</h4><p>Ek click mein vocals hatayein</p></div></div>
+<div class="feat"><span class="feat-icon">🧹</span><div><h4>Noise Reduction</h4><p>Background hiss/hum kam karein</p></div></div>
+<div class="feat"><span class="feat-icon">🔁</span><div><h4>Reverse Audio</h4><p>Audio ko ulta bajayein</p></div></div>
+<div class="feat"><span class="feat-icon">🎛️</span><div><h4>10-Band Equalizer</h4><p>Presets ya manual — bass, treble, vocal boost</p></div></div>
+<div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Sab kuch browser mein hi, koi upload nahi</p></div></div>
 <div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Always free</p></div></div>
-<div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Instant conversion</p></div></div>
 </div>
   </div>
 
@@ -283,6 +461,9 @@
 <div class="faq-item"><button class="faq-q">MP3 se WAV convert karne se quality badhegi?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi, already compressed audio ko WAV mein convert karne se quality improve nahi hoti.</div></div>
 <div class="faq-item"><button class="faq-q">Mono vs Stereo?<span class="faq-arrow">+</span></button><div class="faq-a">Mono: voice/speech ke liye. Stereo: music aur general audio ke liye.</div></div>
 <div class="faq-item"><button class="faq-q">Video files ka audio convert kar sakte hain?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi, pehle 'Video to MP3' tool se audio extract karein.</div></div>
+<div class="faq-item"><button class="faq-q">Vocal Remover har song pe kaam karega?<span class="faq-arrow">+</span></button><div class="faq-a">Zyadatar studio recordings mein vocals center mein panned hote hain, isliye ye tarika achha kaam karta hai. Live recordings ya mono audio par result kam effective hoga.</div></div>
+<div class="faq-item"><button class="faq-q">Trim/Cut ke liye original file upload hoti hai?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi — waveform aur processing dono aapke browser mein hi hote hain, file kabhi kisi server par nahi jaati.</div></div>
+<div class="faq-item"><button class="faq-q">Bahut lambi audio file (jaise 2 ghante ka podcast) chalegi?<span class="faq-arrow">+</span></button><div class="faq-a">Haan, lekin bahut badi files ke liye waveform visual nahi banega (memory limit) — is case mein simple start/end time fields se trim kar sakte hain, processing waise hi kaam karegi.</div></div>
 
   </div>
 
@@ -317,7 +498,7 @@
   </div>
 </footer>
 
-
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
 <script>
   document.querySelectorAll('.faq-q').forEach(b => {
     b.addEventListener('click', () => {
@@ -326,12 +507,63 @@
     });
   });
   function formatBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+  function formatTime(s){
+    if(!Number.isFinite(s) || s<0) s=0;
+    const m = Math.floor(s/60), sec = s-m*60;
+    return m+':'+(sec<10?'0':'')+sec.toFixed(1);
+  }
+
+  /* =========================================================
+     STATE
+  ========================================================= */
+  let currentFile = null;
+  let audioCtx = null;
+  let decodedBuffer = null;   // AudioBuffer, null if decode failed/skipped
+  let duration = 0;
+  let trimStart = 0, trimEnd = 0;
+  let waveformReady = false;
+
+  const FX = {
+    volume: 1, pitch: 1,
+    vocalRemove: false,
+    noiseReduce: false, noiseStrength: 12, noiseMode: 'standard',
+    reverseAudio: false,
+    eq: [0,0,0,0,0,0,0,0,0,0]
+  };
+  const EQ_FREQS = [31,63,125,250,500,1000,2000,4000,8000,16000];
+  const EQ_LABELS = ['31','63','125','250','500','1K','2K','4K','8K','16K'];
+  const EQ_PRESETS = {
+    default: [0,0,0,0,0,0,0,0,0,0],
+    flat:    [0,0,0,0,0,0,0,0,0,0],
+    bass:    [7,6,5,3,1,0,0,0,0,0],
+    treble:  [0,0,0,0,0,1,3,5,6,7],
+    vocal:   [-2,-1,0,2,4,4,3,1,0,-1],
+    podcast: [-3,-1,1,3,4,3,1,0,-1,-2]
+  };
+
+  const OUT_FORMATS = {
+    mp3:  { ext:'mp3',  mime:'audio/mpeg', acodec:'libmp3lame', lossy:true },
+    wav:  { ext:'wav',  mime:'audio/wav',  acodec:'pcm_s16le',  lossy:false },
+    ogg:  { ext:'ogg',  mime:'audio/ogg',  acodec:'libvorbis',  lossy:true },
+    m4a:  { ext:'m4a',  mime:'audio/mp4',  acodec:'aac',        lossy:true },
+    flac: { ext:'flac', mime:'audio/flac', acodec:'flac',       lossy:false },
+    opus: { ext:'opus', mime:'audio/opus', acodec:'libopus',    lossy:true },
+    aiff: { ext:'aiff', mime:'audio/aiff', acodec:'pcm_s16be',  lossy:false }
+  };
+
+  /* =========================================================
+     FILE UPLOAD
+  ========================================================= */
   function bindFile(inputId, previewId){
     const inp=document.getElementById(inputId), prev=document.getElementById(previewId);
     if(!inp)return;
     function handleFile(f){
       if(!f)return;
+      currentFile = f;
       if(prev){ prev.classList.add('show'); prev.querySelector('.file-name').textContent=f.name; prev.querySelector('.file-size').textContent=formatBytes(f.size); }
+      loadWaveform(f);
+      document.getElementById('result-card').classList.remove('show');
+      document.getElementById('err-box').classList.remove('show');
     }
     inp.addEventListener('change',()=>handleFile(inp.files[0]));
     const zone=inp.closest('.upload-zone')||document.querySelector('.upload-zone');
@@ -342,48 +574,414 @@
       zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;handleFile(f);}});
     }
     const rm=prev&&prev.querySelector('.file-remove');
-    if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
+    if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');document.getElementById('trim-card').style.display='none';currentFile=null;});
   }
-  function animProgress(barId, msgEl, msg){
-    const bar=document.getElementById(barId), msgd=document.getElementById(msgEl);
-    if(msgd)msgd.textContent=msg||'Processing...';
-    if(!bar)return;
-    let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    return t;
-  }
-  function finishProgress(barId){ const b=document.getElementById(barId); if(b)b.style.width='100%'; }
-</script>
-
-<script>
   bindFile('main-file','file-preview');
-  document.getElementById('process-btn').addEventListener('click', function(){
-    const f = document.getElementById('main-file').files[0];
-    if(!f){ alert('Pehle file select karein!'); return; }
+
+  /* =========================================================
+     WAVEFORM + TRIM
+     Decodes via Web Audio API purely for the visual + live preview.
+     Files too large to safely decode (>80MB) fall back to plain
+     mm:ss text fields — trimming still works either way (it's
+     applied for real by ffmpeg's atrim filter on export).
+  ========================================================= */
+  const DECODE_SIZE_LIMIT = 80 * 1024 * 1024;
+  async function loadWaveform(file){
+    const trimCard = document.getElementById('trim-card');
+    const panel = document.getElementById('trim-panel');
+    const fallback = document.getElementById('trim-fallback');
+    trimCard.style.display = 'block';
+    waveformReady = false;
+    decodedBuffer = null;
+    panel.classList.add('disabled');
+    fallback.classList.remove('show');
+    document.getElementById('trim-duration').textContent = 'Loading...';
+
+    if (file.size > DECODE_SIZE_LIMIT) {
+      useFallbackTrim(0, 0);
+      document.getElementById('trim-duration').textContent = 'File bahut badi hai — waveform preview skip, manual time fields use karein';
+      return;
+    }
+    try {
+      audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+      const buf = await file.arrayBuffer();
+      const decoded = await audioCtx.decodeAudioData(buf);
+      decodedBuffer = decoded;
+      duration = decoded.duration;
+      trimStart = 0; trimEnd = duration;
+      waveformReady = true;
+      panel.classList.remove('disabled');
+      document.getElementById('trim-duration').textContent = formatTime(duration)+' total';
+      drawWaveform(decoded);
+      layoutHandles();
+      updateSelInfo();
+      const pa = document.getElementById('preview-audio');
+      pa.src = URL.createObjectURL(file);
+    } catch(err){
+      console.warn('Waveform decode failed, using fallback trim fields:', err);
+      useFallbackTrim(0, 0);
+      document.getElementById('trim-duration').textContent = 'Waveform preview available nahi — manual time fields use karein';
+    }
+  }
+  function useFallbackTrim(){
+    document.getElementById('wave-wrap').style.display = 'none';
+    document.getElementById('trim-sel-info').style.display = 'none';
+    document.getElementById('trim-fallback').classList.add('show');
+    document.getElementById('trim-panel').classList.remove('disabled');
+  }
+
+  function drawWaveform(buffer){
+    const canvas = document.getElementById('wave-canvas');
+    const wrap = document.getElementById('wave-wrap');
+    const dpr = window.devicePixelRatio || 1;
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    const data = buffer.getChannelData(0);
+    const step = Math.max(1, Math.floor(data.length / w));
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = '#2ee6a6';
+    const mid = h/2;
+    for (let x=0; x<w; x++){
+      let min=1, max=-1;
+      const start = x*step;
+      for (let i=0; i<step && start+i<data.length; i++){
+        const v = data[start+i];
+        if (v<min) min=v;
+        if (v>max) max=v;
+      }
+      const y1 = mid + min*mid*0.92;
+      const y2 = mid + max*mid*0.92;
+      ctx.fillRect(x, y1, 1, Math.max(1, y2-y1));
+    }
+  }
+
+  function layoutHandles(){
+    const wrap = document.getElementById('wave-wrap');
+    const w = wrap.clientWidth;
+    const sx = (trimStart/duration)*w, ex = (trimEnd/duration)*w;
+    document.getElementById('handle-start').style.left = sx+'px';
+    document.getElementById('handle-end').style.left = ex+'px';
+    document.getElementById('dim-left').style.width = sx+'px';
+    document.getElementById('dim-right').style.width = (w-ex)+'px';
+    document.getElementById('wave-lbl-start').textContent = formatTime(trimStart);
+    document.getElementById('wave-lbl-total').textContent = formatTime(duration);
+  }
+  function updateSelInfo(){
+    document.getElementById('trim-sel-range').textContent = formatTime(trimStart).split('.')[0]+' – '+formatTime(trimEnd).split('.')[0];
+    document.getElementById('trim-sel-dur').textContent = (trimEnd-trimStart).toFixed(1)+'s';
+  }
+
+  function bindHandle(el, isStart){
+    let dragging=false;
+    const wrap = document.getElementById('wave-wrap');
+    function toTime(clientX){
+      const rect = wrap.getBoundingClientRect();
+      let frac = (clientX-rect.left)/rect.width;
+      frac = Math.max(0, Math.min(1, frac));
+      return frac*duration;
+    }
+    el.addEventListener('pointerdown', e=>{ dragging=true; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointermove', e=>{
+      if(!dragging || !waveformReady) return;
+      const t = toTime(e.clientX);
+      if (isStart){ trimStart = Math.min(t, trimEnd-0.1); if(trimStart<0)trimStart=0; }
+      else { trimEnd = Math.max(t, trimStart+0.1); if(trimEnd>duration)trimEnd=duration; }
+      layoutHandles(); updateSelInfo();
+    });
+    el.addEventListener('pointerup', e=>{ dragging=false; try{el.releasePointerCapture(e.pointerId);}catch(_){} });
+  }
+  bindHandle(document.getElementById('handle-start'), true);
+  bindHandle(document.getElementById('handle-end'), false);
+
+  document.getElementById('preview-trim-btn').addEventListener('click', ()=>{
+    const pa = document.getElementById('preview-audio');
+    if (!pa.src) return;
+    const ph = document.getElementById('wave-playhead');
+    const wrap = document.getElementById('wave-wrap');
+    pa.currentTime = trimStart;
+    pa.play();
+    ph.style.display = 'block';
+    function onTick(){
+      if (pa.paused || pa.ended) { ph.style.display='none'; return; }
+      if (pa.currentTime >= trimEnd) { pa.pause(); ph.style.display='none'; return; }
+      const frac = pa.currentTime/duration;
+      ph.style.left = (frac*wrap.clientWidth)+'px';
+      requestAnimationFrame(onTick);
+    }
+    requestAnimationFrame(onTick);
+  });
+
+  function parseMMSS(str){
+    const parts = String(str).trim().split(':');
+    if (parts.length===2) return Math.max(0, parseInt(parts[0],10)*60 + parseFloat(parts[1]));
+    return Math.max(0, parseFloat(str)||0);
+  }
+  document.getElementById('trim-start-txt').addEventListener('change', e=>{ trimStart = parseMMSS(e.target.value); });
+  document.getElementById('trim-end-txt').addEventListener('change', e=>{ trimEnd = parseMMSS(e.target.value); });
+
+  window.addEventListener('resize', ()=>{ if(waveformReady && decodedBuffer){ drawWaveform(decodedBuffer); layoutHandles(); } });
+
+  /* =========================================================
+     EFFECTS PANEL WIRING
+  ========================================================= */
+  const volEl = document.getElementById('fx-volume'), volVal = document.getElementById('volume-val');
+  volEl.addEventListener('input', ()=>{ FX.volume = parseInt(volEl.value,10)/100; volVal.textContent = volEl.value; });
+  const pitchEl = document.getElementById('fx-pitch'), pitchVal = document.getElementById('pitch-val');
+  pitchEl.addEventListener('input', ()=>{ FX.pitch = parseFloat(pitchEl.value); pitchVal.textContent = FX.pitch.toFixed(2); });
+  document.getElementById('fx-vocal-remove').addEventListener('change', e=>{ FX.vocalRemove = e.target.checked; });
+  const noiseToggle = document.getElementById('fx-noise-reduce');
+  const noiseStrengthField = document.getElementById('noise-strength-field');
+  const noiseModeField = document.getElementById('noise-mode-field');
+  noiseToggle.addEventListener('change', e=>{
+    FX.noiseReduce = e.target.checked;
+    noiseStrengthField.classList.toggle('show', FX.noiseReduce);
+    noiseModeField.classList.toggle('show', FX.noiseReduce);
+  });
+  const noiseStrengthEl = document.getElementById('fx-noise-strength'), noiseStrengthVal = document.getElementById('noise-strength-val');
+  noiseStrengthEl.addEventListener('input', ()=>{ FX.noiseStrength = parseInt(noiseStrengthEl.value,10); noiseStrengthVal.textContent = FX.noiseStrength; });
+  document.getElementById('fx-noise-mode').addEventListener('change', e=>{ FX.noiseMode = e.target.value; });
+  document.getElementById('fx-reverse-audio').addEventListener('change', e=>{ FX.reverseAudio = e.target.checked; });
+
+  const eqBandsEl = document.getElementById('eq-bands');
+  function renderEqBands(){
+    eqBandsEl.innerHTML = '';
+    EQ_FREQS.forEach((freq, i)=>{
+      const wrap = document.createElement('div'); wrap.className='eq-band';
+      const gainLabel = document.createElement('div'); gainLabel.className='eq-band-gain';
+      gainLabel.textContent = (FX.eq[i]>0?'+':'')+FX.eq[i];
+      const track = document.createElement('div'); track.className='eq-slider-track';
+      const slider = document.createElement('input');
+      slider.type='range'; slider.min='-12'; slider.max='12'; slider.step='1'; slider.value=FX.eq[i];
+      slider.addEventListener('input', e=>{
+        FX.eq[i] = parseInt(e.target.value,10);
+        gainLabel.textContent = (FX.eq[i]>0?'+':'')+FX.eq[i];
+        document.getElementById('eq-preset').value = matchingPresetName()||'default';
+      });
+      track.appendChild(slider);
+      const freqLabel = document.createElement('div'); freqLabel.className='eq-band-freq'; freqLabel.textContent=EQ_LABELS[i];
+      wrap.appendChild(gainLabel); wrap.appendChild(track); wrap.appendChild(freqLabel);
+      eqBandsEl.appendChild(wrap);
+    });
+  }
+  function matchingPresetName(){
+    for (const [name, vals] of Object.entries(EQ_PRESETS)){
+      if (vals.every((v,i)=>v===FX.eq[i])) return name;
+    }
+    return null;
+  }
+  document.getElementById('eq-preset').addEventListener('change', e=>{
+    FX.eq = (EQ_PRESETS[e.target.value]||EQ_PRESETS.default).slice();
+    renderEqBands();
+  });
+  renderEqBands();
+
+  /* =========================================================
+     OUTPUT FORMAT FIELD TOGGLES
+  ========================================================= */
+  const formatSel = document.getElementById('opt-format');
+  const bitrateField = document.getElementById('bitrate-field');
+  function syncBitrateVisibility(){
+    const fmt = OUT_FORMATS[formatSel.value];
+    bitrateField.style.display = fmt.lossy ? '' : 'none';
+  }
+  formatSel.addEventListener('change', syncBitrateVisibility);
+  syncBitrateVisibility();
+
+  /* =========================================================
+     FFMPEG ENGINE (proven loader, same as video-studio.html)
+  ========================================================= */
+  let ffmpegInstance = null;
+  async function toBlobURL(url, mimeType){
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Failed to fetch: '+resp.status);
+    const buf = await resp.arrayBuffer();
+    return URL.createObjectURL(new Blob([buf], {type:mimeType}));
+  }
+  function withTimeout(promise, ms, label){
+    return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error(label+' timeout ho gaya.')), ms))]);
+  }
+  async function resolveWorkerChunkURL(ffmpegBase){
+    const resp = await fetch(`${ffmpegBase}/ffmpeg.js`);
+    if (!resp.ok) throw new Error('ffmpeg.js fetch failed: '+resp.status);
+    const text = await resp.text();
+    const m = text.match(/\.u\((\d+)\)/) || text.match(/(\d+)\.ffmpeg\.js/);
+    if (!m) throw new Error('Worker chunk id nahi mila');
+    return toBlobURL(`${ffmpegBase}/${m[1]}.ffmpeg.js`, 'text/javascript');
+  }
+  async function getFFmpeg(){
+    if (ffmpegInstance) return ffmpegInstance;
+    const { FFmpeg } = FFmpegWASM;
+    const pairs = [
+      { core:'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm', ffmpeg:'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd' },
+      { core:'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm', ffmpeg:'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd' }
+    ];
+    let lastErr=null;
+    for (const {core:coreBase, ffmpeg:ffmpegBase} of pairs){
+      const instance = new FFmpeg();
+      instance.on('log', ({message})=>console.log('[ffmpeg]', message));
+      try {
+        const coreURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.js`,'text/javascript'), 20000, 'Core JS fetch');
+        const wasmURL = await withTimeout(toBlobURL(`${coreBase}/ffmpeg-core.wasm`,'application/wasm'), 30000, 'Core WASM fetch');
+        const classWorkerURL = await withTimeout(resolveWorkerChunkURL(ffmpegBase), 20000, 'Worker script resolve');
+        await withTimeout(instance.load({coreURL,wasmURL,classWorkerURL}), 30000, 'FFmpeg engine load');
+        ffmpegInstance = instance;
+        return ffmpegInstance;
+      } catch(err){ console.warn('FFmpeg load failed', coreBase, err); lastErr=err; }
+    }
+    throw lastErr || new Error('FFmpeg kisi bhi CDN se load nahi hua');
+  }
+  async function fetchFile(file){ const buf = await file.arrayBuffer(); return new Uint8Array(buf); }
+  function atempoChain(speed){
+    let s = speed>0?speed:1, parts=[];
+    while (s>2.0){ parts.push('atempo=2.0'); s/=2.0; }
+    while (s<0.5){ parts.push('atempo=0.5'); s/=0.5; }
+    parts.push(`atempo=${s.toFixed(4)}`);
+    return parts.join(',');
+  }
+  function toError(err){
+    if (err instanceof Error && err.message) return err;
+    const fallbackMsg = (typeof err === 'string' && err) ? err : (err && err.message) ? err.message : 'Unknown error';
+    return new Error(fallbackMsg);
+  }
+
+  /* =========================================================
+     EXPORT / PROCESS
+  ========================================================= */
+  async function performExport(){
+    if (!currentFile){ alert('Pehle file select karein!'); return; }
     const pw = document.getElementById('progress-wrap');
-    pw.style.display='block';
-    animProgress('pbar','pmsg','File process ho rahi hai...');
-    setTimeout(()=>{
-      finishProgress('pbar');
-      document.getElementById('pmsg').textContent='Done!';
+    const pbar = document.getElementById('pbar'), pmsg = document.getElementById('pmsg');
+    const errBox = document.getElementById('err-box');
+    errBox.classList.remove('show');
+    document.getElementById('result-card').classList.remove('show');
+    pw.style.display='block'; pbar.style.width='0%'; pmsg.textContent='FFmpeg engine load ho raha hai...';
+    document.getElementById('process-btn').disabled = true;
+
+    let capturedLogs = [];
+    const globalLogHandler = ({message}) => { capturedLogs.push(message); if(capturedLogs.length>200) capturedLogs.shift(); };
+
+    let ffmpeg;
+    try {
+      ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load');
+    } catch(err){
+      showExportError('FFmpeg load nahi ho paya', toError(err), capturedLogs);
+      return;
+    }
+    ffmpeg.on('log', globalLogHandler);
+    const onProgress = ({progress})=>{
+      const pct = Math.max(0, Math.min(100, Math.round(progress*100)));
+      pbar.style.width = pct+'%';
+    };
+    ffmpeg.on('progress', onProgress);
+
+    try {
+      pmsg.textContent = 'File load ho rahi hai...';
+      const inExt = (currentFile.name.split('.').pop()||'mp3').toLowerCase();
+      const inName = 'input.'+inExt;
+      await ffmpeg.writeFile(inName, await fetchFile(currentFile));
+
+      const fmtKey = formatSel.value;
+      const fmt = OUT_FORMATS[fmtKey];
+      const outName = 'output.'+fmt.ext;
+
+      // ── build -af filter chain ──
+      const steps = [];
+      const trimActive = waveformReady ? (trimStart>0.001 || trimEnd < duration-0.001)
+                                        : (parseMMSS(document.getElementById('trim-start-txt').value)>0 || document.getElementById('trim-end-txt').value.trim()!=='0:00');
+      if (trimActive){
+        const s = waveformReady ? trimStart : parseMMSS(document.getElementById('trim-start-txt').value);
+        const eTxt = document.getElementById('trim-end-txt').value;
+        const e = waveformReady ? trimEnd : (eTxt && eTxt.trim()!=='0:00' ? parseMMSS(eTxt) : null);
+        steps.push(e!=null ? `atrim=start=${s.toFixed(3)}:end=${e.toFixed(3)}` : `atrim=start=${s.toFixed(3)}`);
+        steps.push('asetpts=PTS-STARTPTS');
+      }
+      if (FX.vocalRemove) steps.push('pan=stereo|c0=c0-c1|c1=c1-c0');
+      if (FX.noiseReduce){
+        const strength = FX.noiseStrength;
+        if (FX.noiseMode==='voice') steps.push('highpass=f=100', `afftdn=nr=${Math.min(40,strength+5).toFixed(2)}:nf=-30`);
+        else if (FX.noiseMode==='gentle') steps.push(`afftdn=nr=${(strength*0.6).toFixed(2)}:nf=-60`);
+        else steps.push(`afftdn=nr=${strength.toFixed(2)}`);
+      }
+      if (FX.eq.some(g=>g!==0)){
+        steps.push(EQ_FREQS.map((f,i)=>`equalizer=f=${f}:width_type=o:width=1:g=${FX.eq[i]}`).join(','));
+      }
+      if (FX.volume !== 1){
+        steps.push(`volume=${FX.volume.toFixed(2)}`);
+        if (FX.volume > 1) steps.push('alimiter=limit=0.95');
+      }
+      if (FX.pitch !== 1){
+        steps.push(`asetrate=44100*${FX.pitch.toFixed(3)}`, 'aresample=44100', atempoChain(1/FX.pitch));
+      }
+      if (FX.reverseAudio) steps.push('areverse');
+
+      const args = ['-i', inName];
+      if (steps.length) args.push('-af', steps.join(','));
+      const sr = document.getElementById('opt-samplerate').value;
+      if (sr !== 'same') args.push('-ar', sr);
+      const ch = document.getElementById('opt-channels').value;
+      if (ch !== 'same') args.push('-ac', ch);
+      args.push('-c:a', fmt.acodec);
+      if (fmt.lossy) args.push('-b:a', document.getElementById('opt-bitrate').value);
+      if (fmtKey==='m4a') args.push('-movflags', '+faststart');
+      args.push(outName);
+
+      pmsg.textContent = 'Audio process ho raha hai...';
+      console.log('FFmpeg args:', args.join(' '));
+      const exitCode = await ffmpeg.exec(args);
+      if (typeof exitCode==='number' && exitCode!==0) throw new Error(`FFmpeg exit code ${exitCode}`);
+
+      const outData = await ffmpeg.readFile(outName);
+      if (!outData || !outData.buffer || outData.byteLength===0) throw new Error('Output file khaali bani — processing fail hua.');
+
+      try{ await ffmpeg.deleteFile(inName); }catch(_){}
+      try{ await ffmpeg.deleteFile(outName); }catch(_){}
+      ffmpeg.off('progress', onProgress); ffmpeg.off('log', globalLogHandler);
+
+      pbar.style.width='100%'; pmsg.textContent='Done!';
+      const blob = new Blob([outData.buffer], {type:fmt.mime});
       const rc = document.getElementById('result-card');
       rc.classList.add('show');
-      const sr = document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Original Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">New Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{
-        const url=URL.createObjectURL(f);
-        const a=document.createElement('a'); a.href=url; a.download='processed_'+f.name; a.click(); URL.revokeObjectURL(url);
+      const sr2 = document.getElementById('stat-row');
+      sr2.innerHTML = `<div class="stat-box"><div class="stat-val">${formatBytes(currentFile.size)}</div><div class="stat-lbl">Original Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Converted Size</div></div><div class="stat-box"><div class="stat-val">${fmt.ext.toUpperCase()}</div><div class="stat-lbl">Format</div></div>`;
+      const outFileName = currentFile.name.replace(/\.[^.]+$/, '')+'.'+fmt.ext;
+      document.getElementById('dl-btn').onclick = ()=>{
+        const url = URL.createObjectURL(blob);
+        const a=document.createElement('a'); a.href=url; a.download=outFileName; a.click(); URL.revokeObjectURL(url);
       };
-    },1800);
+    } catch(err){
+      showExportError('Processing fail ho gaya', toError(err), capturedLogs);
+      try{ ffmpeg.off('progress', onProgress); ffmpeg.off('log', globalLogHandler); }catch(_){}
+    } finally {
+      document.getElementById('process-btn').disabled = false;
+    }
+  }
+  function showExportError(prefix, err, logs){
+    const pw = document.getElementById('progress-wrap');
+    pw.style.display='none';
+    const errBox = document.getElementById('err-box');
+    document.getElementById('err-msg').textContent = '❌ '+prefix+': '+err.message;
+    document.getElementById('err-tech').textContent = logs.slice(-30).join('\n') || '(koi log capture nahi hua)';
+    errBox.classList.add('show');
+    document.getElementById('process-btn').disabled = false;
+  }
+  document.getElementById('err-toggle').addEventListener('click', ()=>{
+    const t = document.getElementById('err-tech');
+    t.style.display = t.style.display==='none' || !t.style.display ? 'block' : 'none';
   });
+
+  document.getElementById('process-btn').addEventListener('click', performExport);
   document.getElementById('reset-btn').addEventListener('click', function(){
     document.getElementById('main-file').value='';
     document.getElementById('file-preview').classList.remove('show');
+    document.getElementById('trim-card').style.display='none';
     document.getElementById('progress-wrap').style.display='none';
     document.getElementById('pbar').style.width='0%';
     document.getElementById('result-card').classList.remove('show');
+    document.getElementById('err-box').classList.remove('show');
+    currentFile = null; decodedBuffer = null; waveformReady = false;
   });
-  document.querySelector('.upload-zone').addEventListener('click', ()=>document.getElementById('main-file').click());
 </script>
 </body>
 </html>
