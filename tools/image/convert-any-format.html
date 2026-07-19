@@ -118,6 +118,15 @@
     .thumb-btn { width: 22px; height: 22px; border-radius: 6px; border: none; background: rgba(15,23,42,0.55); color: #fff; font-size: 0.68rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
     .thumb-btn:hover { background: rgba(15,23,42,0.85); }
     .thumb-err { position: absolute; inset: 0; background: rgba(239,68,68,0.85); color: #fff; font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; }
+    .adjust-layout { display: flex; gap: 22px; }
+    .adjust-preview-col { flex: 1 1 320px; min-width: 260px; }
+    .adjust-controls-col { flex: 1 1 320px; min-width: 260px; }
+    .live-preview-wrap { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); text-align: center; padding: 14px; background: var(--mist); }
+    .live-preview-wrap canvas { max-width: 100%; max-height: min(60vh, 520px); border-radius: 8px; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px; }
+    .preview-cap { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+    .rotate-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .rotate-row .btn-secondary { padding: 8px 14px; font-size: 0.82rem; }
+    .rot-val { font-weight: 800; color: var(--brand); font-size: 0.85rem; margin-left: auto; }
     .adj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; }
     .adj-label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 7px; }
     .adj-label .adj-val { color: var(--brand); font-weight: 800; }
@@ -137,6 +146,7 @@
       .stat-row { flex-direction: column; }
       .thumb-grid { grid-template-columns: repeat(3, 1fr); }
       .adj-grid { grid-template-columns: 1fr 1fr; }
+      .adjust-layout { flex-direction: column; }
     }
 </style>
 
@@ -243,48 +253,64 @@
 
   <div class="card hidden" id="adjust-card">
     <h3>🌟 Photo Adjust Karein</h3>
-    <div class="adj-grid">
-      <div class="adj-group">
-        <label class="adj-label"><span>Brightness</span><span class="adj-val" id="v-bright">100%</span></label>
-        <input type="range" class="adj-slider" id="s-bright" min="40" max="180" value="100">
-        <div class="adj-presets">
-          <button type="button" class="adj-preset" data-target="bright" data-val="70">Dark</button>
-          <button type="button" class="adj-preset active" data-target="bright" data-val="100">Normal</button>
-          <button type="button" class="adj-preset" data-target="bright" data-val="130">Bright</button>
+    <div class="adjust-layout">
+      <div class="adjust-preview-col">
+        <div class="live-preview-wrap">
+          <canvas id="adjPreviewCanvas"></canvas>
+          <p class="preview-cap">Live Preview — <span id="preview-fname">—</span></p>
         </div>
+        <div class="rotate-row">
+          <button type="button" class="btn-secondary" id="rot-left-btn">↺ Left 90°</button>
+          <button type="button" class="btn-secondary" id="rot-right-btn">↻ Right 90°</button>
+          <span class="rot-val" id="rot-val">0°</span>
+        </div>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:8px">Rotation sabhi uploaded images par ek saath apply hoga.</p>
       </div>
-      <div class="adj-group">
-        <label class="adj-label"><span>Contrast</span><span class="adj-val" id="v-contrast">100%</span></label>
-        <input type="range" class="adj-slider" id="s-contrast" min="40" max="180" value="100">
-        <div class="adj-presets">
-          <button type="button" class="adj-preset" data-target="contrast" data-val="75">Low</button>
-          <button type="button" class="adj-preset active" data-target="contrast" data-val="100">Normal</button>
-          <button type="button" class="adj-preset" data-target="contrast" data-val="135">High</button>
+      <div class="adjust-controls-col">
+        <div class="adj-grid">
+          <div class="adj-group">
+            <label class="adj-label"><span>Brightness</span><span class="adj-val" id="v-bright">100%</span></label>
+            <input type="range" class="adj-slider" id="s-bright" min="40" max="180" value="100">
+            <div class="adj-presets">
+              <button type="button" class="adj-preset" data-target="bright" data-val="70">Dark</button>
+              <button type="button" class="adj-preset active" data-target="bright" data-val="100">Normal</button>
+              <button type="button" class="adj-preset" data-target="bright" data-val="130">Bright</button>
+            </div>
+          </div>
+          <div class="adj-group">
+            <label class="adj-label"><span>Contrast</span><span class="adj-val" id="v-contrast">100%</span></label>
+            <input type="range" class="adj-slider" id="s-contrast" min="40" max="180" value="100">
+            <div class="adj-presets">
+              <button type="button" class="adj-preset" data-target="contrast" data-val="75">Low</button>
+              <button type="button" class="adj-preset active" data-target="contrast" data-val="100">Normal</button>
+              <button type="button" class="adj-preset" data-target="contrast" data-val="135">High</button>
+            </div>
+          </div>
+          <div class="adj-group">
+            <label class="adj-label"><span>Saturation</span><span class="adj-val" id="v-sat">100%</span></label>
+            <input type="range" class="adj-slider" id="s-sat" min="0" max="200" value="100">
+            <div class="adj-presets">
+              <button type="button" class="adj-preset" data-target="sat" data-val="0">B&W</button>
+              <button type="button" class="adj-preset active" data-target="sat" data-val="100">Normal</button>
+              <button type="button" class="adj-preset" data-target="sat" data-val="160">Vivid</button>
+            </div>
+          </div>
+          <div class="adj-group">
+            <label class="adj-label"><span>Sharpness</span><span class="adj-val" id="v-sharp">0</span></label>
+            <input type="range" class="adj-slider" id="s-sharp" min="0" max="100" value="0">
+            <div class="adj-presets">
+              <button type="button" class="adj-preset active" data-target="sharp" data-val="0">None</button>
+              <button type="button" class="adj-preset" data-target="sharp" data-val="35">Light</button>
+              <button type="button" class="adj-preset" data-target="sharp" data-val="75">Sharp</button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="adj-group">
-        <label class="adj-label"><span>Saturation</span><span class="adj-val" id="v-sat">100%</span></label>
-        <input type="range" class="adj-slider" id="s-sat" min="0" max="200" value="100">
-        <div class="adj-presets">
-          <button type="button" class="adj-preset" data-target="sat" data-val="0">B&W</button>
-          <button type="button" class="adj-preset active" data-target="sat" data-val="100">Normal</button>
-          <button type="button" class="adj-preset" data-target="sat" data-val="160">Vivid</button>
+        <div class="action-row" style="margin-top:16px">
+          <button class="btn-secondary" id="adjust-reset-btn">↺ Adjustments Reset Karein</button>
         </div>
-      </div>
-      <div class="adj-group">
-        <label class="adj-label"><span>Sharpness</span><span class="adj-val" id="v-sharp">0</span></label>
-        <input type="range" class="adj-slider" id="s-sharp" min="0" max="100" value="0">
-        <div class="adj-presets">
-          <button type="button" class="adj-preset active" data-target="sharp" data-val="0">None</button>
-          <button type="button" class="adj-preset" data-target="sharp" data-val="35">Light</button>
-          <button type="button" class="adj-preset" data-target="sharp" data-val="75">Sharp</button>
-        </div>
+        <p style="font-size:.76rem;color:var(--muted);margin-top:10px">Brightness/Contrast/Saturation/Rotate ka live preview yahan aur thumbnails me turant dikhta hai. Sharpness ka effect final download par apply hota hai. Sab adjustment ek saath sabhi images par apply hote hain.</p>
       </div>
     </div>
-    <div class="action-row" style="margin-top:16px">
-      <button class="btn-secondary" id="adjust-reset-btn">↺ Adjustments Reset Karein</button>
-    </div>
-    <p style="font-size:.76rem;color:var(--muted);margin-top:10px">Brightness/Contrast/Saturation ka live preview upar thumbnails me turant dikhta hai. Sharpness ka effect final download par apply hota hai (sab images par ek saath).</p>
   </div>
 
   <div class="card hidden" id="settings-card">
@@ -305,12 +331,6 @@
       <div class="form-group hidden" id="pdf-mode-item"><label>PDF Output Mode</label><select id="pdfMode">
         <option value="single">1 Combined PDF (sab images ek hi PDF me)</option>
         <option value="separate">Alag-Alag PDF (ZIP me, har image ki apni PDF)</option>
-      </select></div>
-      <div class="form-group"><label>Rotate (sab images par)</label><select id="rot">
-        <option value="0">0° (None)</option>
-        <option value="90">90° ↻ Right</option>
-        <option value="180">180° Flip</option>
-        <option value="270">270° ↺ Left</option>
       </select></div>
       <div class="form-group"><label>Flip / Mirror (sab par)</label><select id="flip">
         <option value="none">None</option>
@@ -431,8 +451,8 @@
 
   function loadImageForItem(item){
     var img=new Image();
-    img.onload=function(){item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;renderThumbs();};
-    img.onerror=function(){item.error=true;item.loading=false;renderThumbs();};
+    img.onload=function(){item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;renderThumbs();renderAdjPreview();};
+    img.onerror=function(){item.error=true;item.loading=false;renderThumbs();renderAdjPreview();};
     img.src=item.url;
   }
 
@@ -469,13 +489,44 @@
   }
 
   /* ══════════════ Photo Adjust ══════════════ */
-  var ST={bright:100,contrast:100,sat:100,sharp:0};
+  var ST={bright:100,contrast:100,sat:100,sharp:0,rotate:0};
   function applyLiveFilter(){var f=filterCss();document.querySelectorAll('.thumb-img').forEach(function(im){im.style.filter=f;});}
   function clearActive(target){document.querySelectorAll('.adj-preset[data-target="'+target+'"]').forEach(function(b){b.classList.remove('active');});}
 
-  G('s-bright').addEventListener('input',function(){ST.bright=+this.value;G('v-bright').textContent=ST.bright+'%';clearActive('bright');applyLiveFilter();});
-  G('s-contrast').addEventListener('input',function(){ST.contrast=+this.value;G('v-contrast').textContent=ST.contrast+'%';clearActive('contrast');applyLiveFilter();});
-  G('s-sat').addEventListener('input',function(){ST.sat=+this.value;G('v-sat').textContent=ST.sat+'%';clearActive('sat');applyLiveFilter();});
+  // Big single-photo live preview (passport-photo.html-style layout) — shows
+  // the first successfully-loaded queue image so users can see Brightness/
+  // Contrast/Saturation/Rotate at real size before it's applied to the whole
+  // batch, instead of judging the effect off tiny thumbnails only.
+  function renderAdjPreview(){
+    var canvas=G('adjPreviewCanvas');
+    if(!canvas)return;
+    var item=QUEUE.find(function(it){return it.img&&!it.error;});
+    var fname=G('preview-fname');
+    if(!item){canvas.width=0;canvas.height=0;if(fname)fname.textContent='—';return;}
+    if(fname)fname.textContent=item.file.name;
+    var rot=ST.rotate||0,swap=(rot===90||rot===270);
+    var maxSide=640;
+    var scale=Math.min(1,maxSide/Math.max(item.natW,item.natH));
+    var dw=Math.max(1,Math.round(item.natW*scale)),dh=Math.max(1,Math.round(item.natH*scale));
+    canvas.width=swap?dh:dw;canvas.height=swap?dw:dh;
+    var ctx=canvas.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.filter=filterCss();
+    ctx.save();
+    ctx.translate(canvas.width/2,canvas.height/2);
+    ctx.rotate(rot*Math.PI/180);
+    ctx.drawImage(item.img,-dw/2,-dh/2,dw,dh);
+    ctx.restore();
+    ctx.filter='none';
+  }
+
+  var rotLeftBtn=G('rot-left-btn'),rotRightBtn=G('rot-right-btn');
+  if(rotLeftBtn)rotLeftBtn.addEventListener('click',function(){ST.rotate=((ST.rotate||0)+360-90)%360;G('rot-val').textContent=ST.rotate+'°';renderAdjPreview();});
+  if(rotRightBtn)rotRightBtn.addEventListener('click',function(){ST.rotate=((ST.rotate||0)+90)%360;G('rot-val').textContent=ST.rotate+'°';renderAdjPreview();});
+
+  G('s-bright').addEventListener('input',function(){ST.bright=+this.value;G('v-bright').textContent=ST.bright+'%';clearActive('bright');applyLiveFilter();renderAdjPreview();});
+  G('s-contrast').addEventListener('input',function(){ST.contrast=+this.value;G('v-contrast').textContent=ST.contrast+'%';clearActive('contrast');applyLiveFilter();renderAdjPreview();});
+  G('s-sat').addEventListener('input',function(){ST.sat=+this.value;G('v-sat').textContent=ST.sat+'%';clearActive('sat');applyLiveFilter();renderAdjPreview();});
   G('s-sharp').addEventListener('input',function(){ST.sharp=+this.value;G('v-sharp').textContent=ST.sharp;clearActive('sharp');});
 
   document.querySelectorAll('.adj-preset').forEach(function(btn){
@@ -488,20 +539,23 @@
       if(target==='sharp'){G('s-sharp').value=val;G('v-sharp').textContent=val;}
       clearActive(target);btn.classList.add('active');
       applyLiveFilter();
+      renderAdjPreview();
     });
   });
 
   var adjResetBtn=G('adjust-reset-btn');
   if(adjResetBtn)adjResetBtn.addEventListener('click',function(){
-    ST={bright:100,contrast:100,sat:100,sharp:0};
+    ST={bright:100,contrast:100,sat:100,sharp:0,rotate:0};
     G('s-bright').value=100;G('v-bright').textContent='100%';
     G('s-contrast').value=100;G('v-contrast').textContent='100%';
     G('s-sat').value=100;G('v-sat').textContent='100%';
     G('s-sharp').value=0;G('v-sharp').textContent='0';
+    G('rot-val').textContent='0°';
     document.querySelectorAll('.adj-preset').forEach(function(b){b.classList.remove('active');});
     document.querySelectorAll('.adj-preset[data-val="100"]').forEach(function(b){if(b.getAttribute('data-target')!=='sharp')b.classList.add('active');});
     document.querySelectorAll('.adj-preset[data-target="sharp"][data-val="0"]').forEach(function(b){b.classList.add('active');});
     applyLiveFilter();
+    renderAdjPreview();
   });
 
   /* ══════════════ Encoders (reused) ══════════════ */
@@ -549,7 +603,7 @@
 
   /* ══════════════ Render canvas per item (rotate/flip + Photo Adjust) ══════════════ */
   function renderCanvasForItem(item,fmt){
-    var rot=(+G('rot').value)||0,flip=G('flip').value,swap=(rot===90||rot===270);
+    var rot=ST.rotate||0,flip=G('flip').value,swap=(rot===90||rot===270);
     var cw=swap?item.natH:item.natW, ch=swap?item.natW:item.natH;
     var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;var ctx=cv.getContext('2d');
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
