@@ -329,8 +329,20 @@
         </label>
         <div class="cs-controls" id="cs-controls">
           <div class="cs-row">
-            <div class="cs-field"><label>Width (px)</label><input type="number" id="cs-w" min="1" max="10000"></div>
-            <div class="cs-field"><label>Height (px)</label><input type="number" id="cs-h" min="1" max="10000"></div>
+            <div class="cs-field"><label>Width</label><input type="number" id="cs-w" min="0" step="any"></div>
+            <div class="cs-field"><label>Height</label><input type="number" id="cs-h" min="0" step="any"></div>
+          </div>
+          <div class="cs-row" style="margin-top:10px">
+            <div class="cs-field"><label>Unit</label><select id="cs-unit">
+              <option value="px">Pixels</option>
+              <option value="percent">Percent</option>
+              <option value="in">Inches</option>
+              <option value="cm">Centimeters</option>
+              <option value="mm">Millimeters</option>
+              <option value="pt">Points</option>
+              <option value="pc">Picas</option>
+            </select></div>
+            <div class="cs-field" id="cs-dpi-field"><label>Resolution (DPI)</label><input type="number" id="cs-dpi" min="1" step="1" value="300"></div>
           </div>
           <label class="cs-lock-row"><input type="checkbox" id="cs-lock-ar" checked> Aspect Ratio Lock Karein</label>
           <div class="action-row" style="margin-top:12px">
@@ -486,8 +498,8 @@
     var img=new Image();
     img.onload=function(){
       item.img=img;item.natW=img.naturalWidth;item.natH=img.naturalHeight;item.loading=false;
-      if(!item.size.w)item.size.w=item.natW;
-      if(!item.size.h)item.size.h=item.natH;
+      if(!item.size.wRaw)item.size.wRaw=item.natW;
+      if(!item.size.hRaw)item.size.hRaw=item.natH;
       renderThumbs();renderAdjPreview();
       if(item.id===activeId)syncAdjustUIFromActive();
     };
@@ -542,14 +554,42 @@
      own Brightness/Contrast/Saturation/Sharpness/Rotate, not one shared
      setting for the whole batch) ══════════════ */
   function defaultAdjust(){return {bright:100,contrast:100,sat:100,sharp:0,rotate:0};}
-  // Custom Size (px) — also per-image, same "window onto whichever photo is
-  // active" model as adjust. w/h start at 0 and get filled in with the
-  // image's natural dimensions once it loads (see loadImageForItem), so the
-  // number inputs show sensible values even before the user enables this.
-  function defaultSize(){return {enabled:false,w:0,h:0,lockAR:true};}
+  // Custom Size — also per-image, same "window onto whichever photo is
+  // active" model as adjust. wRaw/hRaw are stored in whatever UNIT is
+  // currently selected (not always px) and start at 0, getting filled in
+  // with the image's natural pixel dimensions once it loads (see
+  // loadImageForItem), so the number inputs show sensible values even
+  // before the user enables this.
+  function defaultSize(){return {enabled:false,wRaw:0,hRaw:0,unit:'px',dpi:300,lockAR:true};}
+  // unit <-> pixels (physical units use DPI) — same conversion table as
+  // image-resizer.html's Unit dropdown, reused here per-image.
+  function toPx(val,unit,dpi,orig){
+    val=parseFloat(val)||0;dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return Math.round(orig*val/100);
+    if(unit==='in')return Math.round(val*dpi);
+    if(unit==='cm')return Math.round(val*dpi/2.54);
+    if(unit==='mm')return Math.round(val*dpi/25.4);
+    if(unit==='pt')return Math.round(val*dpi/72);
+    if(unit==='pc')return Math.round(val*dpi/6);
+    return Math.round(val); // px
+  }
+  function fromPx(px,unit,dpi,orig){
+    dpi=parseFloat(dpi)||300;
+    if(unit==='percent')return orig?+(px/orig*100).toFixed(2):100;
+    if(unit==='in')return +(px/dpi).toFixed(3);
+    if(unit==='cm')return +(px/dpi*2.54).toFixed(3);
+    if(unit==='mm')return +(px/dpi*25.4).toFixed(2);
+    if(unit==='pt')return +(px/dpi*72).toFixed(2);
+    if(unit==='pc')return +(px/dpi*6).toFixed(2);
+    return Math.round(px); // px
+  }
   function getBaseSize(item){
     var s=item.size;
-    if(s&&s.enabled&&s.w>0&&s.h>0)return{w:s.w,h:s.h};
+    if(s&&s.enabled){
+      var w=toPx(s.wRaw,s.unit,s.dpi,item.natW);
+      var h=toPx(s.hRaw,s.unit,s.dpi,item.natH);
+      if(w>0&&h>0)return{w:w,h:h};
+    }
     return{w:item.natW,h:item.natH};
   }
   var activeId=null;
@@ -582,17 +622,28 @@
       });
     });
     var sizeCfg=item?item.size:defaultSize();
-    var csEnable=G('cs-enable'),csW=G('cs-w'),csH=G('cs-h'),csLock=G('cs-lock-ar');
+    var csEnable=G('cs-enable'),csW=G('cs-w'),csH=G('cs-h'),csLock=G('cs-lock-ar'),csUnit=G('cs-unit'),csDpi=G('cs-dpi');
     if(csEnable)csEnable.checked=!!sizeCfg.enabled;
-    if(csW)csW.value=sizeCfg.w||(item?item.natW:'')||'';
-    if(csH)csH.value=sizeCfg.h||(item?item.natH:'')||'';
+    if(csUnit)csUnit.value=sizeCfg.unit||'px';
+    if(csDpi)csDpi.value=sizeCfg.dpi||300;
+    if(csW)csW.value=sizeCfg.wRaw||(item?item.natW:'')||'';
+    if(csH)csH.value=sizeCfg.hRaw||(item?item.natH:'')||'';
     if(csLock)csLock.checked=sizeCfg.lockAR!==false;
     syncSizeControlsEnabled();
+    syncCsDpiVisibility();
   }
   function syncSizeControlsEnabled(){
     var item=getActiveItem();
     var ctrl=G('cs-controls');
     if(ctrl)ctrl.classList.toggle('on',!!(item&&item.size&&item.size.enabled));
+  }
+  // DPI is meaningless for Pixels/Percent (no physical size involved) —
+  // only show it for the physical units (inches/cm/mm/points/picas).
+  function syncCsDpiVisibility(){
+    var item=getActiveItem();
+    var unit=item?item.size.unit:'px';
+    var f=G('cs-dpi-field');
+    if(f)f.style.display=(unit==='px'||unit==='percent')?'none':'';
   }
   // Updates only the active photo's OWN thumbnail filter live while a
   // slider is being dragged (cheap style tweak) — a full renderThumbs()
@@ -676,8 +727,8 @@
     renderAdjPreview();
   });
 
-  /* ══════════════ Custom Size (per-image, px) ══════════════ */
-  var csEnableEl=G('cs-enable'),csWEl=G('cs-w'),csHEl=G('cs-h'),csLockEl=G('cs-lock-ar'),csResetBtn=G('cs-reset-btn');
+  /* ══════════════ Custom Size (per-image, unit-aware) ══════════════ */
+  var csEnableEl=G('cs-enable'),csWEl=G('cs-w'),csHEl=G('cs-h'),csLockEl=G('cs-lock-ar'),csUnitEl=G('cs-unit'),csDpiEl=G('cs-dpi'),csResetBtn=G('cs-reset-btn');
   if(csEnableEl)csEnableEl.addEventListener('change',function(){
     var item=getActiveItem();if(!item)return;
     item.size.enabled=csEnableEl.checked;
@@ -686,22 +737,53 @@
   });
   if(csWEl)csWEl.addEventListener('input',function(){
     var item=getActiveItem();if(!item)return;
-    var w=Math.max(1,parseInt(csWEl.value,10)||1);
-    item.size.w=w;
+    item.size.wRaw=parseFloat(csWEl.value)||0;
+    // Aspect ratio is a pixel/physical ratio, independent of the display
+    // unit -- convert to px, scale, convert the result back to whatever
+    // unit is currently shown.
     if(item.size.lockAR&&item.natW&&item.natH){
-      var h=Math.max(1,Math.round(w*item.natH/item.natW));
-      item.size.h=h;csHEl.value=h;
+      var wpx=toPx(item.size.wRaw,item.size.unit,item.size.dpi,item.natW);
+      if(wpx>0){
+        var hpx=Math.round(wpx*item.natH/item.natW);
+        item.size.hRaw=fromPx(hpx,item.size.unit,item.size.dpi,item.natH);
+        csHEl.value=item.size.hRaw;
+      }
     }
     renderAdjPreview();
   });
   if(csHEl)csHEl.addEventListener('input',function(){
     var item=getActiveItem();if(!item)return;
-    var h=Math.max(1,parseInt(csHEl.value,10)||1);
-    item.size.h=h;
+    item.size.hRaw=parseFloat(csHEl.value)||0;
     if(item.size.lockAR&&item.natW&&item.natH){
-      var w=Math.max(1,Math.round(h*item.natW/item.natH));
-      item.size.w=w;csWEl.value=w;
+      var hpx=toPx(item.size.hRaw,item.size.unit,item.size.dpi,item.natH);
+      if(hpx>0){
+        var wpx=Math.round(hpx*item.natW/item.natH);
+        item.size.wRaw=fromPx(wpx,item.size.unit,item.size.dpi,item.natW);
+        csWEl.value=item.size.wRaw;
+      }
     }
+    renderAdjPreview();
+  });
+  if(csUnitEl)csUnitEl.addEventListener('change',function(){
+    var item=getActiveItem();if(!item)return;
+    // Convert the CURRENT physical size into the new unit (not just reset
+    // to natural size) so switching Pixels -> Inches keeps showing the same
+    // custom size the user already set, just in different units.
+    var wpx=toPx(item.size.wRaw,item.size.unit,item.size.dpi,item.natW);
+    var hpx=toPx(item.size.hRaw,item.size.unit,item.size.dpi,item.natH);
+    item.size.unit=csUnitEl.value;
+    item.size.wRaw=fromPx(wpx,item.size.unit,item.size.dpi,item.natW);
+    item.size.hRaw=fromPx(hpx,item.size.unit,item.size.dpi,item.natH);
+    csWEl.value=item.size.wRaw;csHEl.value=item.size.hRaw;
+    syncCsDpiVisibility();
+    renderAdjPreview();
+  });
+  if(csDpiEl)csDpiEl.addEventListener('input',function(){
+    var item=getActiveItem();if(!item)return;
+    // DPI changes how many pixels a physical size maps to -- the entered
+    // physical value (e.g. "2 inches") stays the same, only the resulting
+    // px resolution changes, so wRaw/hRaw are deliberately left untouched.
+    item.size.dpi=parseFloat(csDpiEl.value)||300;
     renderAdjPreview();
   });
   if(csLockEl)csLockEl.addEventListener('change',function(){
@@ -710,7 +792,8 @@
   });
   if(csResetBtn)csResetBtn.addEventListener('click',function(){
     var item=getActiveItem();if(!item||!item.natW)return;
-    item.size.w=item.natW;item.size.h=item.natH;
+    item.size.unit='px';item.size.dpi=300;
+    item.size.wRaw=item.natW;item.size.hRaw=item.natH;
     syncAdjustUIFromActive();
     renderAdjPreview();
   });
