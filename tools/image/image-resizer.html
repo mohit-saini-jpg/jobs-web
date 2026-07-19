@@ -269,6 +269,12 @@
       <button type="button" class="btn-secondary" id="cropRotL" title="Rotate Left 90°"><i class="fa-solid fa-rotate-left"></i></button>
       <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
+    <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px">
+      <label for="cropFineRot" style="font-size:.85rem;font-weight:600;white-space:nowrap"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
+      <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;accent-color:var(--brand)">
+      <span id="cropFineRotVal" style="font-size:.82rem;font-weight:700;color:var(--brand);min-width:38px;text-align:right">0°</span>
+    </div>
+    <p id="quadRotNote" style="display:none;font-size:.76rem;color:#94a3b8;margin:8px 0 0"><i class="fa-solid fa-circle-info"></i> Free Select mode mein seedha karne ke liye kisi bhi corner ko tilt karke drag karein — poora area khud seedha ho jayega.</p>
     <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — zoom se precise selection aur rotate se angle theek karein. Process karte hi sirf cropped part hi resize/save hoga.</p>
   </div>
 
@@ -775,12 +781,33 @@
   }
 
   var cropperInst=null, quadUI=null;
+  // Fine rotation (straightening a tilted photo) is tracked as two parts kept
+  // separate on purpose: rot90 from the quick Left/Right 90° buttons, rotFine
+  // from the slider (-45..45). Summed and applied as one absolute angle via
+  // rotateTo() so the two controls never fight each other's state (mixing
+  // relative rotate() calls with an absolute slider would drift out of sync).
+  var rot90=0, rotFine=0;
+  function applyCropRotation(){
+    if(cropperInst)cropperInst.rotateTo(rot90+rotFine);
+  }
+  function resetCropRotationState(){
+    rot90=0;rotFine=0;
+    var r=G('cropFineRot');if(r)r.value=0;
+    var v=G('cropFineRotVal');if(v)v.textContent='0°';
+  }
+  function syncRotUIForMode(freeSelectActive){
+    var row=G('fineRotRow'),note=G('quadRotNote');
+    if(row)row.style.display=freeSelectActive?'none':'flex';
+    if(note)note.style.display=freeSelectActive?'block':'none';
+  }
   function initCrop(){
     var card=G('crop-card'),img=G('cropImg');
     if(!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}if(quadUI)quadUI.deactivate();return;}
     card.style.display='';
     if(quadUI)quadUI.deactivate();
     setFreeSelBtnState(false);
+    syncRotUIForMode(false);
+    resetCropRotationState();
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
@@ -803,12 +830,15 @@
     if(quadUI.isActive()){
       quadUI.deactivate();
       if(cropperInst)cropperInst.destroy();
+      resetCropRotationState();
       try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
       setFreeSelBtnState(false);
+      syncRotUIForMode(false);
     }else{
       if(cropperInst){cropperInst.destroy();cropperInst=null;}
       quadUI.activate();
       setFreeSelBtnState(true);
+      syncRotUIForMode(true);
     }
   }
 
@@ -925,12 +955,13 @@
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);}});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
     if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
     if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst)cropperInst.zoom(0.1);});
     if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst)cropperInst.zoom(-0.1);});
-    if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){if(cropperInst)cropperInst.rotate(-90);});
-    if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){if(cropperInst)cropperInst.rotate(90);});
+    if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){rot90=((rot90-90)%360+360)%360;applyCropRotation();});
+    if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){rot90=(rot90+90)%360;applyCropRotation();});
+    if(G('cropFineRot'))G('cropFineRot').addEventListener('input',function(){rotFine=parseFloat(this.value);G('cropFineRotVal').textContent=rotFine+'°';applyCropRotation();});
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';
