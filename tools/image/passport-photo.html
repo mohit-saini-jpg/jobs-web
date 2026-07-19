@@ -187,8 +187,14 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .bg-final-preview{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:12px;background:var(--mist);margin-top:12px}
 .bg-final-preview canvas{max-width:180px;max-height:240px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 
-/* ADJUSTMENTS */
-.adj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+/* ADJUSTMENTS — two-column: large live preview on the left, controls on the
+   right (photo editors like Photoshop Express / Canva use this layout so
+   you can actually SEE the effect of a slider without scrolling down to a
+   thumbnail-sized preview every time) */
+.adjust-layout{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
+.adjust-preview-col{flex:1 1 340px;min-width:280px;position:sticky;top:120px}
+.adjust-controls-col{flex:1 1 340px;min-width:280px;margin-bottom:0}
+.adj-grid{display:grid;grid-template-columns:1fr;gap:18px}
 .adj-group{}
 .adj-label{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
 .adj-label span{color:var(--brand);font-size:.82rem;font-weight:700}
@@ -196,8 +202,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .adj-presets{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
 .preset-btn{padding:3px 9px;border:1px solid var(--line);border-radius:20px;font-size:.68rem;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s}
 .preset-btn:hover{border-color:var(--brand);color:var(--brand)}
-.live-preview-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:12px;background:var(--mist);margin-top:14px}
-.live-preview-wrap canvas{max-width:180px;max-height:240px;border-radius:6px}
+.live-preview-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:14px;background:var(--mist);box-shadow:var(--shadow)}
+.live-preview-wrap canvas{max-width:100%;max-height:min(65vh,560px);border-radius:8px}
+@media(max-width:760px){
+  .adjust-preview-col{position:static}
+}
 
 /* KB SIZE */
 .kb-section{margin-top:18px;padding-top:16px;border-top:2px dashed var(--line)}
@@ -460,55 +469,61 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
 <!-- ══════════ STEP 3: ADJUST + KB SIZE ══════════ -->
 <div class="step-panel" id="panel-3">
-  <div class="card">
-    <div class="card-title">🌟 Photo Adjust Karein</div>
-    <button class="btn-choose" style="width:100%;justify-content:center;margin-bottom:16px;background:linear-gradient(135deg,#7c3aed,#345de6)" onclick="autoEnhance()"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Enhance — Ek Click Mein Clear &amp; Sharp</button>
-    <div class="adj-grid">
-      <div class="adj-group">
-        <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
-        <input type="range" id="brightRange" min="0" max="200" value="100" oninput="updateAdj()">
-        <div class="adj-presets">
-          <button class="preset-btn" onclick="setAdj('brightRange',80,'brightVal','%')">Dark</button>
-          <button class="preset-btn" onclick="setAdj('brightRange',100,'brightVal','%')">Normal</button>
-          <button class="preset-btn" onclick="setAdj('brightRange',120,'brightVal','%')">Bright</button>
-        </div>
+  <div class="adjust-layout">
+    <div class="adjust-preview-col">
+      <div class="live-preview-wrap">
+        <canvas id="adjCanvas"></canvas>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Live Preview</p>
       </div>
-      <div class="adj-group">
-        <div class="adj-label">Contrast <span id="contrastVal">100%</span></div>
-        <input type="range" id="contrastRange" min="0" max="200" value="100" oninput="updateAdj()">
-        <div class="adj-presets">
-          <button class="preset-btn" onclick="setAdj('contrastRange',80,'contrastVal','%')">Low</button>
-          <button class="preset-btn" onclick="setAdj('contrastRange',100,'contrastVal','%')">Normal</button>
-          <button class="preset-btn" onclick="setAdj('contrastRange',130,'contrastVal','%')">High</button>
+      <button class="btn-icon" style="margin-top:11px;width:100%;justify-content:center" onclick="resetAdj()"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
+    </div>
+    <div class="card adjust-controls-col">
+      <div class="card-title">🌟 Photo Adjust Karein</div>
+      <button class="btn-choose" style="width:100%;justify-content:center;margin-bottom:16px;background:linear-gradient(135deg,#7c3aed,#345de6)" onclick="autoEnhance()"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Enhance — Ek Click Mein Clear &amp; Sharp</button>
+      <div class="adj-grid">
+        <div class="adj-group">
+          <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
+          <input type="range" id="brightRange" min="0" max="200" value="100" oninput="updateAdj()">
+          <div class="adj-presets">
+            <button class="preset-btn" onclick="setAdj('brightRange',80,'brightVal','%')">Dark</button>
+            <button class="preset-btn" onclick="setAdj('brightRange',100,'brightVal','%')">Normal</button>
+            <button class="preset-btn" onclick="setAdj('brightRange',120,'brightVal','%')">Bright</button>
+          </div>
         </div>
-      </div>
-      <div class="adj-group">
-        <div class="adj-label">Saturation <span id="saturateVal">100%</span></div>
-        <input type="range" id="saturateRange" min="0" max="200" value="100" oninput="updateAdj()">
-        <div class="adj-presets">
-          <button class="preset-btn" onclick="setAdj('saturateRange',0,'saturateVal','%')">B&amp;W</button>
-          <button class="preset-btn" onclick="setAdj('saturateRange',100,'saturateVal','%')">Normal</button>
-          <button class="preset-btn" onclick="setAdj('saturateRange',150,'saturateVal','%')">Vivid</button>
+        <div class="adj-group">
+          <div class="adj-label">Contrast <span id="contrastVal">100%</span></div>
+          <input type="range" id="contrastRange" min="0" max="200" value="100" oninput="updateAdj()">
+          <div class="adj-presets">
+            <button class="preset-btn" onclick="setAdj('contrastRange',80,'contrastVal','%')">Low</button>
+            <button class="preset-btn" onclick="setAdj('contrastRange',100,'contrastVal','%')">Normal</button>
+            <button class="preset-btn" onclick="setAdj('contrastRange',130,'contrastVal','%')">High</button>
+          </div>
         </div>
-      </div>
-      <div class="adj-group">
-        <div class="adj-label">Sharpness <span id="sharpVal">0</span></div>
-        <input type="range" id="sharpRange" min="0" max="5" value="0" step="0.5" oninput="updateAdj()">
-        <div class="adj-presets">
-          <button class="preset-btn" onclick="setAdj('sharpRange',0,'sharpVal','')">None</button>
-          <button class="preset-btn" onclick="setAdj('sharpRange',1,'sharpVal','')">Light</button>
-          <button class="preset-btn" onclick="setAdj('sharpRange',2,'sharpVal','')">Sharp</button>
+        <div class="adj-group">
+          <div class="adj-label">Saturation <span id="saturateVal">100%</span></div>
+          <input type="range" id="saturateRange" min="0" max="200" value="100" oninput="updateAdj()">
+          <div class="adj-presets">
+            <button class="preset-btn" onclick="setAdj('saturateRange',0,'saturateVal','%')">B&amp;W</button>
+            <button class="preset-btn" onclick="setAdj('saturateRange',100,'saturateVal','%')">Normal</button>
+            <button class="preset-btn" onclick="setAdj('saturateRange',150,'saturateVal','%')">Vivid</button>
+          </div>
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Sharpness <span id="sharpVal">0</span></div>
+          <input type="range" id="sharpRange" min="0" max="5" value="0" step="0.5" oninput="updateAdj()">
+          <div class="adj-presets">
+            <button class="preset-btn" onclick="setAdj('sharpRange',0,'sharpVal','')">None</button>
+            <button class="preset-btn" onclick="setAdj('sharpRange',1,'sharpVal','')">Light</button>
+            <button class="preset-btn" onclick="setAdj('sharpRange',2,'sharpVal','')">Sharp</button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="live-preview-wrap">
-      <canvas id="adjCanvas"></canvas>
-      <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Live Preview</p>
-    </div>
-    <button class="btn-icon" style="margin-top:11px" onclick="resetAdj()"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
+  </div>
 
-    <!-- KB SIZE SECTION -->
-    <div class="kb-section">
+  <!-- KB SIZE SECTION -->
+  <div class="card">
+    <div class="kb-section" style="margin-top:0;padding-top:0;border-top:none">
       <div class="card-title" style="margin-bottom:10px">📦 File Size (KB) — Optional</div>
       <div class="kb-toggle-row">
         <label>
