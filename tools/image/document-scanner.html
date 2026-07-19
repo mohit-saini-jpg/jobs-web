@@ -73,6 +73,9 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .upload-sub b{color:var(--brand)}
 .btn-choose{margin-top:13px;display:inline-flex;align-items:center;gap:7px;padding:10px 22px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn-choose:hover{background:var(--brand-dark)}
+.upload-btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-choose-alt{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.btn-choose-alt:hover{background:var(--brand-light)}
 
 /* PAGE STRIP (multi-page thumbnails) */
 .page-strip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;margin-top:14px}
@@ -247,12 +250,16 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   <div class="step-panel active" id="panel-1">
     <div class="card">
       <div class="card-title"><i class="fa-solid fa-camera"></i> Document Pages Upload Karein</div>
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-zone" id="uploadZone">
         <span class="upload-icon">📷</span>
         <div class="upload-title">Photo click karein ya file choose karein</div>
         <div class="upload-sub">Ek se zyada pages ek saath select kar sakte hain (<b>multi-page</b>)</div>
-        <button class="btn-choose" type="button"><i class="fa-solid fa-upload"></i> File Choose Karein</button>
-        <input type="file" id="fileInput" accept="image/*" multiple>
+        <div class="upload-btn-row">
+          <button class="btn-choose" type="button" onclick="event.stopPropagation();G('cameraInput').click()"><i class="fa-solid fa-camera"></i> Camera Se Khinchein</button>
+          <button class="btn-choose btn-choose-alt" type="button" onclick="event.stopPropagation();G('galleryInput').click()"><i class="fa-solid fa-images"></i> Gallery Se Choose Karein</button>
+        </div>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment">
+        <input type="file" id="galleryInput" accept="image/*" multiple>
       </div>
       <div class="page-strip" id="pageStrip" style="display:none"></div>
       <div class="info-notice"><i class="fa-solid fa-circle-info"></i> Tip: Achhi roshni me, document ko flat surface par rakh ke photo lein — corners saaf dikhne chahiye taaki crop accurate ho.</div>
@@ -764,7 +771,8 @@ function resetAll(){
 }
 
 /* ---- Step 1: Upload ---- */
-G('fileInput').addEventListener('change',function(e){handleFiles(e.target.files);});
+G('cameraInput').addEventListener('change',function(e){handleFiles(e.target.files);e.target.value='';});
+G('galleryInput').addEventListener('change',function(e){handleFiles(e.target.files);e.target.value='';});
 var uz=G('uploadZone');
 uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('drag');});
 uz.addEventListener('dragleave',function(){uz.classList.remove('drag');});
@@ -806,7 +814,7 @@ function renderPageStrip(){
   var addBtn=document.createElement('div');
   addBtn.className='page-add';
   addBtn.innerHTML='<i class="fa-solid fa-plus"></i>';
-  addBtn.onclick=function(){G('fileInput').click();};
+  addBtn.onclick=function(){G('galleryInput').click();};
   strip.appendChild(addBtn);
   G('toStep2Btn').disabled=pages.length===0;
 }
