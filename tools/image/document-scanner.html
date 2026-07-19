@@ -1202,11 +1202,15 @@ updateTsLabel(1024);
 function readTargetBytesOrNull(){ return G('tsEnable').checked ? Math.round(readTargetSizeKB()*1024) : null; }
 function estimateDataURLBytes(durl){ var i=durl.indexOf(',');return Math.round((durl.length-i-1)*3/4); }
 
-/* Renders one page at an explicit scale+quality for export — separate from
-   renderFinalForPage() (which always renders 1:1 at fixed quality for the
-   live Filter-step preview) so DPI/target-size only affect the final file,
-   never the on-screen preview. */
-function renderPageForExport(idx,scale,quality){
+/* Renders one page's filtered/perspective-corrected canvas ONCE at an
+   explicit scale — separate from renderFinalForPage() (which always
+   renders 1:1 at fixed quality for the live Filter-step preview) so
+   DPI/target-size only affect the final file, never the on-screen
+   preview. This is the EXPENSIVE step (image decode + perspective warp +
+   Auto Clean/Sharpen pixel filters) — Target File Size search below
+   re-encodes JPEG quality against this cached canvas instead of redoing
+   this render on every size attempt, which is what made it slow before. */
+function renderPageCanvasForExport(idx,scale){
   var p=pages[idx];
   return new Promise(function(resolve){
     var img=new Image();
@@ -1215,10 +1219,26 @@ function renderPageForExport(idx,scale,quality){
       var w=Math.max(1,Math.round(img.naturalWidth*scale));
       var h=Math.max(1,Math.round(img.naturalHeight*scale));
       drawFilteredToCanvas(img,cnv,p,w,h);
-      resolve(cnv.toDataURL('image/jpeg',quality));
+      resolve(cnv);
     };
     img.src=p.warpedDataURL;
   });
+}
+// Binary-search JPEG quality on an already-rendered canvas for the HIGHEST
+// quality that still fits under targetBytes (same "closest to target from
+// below" approach used elsewhere on the site — passport-photo.html,
+// signature-resizer.html) — this is what makes the output land CLOSE to
+// the target instead of stopping wherever the default quality happened to
+// land (previously: a target of 500KB could come out as 314KB because the
+// old code only ever shrank quality DOWN, never checked if it could go up).
+function encodeCanvasToTargetBytes(cnv,targetBytes){
+  var lo=0.05,hi=0.95,best=null;
+  for(var i=0;i<8;i++){
+    var q=(lo+hi)/2;
+    var durl=cnv.toDataURL('image/jpeg',q);
+    if(estimateDataURLBytes(durl)<=targetBytes){best=durl;lo=q;}else{hi=q;}
+  }
+  return best||cnv.toDataURL('image/jpeg',0.05);
 }
 
 async function downloadScan(){
@@ -1229,22 +1249,30 @@ async function downloadScan(){
   var quality=0.92;
   var targetBytes=readTargetBytesOrNull();
 
+  var canvases=[];
+  for(var ci=0;ci<pages.length;ci++){
+    canvases.push(await renderPageCanvasForExport(ci,scale));
+    G('progBar').style.width=(10+((ci+1)/pages.length)*30)+'%';
+  }
+
   if(exportMode==='image'){
     for(var i=0;i<pages.length;i++){
-      var durl=await renderPageForExport(i,scale,quality);
-      if(targetBytes){
-        var attempt=0,curScale=scale,curQ=quality;
-        while(estimateDataURLBytes(durl)>targetBytes && attempt<5){
-          attempt++;
-          curQ=Math.max(0.25,curQ-0.15);
-          if(attempt>=3)curScale=Math.max(0.4,curScale-0.25);
-          durl=await renderPageForExport(i,curScale,curQ);
+      var durl=targetBytes?encodeCanvasToTargetBytes(canvases[i],targetBytes):canvases[i].toDataURL('image/jpeg',quality);
+      // Extreme case: even the lowest JPEG quality at this DPI scale is
+      // still over a very aggressive target — shrink the render scale and
+      // retry (rare fallback, only path that still needs a re-render).
+      if(targetBytes&&estimateDataURLBytes(durl)>targetBytes){
+        var curScale=scale;
+        for(var attempt=0;attempt<4&&estimateDataURLBytes(durl)>targetBytes;attempt++){
+          curScale=Math.max(0.3,curScale-0.2);
+          var smallCanvas=await renderPageCanvasForExport(i,curScale);
+          durl=encodeCanvasToTargetBytes(smallCanvas,targetBytes);
         }
       }
       var a=document.createElement('a');
       a.href=durl;a.download='scan-page-'+(i+1)+'.jpg';
       document.body.appendChild(a);a.click();document.body.removeChild(a);
-      G('progBar').style.width=(10+((i+1)/pages.length)*85)+'%';
+      G('progBar').style.width=(40+((i+1)/pages.length)*55)+'%';
     }
     G('progBar').style.width='100%';
     setTimeout(function(){G('progWrap').style.display='none';G('progBar').style.width='0%';},600);
@@ -1252,45 +1280,52 @@ async function downloadScan(){
   }
 
   await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
-  G('progBar').style.width='25%';
+  G('progBar').style.width='45%';
   var JsPDF=(window.jspdf||{}).jsPDF;
 
-  async function buildPdf(sc,q){
+  function buildPdfFromCanvases(cnvs,q){
     var pdf=null;
-    for(var i=0;i<pages.length;i++){
-      var durl=await renderPageForExport(i,sc,q);
-      var dims=await getImgDims(durl);
-      if(!pdf){pdf=new JsPDF({orientation:dims.w>=dims.h?'l':'p',unit:'px',format:[dims.w,dims.h]});}
-      else{pdf.addPage([dims.w,dims.h],dims.w>=dims.h?'l':'p');}
-      pdf.addImage(durl,'JPEG',0,0,dims.w,dims.h);
-      G('progBar').style.width=(25+((i+1)/pages.length)*55)+'%';
+    for(var i=0;i<cnvs.length;i++){
+      var durl=cnvs[i].toDataURL('image/jpeg',q);
+      var w=cnvs[i].width,h=cnvs[i].height;
+      if(!pdf){pdf=new JsPDF({orientation:w>=h?'l':'p',unit:'px',format:[w,h]});}
+      else{pdf.addPage([w,h],w>=h?'l':'p');}
+      pdf.addImage(durl,'JPEG',0,0,w,h);
     }
     return pdf;
   }
 
-  var pdf=await buildPdf(scale,quality);
+  var pdf;
   if(targetBytes){
-    var attempt2=0,curScale2=scale,curQ2=quality;
-    var sizeNow=pdf.output('arraybuffer').byteLength;
-    while(sizeNow>targetBytes && attempt2<5){
-      attempt2++;
-      curQ2=Math.max(0.25,curQ2-0.15);
-      if(attempt2>=3)curScale2=Math.max(0.4,curScale2-0.25);
-      G('progBar').style.width='90%';
-      pdf=await buildPdf(curScale2,curQ2);
-      sizeNow=pdf.output('arraybuffer').byteLength;
+    // Binary-search ONE shared JPEG quality across all cached page canvases
+    // for the highest quality whose ASSEMBLED PDF (JsPDF adds its own
+    // overhead beyond raw JPEG bytes) still fits under targetBytes.
+    var lo=0.05,hi=0.95,bestPdf=null;
+    for(var iter=0;iter<8;iter++){
+      var q2=(lo+hi)/2;
+      var candidate=buildPdfFromCanvases(canvases,q2);
+      if(candidate.output('arraybuffer').byteLength<=targetBytes){bestPdf=candidate;lo=q2;}else{hi=q2;}
+      G('progBar').style.width=(45+((iter+1)/8)*45)+'%';
     }
+    pdf=bestPdf||buildPdfFromCanvases(canvases,0.05);
+    var sizeNow=pdf.output('arraybuffer').byteLength;
+    if(sizeNow>targetBytes){
+      var curScale2=scale;
+      for(var a2=0;a2<4&&sizeNow>targetBytes;a2++){
+        curScale2=Math.max(0.3,curScale2-0.2);
+        var smallCanvases=[];
+        for(var si=0;si<pages.length;si++)smallCanvases.push(await renderPageCanvasForExport(si,curScale2));
+        pdf=buildPdfFromCanvases(smallCanvases,0.4);
+        sizeNow=pdf.output('arraybuffer').byteLength;
+      }
+    }
+  }else{
+    pdf=buildPdfFromCanvases(canvases,quality);
+    G('progBar').style.width='90%';
   }
   pdf.save('scanned-document.pdf');
   G('progBar').style.width='100%';
   setTimeout(function(){G('progWrap').style.display='none';G('progBar').style.width='0%';},600);
-}
-function getImgDims(src){
-  return new Promise(function(res){
-    var im=new Image();
-    im.onload=function(){res({w:im.naturalWidth,h:im.naturalHeight});};
-    im.src=src;
-  });
 }
 
 /* ---- FAQ toggle ---- */
