@@ -102,7 +102,11 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 
 /* FILTERS — horizontal scroll strip (was a wrapping grid; scrolling keeps the
    layout compact instead of pushing everything below it down the page) */
-.filter-grid{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.filter-scroll-row{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.filter-grid{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;min-width:0;flex:1;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.filter-scroll-btn{flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
+.filter-scroll-btn:hover{border-color:var(--brand);color:var(--brand)}
+.filter-scroll-btn:disabled{opacity:.35;cursor:not-allowed}
 .filter-card{flex:0 0 104px;border:2px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;transition:all .2s;text-align:center;background:#fff;scroll-snap-align:start}
 .filter-card:hover{border-color:var(--brand)}
 .filter-card.active{border-color:var(--brand);background:var(--brand-light)}
@@ -303,7 +307,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <span class="page-nav-count" id="filtPageCount">Page 1 / 1</span>
         <button class="page-nav-btn" id="filtNextBtn" onclick="filterGoPage(1)">Next Page <i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      <div class="filter-grid" id="filterGrid"></div>
+      <div class="filter-scroll-row">
+        <button class="filter-scroll-btn" id="filterScrollLeft" type="button" aria-label="Filters left scroll karein"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="filter-grid" id="filterGrid"></div>
+        <button class="filter-scroll-btn" id="filterScrollRight" type="button" aria-label="Filters right scroll karein"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
       <div class="adj-grid">
         <div class="adj-group">
           <div class="adj-label">Brightness <span id="brVal">100%</span></div>
@@ -979,7 +987,20 @@ function initFilterStep(){
   G('satRange').value=srcPage.saturation||100;
   previewImg.onload=function(){updateAdjust();};
   previewImg.src=srcPage.warpedDataURL;
+  updateFilterScrollBtns();
 }
+function updateFilterScrollBtns(){
+  var grid=G('filterGrid');
+  if(!grid)return;
+  G('filterScrollLeft').disabled=grid.scrollLeft<=2;
+  G('filterScrollRight').disabled=grid.scrollLeft>=grid.scrollWidth-grid.clientWidth-2;
+}
+(function(){
+  var grid=G('filterGrid');
+  G('filterScrollLeft').addEventListener('click',function(){grid.scrollBy({left:-260,behavior:'smooth'});});
+  G('filterScrollRight').addEventListener('click',function(){grid.scrollBy({left:260,behavior:'smooth'});});
+  grid.addEventListener('scroll',updateFilterScrollBtns,{passive:true});
+})();
 function filterGoPage(delta){
   var ni=curPageIdx+delta;
   if(ni<0||ni>=pages.length)return;
