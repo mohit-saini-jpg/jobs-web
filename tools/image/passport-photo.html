@@ -462,6 +462,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="step-panel" id="panel-3">
   <div class="card">
     <div class="card-title">🌟 Photo Adjust Karein</div>
+    <button class="btn-choose" style="width:100%;justify-content:center;margin-bottom:16px;background:linear-gradient(135deg,#7c3aed,#345de6)" onclick="autoEnhance()"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Enhance — Ek Click Mein Clear &amp; Sharp</button>
     <div class="adj-grid">
       <div class="adj-group">
         <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
@@ -1291,6 +1292,68 @@ function setAdj(rid,val,lid,unit){
 }
 function resetAdj(){setAdj('brightRange',100,'brightVal','%');setAdj('contrastRange',100,'contrastVal','%');setAdj('saturateRange',100,'saturateVal','%');setAdj('sharpRange',0,'sharpVal','');}
 
+// ── AUTO ENHANCE ───────────────────────────────────────
+// Analyzes the ACTUAL photo's brightness histogram (auto-levels, the same
+// idea as "Auto Contrast" in real photo editors) instead of applying one
+// fixed preset to every photo — a photo taken in dim light and one taken in
+// bright light need different correction, a static preset can't give both
+// a good result. Finds the 1st/99th percentile luminance so a handful of
+// stray dark/bright pixels (shadows, a bright light source) don't skew the
+// stretch, then derives brightness/contrast from that real range, plus a
+// mild saturation lift and sharpen.
+function autoEnhance(){
+  var src=S.bgRemoveEnabled&&S.removedBgCanvas ? S.removedBgCanvas : S.croppedCanvas;
+  if(!src){alert('Pehle photo crop karein.');return;}
+  var sw=Math.min(200,src.width),sh=Math.max(1,Math.round(sw*src.height/src.width));
+  var sc=document.createElement('canvas');sc.width=sw;sc.height=sh;
+  sc.getContext('2d').drawImage(src,0,0,sw,sh);
+  var data=sc.getContext('2d').getImageData(0,0,sw,sh).data;
+  var hist=new Array(256).fill(0),total=0;
+  for(var i=0;i<data.length;i+=4){
+    var lum=Math.round(0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]);
+    hist[lum]++;total++;
+  }
+  var lo=0,hi=255,cum=0;
+  for(var v=0;v<256;v++){cum+=hist[v];if(cum>=total*0.01){lo=v;break;}}
+  cum=0;
+  for(var v=255;v>=0;v--){cum+=hist[v];if(cum>=total*0.01){hi=v;break;}}
+  var range=Math.max(20,hi-lo);
+  var contrastPct=Math.round(Math.min(150,Math.max(100,(255/range)*100)));
+  var brightnessPct=Math.round(Math.min(125,Math.max(90,100-(lo/255)*35)));
+  setAdj('brightRange',brightnessPct,'brightVal','%');
+  setAdj('contrastRange',contrastPct,'contrastVal','%');
+  setAdj('saturateRange',112,'saturateVal','%');
+  setAdj('sharpRange',1.5,'sharpVal','');
+}
+
+// Real unsharp-mask sharpen (BUG FIX: the Sharpness slider previously only
+// stored S.sharpness and never actually touched the image — moving it did
+// nothing to the output). Classic unsharp mask: blur a copy, then push each
+// pixel further AWAY from its blurred (low-detail) version — this amplifies
+// edges/fine detail (hair, eyebrows, text on ID cards held in-frame) without
+// the harsh ringing a naive fixed convolution kernel gives at high strength.
+function applySharpen(canvas,amount){
+  if(!amount)return;
+  var w=canvas.width,h=canvas.height;
+  var ctx=canvas.getContext('2d');
+  var srcData=ctx.getImageData(0,0,w,h);
+  var blurCanvas=document.createElement('canvas');
+  blurCanvas.width=w;blurCanvas.height=h;
+  var bctx=blurCanvas.getContext('2d');
+  bctx.filter='blur(1.1px)';
+  bctx.drawImage(canvas,0,0);
+  bctx.filter='none';
+  var blurData=bctx.getImageData(0,0,w,h).data;
+  var sd=srcData.data;
+  var strength=amount*0.55; // amount is the 0-5 slider value
+  for(var i=0;i<sd.length;i+=4){
+    for(var c2=0;c2<3;c2++){
+      var v=sd[i+c2]+(sd[i+c2]-blurData[i+c2])*strength;
+      sd[i+c2]=v<0?0:(v>255?255:v);
+    }
+  }
+  ctx.putImageData(srcData,0,0);
+}
 // Apply CSS filters + bg composite
 function buildProcessedCanvas(w,h){
   var src=S.bgRemoveEnabled&&S.removedBgCanvas ? S.removedBgCanvas : S.croppedCanvas;
@@ -1304,6 +1367,7 @@ function buildProcessedCanvas(w,h){
   ctx.filter='brightness('+S.brightness+'%) contrast('+S.contrast+'%) saturate('+S.saturate+'%)';
   ctx.drawImage(bgApplied,0,0,w,h);
   ctx.filter='none';
+  if(S.sharpness>0)applySharpen(c,S.sharpness);
   return c;
 }
 
