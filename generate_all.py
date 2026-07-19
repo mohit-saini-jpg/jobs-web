@@ -8255,6 +8255,23 @@ QUAL_GROUPS = [
     ("PhD / LLM / M.Phil & Others", ['LLM','MPhil_PhD','M_Th','Retired_Staff'],
      "Highest-qualification government jobs — LLM, M.Phil, PhD and re-employment openings for retired staff."),
 ]
+# Icon + accent color per QUAL_GROUPS entry (same order/index) — gives each tier
+# a distinct visual identity (colored top border, icon chip, tinted chip borders)
+# instead of 11 identical-looking plain sections back to back.
+QUAL_GROUP_STYLE = [
+    ('🎒', '#1a56db', '#eff6ff'),   # Below 10th Pass
+    ('📘', '#dc2626', '#fef2f2'),   # 10th & 12th Pass
+    ('🔧', '#0d9488', '#f0fdfa'),   # ITI / Diploma / Para-Medical Diploma
+    ('🎓', '#059669', '#ecfdf5'),   # Graduate / Bachelor's Degree
+    ('⚙️', '#f97316', '#fff7ed'),   # Engineering (B.Tech / BE)
+    ('🏥', '#db2777', '#fdf2f8'),   # Medical & Para-Medical (Bachelor's)
+    ('⚖️', '#7c3aed', '#f5f3ff'),   # Law & Professional Courses
+    ('📚', '#1e40af', '#eff6ff'),   # Post Graduate / Master's Degree
+    ('🩺', '#9d174d', '#fce7f3'),   # Medical Post Graduate & Super Specialty
+    ('📜', '#d97706', '#fffbeb'),   # PG Diploma
+    ('🏆', '#0d2257', '#eef2ff'),   # PhD / LLM / M.Phil & Others
+]
+
 _qkey_to_slugcount = {}
 for _qkey in QUAL_SLUG_ORDER:
     _qslug = QUAL_SLUG.get(_qkey, slugify(_qkey))
@@ -8262,27 +8279,50 @@ for _qkey in QUAL_SLUG_ORDER:
     _qkey_to_slugcount[_qkey] = (_qslug, _cdata.get('label', _qslug.replace('-', ' ').title()), len(_cdata.get('jobs', [])))
 
 _study_group_sections = []
-for _gname, _gkeys, _gdesc in QUAL_GROUPS:
+for _gi, (_gname, _gkeys, _gdesc) in enumerate(QUAL_GROUPS):
+    _gicon, _gcolor, _glightbg = QUAL_GROUP_STYLE[_gi]
     _chips = []
     for _gk in _gkeys:
         if _gk not in _qkey_to_slugcount: continue
         _gslug, _glabel, _gcount = _qkey_to_slugcount[_gk]
-        _badge = (f'<span style="background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:1px 7px;'
+        _badge = (f'<span style="background:{_glightbg};color:{_gcolor};border-radius:10px;padding:1px 7px;'
                   f'font-size:.66rem;font-weight:800;margin-left:5px">{_gcount}</span>') if _gcount else ''
         _chips.append(
-            f'<a href="/category/study/{e(_gslug)}/" style="display:inline-flex;align-items:center;'
-            f'background:#fff;border:1px solid #e2e8f0;color:#0d2257;padding:7px 12px;border-radius:20px;'
-            f'font-size:.8rem;font-weight:700;text-decoration:none;margin:0">{e(_glabel)}{_badge}</a>'
+            f'<a href="/category/study/{e(_gslug)}/" class="qg-chip" style="border-color:{_gcolor}40">'
+            f'{e(_glabel)}{_badge}</a>'
         )
     if not _chips: continue
     _study_group_sections.append(
-        f'<section style="margin:0 10px 20px">'
-        f'<h2 style="font-size:1rem;font-weight:800;color:#0d2257;margin:0 0 4px">{e(_gname)}</h2>'
-        f'<p style="font-size:.8rem;color:#64748b;margin:0 0 10px;line-height:1.55">{e(_gdesc)}</p>'
-        f'<div style="display:flex;flex-wrap:wrap;gap:8px">{"".join(_chips)}</div>'
+        f'<section class="qg-card" style="border-top:4px solid {_gcolor}">'
+        f'<div class="qg-head">'
+        f'<span class="qg-icon" style="background:{_glightbg}">{_gicon}</span>'
+        f'<div><h2 class="qg-title">{e(_gname)}</h2>'
+        f'<p class="qg-sub">{len(_chips)} qualification{"s" if len(_chips) != 1 else ""}</p></div>'
+        f'</div>'
+        f'<p class="qg-desc">{e(_gdesc)}</p>'
+        f'<div class="qg-chips">{"".join(_chips)}</div>'
         f'</section>'
     )
-_study_groups_html = ''.join(_study_group_sections)
+_study_groups_html = (
+    '<style>'
+    '.qg-wrap{display:grid;grid-template-columns:1fr;gap:16px;margin:0 10px 22px}'
+    '@media (min-width:860px){.qg-wrap{grid-template-columns:1fr 1fr}}'
+    '.qg-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px 18px;'
+    'box-shadow:0 2px 10px rgba(13,34,87,.06);transition:box-shadow .2s,transform .2s}'
+    '.qg-card:hover{box-shadow:0 8px 22px rgba(13,34,87,.13);transform:translateY(-2px)}'
+    '.qg-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}'
+    '.qg-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;'
+    'font-size:1.25rem;flex-shrink:0}'
+    '.qg-title{font-size:1rem;font-weight:800;color:#0d2257;margin:0;line-height:1.3}'
+    '.qg-sub{font-size:.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin:2px 0 0}'
+    '.qg-desc{font-size:.8rem;color:#64748b;line-height:1.55;margin:0 0 12px}'
+    '.qg-chips{display:flex;flex-wrap:wrap;gap:7px}'
+    '.qg-chip{display:inline-flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;color:#0d2257;'
+    'padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:700;text-decoration:none;transition:all .15s}'
+    '.qg-chip:hover{background:#fff;transform:translateY(-1px);box-shadow:0 2px 8px rgba(13,34,87,.12)}'
+    '</style>'
+    f'<div class="qg-wrap">{"".join(_study_group_sections)}</div>'
+)
 
 if _study_landing_jobs:
     write(str(ROOT/'category'/'study'/'index.html'), build_listing_page(
