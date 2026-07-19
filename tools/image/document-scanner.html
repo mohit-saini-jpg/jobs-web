@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
 <title>Document Scanner Online Free – Auto Crop, Perspective Fix, PDF | Top Sarkari Jobs</title>
-<meta name="description" content="Scan documents online free using your phone or PC camera/photo. Auto perspective correction, B&W/enhance filters, multi-page PDF export. 100% browser-based, no app install.">
+<meta name="description" content="Scan documents online free using your phone or PC camera/photo. Auto Clean & Sharpen removes shadows and uneven background color for crisp readable text, plus perspective correction, B&W/enhance filters, multi-page PDF export. 100% browser-based, no app install.">
 <meta name="keywords" content="document scanner online, free document scanner, pdf scanner, photo to pdf scanner, mobile document scanner, scan document free india">
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
 <link rel="canonical" href="https://www.topsarkarijobs.com/tools/image/document-scanner.html">
@@ -225,8 +225,9 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <section class="tool-hero">
   <div class="hero-icon">📄</div>
   <h1>Document Scanner Online Free</h1>
-  <p>Photo se seedha professional scan banayein — auto perspective fix, B&amp;W/enhance filters, multi-page PDF export. Bilkul free, sirf browser mein.</p>
+  <p>Photo se seedha professional scan banayein — Auto Clean &amp; Sharpen se shadow aur uneven background hatakar text crisp banayein, auto perspective fix, B&amp;W/enhance filters, multi-page PDF export. Bilkul free, sirf browser mein.</p>
   <div class="badges">
+    <span class="badge">🪄 Shadow Remove</span>
     <span class="badge">🔒 100% Browser-Based</span>
     <span class="badge">📚 Multi-Page PDF</span>
     <span class="badge">⚡ No Upload</span>
@@ -339,12 +340,20 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <div class="print-preview" id="finalPreview"></div>
       <div class="form-group"><label>🎯 Image Quality (DPI)</label>
         <select id="dpiSelect">
-          <option value="72">72 (Draft / Chhota Size)</option>
+          <option value="72">72 (Low / Small Size)</option>
           <option value="96">96 (Screen)</option>
           <option value="150" selected>150 (Good)</option>
           <option value="200">200 (High)</option>
-          <option value="300">300 (Print Quality)</option>
+          <option value="300">300 (Print)</option>
+          <option value="400">400 (Print+)</option>
+          <option value="600">600 (Ultra HD)</option>
+          <option value="900">900 (Scan Quality)</option>
+          <option value="1200">1200 (Maximum)</option>
+          <option value="custom">Custom DPI...</option>
         </select>
+      </div>
+      <div class="form-group" id="dpiCustomWrap" style="display:none"><label>Custom DPI</label>
+        <input type="number" id="dpiCustom" min="36" max="2400" value="150">
       </div>
       <div class="target-size-box">
         <label class="ts-enable-row">
@@ -389,6 +398,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Kya mera document server par upload hota hai? <i class="fa fa-plus"></i></button><div class="faq-a">Nahi. Poora processing — crop, filter, PDF banana — aapke browser ke andar hi hota hai. Koi file kahin upload nahi hoti.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Kitne pages ek PDF me add kar sakte hain? <i class="fa fa-plus"></i></button><div class="faq-a">Jitne chahein utne pages add karke ek hi PDF me combine kar sakte hain — koi limit nahi hai.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Corners auto-detect kyun nahi hote? <i class="fa fa-plus"></i></button><div class="faq-a">Ye tool lightweight rakhne ke liye default corners deta hai jinhe aap manually drag karke sirf 2 second me set kar sakte hain — isse tool fast load hota hai bina heavy libraries ke.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Photo me shadow ya asaman lighting ki wajah se text saaf nahi dikhta — kya karein? <i class="fa fa-plus"></i></button><div class="faq-a">Filter step me "Auto Clean & Sharpen" chunein — ye normal contrast/brightness filters se alag hai, ye document ke background ko har jagah analyze karke shadow aur uneven paper color ko flatten karta hai (jaise real scanner apps karte hain), jisse text har jagah equally crisp aur dark dikhta hai, chahe photo click karte waqt shadow ya ulti-seedhi lighting hi kyun na ho.</div></div>
   </div>
 
   <div class="card">
@@ -706,6 +716,7 @@ var cropInst=null;
 var exportMode='pdf';
 var FILTERS=[
   {id:'none',name:'Original',css:''},
+  {id:'autoclean',name:'Auto Clean & Sharpen',css:'',pixel:true},
   {id:'autocolor',name:'Auto Color',css:'saturate(126%) contrast(114%) brightness(107%)'},
   {id:'bw',name:'B&W Scan',css:'grayscale(100%) contrast(160%) brightness(110%)'},
   {id:'gray',name:'Grayscale',css:'grayscale(100%) contrast(105%)'},
@@ -950,13 +961,25 @@ function initFilterStep(){
   var grid=G('filterGrid');
   grid.innerHTML='';
   var srcPage=pages[curPageIdx]||pages[0];
+  var thumbImg=new Image(); // decoded once, reused to render pixel-filter (Auto Clean) thumbnails
+  thumbImg.onload=function(){
+    var THUMB_W=180,THUMB_H=Math.round(THUMB_W*thumbImg.naturalHeight/thumbImg.naturalWidth);
+    document.querySelectorAll('.filter-card[data-fid="autoclean"] img').forEach(function(imgEl){
+      var tc=document.createElement('canvas');
+      drawFilteredToCanvas(thumbImg,tc,{filter:'autoclean',brightness:100,contrast:100,saturation:100},THUMB_W,THUMB_H);
+      imgEl.src=tc.toDataURL('image/jpeg',0.85);
+    });
+  };
+  thumbImg.src=srcPage.warpedDataURL;
   FILTERS.forEach(function(f){
     var card=document.createElement('div');
     card.className='filter-card'+(srcPage.filter===f.id?' active':'');
     card.dataset.fid=f.id;
     var img=document.createElement('img');
-    img.src=srcPage.warpedDataURL;
-    img.style.filter=f.css;
+    if(!f.pixel){
+      img.src=srcPage.warpedDataURL;
+      img.style.filter=f.css;
+    } // pixel filters (Auto Clean): thumbImg.onload above fills in a real rendered preview once ready
     card.appendChild(img);
     var lbl=document.createElement('div');
     lbl.className='fc-name';lbl.textContent=f.name;
@@ -999,6 +1022,76 @@ function currentFilterCss(p){
   var f=FILTERS.find(function(x){return x.id===p.filter;})||FILTERS[0];
   return 'brightness('+(p.brightness||100)+'%) contrast('+(p.contrast||100)+'%) saturate('+(p.saturation!=null?p.saturation:100)+'%) '+f.css;
 }
+/* ================= Auto Clean & Sharpen — real background-flattening =================
+   Plain CSS filters (contrast/brightness) are GLOBAL — they cannot fix a
+   shadow or a yellowed/uneven paper background because they push every
+   pixel the same way, so a dark shadow just becomes a darker (still
+   visible) shadow. A shadow is a SLOWLY-VARYING regional pattern, so it
+   needs its own local background estimate to correct: this is the same
+   "divide by blurred background" trick real scanner apps (CamScanner,
+   Adobe Scan) use.
+     1. Shrink the image way down (24x) then draw it back up full size.
+        Downscaling destroys fine detail (text strokes) but preserves the
+        slow gradient of a shadow/tint — so the upscaled result IS an
+        estimate of just the background, with the text washed out of it.
+     2. Divide every pixel by its local background estimate and rescale to
+        255. A pixel that's part of the (locally bright) background maps
+        close to white regardless of the original shadow darkening it or
+        the paper's original color cast — because it's being compared to
+        ITS OWN neighborhood's background level, not a global threshold.
+        Text (locally much darker than its immediate surroundings) stays
+        dark relative to that same local baseline, so it survives sharp
+        and unwashed even where a shadow used to sit.
+     3. A contrast stretch on top pushes the now-flattened background to
+        pure white and ink to a crisp near-black, instead of a flat gray. */
+function applyAutoClean(canvas){
+  var w=canvas.width,h=canvas.height;
+  var ctx=canvas.getContext('2d');
+  var srcData=ctx.getImageData(0,0,w,h);
+  var sw=Math.max(1,Math.round(w/24)),sh=Math.max(1,Math.round(h/24));
+  var small=document.createElement('canvas');
+  small.width=sw;small.height=sh;
+  small.getContext('2d').drawImage(canvas,0,0,sw,sh);
+  var bgCanvas=document.createElement('canvas');
+  bgCanvas.width=w;bgCanvas.height=h;
+  var bgCtx=bgCanvas.getContext('2d');
+  bgCtx.imageSmoothingEnabled=true;bgCtx.imageSmoothingQuality='high';
+  bgCtx.drawImage(small,0,0,w,h);
+  var bgData=bgCtx.getImageData(0,0,w,h);
+  var sd=srcData.data,bd=bgData.data;
+  var CONTRAST=1.22;
+  for(var i=0;i<sd.length;i+=4){
+    for(var c=0;c<3;c++){
+      var bgVal=bd[i+c]<15?15:bd[i+c];
+      var norm=(sd[i+c]/bgVal)*255;
+      norm=(norm-255)*CONTRAST+255;
+      sd[i+c]=norm<0?0:(norm>255?255:norm);
+    }
+  }
+  ctx.putImageData(srcData,0,0);
+}
+/* Unified renderer for every filter (CSS-based or pixel-algorithm-based like
+   Auto Clean) at any target size — brightness/contrast/saturation sliders
+   always apply on top regardless of which filter is active. */
+function drawFilteredToCanvas(img,destCanvas,p,w,h){
+  destCanvas.width=w;destCanvas.height=h;
+  var f=FILTERS.find(function(x){return x.id===p.filter;})||FILTERS[0];
+  var bcs='brightness('+(p.brightness||100)+'%) contrast('+(p.contrast||100)+'%) saturate('+(p.saturation!=null?p.saturation:100)+'%)';
+  var dctx=destCanvas.getContext('2d');
+  if(f.pixel){
+    var tmp=document.createElement('canvas');
+    tmp.width=w;tmp.height=h;
+    tmp.getContext('2d').drawImage(img,0,0,w,h);
+    applyAutoClean(tmp);
+    dctx.filter=bcs;
+    dctx.drawImage(tmp,0,0,w,h);
+    dctx.filter='none';
+  }else{
+    dctx.filter=bcs+' '+f.css;
+    dctx.drawImage(img,0,0,w,h);
+    dctx.filter='none';
+  }
+}
 function updateAdjust(){
   var p=pages[curPageIdx];
   p.brightness=parseInt(G('brRange').value);
@@ -1010,12 +1103,7 @@ function updateAdjust(){
   var cnv=G('livePreview');
   var maxW=520;
   var scale=Math.min(1,maxW/previewImg.naturalWidth);
-  cnv.width=previewImg.naturalWidth*scale;
-  cnv.height=previewImg.naturalHeight*scale;
-  var ctx=cnv.getContext('2d');
-  ctx.filter=currentFilterCss(p);
-  ctx.drawImage(previewImg,0,0,cnv.width,cnv.height);
-  ctx.filter='none';
+  drawFilteredToCanvas(previewImg,cnv,p,Math.round(previewImg.naturalWidth*scale),Math.round(previewImg.naturalHeight*scale));
   renderFinalForPage(curPageIdx);
 }
 function renderFinalForPage(idx){
@@ -1023,11 +1111,7 @@ function renderFinalForPage(idx){
   var img=new Image();
   img.onload=function(){
     var cnv=document.createElement('canvas');
-    cnv.width=img.naturalWidth;cnv.height=img.naturalHeight;
-    var ctx=cnv.getContext('2d');
-    ctx.filter=currentFilterCss(p);
-    ctx.drawImage(img,0,0);
-    ctx.filter='none';
+    drawFilteredToCanvas(img,cnv,p,img.naturalWidth,img.naturalHeight);
     p.finalDataURL=cnv.toDataURL('image/jpeg',0.95);
   };
   img.src=p.warpedDataURL;
@@ -1061,8 +1145,19 @@ function buildExportPreview(){
 }
 /* ---- DPI + Target File Size (same pattern as tools/pdf/any-file-to-pdf.html) ---- */
 var DPI_BASE=96; // baseline "screen" DPI — matches the scale=dpi/96 convention used elsewhere on this site
-function getSelectedDpi(){ return parseInt(G('dpiSelect').value,10)||150; }
-function getDpiScale(){ return Math.min(3,Math.max(0.5,getSelectedDpi()/DPI_BASE)); }
+G('dpiSelect').addEventListener('change',function(){
+  G('dpiCustomWrap').style.display = G('dpiSelect').value==='custom' ? 'block' : 'none';
+});
+function getSelectedDpi(){
+  var v=G('dpiSelect').value;
+  if(v==='custom'){ var c=parseInt(G('dpiCustom').value,10)||150; return Math.min(2400,Math.max(36,c)); }
+  return parseInt(v,10)||150;
+}
+// Cap matches tools/pdf/any-file-to-pdf.html's own dpi/96 convention — scale
+// stops growing past 4x (~400+ DPI) since a photo-based scan has no real
+// extra detail beyond that, and letting canvas dimensions grow unbounded on
+// a 900/1200 DPI pick would risk hitting browser canvas memory/size limits.
+function getDpiScale(){ return Math.min(4,Math.max(0.6,getSelectedDpi()/DPI_BASE)); }
 var TS_PRESETS=[{l:'20 KB',kb:20},{l:'50 KB',kb:50},{l:'100 KB',kb:100},{l:'200 KB',kb:200},{l:'500 KB',kb:500},{l:'1 MB',kb:1024},{l:'5 MB',kb:5120},{l:'10 MB',kb:10240},{l:'20 MB',kb:20480},{l:'50 MB',kb:51200},{l:'100 MB',kb:102400}];
 (function(){
   var box=G('tsPresets');
@@ -1109,12 +1204,9 @@ function renderPageForExport(idx,scale,quality){
     var img=new Image();
     img.onload=function(){
       var cnv=document.createElement('canvas');
-      cnv.width=Math.max(1,Math.round(img.naturalWidth*scale));
-      cnv.height=Math.max(1,Math.round(img.naturalHeight*scale));
-      var ctx=cnv.getContext('2d');
-      ctx.filter=currentFilterCss(p);
-      ctx.drawImage(img,0,0,cnv.width,cnv.height);
-      ctx.filter='none';
+      var w=Math.max(1,Math.round(img.naturalWidth*scale));
+      var h=Math.max(1,Math.round(img.naturalHeight*scale));
+      drawFilteredToCanvas(img,cnv,p,w,h);
       resolve(cnv.toDataURL('image/jpeg',quality));
     };
     img.src=p.warpedDataURL;
