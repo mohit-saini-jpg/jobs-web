@@ -92,6 +92,8 @@
     .upload-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
     .upload-sub { font-size: 0.82rem; color: var(--muted); }
     .upload-sub b { color: var(--brand); }
+    .upload-btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+    .upload-btn-row .btn-primary, .upload-btn-row .btn-secondary { padding: 10px 20px; font-size: 0.85rem; }
     .file-preview { margin-top: 14px; padding: 10px 14px; background: var(--mist); border-radius: 8px; display: none; align-items: center; gap: 8px; font-size: 0.82rem; }
     .file-preview.show { display: flex; }
     .file-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -246,13 +248,18 @@
 <div class="main-container">
   <div class="card">
     <h3>📂 File Upload Karein</h3>
-    <div class="upload-zone">
+    <div class="upload-zone" id="upload-zone-sig">
       <span class="upload-icon">⬆️</span>
       <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein · image/*</div>
+      <div class="upload-sub">Ya neeche se Camera / Gallery choose karein · image/*</div>
+      <div class="upload-btn-row">
+        <button type="button" class="btn-primary" id="camera-btn"><i class="fa-solid fa-camera"></i> Camera Se Khinchein</button>
+        <button type="button" class="btn-secondary" id="gallery-btn"><i class="fa-solid fa-images"></i> Gallery Se Choose Karein</button>
+      </div>
     </div>
     <div class="file-preview" id="file-preview"><span>📄</span><span class="file-name">—</span><span class="file-size">—</span><button class="file-remove">✕</button></div>
     <input type="file" id="main-file" style="display:none" accept="image/*">
+    <input type="file" id="camera-file" style="display:none" accept="image/*" capture="environment">
   </div>
 
   <div class="card" id="crop-card" style="display:none">
@@ -375,7 +382,31 @@
     function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
     inp.addEventListener('change',()=>hf(inp.files[0]));
     const zone=document.querySelector('.upload-zone');
-    if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
+    // BUG FIX: drop previously only updated the filename/size preview (hf(f))
+    // but never fired 'change' on the input, so loadImageFromFile() (wired to
+    // 'change' further down) never ran -- a dropped image never actually
+    // loaded into the crop/resize pipeline. Dispatching 'change' after
+    // setting .files makes every listener on this input run, same as a real
+    // OS-picker selection.
+    if(zone){zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;inp.dispatchEvent(new Event('change'));}});}
+    // Android's Chrome file picker for a plain <input accept="image/*">
+    // opens the OS Photo Picker, which has NO Camera option -- so a single
+    // shared input can never offer "take a photo". Two explicit buttons:
+    // Gallery opens the normal (no-capture) input, Camera opens a dedicated
+    // capture="environment" input and relays its file into #main-file so
+    // every downstream consumer (loadImageFromFile, runProcess, reset) keeps
+    // working off the one input it already reads from.
+    const camBtn=document.getElementById('camera-btn'),galBtn=document.getElementById('gallery-btn'),camInp=document.getElementById('camera-file');
+    if(galBtn)galBtn.addEventListener('click',e=>{e.stopPropagation();inp.click();});
+    if(camBtn&&camInp){
+      camBtn.addEventListener('click',e=>{e.stopPropagation();camInp.click();});
+      camInp.addEventListener('change',()=>{
+        const f=camInp.files[0];if(!f)return;
+        const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;
+        inp.dispatchEvent(new Event('change'));
+        camInp.value='';
+      });
+    }
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
   // ══════════════════════════════════════════════════════════
