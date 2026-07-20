@@ -237,9 +237,14 @@ a{color:inherit}
       <div style="font-size:0.78rem;margin:10px 0;color:#e7e9ee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="audio-track-name"></div>
       <div class="field">
         <label>Track Volume (<span id="audio-track-vol-val">100</span>%)</label>
-        <input type="range" id="audio-track-volume" min="0" max="200" value="100">
+        <input type="range" id="audio-track-volume" min="0" max="500" value="100">
       </div>
-      <button class="tool-btn" id="remove-audio-track-btn" style="color:#fca5a5;border-color:#7f1d1d">🗑️ Remove Audio Track</button>
+      <div class="toggle-row">
+        <span>🔇 Mute Original Video Audio</span>
+        <label class="switch"><input type="checkbox" id="fx-include-audio-2"><span class="slider-tog"></span></label>
+      </div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:2px">On karein taaki sirf ye background track sunai de, video ki apni recorded awaaz hat jaaye.</p>
+      <button class="tool-btn" id="remove-audio-track-btn" style="color:#fca5a5;border-color:#7f1d1d;margin-top:10px">🗑️ Remove Audio Track</button>
       <p style="font-size:0.7rem;color:var(--muted);margin-top:8px">↔️ Timeline mein green waveform ko drag karke position set karein, edges khींचकर trim karein.</p>
     </div>
   </div>
@@ -1626,7 +1631,14 @@ document.getElementById('bg-color').addEventListener('input', e=>{ ST.bgColor = 
 ========================================================= */
 document.getElementById('fx-include-audio').addEventListener('change', e=>{
   ST.fx.includeAudio = e.target.checked;
+  document.getElementById('fx-include-audio-2').checked = !e.target.checked;
   if (volumeGainNode) volumeGainNode.gain.value = e.target.checked ? ST.fx.volume : 0;
+});
+document.getElementById('fx-include-audio-2').addEventListener('change', e=>{
+  const keepAudio = !e.target.checked; // this checkbox means "mute", so invert
+  ST.fx.includeAudio = keepAudio;
+  document.getElementById('fx-include-audio').checked = keepAudio;
+  if (volumeGainNode) volumeGainNode.gain.value = keepAudio ? ST.fx.volume : 0;
 });
 document.getElementById('fx-volume').addEventListener('input', e=>{
   ST.fx.volume = parseInt(e.target.value)/100;
@@ -1847,7 +1859,7 @@ function sanitizeExportState(){
     }
     audioTrack.trimEnd = Math.min(audioTrack.trimEnd, audioTrack.duration || audioTrack.trimEnd);
     if (!Number.isFinite(audioTrack.volume) || audioTrack.volume < 0) audioTrack.volume = 1;
-    audioTrack.volume = Math.min(2, audioTrack.volume);
+    audioTrack.volume = Math.min(5, audioTrack.volume);
   }
 }
 
@@ -2099,7 +2111,8 @@ async function performExport(){
     if (hasAudioTrack){
       const trimS = audioTrack.trimStart, trimE = audioTrack.trimEnd;
       const delayMs = Math.max(0, Math.round(audioTrack.offset * 1000));
-      filter += `[${audioTrackInputIdx}:a]atrim=start=${trimS.toFixed(3)}:end=${trimE.toFixed(3)},asetpts=PTS-STARTPTS,adelay=${delayMs}:all=1,volume=${audioTrack.volume.toFixed(2)}[atrack];`;
+      const trackLimiter = audioTrack.volume > 1 ? ',alimiter=limit=0.95' : '';
+      filter += `[${audioTrackInputIdx}:a]atrim=start=${trimS.toFixed(3)}:end=${trimE.toFixed(3)},asetpts=PTS-STARTPTS,adelay=${delayMs}:all=1,volume=${audioTrack.volume.toFixed(2)}${trackLimiter}[atrack];`;
       trackLabel = 'atrack';
     }
 
