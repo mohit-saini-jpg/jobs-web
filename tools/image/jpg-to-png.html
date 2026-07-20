@@ -104,6 +104,18 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .section-title { font-size: 0.84rem; font-weight: 800; margin: 20px 0 12px; padding-top: 16px; border-top: 2px dashed var(--line); display: flex; align-items: center; gap: 6px; }
+    .adj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+    .adj-label { display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .adj-label span:last-child { color: var(--brand); font-weight: 800; }
+    .adj-slider { width: 100%; accent-color: var(--brand); }
+    .adj-presets { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+    .adj-preset { padding: 4px 11px; border: 1.5px solid var(--line); border-radius: 20px; background: #fff; font-size: 0.72rem; font-weight: 700; cursor: pointer; color: var(--ink); font-family: inherit; }
+    .adj-preset:hover { border-color: var(--brand); }
+    .adj-preset.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .toggle-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+    .toggle-body { opacity: 0.45; pointer-events: none; transition: opacity 0.2s; }
+    .toggle-body.on { opacity: 1; pointer-events: auto; }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -209,7 +221,49 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>PNG Type</label><select><option>PNG-24 (Full Color)</option><option>PNG-8 (Smaller Size)</option></select></div><div class="form-group"><label>Background</label><select><option>Transparent</option><option>White</option><option>Custom Color</option></select></div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>PNG Type</label><select id="pngType">
+        <option value="24">PNG-24 (Full Color, Best Quality)</option>
+        <option value="8">PNG-8 (256 Colors, Smaller Size)</option>
+      </select></div>
+    </div>
+    <p class="info-box" id="pngTypeNote">PNG-24 lossless hai — original JPG jaisa hi color quality, thoda bada size.</p>
+
+    <div class="section-title">🌟 Photo Adjust (Optional)</div>
+    <div id="livePreviewWrap" style="display:none;text-align:center;margin-bottom:16px;border-radius:10px;overflow:hidden;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;padding:12px">
+      <img id="livePreviewImg" style="max-width:100%;max-height:320px;border-radius:6px">
+    </div>
+    <div class="adj-grid">
+      <div class="form-group">
+        <label class="adj-label"><span>Brightness</span><span id="v-bright">100%</span></label>
+        <input type="range" class="adj-slider" id="s-bright" min="40" max="180" value="100">
+        <div class="adj-presets"><button type="button" class="adj-preset" data-t="bright" data-v="70">Dark</button><button type="button" class="adj-preset active" data-t="bright" data-v="100">Normal</button><button type="button" class="adj-preset" data-t="bright" data-v="130">Bright</button></div>
+      </div>
+      <div class="form-group">
+        <label class="adj-label"><span>Contrast</span><span id="v-contrast">100%</span></label>
+        <input type="range" class="adj-slider" id="s-contrast" min="40" max="180" value="100">
+        <div class="adj-presets"><button type="button" class="adj-preset" data-t="contrast" data-v="75">Low</button><button type="button" class="adj-preset active" data-t="contrast" data-v="100">Normal</button><button type="button" class="adj-preset" data-t="contrast" data-v="135">High</button></div>
+      </div>
+      <div class="form-group">
+        <label class="adj-label"><span>Saturation</span><span id="v-sat">100%</span></label>
+        <input type="range" class="adj-slider" id="s-sat" min="0" max="200" value="100">
+        <div class="adj-presets"><button type="button" class="adj-preset" data-t="sat" data-v="0">B&amp;W</button><button type="button" class="adj-preset active" data-t="sat" data-v="100">Normal</button><button type="button" class="adj-preset" data-t="sat" data-v="160">Vivid</button></div>
+      </div>
+      <div class="form-group">
+        <label class="adj-label"><span>Sharpness</span><span id="v-sharp">0</span></label>
+        <input type="range" class="adj-slider" id="s-sharp" min="0" max="100" value="0">
+        <div class="adj-presets"><button type="button" class="adj-preset active" data-t="sharp" data-v="0">None</button><button type="button" class="adj-preset" data-t="sharp" data-v="35">Light</button><button type="button" class="adj-preset" data-t="sharp" data-v="75">Sharp</button></div>
+      </div>
+    </div>
+
+    <div class="section-title">📐 Resize (Optional)</div>
+    <label class="toggle-row"><input type="checkbox" id="rsEnable"> Custom width/height set karein</label>
+    <div class="toggle-body form-grid" id="rsBody">
+      <div class="form-group"><label>Width (px)</label><input type="number" id="rsW" min="1" max="10000"></div>
+      <div class="form-group"><label>Height (px)</label><input type="number" id="rsH" min="1" max="10000"></div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;cursor:pointer;margin-top:22px"><input type="checkbox" id="rsLock" checked> Aspect Ratio Lock</label>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -251,23 +305,141 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
+  function G(id){return document.getElementById(id);}
+  // ── Real state (was previously never read anywhere — PNG Type/Background
+  // selects were decorative, and "Process" just renamed the original JPG
+  // bytes as if it were a converted PNG) ──
+  let natW=0,natH=0,srcImg=null;
+  const ADJ={bright:100,contrast:100,sat:100,sharp:0};
+  const SZ={w:0,h:0};
+  function filterCss(){return 'brightness('+ADJ.bright+'%) contrast('+ADJ.contrast+'%) saturate('+ADJ.sat+'%)';}
+  function updateLivePreview(){
+    const img=G('livePreviewImg');if(!img||!srcImg)return;
+    img.src=srcImg.src;img.style.filter=filterCss();
+    G('livePreviewWrap').style.display='block';
+  }
+  function loadImageFromFile(f){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=e=>{
+        const img=new Image();
+        img.onload=()=>{srcImg=img;natW=img.naturalWidth;natH=img.naturalHeight;
+          if(!SZ.w){SZ.w=natW;G('rsW').value=natW;}
+          if(!SZ.h){SZ.h=natH;G('rsH').value=natH;}
+          updateLivePreview();resolve(img);};
+        img.onerror=()=>reject(new Error('Image load failed'));
+        img.src=e.target.result;
+      };
+      reader.onerror=()=>reject(new Error('File read failed'));
+      reader.readAsDataURL(f);
+    });
+  }
+  function applySharpen(ctx,w,h,amount){
+    if(amount<=0)return;
+    const blur=document.createElement('canvas');blur.width=w;blur.height=h;
+    const bctx=blur.getContext('2d');bctx.filter='blur(1.1px)';bctx.drawImage(ctx.canvas,0,0);bctx.filter='none';
+    const src=ctx.getImageData(0,0,w,h),blurData=bctx.getImageData(0,0,w,h).data,sd=src.data;
+    const strength=(amount/100)*3;
+    for(let i=0;i<sd.length;i+=4){for(let c=0;c<3;c++){const v=sd[i+c]+(sd[i+c]-blurData[i+c])*strength;sd[i+c]=v<0?0:(v>255?255:v);}}
+    ctx.putImageData(src,0,0);
+  }
+  function canvasToBlobP(cv,mime,q){return new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('encode fail')),mime,q));}
+  function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector('script[src="'+src+'"]')){res();return;}const s=document.createElement('script');s.src=src;s.onload=()=>res();s.onerror=()=>rej(new Error('Library load fail'));document.head.appendChild(s);});}
+  function buildCanvas(){
+    const w=G('rsEnable').checked&&SZ.w>0?SZ.w:natW;
+    const h=G('rsEnable').checked&&SZ.h>0?SZ.h:natH;
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const ctx=cv.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.filter=filterCss();
+    ctx.drawImage(srcImg,0,0,w,h);
+    ctx.filter='none';
+    if(ADJ.sharp>0)applySharpen(ctx,w,h,ADJ.sharp);
+    return cv;
+  }
+  // Real PNG-8: canvas.toBlob('image/png') can ONLY produce truecolor PNG-24 --
+  // there is no browser API to request an indexed-palette PNG, so "PNG-8"
+  // previously was not just fake output stats, it was not even POSSIBLE
+  // with the code that existed. UPNG.js does genuine palette quantization
+  // and writes a real indexed PNG (same "load a small format-specific
+  // encoder via CDN" pattern used for GIF/TIFF elsewhere on this site).
+  async function encodePng8(cv){
+    // UPNG.js needs pako's deflate implementation as a global -- it doesn't
+    // bundle it, so it must load BEFORE UPNG.js or encode() throws trying
+    // to read undefined.deflate.
+    await loadScript('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.js');
+    const ctx=cv.getContext('2d');
+    const imgData=ctx.getImageData(0,0,cv.width,cv.height);
+    const buf=UPNG.encode([imgData.data.buffer],cv.width,cv.height,256);
+    return new Blob([buf],{type:'image/png'});
+  }
+  async function runProcess(){
+    const inp=G('main-file');
     if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
+    if(!srcImg){alert('Image abhi load ho rahi hai — 1 second baad try karein.');return;}
     const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
+    const pw=G('progress-wrap');pw.style.display='block';
+    const bar=G('pbar');bar.style.width='20%';G('pmsg').textContent='Converting...';
+    const pb=G('process-btn');pb.disabled=true;
+    try{
+      const cv=buildCanvas();
+      bar.style.width='55%';
+      let blob;
+      if(G('pngType').value==='8'){
+        G('pmsg').textContent='256-color palette banaya ja raha hai...';
+        blob=await encodePng8(cv);
+      }else{
+        blob=await canvasToBlobP(cv,'image/png');
+      }
+      bar.style.width='100%';G('pmsg').textContent='Done!';
+      const rc=G('result-card');rc.classList.add('show');
+      G('stat-row').innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">${cv.width}×${cv.height}</div><div class="stat-lbl">Dimensions</div></div><div class="stat-box"><div class="stat-val">PNG-${G('pngType').value}</div><div class="stat-lbl">Type</div></div>`;
+      const outName=f.name.replace(/\.[^.]+$/,'')+'.png';
+      G('dl-btn').onclick=()=>{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=outName;a.click();setTimeout(()=>URL.revokeObjectURL(u),4000);};
+      rc.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }catch(err){
+      pw.style.display='none';
+      alert('Convert nahi ho paya: '+(err&&err.message?err.message:err));
+    }finally{
+      pb.disabled=false;
+    }
   }
   document.addEventListener('DOMContentLoaded',()=>{
     bindFile('main-file','file-preview');
+    G('main-file').addEventListener('change',()=>{if(G('main-file').files[0])loadImageFromFile(G('main-file').files[0]).catch(err=>alert('Image load fail: '+err.message));});
+    G('pngType').addEventListener('change',function(){
+      G('pngTypeNote').textContent=this.value==='8'
+        ? 'PNG-8 real 256-color palette use karta hai — file chhoti hoti hai, lekin gradients/photos mein halka color-banding aa sakta hai.'
+        : 'PNG-24 lossless hai — original JPG jaisa hi color quality, thoda bada size.';
+    });
+
+    function clearActive(t){document.querySelectorAll('.adj-preset[data-t="'+t+'"]').forEach(b=>b.classList.remove('active'));}
+    G('s-bright').addEventListener('input',function(){ADJ.bright=+this.value;G('v-bright').textContent=ADJ.bright+'%';clearActive('bright');updateLivePreview();});
+    G('s-contrast').addEventListener('input',function(){ADJ.contrast=+this.value;G('v-contrast').textContent=ADJ.contrast+'%';clearActive('contrast');updateLivePreview();});
+    G('s-sat').addEventListener('input',function(){ADJ.sat=+this.value;G('v-sat').textContent=ADJ.sat+'%';clearActive('sat');updateLivePreview();});
+    G('s-sharp').addEventListener('input',function(){ADJ.sharp=+this.value;G('v-sharp').textContent=ADJ.sharp;clearActive('sharp');});
+    document.querySelectorAll('.adj-preset').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const t=btn.getAttribute('data-t'),v=+btn.getAttribute('data-v');
+        ADJ[t]=v;
+        const map={bright:['s-bright','v-bright','%'],contrast:['s-contrast','v-contrast','%'],sat:['s-sat','v-sat','%'],sharp:['s-sharp','v-sharp','']};
+        const[sid,lid,suf]=map[t];G(sid).value=v;G(lid).textContent=v+suf;
+        clearActive(t);btn.classList.add('active');
+        updateLivePreview();
+      });
+    });
+
+    G('rsEnable').addEventListener('change',function(){G('rsBody').classList.toggle('on',this.checked);});
+    G('rsW').addEventListener('input',function(){
+      SZ.w=Math.max(1,parseInt(this.value,10)||1);
+      if(G('rsLock').checked&&natW&&natH){SZ.h=Math.max(1,Math.round(SZ.w*natH/natW));G('rsH').value=SZ.h;}
+    });
+    G('rsH').addEventListener('input',function(){
+      SZ.h=Math.max(1,parseInt(this.value,10)||1);
+      if(G('rsLock').checked&&natW&&natH){SZ.w=Math.max(1,Math.round(SZ.h*natW/natH));G('rsW').value=SZ.w;}
+    });
+
     const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
     const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
       document.getElementById('main-file').value='';
@@ -275,6 +447,10 @@
       document.getElementById('progress-wrap').style.display='none';
       document.getElementById('pbar').style.width='0%';
       const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+      srcImg=null;natW=0;natH=0;SZ.w=0;SZ.h=0;
+      ADJ.bright=100;ADJ.contrast=100;ADJ.sat=100;ADJ.sharp=0;
+      G('livePreviewWrap').style.display='none';
+      G('rsEnable').checked=false;G('rsBody').classList.remove('on');
     });
   });
 </script>
