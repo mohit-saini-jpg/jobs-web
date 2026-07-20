@@ -8975,38 +8975,46 @@ if _adm_items:
     sections_index['ADMISSIONS'] = _adm_items[:10]
     print(f"  [ADMISSIONS] {len(_adm_items[:10])} items loaded")
 
-# ── OFFLINE_FORM: FJA jobs se HAMESHA rebuild (permanent fix) ────────────────
-_offline_items = []; _offline_seen = set()
-for _fj in (list(FJA.get('Latest_Notifications',[])) +
-             list(FJA.get('Any_Graduate',[])) +
-             list(FJA.get('10TH_Pass',[]))):
-    _bd2 = (_fj.get('basic_details') or {})
-    _ft = safe(_bd2.get('job_title',''))
-    if not _ft or _ft in _offline_seen: continue
-    if 'offline' not in _ft.lower(): continue
-    _sl2 = get_canonical_slug(_fj)
-    _imp2 = (_fj.get('important_dates') or {})
-    _ld2 = safe(_imp2.get('last_date_to_apply','') or _imp2.get('last_date',''))
-    _offline_items.append({'slug':_sl2,'name':_ft,'date':_ld2})
-    _offline_seen.add(_ft)
-    if len(_offline_items) >= 10: break
-if _offline_items:
-    sections_index['OFFLINE_FORM'] = _offline_items
+# ── OFFLINE_FORM: FALLBACK ONLY when SARK hasn't already populated it above
+# (lines ~8847-8864 build this from SARK's own 'OFFLINE_FORM' category, which
+# is also what the /section/offline-form/ listing page itself uses — that is
+# the authoritative, freshest source. Overwriting it unconditionally here with
+# an older FJA-based guess caused the homepage card to go stale while the
+# section page stayed fresh, since the two used different data sources.)
+if not sections_index.get('OFFLINE_FORM'):
+    _offline_items = []; _offline_seen = set()
+    for _fj in (list(FJA.get('Latest_Notifications',[])) +
+                 list(FJA.get('Any_Graduate',[])) +
+                 list(FJA.get('10TH_Pass',[]))):
+        _bd2 = (_fj.get('basic_details') or {})
+        _ft = safe(_bd2.get('job_title',''))
+        if not _ft or _ft in _offline_seen: continue
+        if 'offline' not in _ft.lower(): continue
+        _sl2 = get_canonical_slug(_fj)
+        _imp2 = (_fj.get('important_dates') or {})
+        _ld2 = safe(_imp2.get('last_date_to_apply','') or _imp2.get('last_date',''))
+        _offline_items.append({'slug':_sl2,'name':_ft,'date':_ld2})
+        _offline_seen.add(_ft)
+        if len(_offline_items) >= 10: break
+    if _offline_items:
+        sections_index['OFFLINE_FORM'] = _offline_items
 
-# ── LATEST_JOBS NEW: FJA Latest_Notifications se HAMESHA rebuild ─────────────
-_ln_items = []; _ln_seen = set()
-for _fj in FJA.get('Latest_Notifications', []):
-    _bd3 = (_fj.get('basic_details') or {})
-    _ft3 = safe(_bd3.get('job_title',''))
-    if not _ft3 or _ft3 in _ln_seen: continue
-    _sl3 = get_canonical_slug(_fj)
-    _imp3 = (_fj.get('important_dates') or {})
-    _ld3 = safe(_imp3.get('last_date_to_apply','') or _imp3.get('last_date',''))
-    _ln_items.append({'slug':_sl3,'name':_ft3,'date':_ld3})
-    _ln_seen.add(_ft3)
-    if len(_ln_items) >= 10: break
-if _ln_items:
-    sections_index['LATEST_JOBS NEW'] = _ln_items
+# ── LATEST_JOBS NEW: FALLBACK ONLY when SARK hasn't already populated it
+# above (same reasoning as OFFLINE_FORM immediately above).
+if not sections_index.get('LATEST_JOBS NEW'):
+    _ln_items = []; _ln_seen = set()
+    for _fj in FJA.get('Latest_Notifications', []):
+        _bd3 = (_fj.get('basic_details') or {})
+        _ft3 = safe(_bd3.get('job_title',''))
+        if not _ft3 or _ft3 in _ln_seen: continue
+        _sl3 = get_canonical_slug(_fj)
+        _imp3 = (_fj.get('important_dates') or {})
+        _ld3 = safe(_imp3.get('last_date_to_apply','') or _imp3.get('last_date',''))
+        _ln_items.append({'slug':_sl3,'name':_ft3,'date':_ld3})
+        _ln_seen.add(_ft3)
+        if len(_ln_items) >= 10: break
+    if _ln_items:
+        sections_index['LATEST_JOBS NEW'] = _ln_items
 
 # ── Add DU sections to sections-index.json (Phase: slug-based internal links) ──
 # Govt Scheme & Yojna, ImportantCSC PDF, ImportantCSC link, Today Updates
