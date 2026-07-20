@@ -122,6 +122,23 @@
     .sig-drag-box { position:absolute; border:2px dashed var(--brand); background:rgba(52,93,230,0.08); cursor:move; display:flex; align-items:center; justify-content:center; touch-action:none; border-radius:4px; }
     .sig-drag-box img { max-width:100%; max-height:100%; pointer-events:none; }
     .sig-drag-box span { pointer-events:none; }
+    .sig-drag-box.other-page { border-style:solid; border-color:var(--muted); opacity:0.45; cursor:default; }
+    .sig-drag-box .rm-placement { position:absolute; top:-11px; right:-11px; width:22px; height:22px; border-radius:50%; background:#EF4444; color:#fff; border:2px solid #fff; font-size:12px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; pointer-events:auto; }
+    .preview-nav { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:10px; }
+    .pg-nav-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; }
+    .pg-nav-btn:hover:not(:disabled) { border-color:var(--brand); color:var(--brand); }
+    .pg-nav-btn:disabled { opacity:0.35; cursor:not-allowed; }
+    .pg-indicator { font-size:0.82rem; font-weight:700; color:var(--ink); min-width:90px; text-align:center; }
+    .placements-list { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+    .placement-item { display:flex; align-items:center; gap:10px; padding:9px 12px; background:var(--mist); border-radius:8px; font-size:0.82rem; }
+    .placement-item img { width:34px; height:22px; object-fit:contain; background:#fff; border-radius:4px; border:1px solid var(--line); }
+    .placement-item .pi-label { flex:1; font-weight:600; }
+    .placement-item .pi-rm { background:none; border:none; color:#EF4444; cursor:pointer; font-size:1rem; padding:2px 6px; }
+    .saved-sig-banner { display:flex; align-items:center; gap:10px; background:var(--brand-light); border-radius:8px; padding:10px 12px; margin-top:10px; font-size:0.82rem; }
+    .saved-sig-banner img { width:44px; height:28px; object-fit:contain; background:#fff; border-radius:4px; border:1px solid var(--line); }
+    .saved-sig-banner .ssb-actions { margin-left:auto; display:flex; gap:6px; }
+    .saved-sig-banner button { padding:5px 11px; border-radius:7px; border:1.5px solid var(--line); background:#fff; font-size:0.76rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .saved-sig-banner button:hover { border-color:var(--brand); color:var(--brand); }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -249,17 +266,36 @@
     <input type="text" id="sig-type-input" class="sig-type-input" placeholder="Apna naam type karein" style="display:none; font-family:'Dancing Script',cursive;">
     <div class="sig-upload-wrap" id="upload-wrap" style="display:none"><input type="file" id="sig-upload-file" accept="image/png,image/jpeg"></div>
     <div class="sig-actions">
+      <button type="button" id="sig-undo-btn">↩️ Undo Stroke</button>
       <button type="button" id="sig-clear-btn">🗑️ Clear</button>
       <button type="button" id="sig-build-btn">✅ Signature Set Karein</button>
     </div>
     <div class="info-box" id="sig-info">✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.</div>
     <div class="err-box" id="err-box"></div>
+    <div class="saved-sig-banner" id="saved-sig-banner" style="display:none">
+      <img id="saved-sig-thumb" alt="Saved signature">
+      <span>Saved signature mili — reuse karein?</span>
+      <div class="ssb-actions">
+        <button type="button" id="load-saved-sig-btn">Use Karein</button>
+        <button type="button" id="delete-saved-sig-btn">Delete</button>
+      </div>
+    </div>
+    <div class="saved-sig-banner" id="save-sig-prompt" style="display:none;background:var(--mist)">
+      <span>👍 Signature set ho gaya. Agli baar ke liye is browser mein save kar lein?</span>
+      <div class="ssb-actions"><button type="button" id="save-sig-btn">💾 Save Karein</button></div>
+    </div>
+  </div>
 
-    <div class="form-grid" style="margin-top:18px">
+  <div class="card" id="placement-card" style="display:none">
+    <h3>📍 Signature Placement</h3>
+    <p style="font-size:.8rem;color:var(--muted);margin:-10px 0 16px">Ek hi signature ko document ke alag-alag pages par (chahiye jitni baar) add kar sakte hain — jaise har page par initial + last page par full signature.</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Page</label><select id="place-page"></select></div>
       <div class="form-group"><label>Position</label><select id="sig-pos">
-        <option value="last-br">Last Page – Bottom Right</option>
-        <option value="last-bl">Last Page – Bottom Left</option>
-        <option value="all-br">All Pages – Bottom Right</option>
+        <option value="br">Bottom Right</option>
+        <option value="bl">Bottom Left</option>
+        <option value="tr">Top Right</option>
+        <option value="tl">Top Left</option>
         <option value="custom">Custom (Drag on Preview)</option>
       </select></div>
       <div class="form-group"><label>Size</label><select id="sig-size">
@@ -267,16 +303,26 @@
         <option value="1" selected>Medium</option>
         <option value="1.5">Large</option>
       </select></div>
-      <div class="form-group"><label class="checkbox-row"><input type="checkbox" id="sig-date" checked> Date Stamp bhi add karein</label></div>
+      <div class="form-group"><label class="checkbox-row"><input type="checkbox" id="sig-date" checked> Date Stamp</label></div>
+    </div>
+    <div class="action-row" style="margin-top:14px">
+      <button type="button" class="btn-primary" id="add-placement-btn">➕ Is Page Par Signature Add Karein</button>
     </div>
 
-    <div class="place-wrap" id="place-wrap" style="display:none">
-      <div class="preview-label" style="font-size:0.76rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Preview — Drag signature to position karein</div>
+    <div class="place-wrap" id="place-wrap">
+      <div class="preview-nav">
+        <button type="button" class="pg-nav-btn" id="prevPageBtn">◀</button>
+        <span class="pg-indicator" id="pageIndicator">Page 1 / 1</span>
+        <button type="button" class="pg-nav-btn" id="nextPageBtn">▶</button>
+      </div>
+      <div class="preview-label" style="font-size:0.76rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Preview — is page ke liye "Custom" position ho to drag karke set karein</div>
       <div class="place-canvas-holder" id="place-holder">
         <canvas id="place-canvas"></canvas>
         <div class="sig-drag-box" id="sig-drag-box" style="display:none"><span>✍️</span></div>
       </div>
     </div>
+
+    <div class="placements-list" id="placements-list"></div>
 
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
@@ -295,8 +341,8 @@
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Signature</h4><p>Draw ya type karein</p></div><div class="step"><div class="step-n">3</div><h4>Position</h4><p>Sign placement set karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Signed PDF download</p></div></div></div>
-  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">✍️</span><div><h4>Draw Sign</h4><p>Natural handwriting</p></div></div><div class="feat"><span class="feat-icon">⌨️</span><div><h4>Type Sign</h4><p>Font-based signature</p></div></div><div class="feat"><span class="feat-icon">🖼️</span><div><h4>Upload</h4><p>Image signature</p></div></div><div class="feat"><span class="feat-icon">📍</span><div><h4>Positioning</h4><p>Exact placement</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Local only</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Always free</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Digital signature legally valid hai?<span class="fa">+</span></button><div class="faq-a">India mein IT Act ke under certain conditions mein valid hai. Legal advice lein specific use ke liye.</div></div><div class="faq-item"><button class="faq-q">Mobile par draw kar sakte hain?<span class="fa">+</span></button><div class="faq-a">Haan, touch se perfectly sign kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Signature save hogi?<span class="fa">+</span></button><div class="faq-a">Browser session mein save hoti hai — close karne par delete.</div></div><div class="faq-item"><button class="faq-q">Multiple pages sign kar sakte hain?<span class="fa">+</span></button><div class="faq-a">Haan, all pages option choose karein.</div></div></div>
+  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">✍️</span><div><h4>Draw / Type / Upload</h4><p>Teen tareeke signature banane ke</p></div></div><div class="feat"><span class="feat-icon">↩️</span><div><h4>Undo Stroke</h4><p>Galat stroke sirf undo karein</p></div></div><div class="feat"><span class="feat-icon">📚</span><div><h4>Multi-Signature</h4><p>Ek document mein kayi jagah — page-wise ya sabhi pages par</p></div></div><div class="feat"><span class="feat-icon">🧭</span><div><h4>Page Navigation</h4><p>Har page preview karke exact position set karein</p></div></div><div class="feat"><span class="feat-icon">💾</span><div><h4>Save Signature</h4><p>Agli baar ke liye is browser mein save</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser mein, local only</p></div></div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Digital signature legally valid hai?<span class="fa">+</span></button><div class="faq-a">India mein IT Act ke under certain conditions mein valid hai. Legal advice lein specific use ke liye.</div></div><div class="faq-item"><button class="faq-q">Mobile par draw kar sakte hain?<span class="fa">+</span></button><div class="faq-a">Haan, touch se perfectly sign kar sakte hain — galat stroke ho to Undo bhi kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Signature save hogi?<span class="fa">+</span></button><div class="faq-a">Signature set karne ke baad "Save Karein" button dabayein — agli baar is tool par aane par wahi signature turant load ho jayegi (isi browser mein, kisi server par nahi).</div></div><div class="faq-item"><button class="faq-q">Alag-alag pages par alag signature/initial laga sakte hain?<span class="fa">+</span></button><div class="faq-a">Haan — "Signature Placement" mein page choose karke "+ Add Karein" dabayein, ye kayi baar repeat kar sakte hain (jaise Page 1/2/3 par initial + last page par full signature). "Sabhi Pages" option se ek hi placement se poore document mein add ho jata hai.</div></div><div class="faq-item"><button class="faq-q">Signature ki exact position kaise set karein?<span class="fa">+</span></button><div class="faq-a">Position "Custom" choose karein aur preview par signature box ko drag karke jahan chahiye wahan rakh dein — jo dikhega, wahi final PDF mein aayega.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/any-file-to-pdf.html" class="rel-item"><span class="ri">🗂️</span><span>Any File to PDF</span></a><a href="/tools/pdf/add-watermark.html" class="rel-item"><span class="ri">💧</span><span>Watermark</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>Lock PDF</span></a><a href="/tools/pdf/pdf-unlock.html" class="rel-item"><span class="ri">🗝️</span><span>Unlock</span></a><a href="/tools/pdf/compress-pdf.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge</span></a><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>to JPG</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
@@ -328,23 +374,29 @@
     inp.addEventListener('change',()=>{hf(inp.files[0]); onMainFileChange();});
     const zone=document.querySelector('.upload-zone');
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);onMainFileChange();}});}
-    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');$('place-wrap').style.display='none';mainPdfDoc=null;});
+    const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');$('placement-card').style.display='none';mainPdfDoc=null;pageCount=0;placements=[];renderPlacementsListUI();});
   }
 
   // ── state ──
   let mainPdfDoc=null;
-  let signature=null; // { dataUrl, w, h }
-  let dragPos={xPct:70,yPct:82}; // percent, top-left anchor of signature box on preview canvas
+  let pageCount=0;
+  let currentPreviewPage=1; // 1-indexed page currently shown in the placement preview
+  let signature=null; // { dataUrl, w, h } — the currently built/active signature
+  let placements=[]; // [{id, page:1-indexed number | 'all', xPct, yPct, sizeFactor, dateStamp, sigDataUrl, sigW, sigH}]
+  let nextPlacementId=1;
+  let dragPos={xPct:90,yPct:90}; // percent, CENTER of the pending signature box on preview canvas
+  const SIG_STORAGE_KEY='tsj_saved_signature_v1';
 
   // ── signature pad (draw) ──
   const padCanvas = $('sig-pad');
-  let drawing=false, hasDrawn=false;
+  let drawing=false, hasDrawn=false, drawHistory=[];
   function resizePad(){
     const rect = padCanvas.getBoundingClientRect();
     padCanvas.width = rect.width * 2; padCanvas.height = rect.height * 2;
     const ctx = padCanvas.getContext('2d'); ctx.scale(2,2);
     ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=2.6;
     ctx.strokeStyle = $('sig-color').value;
+    drawHistory=[];
   }
   function padPos(e){
     const rect = padCanvas.getBoundingClientRect();
@@ -352,7 +404,24 @@
     const cy = (e.touches? e.touches[0].clientY : e.clientY) - rect.top;
     return {x:cx,y:cy};
   }
-  function startDraw(e){ e.preventDefault(); drawing=true; hasDrawn=true; const p=padPos(e); const ctx=padCanvas.getContext('2d'); ctx.strokeStyle=$('sig-color').value; ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  // Real undo (was a common gap in "advanced" signature pads elsewhere) —
+  // snapshot the canvas pixels right before each stroke starts, so Undo can
+  // restore to just before the last stroke instead of only offering a full
+  // Clear.
+  function canvasHasContent(canvas){
+    const ctx=canvas.getContext('2d');
+    const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    for(let i=3;i<data.length;i+=4)if(data[i]>10)return true;
+    return false;
+  }
+  function startDraw(e){
+    e.preventDefault();
+    const ctx=padCanvas.getContext('2d');
+    drawHistory.push(ctx.getImageData(0,0,padCanvas.width,padCanvas.height));
+    if(drawHistory.length>25)drawHistory.shift();
+    drawing=true; hasDrawn=true;
+    const p=padPos(e); ctx.strokeStyle=$('sig-color').value; ctx.beginPath(); ctx.moveTo(p.x,p.y);
+  }
   function moveDraw(e){ if(!drawing) return; e.preventDefault(); const p=padPos(e); const ctx=padCanvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke(); }
   function endDraw(){ drawing=false; }
   ['mousedown','touchstart'].forEach(ev=>padCanvas.addEventListener(ev,startDraw,{passive:false}));
@@ -422,8 +491,26 @@
     else sig = await buildFromUpload();
     if(!sig) return;
     signature = sig;
-    $('sig-info').textContent = '✅ Signature set ho gaya! Ab neeche position choose karein aur PDF process karein.';
-    await refreshPlacementPreview();
+    $('sig-info').textContent = '✅ Signature set ho gaya! Neeche "Signature Placement" mein page/position choose karke add karein.';
+    try{
+      const saved=localStorage.getItem(SIG_STORAGE_KEY);
+      $('save-sig-prompt').style.display = saved ? 'none' : 'flex';
+    }catch(e){}
+    await updatePlacementCardVisibility();
+  }
+
+  // ── saved signature (localStorage) — real convenience feature: a returning
+  // user doesn't have to redraw/retype their signature every visit. Purely
+  // client-side (matches the "100% browser only" privacy promise), so it's
+  // just this browser's storage, not an account.
+  function checkSavedSignature(){
+    try{
+      const raw=localStorage.getItem(SIG_STORAGE_KEY);
+      if(!raw)return;
+      const saved=JSON.parse(raw);
+      $('saved-sig-thumb').src=saved.dataUrl;
+      $('saved-sig-banner').style.display='flex';
+    }catch(e){}
   }
 
   function toggleSigTypeUI(){
@@ -436,38 +523,155 @@
     if(t==='draw') setTimeout(resizePad,0);
   }
 
-  // ── main file + placement preview ──
+  // ── main file + multi-page placement preview ──
   async function onMainFileChange(){
-    const inp=$('main-file'); if(!inp.files[0]){ mainPdfDoc=null; $('place-wrap').style.display='none'; return; }
+    const inp=$('main-file');
+    if(!inp.files[0]){ mainPdfDoc=null; pageCount=0; $('placement-card').style.display='none'; return; }
     hideErr();
     try{
       const bytes = new Uint8Array(await inp.files[0].arrayBuffer());
       mainPdfDoc = await pdfjsLib.getDocument({data:bytes}).promise;
-      await refreshPlacementPreview();
+      pageCount = mainPdfDoc.numPages;
+      populatePageSelect();
+      currentPreviewPage = pageCount; // most signatures go on the last page — sensible default
+      placements = []; renderPlacementsListUI();
+      await updatePlacementCardVisibility();
     }catch(e){ mainPdfDoc=null; showErr('❌ Yeh file valid PDF nahi lag rahi.'); }
   }
 
-  async function refreshPlacementPreview(){
-    if(!mainPdfDoc || !signature){ $('place-wrap').style.display='none'; return; }
-    $('place-wrap').style.display='block';
-    const pageNum = mainPdfDoc.numPages; // preview shows last page (default target)
-    const page = await mainPdfDoc.getPage(pageNum);
+  function populatePageSelect(){
+    const sel=$('place-page');
+    let html='';
+    for(let i=1;i<=pageCount;i++) html+=`<option value="${i}">Page ${i}${i===pageCount?' (Last)':''}</option>`;
+    html+=`<option value="all">Sabhi Pages</option>`;
+    sel.innerHTML=html;
+    sel.value=String(pageCount);
+  }
+
+  async function updatePlacementCardVisibility(){
+    if(mainPdfDoc && signature){
+      $('placement-card').style.display='block';
+      await renderPreviewPage(currentPreviewPage);
+    } else if(mainPdfDoc){
+      $('placement-card').style.display='none';
+    }
+  }
+
+  async function renderPreviewPage(pageNum){
+    if(!mainPdfDoc)return;
+    currentPreviewPage = Math.max(1, Math.min(pageCount, pageNum));
+    const page = await mainPdfDoc.getPage(currentPreviewPage);
     const vp = page.getViewport({scale:1.1});
     const canvas = $('place-canvas'); canvas.width=vp.width; canvas.height=vp.height;
     await page.render({canvasContext:canvas.getContext('2d'), viewport:vp}).promise;
+    $('pageIndicator').textContent = `Page ${currentPreviewPage} / ${pageCount}`;
+    $('prevPageBtn').disabled = currentPreviewPage<=1;
+    $('nextPageBtn').disabled = currentPreviewPage>=pageCount;
+    renderPlacementBoxesForCurrentPage();
+  }
 
-    const box = $('sig-drag-box');
-    const sizeFactor = +$('sig-size').value || 1;
-    const boxW = Math.min(vp.width*0.32, 180) * sizeFactor;
-    const boxH = boxW * (signature.h/signature.w);
-    box.style.width = boxW+'px'; box.style.height = boxH+'px';
+  // Bottom-Right/Left/Top-Right/Left presets expressed as the SAME xPct/yPct
+  // (percent from top-left, box CENTER) system custom-drag uses, so preview
+  // and the final PDF placement always agree (WYSIWYG) via one shared formula.
+  function presetPct(posMode){
+    const m=10;
+    if(posMode==='bl')return{xPct:m,yPct:100-m};
+    if(posMode==='tr')return{xPct:100-m,yPct:m};
+    if(posMode==='tl')return{xPct:m,yPct:m};
+    return{xPct:100-m,yPct:100-m}; // br
+  }
+
+  function boxSizeFor(canvas,sizeFactor,sig){
+    const boxW = Math.min(canvas.width*0.32,180)*sizeFactor;
+    const boxH = boxW*(sig.h/sig.w);
+    return {boxW,boxH};
+  }
+
+  // The one draggable/pending box reflects whatever the Placement form is
+  // currently configured to (page/position/size) — this is what "+ Add"
+  // actually commits. Existing (already-added) placements render as
+  // separate, dimmed, non-draggable boxes with their own remove button.
+  function updatePendingBoxVisibility(){
+    const box=$('sig-drag-box');
+    const canvas=$('place-canvas');
+    if(!signature || !canvas.width){ box.style.display='none'; return; }
+    const pageVal=$('place-page').value;
+    const appliesToCurrentPreview = pageVal==='all' || +pageVal===currentPreviewPage;
+    if(!appliesToCurrentPreview){ box.style.display='none'; return; }
     box.style.display='flex';
     box.innerHTML = `<img src="${signature.dataUrl}" alt="signature preview">`;
+    const sizeFactor=+$('sig-size').value||1;
+    const {boxW,boxH}=boxSizeFor(canvas,sizeFactor,signature);
+    box.style.width=boxW+'px'; box.style.height=boxH+'px';
+    const posMode=$('sig-pos').value;
+    if(posMode!=='custom'){ const pct=presetPct(posMode); dragPos.xPct=pct.xPct; dragPos.yPct=pct.yPct; }
+    box.style.cursor = posMode==='custom' ? 'move' : 'default';
     positionDragBox();
   }
 
+  function renderPlacementBoxesForCurrentPage(){
+    const holder=$('place-holder'), canvas=$('place-canvas');
+    holder.querySelectorAll('.sig-drag-box.existing').forEach(el=>el.remove());
+    placements.forEach(pl=>{
+      if(!(pl.page==='all' || pl.page===currentPreviewPage))return;
+      const {boxW,boxH}=boxSizeFor(canvas,pl.sizeFactor,{w:pl.sigW,h:pl.sigH});
+      const box=document.createElement('div');
+      box.className='sig-drag-box existing other-page';
+      const x=(pl.xPct/100)*canvas.width-boxW/2, y=(pl.yPct/100)*canvas.height-boxH/2;
+      box.style.left=Math.max(0,Math.min(canvas.width-boxW,x))+'px';
+      box.style.top=Math.max(0,Math.min(canvas.height-boxH,y))+'px';
+      box.style.width=boxW+'px'; box.style.height=boxH+'px';
+      box.innerHTML=`<img src="${pl.sigDataUrl}" alt=""><span class="rm-placement" data-id="${pl.id}">✕</span>`;
+      holder.appendChild(box);
+    });
+    holder.querySelectorAll('.rm-placement').forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        placements=placements.filter(p=>p.id!==+btn.getAttribute('data-id'));
+        renderPlacementsListUI();
+        renderPlacementBoxesForCurrentPage();
+      });
+    });
+    updatePendingBoxVisibility();
+  }
+
+  function renderPlacementsListUI(){
+    const list=$('placements-list');
+    if(!placements.length){ list.innerHTML=''; return; }
+    list.innerHTML = placements.map(pl=>{
+      const pageLabel = pl.page==='all' ? 'Sabhi Pages' : `Page ${pl.page}`;
+      return `<div class="placement-item"><img src="${pl.sigDataUrl}" alt=""><span class="pi-label">${pageLabel} · ${pl.dateStamp?'Date ke saath':'Bina date'}</span><button type="button" class="pi-rm" data-id="${pl.id}">✕ Remove</button></div>`;
+    }).join('');
+    list.querySelectorAll('.pi-rm').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        placements=placements.filter(p=>p.id!==+btn.getAttribute('data-id'));
+        renderPlacementsListUI();
+        renderPlacementBoxesForCurrentPage();
+      });
+    });
+  }
+
+  function addPlacement(){
+    if(!signature){ showErr('❌ Pehle "Signature Set Karein" button dabayein.'); return; }
+    hideErr();
+    const pageVal=$('place-page').value;
+    const page = pageVal==='all' ? 'all' : parseInt(pageVal,10);
+    const posMode=$('sig-pos').value;
+    let xPct,yPct;
+    if(posMode==='custom'){ xPct=dragPos.xPct; yPct=dragPos.yPct; }
+    else{ const pct=presetPct(posMode); xPct=pct.xPct; yPct=pct.yPct; }
+    placements.push({
+      id: nextPlacementId++, page, xPct, yPct,
+      sizeFactor: +$('sig-size').value||1,
+      dateStamp: $('sig-date').checked,
+      sigDataUrl: signature.dataUrl, sigW: signature.w, sigH: signature.h
+    });
+    renderPlacementsListUI();
+    renderPlacementBoxesForCurrentPage();
+  }
+
   function positionDragBox(){
-    const holder = $('place-holder'), canvas=$('place-canvas'), box=$('sig-drag-box');
+    const canvas=$('place-canvas'), box=$('sig-drag-box');
     if(!canvas.width) return;
     const x = (dragPos.xPct/100) * canvas.width - box.offsetWidth/2;
     const y = (dragPos.yPct/100) * canvas.height - box.offsetHeight/2;
@@ -506,7 +710,7 @@
     hideErr();
     const inp=$('main-file');
     if(!inp||!inp.files[0]){ alert('Pehle PDF file select karein!'); return; }
-    if(!signature){ showErr('❌ Pehle "Signature Set Karein" button dabayein.'); return; }
+    if(!placements.length){ showErr('❌ Pehle kam se kam ek signature placement "+ Add Karein" se add karein.'); return; }
     const f=inp.files[0];
     const rc=$('result-card'); rc.classList.remove('show');
     const pw=$('progress-wrap'); pw.style.display='block';
@@ -517,42 +721,49 @@
       const { PDFDocument, StandardFonts, rgb } = PDFLib;
       const bytes = new Uint8Array(await f.arrayBuffer());
       const doc = await PDFDocument.load(bytes);
-      const pageCount = doc.getPageCount();
-
-      const sigImg = await doc.embedPng(pngOrJpgBase64ToBytes(signature.dataUrl));
+      const totalPages = doc.getPageCount();
       const font = await doc.embedFont(StandardFonts.Helvetica);
-      const sizeFactor = +$('sig-size').value || 1;
-      const posMode = $('sig-pos').value;
-      const addDate = $('sig-date').checked;
       const dateStr = new Date().toLocaleDateString('en-IN');
 
-      const targetPages = posMode==='all-br' ? Array.from({length:pageCount},(_,i)=>i) : [pageCount-1];
+      // Multiple placements can share the exact same signature image (e.g.
+      // "initial every page" + "full signature on last page") -- embed each
+      // distinct dataURL once and reuse, instead of re-embedding per placement.
+      const embedCache=new Map();
+      async function getEmbedded(dataUrl){
+        if(embedCache.has(dataUrl)) return embedCache.get(dataUrl);
+        const img = await doc.embedPng(pngOrJpgBase64ToBytes(dataUrl));
+        embedCache.set(dataUrl,img);
+        return img;
+      }
 
-      for(let i=0;i<targetPages.length;i++){
-        const idx = targetPages[i];
-        const page = doc.getPage(idx);
-        const { width, height } = page.getSize();
-        const boxW = Math.min(width*0.28, 170) * sizeFactor;
-        const boxH = boxW * (sigImg.height/sigImg.width);
+      let stampedCount=0;
+      for(let pi=0; pi<placements.length; pi++){
+        const pl=placements[pi];
+        const sigImg = await getEmbedded(pl.sigDataUrl);
+        const targetIdxs = pl.page==='all'
+          ? Array.from({length:totalPages},(_,i)=>i)
+          : [Math.min(totalPages,Math.max(1,pl.page))-1];
 
-        let x,y;
-        if(posMode==='custom'){
-          x = (dragPos.xPct/100)*width - boxW/2;
-          y = height - ((dragPos.yPct/100)*height) - boxH/2;
-        } else if(posMode==='last-bl'){
-          x = width*0.06; y = height*0.06;
-        } else { // last-br or all-br
-          x = width - boxW - width*0.06; y = height*0.06;
+        for(const idx of targetIdxs){
+          const page = doc.getPage(idx);
+          const { width, height } = page.getSize();
+          const boxW = Math.min(width*0.28, 170) * pl.sizeFactor;
+          const boxH = boxW * (pl.sigH/pl.sigW);
+          // Same xPct/yPct -> position formula the live preview uses, so what
+          // you see in "Custom (Drag on Preview)" is exactly what you get.
+          let x = (pl.xPct/100)*width - boxW/2;
+          let y = height - ((pl.yPct/100)*height) - boxH/2;
+          x = Math.max(4, Math.min(width-boxW-4, x));
+          y = Math.max(4, Math.min(height-boxH-4, y));
+
+          page.drawImage(sigImg, { x, y, width:boxW, height:boxH });
+          if(pl.dateStamp){
+            page.drawText(`Signed: ${dateStr}`, { x, y: Math.max(2,y-12), size:8, font, color: rgb(0.42,0.45,0.5) });
+          }
+          stampedCount++;
         }
-        x = Math.max(4, Math.min(width-boxW-4, x));
-        y = Math.max(4, Math.min(height-boxH-4, y));
-
-        page.drawImage(sigImg, { x, y, width:boxW, height:boxH });
-        if(addDate){
-          page.drawText(`Signed: ${dateStr}`, { x, y: Math.max(2,y-12), size:8, font, color: rgb(0.42,0.45,0.5) });
-        }
-        $('pbar').style.width = Math.round((i+1)/targetPages.length*90)+'%';
-        $('pmsg').textContent = `Page ${idx+1} par signature laga rahe hain...`;
+        $('pbar').style.width = Math.round((pi+1)/placements.length*90)+'%';
+        $('pmsg').textContent = `Placement ${pi+1}/${placements.length} laga rahe hain...`;
       }
 
       const outBytes = await doc.save();
@@ -560,7 +771,8 @@
       const blob = new Blob([outBytes], {type:'application/pdf'});
 
       $('result-card').classList.add('show');
-      $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${targetPages.length}</div><div class="stat-lbl">Pages Signed</div></div>`+
+      $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${placements.length}</div><div class="stat-lbl">Placements</div></div>`+
+        `<div class="stat-box"><div class="stat-val">${stampedCount}</div><div class="stat-lbl">Pages Signed</div></div>`+
         `<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div>`+
         `<div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>`;
       $('dl-btn').onclick=()=>{ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download='signed_'+f.name; a.click(); URL.revokeObjectURL(u); };
@@ -576,33 +788,70 @@
     bindFile('main-file','file-preview');
     toggleSigTypeUI();
     setupDrag();
+    checkSavedSignature();
 
     $('sig-type').addEventListener('change', toggleSigTypeUI);
+    $('sig-undo-btn').addEventListener('click', ()=>{
+      if(!drawHistory.length)return;
+      const snap=drawHistory.pop();
+      const ctx=padCanvas.getContext('2d');
+      ctx.putImageData(snap,0,0);
+      hasDrawn=canvasHasContent(padCanvas);
+    });
     $('sig-clear-btn').addEventListener('click', ()=>{
       hasDrawn=false; resizePad();
       $('sig-type-input').value='';
       $('sig-upload-file').value='';
     });
     $('sig-build-btn').addEventListener('click', buildSignature);
-    $('sig-size').addEventListener('change', refreshPlacementPreview);
-    $('sig-pos').addEventListener('change', function(){
-      const box=$('sig-drag-box');
-      box.style.cursor = this.value==='custom' ? 'move' : 'default';
+    $('save-sig-btn').addEventListener('click', ()=>{
+      if(!signature)return;
+      try{
+        localStorage.setItem(SIG_STORAGE_KEY, JSON.stringify(signature));
+        $('save-sig-prompt').style.display='none';
+      }catch(e){ showErr('❌ Signature save nahi ho payi (browser storage full ho sakta hai).'); }
     });
+    $('load-saved-sig-btn').addEventListener('click', async ()=>{
+      try{
+        const saved=JSON.parse(localStorage.getItem(SIG_STORAGE_KEY));
+        signature={dataUrl:saved.dataUrl, w:saved.w, h:saved.h};
+        $('sig-info').textContent='✅ Saved signature load ho gaya! Neeche placement add karein.';
+        $('saved-sig-banner').style.display='none';
+        await updatePlacementCardVisibility();
+      }catch(e){}
+    });
+    $('delete-saved-sig-btn').addEventListener('click', ()=>{
+      localStorage.removeItem(SIG_STORAGE_KEY);
+      $('saved-sig-banner').style.display='none';
+    });
+
+    $('sig-size').addEventListener('change', updatePendingBoxVisibility);
+    $('sig-pos').addEventListener('change', updatePendingBoxVisibility);
+    $('sig-date').addEventListener('change', ()=>{});
+    $('place-page').addEventListener('change', async function(){
+      if(this.value!=='all'){ await renderPreviewPage(parseInt(this.value,10)); }
+      else { updatePendingBoxVisibility(); renderPlacementBoxesForCurrentPage(); }
+    });
+    $('add-placement-btn').addEventListener('click', addPlacement);
+    $('prevPageBtn').addEventListener('click', ()=>renderPreviewPage(currentPreviewPage-1));
+    $('nextPageBtn').addEventListener('click', ()=>renderPreviewPage(currentPreviewPage+1));
     $('sig-color').addEventListener('change', function(){ if($('sig-type').value==='draw'){ const ctx=padCanvas.getContext('2d'); ctx.strokeStyle=this.value; } });
 
     const pb=$('process-btn'); if(pb) pb.addEventListener('click', runProcess);
     const rb=$('reset-btn'); if(rb) rb.addEventListener('click', ()=>{
       $('main-file').value='';
       const fp=$('file-preview'); if(fp) fp.classList.remove('show');
-      $('place-wrap').style.display='none';
+      $('placement-card').style.display='none';
       $('progress-wrap').style.display='none';
       $('pbar').style.width='0%';
       hideErr();
       hasDrawn=false; resizePad();
       $('sig-type-input').value=''; $('sig-upload-file').value='';
       $('sig-info').textContent='✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.';
-      signature=null; mainPdfDoc=null;
+      signature=null; mainPdfDoc=null; pageCount=0; currentPreviewPage=1;
+      placements=[]; renderPlacementsListUI();
+      $('save-sig-prompt').style.display='none';
+      checkSavedSignature();
       const rc=$('result-card'); if(rc) rc.classList.remove('show');
     });
 
