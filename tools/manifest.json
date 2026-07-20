@@ -40,5 +40,28 @@
       "type": "image/webp",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "PDF Tools",
+      "short_name": "PDF",
+      "description": "Merge, split, compress, lock & 20+ PDF tools",
+      "url": "/tools/tools-pdf.html?source=shortcut",
+      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "Image Tools",
+      "short_name": "Image",
+      "description": "Resize, compress, convert & 20+ image tools",
+      "url": "/tools/tools-image.html?source=shortcut",
+      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "Video & Audio Tools",
+      "short_name": "Video/Audio",
+      "description": "Trim, convert, compress video & audio",
+      "url": "/tools/tools-audio-video.html?source=shortcut",
+      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+    }
   ]
 }
