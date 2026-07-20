@@ -1,5 +1,5 @@
 {
-  "name": "Top Sarkari Jobs – Free Online Tools",
+  "name": "TSJ Free Tools - All-in-One",
   "short_name": "TSJ Tools",
   "description": "50+ free online tools — PDF, Image, Video & Audio converters, resizers, compressors. 100% in-browser, no upload, no signup.",
   "start_url": "/tools/?source=pwa",
@@ -23,22 +23,16 @@
   ],
   "icons": [
     {
-      "src": "/image.png",
+      "src": "/tools/icons/tsj-tools-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/image.png",
+      "src": "/tools/icons/tsj-tools-icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "/image.webp",
-      "sizes": "512x512",
-      "type": "image/webp",
-      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -47,21 +41,21 @@
       "short_name": "PDF",
       "description": "Merge, split, compress, lock & 20+ PDF tools",
       "url": "/tools/tools-pdf.html?source=shortcut",
-      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+      "icons": [{ "src": "/tools/icons/tsj-tools-icon-512.png", "sizes": "512x512" }]
     },
     {
       "name": "Image Tools",
       "short_name": "Image",
       "description": "Resize, compress, convert & 20+ image tools",
       "url": "/tools/tools-image.html?source=shortcut",
-      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+      "icons": [{ "src": "/tools/icons/tsj-tools-icon-512.png", "sizes": "512x512" }]
     },
     {
       "name": "Video & Audio Tools",
       "short_name": "Video/Audio",
       "description": "Trim, convert, compress video & audio",
       "url": "/tools/tools-audio-video.html?source=shortcut",
-      "icons": [{ "src": "/image.png", "sizes": "512x512" }]
+      "icons": [{ "src": "/tools/icons/tsj-tools-icon-512.png", "sizes": "512x512" }]
     }
   ]
 }
