@@ -120,6 +120,10 @@
     .pg-btn.rm:hover { background:#fee2e2; color:#ef4444; }
     .pg-btn:disabled { opacity:.3; cursor:not-allowed; }
     .hidden { display:none !important; }
+    .qa-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .pg-qa { padding:6px 13px; border-radius:20px; border:1.5px solid var(--line); background:#fff; font-size:.76rem; font-weight:700; cursor:pointer; color:var(--ink); font-family:inherit; transition:all .15s; }
+    .pg-qa:hover { border-color:var(--brand); color:var(--brand); }
+    .sel-count { font-size:.78rem; font-weight:700; color:var(--brand); }
     .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#111827; color:#fff; padding:11px 18px; border-radius:10px; font-size:.85rem; z-index:9999; opacity:0; transition:opacity .25s; max-width:90%; text-align:center; }
     .toast.show { opacity:1; }
     @media(max-width:640px){
@@ -229,9 +233,21 @@
     <div class="pages-head">
       <h3 style="margin:0">🖼️ Live Preview — Pages</h3>
       <span class="cnt" id="pg-count">0 pages</span>
+      <span class="sel-count" id="sel-count"></span>
+    </div>
+    <div class="qa-row" id="qa-row">
+      <button type="button" class="pg-qa" data-act="selectAll">✓ Select All</button>
+      <button type="button" class="pg-qa" data-act="clearSel">✕ Clear Selection</button>
+      <button type="button" class="pg-qa" data-act="oddOnly">Odd Pages</button>
+      <button type="button" class="pg-qa" data-act="evenOnly">Even Pages</button>
+      <button type="button" class="pg-qa" data-act="firstHalf">First Half</button>
+      <button type="button" class="pg-qa" data-act="secondHalf">Second Half</button>
+      <button type="button" class="pg-qa" data-act="rmFirst">🗑️ Remove First Page</button>
+      <button type="button" class="pg-qa" data-act="rmLast">🗑️ Remove Last Page</button>
+      <button type="button" class="pg-qa" data-act="rotateAll">↻ Rotate All 90°</button>
     </div>
     <div class="pg-grid" id="pg-grid"></div>
-    <div class="info-box">Har page pe <b>↻ rotate</b> aur <b>✕ delete</b> (skip) kar sakte hain. "Extract Specific Pages" mode me page pe click karke <b>✓ select</b> karein.</div>
+    <div class="info-box">Kisi bhi page par <b>click</b> karke select karein (koi bhi mode mein) — <b>Shift+Click</b> se poora range ek saath select ho jata hai. Har page pe <b>↻ rotate</b> aur <b>✕ delete</b> (skip) bhi kar sakte hain.</div>
   </div>
 
   <div class="card hidden" id="pdf-settings">
@@ -265,8 +281,8 @@
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Mode</h4><p>Split mode choose karein</p></div><div class="step"><div class="step-n">3</div><h4>Pages</h4><p>Ranges define karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Split files ZIP mein milenge</p></div></div></div>
-  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">✂️</span><div><h4>Flexible Split</h4><p>Multiple modes</p></div></div><div class="feat"><span class="feat-icon">📄</span><div><h4>Page Range</h4><p>Exact pages</p></div></div><div class="feat"><span class="feat-icon">📦</span><div><h4>ZIP Output</h4><p>Multiple files</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Local</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Quick</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Page range format?<span class="fa">+</span></button><div class="faq-a">1-5,8,10-12 comma-separated.</div></div><div class="faq-item"><button class="faq-q">Output files?<span class="fa">+</span></button><div class="faq-a">Split mode pe depend.</div></div><div class="faq-item"><button class="faq-q">ZIP milega?<span class="fa">+</span></button><div class="faq-a">Haan, multiple files ZIP mein.</div></div><div class="faq-item"><button class="faq-q">Original safe?<span class="fa">+</span></button><div class="faq-a">Haan, unchanged.</div></div></div>
+  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">👆</span><div><h4>Click to Select</h4><p>Type karne ki zaroorat nahi, page par click karein</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Quick Actions</h4><p>Odd/Even, First/Second Half, ek click mein</p></div></div><div class="feat"><span class="feat-icon">🔄</span><div><h4>Live Sync</h4><p>Grid aur Page Range box ek doosre se sync</p></div></div><div class="feat"><span class="feat-icon">📦</span><div><h4>ZIP Output</h4><p>Multiple files ek saath</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser mein, local</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">Pages select karne ka sabse aasan tareeka?<span class="fa">+</span></button><div class="faq-a">Preview grid mein seedha page par click karein — Shift+Click se poora range ek saath select ho jata hai, aur Page Range box apne aap bhar jaata hai. Ya Quick Actions se "Odd Pages", "Even Pages", "First Half" jaise one-click presets bhi use kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Page range format?<span class="fa">+</span></button><div class="faq-a">1-5,8,10-12 comma-separated — ya isse type karne ke bajaye seedha grid mein click bhi kar sakte hain.</div></div><div class="faq-item"><button class="faq-q">Output files?<span class="fa">+</span></button><div class="faq-a">Split mode pe depend — "Extract Specific Pages" (aur Quick Actions) sab selected pages ko EK file mein combine karte hain; "By Page Range" har comma-separated range ki alag file banata hai.</div></div><div class="faq-item"><button class="faq-q">ZIP milega?<span class="fa">+</span></button><div class="faq-a">Haan, jab 1 se zyada output files ho to sab ek ZIP mein milti hain; sirf 1 file ho to direct PDF milta hai.</div></div><div class="faq-item"><button class="faq-q">Original safe?<span class="fa">+</span></button><div class="faq-a">Haan, unchanged — aapki original file kabhi modify nahi hoti.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/any-file-to-pdf.html" class="rel-item"><span class="ri">🗂️</span><span>Any File to PDF</span></a><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a><a href="/tools/pdf/compress-pdf.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/pdf-to-jpg.html" class="rel-item"><span class="ri">🖼️</span><span>to JPG</span></a><a href="/tools/pdf/pdf-lock.html" class="rel-item"><span class="ri">🔐</span><span>Lock</span></a><a href="/tools/pdf/reorder-pdf.html" class="rel-item"><span class="ri">📋</span><span>Reorder</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
@@ -337,15 +353,54 @@
   }
 
   function specificActive(){ return $('splitmode').value==='specific'; }
+  function rangeActive(){ return $('splitmode').value==='range'; }
+  var lastClickedIdx=-1;
+
+  // "1,2,3,5,7,8,9" -> "1-3, 5, 7-9" -- lets clicking pages on the grid
+  // fill in the Page Range text box instead of the user having to type
+  // page numbers by hand after eyeballing the preview.
+  function compactRanges(nums){
+    nums=nums.slice().sort(function(a,b){return a-b;});
+    var out=[],start=null,prev=null;
+    nums.forEach(function(n){
+      if(start===null){ start=n; prev=n; }
+      else if(n===prev+1){ prev=n; }
+      else{ out.push(start===prev?(''+start):(start+'-'+prev)); start=n; prev=n; }
+    });
+    if(start!==null) out.push(start===prev?(''+start):(start+'-'+prev));
+    return out.join(', ');
+  }
+  function syncRangeFromSelection(){
+    var nums=STATE.pages.filter(function(p){return p.selected;}).map(function(p){return p.num;});
+    $('pagerange').value=compactRanges(nums);
+  }
+  // Reverse direction: typing/editing the Page Range box highlights the
+  // matching pages on the grid live, so users can also just type and see
+  // exactly what they're about to get instead of guessing.
+  function syncSelectionFromRangeText(){
+    var groups=parseRanges($('pagerange').value, STATE.pages.length);
+    var selNums={}; groups.forEach(function(g){ g.forEach(function(n){ selNums[n]=true; }); });
+    var g=$('pg-grid');
+    STATE.pages.forEach(function(rec,idx){
+      rec.selected=!!selNums[rec.num];
+      var wrap=g.children[idx]; if(!wrap) return;
+      wrap.classList.toggle('sel',rec.selected);
+      var numEl=wrap.querySelector('.pg-num'); if(numEl) numEl.textContent='P'+rec.num+(rec.selected?' ✓':'');
+    });
+    updateSelCount();
+  }
+  function updateSelCount(){
+    var c=STATE.pages.filter(function(p){return p.selected;}).length;
+    $('sel-count').textContent = c>0 ? (c+' page'+(c>1?'s':'')+' selected') : '';
+  }
 
   async function renderGrid(){
     var g=$('pg-grid'); g.innerHTML='';
     for(var i=0;i<STATE.pages.length;i++){
       var rec=STATE.pages[i];
-      var wrap=document.createElement('div'); wrap.className='pg'+(rec.deleted?' del':'')+(rec.selected&&specificActive()?' sel':'');
+      var wrap=document.createElement('div'); wrap.className='pg'+(rec.deleted?' del':'')+(rec.selected?' sel':'');
       var cv=document.createElement('canvas'); wrap.appendChild(cv);
       cv.style.cursor='pointer';
-      cv.onclick=function(){ /* placeholder, bound below per rec */ };
       var bar=document.createElement('div'); bar.className='pg-bar';
       bar.innerHTML='<span class="pg-num">P'+rec.num+(rec.selected?' ✓':'')+'</span>';
       var btns=document.createElement('div'); btns.className='pg-btns';
@@ -354,19 +409,45 @@
       var rm=document.createElement('button'); rm.className='pg-btn rm'; rm.title='Delete (Skip)'; rm.textContent='✕';
       (function(rec,wrap){ rm.onclick=function(e){ e.stopPropagation(); rec.deleted=!rec.deleted; wrap.classList.toggle('del',rec.deleted); }; })(rec,wrap);
       btns.appendChild(rot); btns.appendChild(rm); bar.appendChild(btns); wrap.appendChild(bar); g.appendChild(wrap);
-      (function(rec,wrap,bar){ wrap.addEventListener('click',function(e){ if(e.target.closest('.pg-btn')) return; if(!specificActive()){ toast('Select karne ke liye Split Mode = "Extract Specific Pages" rakhein'); return; } rec.selected=!rec.selected; wrap.classList.toggle('sel',rec.selected); bar.querySelector('.pg-num').textContent='P'+rec.num+(rec.selected?' ✓':''); }); })(rec,wrap,bar);
+      // Selecting a page works the SAME way in every split mode now (was
+      // previously blocked outside "Extract Specific Pages", forcing an
+      // extra dropdown step before you could even start clicking). Shift+
+      // click selects the whole range from the last-clicked page, like a
+      // file manager.
+      (function(rec,wrap,bar,idx){
+        wrap.addEventListener('click',function(e){
+          if(e.target.closest('.pg-btn')) return;
+          if(e.shiftKey && lastClickedIdx>=0){
+            var lo=Math.min(lastClickedIdx,idx), hi=Math.max(lastClickedIdx,idx);
+            for(var k=lo;k<=hi;k++){
+              var r2=STATE.pages[k]; if(r2.deleted) continue;
+              r2.selected=true;
+              var w2=g.children[k]; w2.classList.add('sel');
+              var n2=w2.querySelector('.pg-num'); if(n2) n2.textContent='P'+r2.num+' ✓';
+            }
+          } else {
+            rec.selected=!rec.selected;
+            wrap.classList.toggle('sel',rec.selected);
+            bar.querySelector('.pg-num').textContent='P'+rec.num+(rec.selected?' ✓':'');
+          }
+          lastClickedIdx=idx;
+          updateSelCount();
+          if(rangeActive()) syncRangeFromSelection();
+        });
+      })(rec,wrap,bar,i);
       if(rec.rotation) cv.style.transform='rotate('+rec.rotation+'deg)';
       (async function(rec,cv){
         try{ var page=await STATE.doc.getPage(rec.num); var vp=page.getViewport({scale:0.4}); cv.width=vp.width; cv.height=vp.height; await page.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise; }catch(e){}
       })(rec,cv);
     }
     $('pg-count').textContent = STATE.pages.length+' pages';
+    updateSelCount();
   }
 
   var modeNotes={
-    range:'💡 Comma se alag ranges (jaise 1-5, 8, 10-12) — har range ek alag PDF file banegi. Multiple files ZIP me milengi.',
+    range:'💡 Grid mein pages par click karein (ya Shift+Click se range) — Page Range box apne aap bhar jaayega. Ya seedha type bhi kar sakte hain (jaise 1-5, 8, 10-12) — har comma-separated range ek alag PDF file banegi.',
     everyn:'💡 Har N consecutive pages ka ek alag PDF file banega, sab ZIP me milenge.',
-    specific:'💡 Neeche preview me pages pe click karke ✓ select karein — sab selected pages ek single PDF me milenge (usi order me jis order me hain).',
+    specific:'💡 Neeche preview me pages par click (ya Shift+Click se range) karke ✓ select karein — sab selected pages ek single PDF me milenge (usi order me jis order me hain).',
     all:'💡 Har page ka apna alag single-page PDF banega, sab ek ZIP me milenge.'
   };
   $('splitmode').addEventListener('change',function(){
@@ -375,8 +456,44 @@
     $('grp-everyn').classList.toggle('hidden', v!=='everyn');
     $('mode-note').textContent = modeNotes[v]||'';
     renderGrid();
+    if(v==='range') syncRangeFromSelection();
   });
   $('grp-everyn').classList.add('hidden');
+
+  // Typing/editing the Page Range box highlights the matching pages live.
+  $('pagerange').addEventListener('input',function(){ if(rangeActive()) syncSelectionFromRangeText(); });
+
+  // Quick Actions — one click for the common "give me the odd pages" /
+  // "cut the first page" style requests instead of typing ranges by hand.
+  document.querySelectorAll('.pg-qa').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(!STATE.pages.length){ toast('Pehle PDF upload karein'); return; }
+      var act=btn.getAttribute('data-act');
+      var kept=STATE.pages.filter(function(p){return !p.deleted;});
+      var selectionActs=['selectAll','clearSel','oddOnly','evenOnly','firstHalf','secondHalf'];
+      if(act==='selectAll'){ STATE.pages.forEach(function(p){ if(!p.deleted) p.selected=true; }); }
+      else if(act==='clearSel'){ STATE.pages.forEach(function(p){ p.selected=false; }); }
+      else if(act==='oddOnly'){ STATE.pages.forEach(function(p){ p.selected=(!p.deleted && p.num%2===1); }); }
+      else if(act==='evenOnly'){ STATE.pages.forEach(function(p){ p.selected=(!p.deleted && p.num%2===0); }); }
+      else if(act==='firstHalf'){ var h1=Math.ceil(kept.length/2), cut1=kept[h1-1]?kept[h1-1].num:0; STATE.pages.forEach(function(p){ p.selected=(!p.deleted && p.num<=cut1); }); }
+      else if(act==='secondHalf'){ var h2=Math.ceil(kept.length/2), cut2=kept[h2-1]?kept[h2-1].num:0; STATE.pages.forEach(function(p){ p.selected=(!p.deleted && p.num>cut2); }); }
+      else if(act==='rmFirst'){ if(STATE.pages.length) STATE.pages[0].deleted=true; }
+      else if(act==='rmLast'){ if(STATE.pages.length) STATE.pages[STATE.pages.length-1].deleted=true; }
+      else if(act==='rotateAll'){ STATE.pages.forEach(function(p){ p.rotation=(p.rotation+90)%360; }); }
+
+      // These presets are all "combine the result into ONE file" requests
+      // -- Range mode would instead build a SEPARATE file per comma-group
+      // (e.g. Odd Pages would become one 1-page PDF per odd page), which
+      // isn't what "give me the odd pages" means. Switch to Specific mode
+      // so the preset's intent actually matches the output.
+      if(selectionActs.indexOf(act)>=0 && !specificActive()){
+        $('splitmode').value='specific';
+        $('splitmode').dispatchEvent(new Event('change'));
+      } else {
+        renderGrid();
+      }
+    });
+  });
 
   function setP(pct,text){ $('pbar').style.width=pct+'%'; if(text!=null)$('pmsg').textContent=text; }
 
