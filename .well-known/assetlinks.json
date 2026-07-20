@@ -8,5 +8,15 @@
         "66:BD:0E:CC:55:53:E7:EB:72:09:2B:FD:E3:80:7D:9B:0B:97:CB:A4:11:C0:7C:30:34:2B:26:35:1B:2A:0C:9F"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.topsarkarijobs.tools",
+      "sha256_cert_fingerprints": [
+        "48:5C:9D:E5:FF:28:08:8B:43:1C:49:40:16:6E:4F:CE:FC:F3:76:FB:1F:84:DE:B6:A7:6E:59:7C:1E:7B:2D:AD"
+      ]
+    }
   }
 ]
