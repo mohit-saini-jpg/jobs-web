@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-  <title>Audio Merger Free Online – Combine Audio Files | Top Sarkari Jobs</title>
-  <meta name="description" content="Merge multiple audio files into one online for free. Combine MP3, WAV and OGG files sequentially or mix them. No signup required.">
-  <meta name="keywords" content="audio merge, free online audio merge, audio merge tool">
+  <title>Audio Merge Free Online – Combine MP3/WAV with Live Preview | Top Sarkari Jobs</title>
+  <meta name="description" content="Merge multiple audio files into one online for free. Reorder tracks, add crossfade, live waveform preview before export as WAV or MP3. 100% in-browser, no upload.">
+  <meta name="keywords" content="audio merge, combine mp3 online, join audio files, audio joiner free, merge wav files">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/av/audio-merge.html">
-  <meta property="og:title" content="Audio Merger Free Online – Combine Audio Files | Top Sarkari Jobs">
-  <meta property="og:description" content="Merge multiple audio files into one online for free. Combine MP3, WAV and OGG files sequentially or mix them. No signup required.">
+  <meta property="og:title" content="Audio Merge Free Online – Combine MP3/WAV with Live Preview | Top Sarkari Jobs">
+  <meta property="og:description" content="Merge multiple audio files into one online for free. Reorder tracks, add crossfade, live waveform preview before export.">
   <meta property="og:url" content="https://www.topsarkarijobs.com/tools/av/audio-merge.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -23,6 +23,7 @@
       --ink: #101828; --muted: #6B7280; --line: #E5E7EB; --mist: #F8FAFC;
       --white: #ffffff; --success: #10B981; --radius: 12px;
       --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --wave: #34d399;
     }
     body { font-family: 'Noto Sans', sans-serif; color: var(--ink); background: var(--mist); min-height: 100vh; }
     h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; }
@@ -38,10 +39,10 @@
     .tool-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(52,93,230,0.35) 0%, transparent 55%), radial-gradient(ellipse at 75% 50%, rgba(79,123,255,0.2) 0%, transparent 55%); }
     .hero-icon { width: 76px; height: 76px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 2rem; position: relative; z-index: 1; }
     .tool-hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
-    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
+    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
     .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
     .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
-    .main-container { max-width: 960px; margin: 0 auto; padding: 28px 20px 56px; }
+    .main-container { max-width: 980px; margin: 0 auto; padding: 28px 20px 56px; }
     .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
     .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
     .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 44px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--mist); }
@@ -50,28 +51,51 @@
     .upload-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
     .upload-sub { font-size: 0.82rem; color: var(--muted); }
     .upload-sub b { color: var(--brand); }
-    .file-preview { margin-top: 14px; padding: 10px 14px; background: var(--mist); border-radius: 8px; display: none; align-items: center; gap: 8px; font-size: 0.82rem; }
-    .file-preview.show { display: flex; }
-    .file-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .file-size { color: var(--muted); flex-shrink: 0; }
-    .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
-    .file-remove:hover { color: #EF4444; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .status-msg { font-size: 0.82rem; color: var(--muted); margin-top: 10px; min-height: 1.2em; }
+    .status-msg.err { color: #dc2626; font-weight: 600; }
+
+    /* Track list */
+    .track-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .track { display: flex; align-items: center; gap: 10px; background: var(--mist); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .track-num { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .track-info { min-width: 130px; flex-shrink: 0; }
+    .track-name { font-size: 0.82rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+    .track-meta { font-size: 0.7rem; color: var(--muted); }
+    .track-canvas-wrap { flex: 1; height: 44px; background: #0b1220; border-radius: 6px; overflow: hidden; min-width: 90px; }
+    .track-canvas { width: 100%; height: 100%; display: block; }
+    .track-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .track-actions button { width: 30px; height: 30px; border-radius: 6px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+    .track-actions button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+    .track-actions button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .track-actions button.danger:hover { border-color: #dc2626; color: #dc2626; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
+    .form-group select, .form-group input[type=number] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
-    .range-wrap { position: relative; }
     .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
     .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
-    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+
+    /* Combined preview */
+    .preview-wrap { display: none; }
+    .preview-wrap.show { display: block; }
+    .preview-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .icon-btn.play { width: 44px; height: 44px; border-radius: 8px; border: none; background: var(--brand); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .icon-btn.play:hover { background: var(--brand-dark); }
+    .preview-dur { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .wave-stage { position: relative; background: #0b1220; border-radius: 10px; overflow: hidden; height: 120px; }
+    .wave-canvas-full { width: 100%; height: 100%; display: block; }
+    .track-boundary { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.25); }
+    .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #fbbf24; z-index: 5; pointer-events: none; display: none; }
+    .playhead .tip { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #fbbf24; color: #1c1400; font-size: 0.62rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:hover:not(:disabled) { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
-    .progress-wrap { display: none; margin-top: 14px; }
-    .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), #7ca1ff); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
-    .progress-msg { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .btn-secondary:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+
     .result-card { display: none; }
     .result-card.show { display: block; }
     .result-ok { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 600; margin-bottom: 14px; }
@@ -81,6 +105,7 @@
     .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
     .btn-dl { padding: 12px 24px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
     .btn-dl:hover { filter: brightness(1.08); }
+
     .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
     .step { text-align: center; padding: 18px 10px; }
     .step-n { width: 38px; height: 38px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; }
@@ -94,214 +119,124 @@
     .faq-item { border-bottom: 1px solid var(--line); }
     .faq-item:last-child { border-bottom: none; }
     .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: inherit; }
-    .faq-q .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
+    .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
     .faq-q.open .faq-arrow { transform: rotate(45deg); }
     .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s; }
     .faq-a.open { max-height: 200px; padding-bottom: 12px; }
-    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
-    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 10px; border-radius: 10px; border: 1.5px solid var(--line); text-decoration: none; color: var(--ink); transition: all 0.2s; text-align: center; }
-    .rel-item:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-2px); }
-    .rel-item .ri { font-size: 1.5rem; }
-    .rel-item span { font-size: 0.78rem; font-weight: 600; }
-    .secure-note { background: var(--brand-light); border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 20px; }
-    .secure-note p { font-size: 0.82rem; color: var(--brand); font-weight: 600; }
-    .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
-    .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
-    .tool-footer a:hover { color: white; }
-    @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
-      .how-steps { grid-template-columns: 1fr 1fr; }
-      .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
-      .btn-primary { width: 100%; justify-content: center; }
-      .stat-row { flex-direction: column; }
-    }
-</style>
-
-  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="application-name" content="Top Sarkari Jobs"/>
-  <meta name="msapplication-TileColor" content="#0d2257"/>
-  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
-  <meta name="msapplication-tap-highlight" content="no"/>
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
-  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
-  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
-  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
-  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
-  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
-  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
-  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/pwa-install.js?v=6.0" defer></script>
-  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
-  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
-  <meta property="og:image:width" content="512"/>
-  <meta property="og:image:height" content="512"/>
-  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/av/audio-merge.html"/>
-  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/av/audio-merge.html"/>
-  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/av/audio-merge.html"/>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Audio Merge | Free Online Tool - TopSarkariJobs",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "url": "https://www.topsarkarijobs.com/tools/av/audio-merge.html",
-    "description": "Multiple audio files ko ek mein merge karein. MP3, WAV, OGG files ko sequentially ya mix karke combine karein free mein.",
-    "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
-    "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
-      {"@type":"ListItem","position":2,"name":"Audio Video Tools","item":"https://www.topsarkarijobs.com/tools-audio-video.html"},
-      {"@type":"ListItem","position":3,"name":"Audio Merge | Free Online Tool - TopSarkariJobs","item":"https://www.topsarkarijobs.com/tools/av/audio-merge.html"}
-    ]
-  }
-  </script>
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 10px; background: var(--mist); text-decoration: none; color: var(--ink); font-size: 0.78rem; font-weight: 600; text-align: center; }
+    .rel-item:hover { background: var(--brand-light); color: var(--brand); }
+    .ri { font-size: 1.3rem; }
+    .secure-note { text-align: center; font-size: 0.8rem; color: var(--muted); padding: 16px; }
+    .tool-footer { background: #0f172a; color: rgba(255,255,255,0.7); text-align: center; padding: 24px 20px; font-size: 0.82rem; }
+    .tool-footer a { color: rgba(255,255,255,0.85); text-decoration: none; margin: 0 8px; }
+    .tool-footer a:hover { color: #fff; }
+  </style>
 </head>
 <body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-brand" href="/">TopSarkariJobs</a>
+  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
+  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-audio-video.html">Audio/Video</a>
+  <a class="nav-tools-link" href="/tools/">All Tools</a>
+</div></nav>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-inner">
-    <a class="nav-brand" href="/">TopSarkariJobs</a>
-    <span class="nav-sep">›</span>
-    <a class="nav-crumb" href="/tools/">Tools</a>
-    <span class="nav-sep">›</span>
-    <a class="nav-crumb" href="/tools/tools-audio-video.html">AV Tools</a>
-    <a class="nav-tools-link" href="/tools/">All Tools</a>
-  </div>
-</nav>
-
-<!-- HERO -->
 <section class="tool-hero">
-  <div class="hero-icon" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">🎤</div>
-  <h1>Audio Merge</h1>
-  <p>Kai audio files ko ek perfect track mein combine karein. Interviews, podcasts, music — sab ke liye.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">Sequential & Mix</span> <span class="badge">Multiple Formats</span> <span class="badge">No Signup</span></div>
+  <div class="hero-icon" style="background:linear-gradient(135deg,#fa709a,#fee140)">🎤</div>
+  <h1>Audio Merge — Live Preview</h1>
+  <p>Multiple audio files ko ek order mein jodein — reorder karein, crossfade set karein, aur live combined waveform dekh kar confirm karein. 100% browser mein.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Live Preview</span> <span class="badge">Crossfade</span> <span class="badge">Reorder</span></div>
 </section>
 
-<!-- MAIN -->
 <div class="main-container">
 
-  <!-- UPLOAD -->
   <div class="card">
-    <h3>📂 File Upload Karein</h3>
+    <h3>📂 Audio Files Upload Karein</h3>
     <div class="upload-zone" id="dropzone">
       <span class="upload-icon">⬆️</span>
-      <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein</div>
+      <div class="upload-title">2 ya zyada Audio Files Yahan Drop Karein</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein · MP3, WAV, OGG, M4A</div>
     </div>
-    <div class="file-preview" id="file-preview">
-      <span>📄</span>
-      <span class="file-name">—</span>
-      <span class="file-size">—</span>
-      <button class="file-remove" title="Remove">✕</button>
-    </div>
-  </div>
-  <input type="file" id="main-file" style="display:none">
+    <input type="file" id="main-file" accept="audio/*" multiple style="display:none">
+    <div class="status-msg" id="load-status"></div>
 
-  <!-- OPTIONS -->
-  <div class="card">
-    <h3>⚙️ Settings</h3>
-    
-      <div class="form-grid">
-        <div class="form-group"><label>Merge Type</label><select><option>Sequential (One after Another)</option><option>Mix (Overlay)</option></select></div>
-        <div class="form-group"><label>Crossfade (sec)</label><input type="number" placeholder="0" min="0" max="10" value="0"></div>
-        <div class="form-group"><label>Output Format</label><select><option>MP3</option><option>WAV</option><option>AAC (.m4a)</option></select></div>
-        <div class="form-group"><label>Output Quality</label><select><option>320 kbps</option><option>192 kbps</option><option>128 kbps</option></select></div>
+    <div class="track-list" id="track-list"></div>
+  </div>
+
+  <div class="card preview-wrap" id="preview-card">
+    <h3>🌊 Combined Live Preview</h3>
+    <div class="form-grid" style="margin-top:0">
+      <div class="form-group">
+        <label>Crossfade Between Tracks (sec)</label>
+        <input type="range" id="crossfade-range" min="0" max="3" step="0.1" value="0">
+        <div class="range-val" id="crossfade-val">0.0 sec</div>
       </div>
-      <div style="background:var(--mist);border-radius:8px;padding:12px;margin-top:10px;font-size:0.82rem;color:var(--muted);">💡 Multiple files ke liye Ctrl+Click use karein.</div>
-    
-    <div class="action-row" style="margin-top:18px;">
-      <button class="btn-primary" id="process-btn">
-        <span>🚀</span> Process Karein
-      </button>
-      <button class="btn-secondary" id="reset-btn">↺ Reset</button>
+      <div class="form-group"><label>Output Format</label><select id="fmt-select"><option value="wav">WAV (lossless)</option><option value="mp3">MP3</option></select></div>
     </div>
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
-      <div class="progress-msg" id="pmsg">Processing...</div>
+
+    <div class="preview-toolbar" style="margin-top:16px">
+      <button class="icon-btn play" id="play-btn" title="Play combined preview">▶</button>
+      <span class="preview-dur" id="preview-dur">Total: 0:00.0</span>
     </div>
+    <div class="wave-stage" id="wave-stage">
+      <canvas class="wave-canvas-full" id="wave-canvas"></canvas>
+      <div class="playhead" id="playhead"><span class="tip" id="playhead-tip">0:00.0</span></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="process-btn">🚀 Merge &amp; Save</button>
+      <button class="btn-secondary" id="reset-btn">Start Over</button>
+    </div>
+    <div class="status-msg" id="process-status"></div>
   </div>
 
-  <!-- RESULT -->
   <div class="card result-card" id="result-card">
-    <div class="result-ok">✅ Successfully Processed!</div>
+    <div class="result-ok">✅ Successfully Merged!</div>
     <div class="stat-row" id="stat-row"></div>
     <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
   </div>
 
-  <!-- HOW IT WORKS -->
   <div class="card">
     <h3>📖 Kaise Use Karein</h3>
-    <div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Multiple audio files choose karein</p></div>
-<div class="step"><div class="step-n">2</div><h4>Merge Type</h4><p>Sequential ya mix choose karein</p></div>
-<div class="step"><div class="step-n">3</div><h4>Settings</h4><p>Crossfade aur quality set karein</p></div>
-<div class="step"><div class="step-n">4</div><h4>Download</h4><p>Merged audio download karein</p></div>
-</div>
+    <div class="how-steps">
+      <div class="step"><div class="step-n">1</div><h4>Upload</h4><p>2+ audio files ek saath select karein</p></div>
+      <div class="step"><div class="step-n">2</div><h4>Reorder</h4><p>↑↓ se order set karein</p></div>
+      <div class="step"><div class="step-n">3</div><h4>Preview</h4><p>Live combined waveform sunein</p></div>
+      <div class="step"><div class="step-n">4</div><h4>Download</h4><p>Merged audio save karein</p></div>
+    </div>
   </div>
 
-  <!-- FEATURES -->
   <div class="card">
     <h3>✨ Features</h3>
-    <div class="features-grid"><div class="feat"><span class="feat-icon">🎤</span><div><h4>Sequential</h4><p>End-to-end join</p></div></div>
-<div class="feat"><span class="feat-icon">🎛️</span><div><h4>Mix Mode</h4><p>Tracks overlay karein</p></div></div>
-<div class="feat"><span class="feat-icon">🎼</span><div><h4>Crossfade</h4><p>Smooth transitions</p></div></div>
-<div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser only</p></div></div>
-<div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>Always free</p></div></div>
-<div class="feat"><span class="feat-icon">⚡</span><div><h4>Fast</h4><p>Quick merge</p></div></div>
-</div>
+    <div class="features-grid">
+      <div class="feat"><span class="feat-icon">🌊</span><div><h4>Live Combined Waveform</h4><p>Reorder/crossfade karte hi preview turant update</p></div></div>
+      <div class="feat"><span class="feat-icon">▶️</span><div><h4>Live Playback</h4><p>Save se pehle poora merged result sunein</p></div></div>
+      <div class="feat"><span class="feat-icon">🔀</span><div><h4>Drag-free Reorder</h4><p>↑↓ buttons se track order badlein</p></div></div>
+      <div class="feat"><span class="feat-icon">🎚️</span><div><h4>Crossfade</h4><p>Tracks ke beech smooth blend</p></div></div>
+      <div class="feat"><span class="feat-icon">🔊</span><div><h4>No Quality Loss</h4><p>Sample-accurate merging</p></div></div>
+      <div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser mein, koi upload nahi</p></div></div>
+    </div>
   </div>
 
-  <!-- FAQ -->
   <div class="card">
     <h3>❓ Aksar Puche Jane Wale Sawal (FAQ)</h3>
-    <div class="faq-item"><button class="faq-q">Sequential aur Mix mein kya fark hai?<span class="faq-arrow">+</span></button><div class="faq-a">Sequential: ek ke baad ek. Mix: dono saath mein play hote hain.</div></div>
-<div class="faq-item"><button class="faq-q">Crossfade kya karta hai?<span class="faq-arrow">+</span></button><div class="faq-a">Tracks ke beech smooth fade transition banata hai.</div></div>
-<div class="faq-item"><button class="faq-q">Maximum kitni files?<span class="faq-arrow">+</span></button><div class="faq-a">20 audio files tak merge kar sakte hain.</div></div>
-<div class="faq-item"><button class="faq-q">Different formats merge ho sakti hain?<span class="faq-arrow">+</span></button><div class="faq-a">Haan, MP3, WAV, OGG sab together merge ho sakti hain.</div></div>
-
+    <div class="faq-item"><button class="faq-q">Kitni files ek saath merge kar sakte hain?<span class="faq-arrow">+</span></button><div class="faq-a">Jitni chahen — browser memory ke hisaab se, generally 10-15 files tak aaram se chal jaati hain.</div></div>
+    <div class="faq-item"><button class="faq-q">Crossfade kya hai?<span class="faq-arrow">+</span></button><div class="faq-a">Do tracks ke beech smooth transition — pehla track fade-out hota hai jabki agla fade-in, dono overlap karke ek natural blend banate hain.</div></div>
+    <div class="faq-item"><button class="faq-q">Different formats (MP3+WAV) mix kar sakte hain?<span class="faq-arrow">+</span></button><div class="faq-a">Haan — koi bhi combination chalta hai, sabhi files decode karke internally same format mein process hoti hain.</div></div>
+    <div class="faq-item"><button class="faq-q">Files kahin upload hoti hain?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi. Poora merging aapke browser ke andar Web Audio API se hota hai — koi file server par nahi jaati.</div></div>
   </div>
 
-  <!-- RELATED -->
   <div class="card">
     <h3>🔗 Related Tools</h3>
-    <div class="related-grid"><a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
-<a href="/tools/av/audio-trim.html" class="rel-item"><span class="ri">✂️</span><span>Audio Trim</span></a>
-<a href="/tools/av/audio-convert.html" class="rel-item"><span class="ri">🔄</span><span>Audio Convert</span></a>
-<a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
-<a href="/tools/av/video-trim.html" class="rel-item"><span class="ri">✂️</span><span>Video Trim</span></a>
-<a href="/tools/av/video-convert.html" class="rel-item"><span class="ri">🔄</span><span>Video Convert</span></a>
-<a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
-<a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge PDF</span></a>
-</div>
+    <div class="related-grid">
+      <a href="/tools/av/audio-trim.html" class="rel-item"><span class="ri">✂️</span><span>Audio Trim</span></a>
+      <a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
+      <a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
+      <a href="/tools/av/video-trim.html" class="rel-item"><span class="ri">✂️</span><span>Video Trim</span></a>
+      <a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
+    </div>
   </div>
 
-  <!-- SECURE NOTE -->
   <div class="secure-note">
     <p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi bhi file server par upload nahi hoti.</p>
   </div>
@@ -318,73 +253,322 @@
   </div>
 </footer>
 
-
 <script>
-  document.querySelectorAll('.faq-q').forEach(b => {
-    b.addEventListener('click', () => {
-      b.classList.toggle('open');
-      b.nextElementSibling.classList.toggle('open');
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+
+document.querySelectorAll('.faq-q').forEach(b => {
+  b.addEventListener('click', () => { b.classList.toggle('open'); b.nextElementSibling.classList.toggle('open'); });
+});
+
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    if(document.querySelector('script[src="'+src+'"]')){ resolve(); return; }
+    const s=document.createElement('script'); s.src=src; s.onload=()=>resolve(); s.onerror=()=>reject(new Error('load failed: '+src));
+    document.head.appendChild(s);
+  });
+}
+function fmtBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+function fmtTime(s){ s=Math.max(0,s||0); const m=Math.floor(s/60), sec=s-m*60; return m+':'+sec.toFixed(1).padStart(4,'0'); }
+
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+let tracks = []; // [{file, buffer, peaks}]
+let mergedBuffer = null;
+let mergedBoundaries = []; // seconds, start-of-each-track in merged preview
+
+// ── WAV / MP3 encode (same approach as audio-trim.html) ───────────────────
+function bufferToWav(buf){
+  const numCh = buf.numberOfChannels, sr = buf.sampleRate, len = buf.length;
+  const bytesPerSample = 2, blockAlign = numCh*bytesPerSample;
+  const dataSize = len*blockAlign;
+  const ab = new ArrayBuffer(44+dataSize);
+  const dv = new DataView(ab);
+  function ws(o,s){ for(let i=0;i<s.length;i++) dv.setUint8(o+i, s.charCodeAt(i)); }
+  ws(0,'RIFF'); dv.setUint32(4,36+dataSize,true); ws(8,'WAVE');
+  ws(12,'fmt '); dv.setUint32(16,16,true); dv.setUint16(20,1,true);
+  dv.setUint16(22,numCh,true); dv.setUint32(24,sr,true);
+  dv.setUint32(28,sr*blockAlign,true); dv.setUint16(32,blockAlign,true); dv.setUint16(34,16,true);
+  ws(36,'data'); dv.setUint32(40,dataSize,true);
+  const chans = []; for(let c=0;c<numCh;c++) chans.push(buf.getChannelData(c));
+  let off = 44;
+  for(let i=0;i<len;i++){
+    for(let c=0;c<numCh;c++){
+      let s = Math.max(-1, Math.min(1, chans[c][i]));
+      dv.setInt16(off, s<0 ? s*0x8000 : s*0x7FFF, true);
+      off += 2;
+    }
+  }
+  return new Blob([ab], {type:'audio/wav'});
+}
+async function bufferToMp3(buf){
+  await loadScript('https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js');
+  const numCh = Math.min(2, buf.numberOfChannels), sr = buf.sampleRate;
+  const encoder = new lamejs.Mp3Encoder(numCh, sr, 160);
+  const chans = []; for(let c=0;c<numCh;c++) chans.push(buf.getChannelData(c));
+  const len = buf.length;
+  const toI16 = (f)=>{ const o=new Int16Array(f.length); for(let i=0;i<f.length;i++){ let s=Math.max(-1,Math.min(1,f[i])); o[i]=s<0?s*0x8000:s*0x7FFF; } return o; };
+  const ch0 = toI16(chans[0]);
+  const ch1 = numCh>1 ? toI16(chans[1]) : null;
+  const chunk = 1152;
+  const parts = [];
+  for(let i=0;i<len;i+=chunk){
+    const l = ch0.subarray(i, i+chunk);
+    const r = ch1 ? ch1.subarray(i, i+chunk) : undefined;
+    const mp3buf = ch1 ? encoder.encodeBuffer(l, r) : encoder.encodeBuffer(l);
+    if(mp3buf.length>0) parts.push(new Uint8Array(mp3buf));
+  }
+  const end = encoder.flush();
+  if(end.length>0) parts.push(new Uint8Array(end));
+  return new Blob(parts, {type:'audio/mp3'});
+}
+
+// ── Peaks / waveform ────────────────────────────────────────────────────
+const PEAK_RES_PER_SEC = 40; // columns per second of audio, for mini + full previews
+function computePeaks(buf, resPerSec){
+  const ch0 = buf.getChannelData(0);
+  const ch1 = buf.numberOfChannels>1 ? buf.getChannelData(1) : null;
+  const len = buf.length, sr = buf.sampleRate;
+  const totalCols = Math.max(4, Math.round((len/sr)*resPerSec));
+  const per = Math.max(1, Math.floor(len/totalCols));
+  const mins = new Float32Array(totalCols), maxs = new Float32Array(totalCols);
+  for(let p=0;p<totalCols;p++){
+    const start=p*per, endI=Math.min(len,start+per);
+    let mn=1,mx=-1;
+    for(let i=start;i<endI;i++){ let v=ch0[i]; if(ch1) v=(v+ch1[i])/2; if(v<mn)mn=v; if(v>mx)mx=v; }
+    if(endI<=start){mn=0;mx=0;}
+    mins[p]=mn; maxs[p]=mx;
+  }
+  return {mins,maxs};
+}
+function drawPeaksOnCanvas(canvas, peaks, color){
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.clientWidth||canvas.parentElement.clientWidth, h = canvas.clientHeight||44;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0b1220'; ctx.fillRect(0,0,w,h);
+  if(!peaks) return;
+  ctx.fillStyle = color||'#34d399';
+  const mid = h/2, n = peaks.mins.length;
+  for(let x=0;x<w;x++){
+    const p = Math.floor(x/w*n);
+    const mn = peaks.mins[p]||0, mx = peaks.maxs[p]||0;
+    const y1 = mid-mx*mid*0.9, y2 = mid-mn*mid*0.9;
+    ctx.fillRect(x,y1,1,Math.max(1,y2-y1));
+  }
+}
+
+// ── Merge logic (real sample-level concat with optional crossfade) ────────
+function mergeTracks(bufs, crossfadeSec){
+  if(bufs.length===0) return null;
+  if(bufs.length===1) return {buffer:bufs[0], boundaries:[0]};
+  const sr = bufs[0].sampleRate;
+  const numCh = Math.max(...bufs.map(b=>b.numberOfChannels));
+  const cfSamples = Math.max(0, Math.round(crossfadeSec*sr));
+
+  let totalLen = 0;
+  bufs.forEach((b,i)=>{ totalLen += b.length; if(i>0) totalLen -= Math.min(cfSamples, b.length, bufs[i-1].length); });
+  totalLen = Math.max(1, totalLen);
+
+  const out = []; for(let c=0;c<numCh;c++) out.push(new Float32Array(totalLen));
+  const boundaries = [];
+  let pos = 0;
+  for(let i=0;i<bufs.length;i++){
+    const b = bufs[i];
+    const overlap = i>0 ? Math.min(cfSamples, b.length, bufs[i-1].length) : 0;
+    const writeStart = pos - overlap;
+    boundaries.push(writeStart/sr);
+    for(let c=0;c<numCh;c++){
+      const src = b.numberOfChannels>c ? b.getChannelData(c) : b.getChannelData(0);
+      for(let s=0;s<b.length;s++){
+        const idx = writeStart+s;
+        if(idx<0 || idx>=totalLen) continue;
+        let gain = 1;
+        if(overlap>0 && s<overlap) gain = s/overlap; // fade-in over the overlap region
+        out[c][idx] += src[s]*gain;
+      }
+    }
+    // Apply fade-out to the tail of the PREVIOUS track that lands in this overlap region.
+    if(overlap>0){
+      const prevB = bufs[i-1];
+      for(let c=0;c<numCh;c++){
+        const prevSrc = prevB.numberOfChannels>c ? prevB.getChannelData(c) : prevB.getChannelData(0);
+        for(let s=0;s<overlap;s++){
+          const idx = writeStart+s;
+          if(idx<0||idx>=totalLen) continue;
+          const prevSampleIdx = prevB.length-overlap+s;
+          if(prevSampleIdx<0||prevSampleIdx>=prevB.length) continue;
+          const prevVal = prevSrc[prevSampleIdx]; // added at gain=1 when prev track was written
+          const fadeOutGain = 1 - s/overlap;
+          out[c][idx] += prevVal*(fadeOutGain-1); // correct 1x contribution down to fadeOutGain
+        }
+      }
+    }
+    pos = writeStart + b.length;
+  }
+  for(let c=0;c<numCh;c++){ const d=out[c]; for(let i=0;i<d.length;i++){ if(d[i]>1)d[i]=1; if(d[i]<-1)d[i]=-1; } }
+  const nb = AC.createBuffer(numCh, totalLen, sr);
+  for(let c=0;c<numCh;c++) nb.copyToChannel(out[c], c);
+  return {buffer: nb, boundaries};
+}
+
+// ── Track list rendering ────────────────────────────────────────────────
+function renderTrackList(){
+  const list = $('track-list');
+  list.innerHTML = '';
+  tracks.forEach((t,i)=>{
+    const row = document.createElement('div'); row.className='track';
+    row.innerHTML = `
+      <div class="track-num">${i+1}</div>
+      <div class="track-info"><div class="track-name">${t.file.name}</div><div class="track-meta">${fmtTime(t.buffer.length/t.buffer.sampleRate)} · ${fmtBytes(t.file.size)}</div></div>
+      <div class="track-canvas-wrap"><canvas class="track-canvas"></canvas></div>
+      <div class="track-actions">
+        <button data-act="up" ${i===0?'disabled':''} title="Move up">↑</button>
+        <button data-act="down" ${i===tracks.length-1?'disabled':''} title="Move down">↓</button>
+        <button data-act="remove" class="danger" title="Remove">✕</button>
+      </div>`;
+    list.appendChild(row);
+    const canvas = row.querySelector('.track-canvas');
+    requestAnimationFrame(()=>drawPeaksOnCanvas(canvas, t.peaks, '#60a5fa'));
+    row.querySelector('[data-act="up"]').addEventListener('click', ()=>{ if(i>0){ [tracks[i-1],tracks[i]]=[tracks[i],tracks[i-1]]; renderTrackList(); updateMergedPreview(); } });
+    row.querySelector('[data-act="down"]').addEventListener('click', ()=>{ if(i<tracks.length-1){ [tracks[i+1],tracks[i]]=[tracks[i],tracks[i+1]]; renderTrackList(); updateMergedPreview(); } });
+    row.querySelector('[data-act="remove"]').addEventListener('click', ()=>{ tracks.splice(i,1); renderTrackList(); updateMergedPreview(); });
+  });
+  $('process-btn').disabled = tracks.length < 1;
+}
+
+// ── Combined preview ────────────────────────────────────────────────────
+function updateMergedPreview(){
+  stopPreview();
+  if(tracks.length===0){
+    $('preview-card').classList.remove('show');
+    mergedBuffer = null;
+    return;
+  }
+  const cf = parseFloat($('crossfade-range').value)||0;
+  const bufs = tracks.map(t=>t.buffer);
+  const result = mergeTracks(bufs, cf);
+  mergedBuffer = result.buffer;
+  mergedBoundaries = result.boundaries;
+  $('preview-card').classList.add('show');
+  $('preview-dur').textContent = 'Total: '+fmtTime(mergedBuffer.length/mergedBuffer.sampleRate);
+  const peaks = computePeaks(mergedBuffer, PEAK_RES_PER_SEC);
+  requestAnimationFrame(()=>{
+    drawPeaksOnCanvas($('wave-canvas'), peaks, '#34d399');
+    document.querySelectorAll('.track-boundary').forEach(el=>el.remove());
+    const stage = $('wave-stage');
+    const total = mergedBuffer.length/mergedBuffer.sampleRate;
+    mergedBoundaries.slice(1).forEach(t=>{
+      const el = document.createElement('div'); el.className='track-boundary';
+      el.style.left = (t/total*100)+'%';
+      stage.appendChild(el);
     });
   });
-  function formatBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
-  function bindFile(inputId, previewId){
-    const inp=document.getElementById(inputId), prev=document.getElementById(previewId);
-    if(!inp)return;
-    function handleFile(f){
-      if(!f)return;
-      if(prev){ prev.classList.add('show'); prev.querySelector('.file-name').textContent=f.name; prev.querySelector('.file-size').textContent=formatBytes(f.size); }
-    }
-    inp.addEventListener('change',()=>handleFile(inp.files[0]));
-    const zone=inp.closest('.upload-zone')||document.querySelector('.upload-zone');
-    if(zone){
-      zone.addEventListener('click',()=>inp.click());
-      zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});
-      zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});
-      zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;handleFile(f);}});
-    }
-    const rm=prev&&prev.querySelector('.file-remove');
-    if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
-  }
-  function animProgress(barId, msgEl, msg){
-    const bar=document.getElementById(barId), msgd=document.getElementById(msgEl);
-    if(msgd)msgd.textContent=msg||'Processing...';
-    if(!bar)return;
-    let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    return t;
-  }
-  function finishProgress(barId){ const b=document.getElementById(barId); if(b)b.style.width='100%'; }
-</script>
+}
+$('crossfade-range').addEventListener('input', ()=>{
+  $('crossfade-val').textContent = parseFloat($('crossfade-range').value).toFixed(1)+' sec';
+});
+$('crossfade-range').addEventListener('change', updateMergedPreview);
 
-<script>
-  bindFile('main-file','file-preview');
-  document.getElementById('process-btn').addEventListener('click', function(){
-    const f = document.getElementById('main-file').files[0];
-    if(!f){ alert('Pehle file select karein!'); return; }
-    const pw = document.getElementById('progress-wrap');
-    pw.style.display='block';
-    animProgress('pbar','pmsg','File process ho rahi hai...');
-    setTimeout(()=>{
-      finishProgress('pbar');
-      document.getElementById('pmsg').textContent='Done!';
-      const rc = document.getElementById('result-card');
-      rc.classList.add('show');
-      const sr = document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Original Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">New Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{
-        const url=URL.createObjectURL(f);
-        const a=document.createElement('a'); a.href=url; a.download='processed_'+f.name; a.click(); URL.revokeObjectURL(url);
-      };
-    },1800);
-  });
-  document.getElementById('reset-btn').addEventListener('click', function(){
-    document.getElementById('main-file').value='';
-    document.getElementById('file-preview').classList.remove('show');
-    document.getElementById('progress-wrap').style.display='none';
-    document.getElementById('pbar').style.width='0%';
-    document.getElementById('result-card').classList.remove('show');
-  });
-  document.querySelector('.upload-zone').addEventListener('click', ()=>document.getElementById('main-file').click());
+// ── Playback preview ──────────────────────────────────────────────────────
+let srcNode=null, isPlaying=false, playStartCtx=0, rafId=null;
+function stopPreview(){
+  if(srcNode){ try{srcNode.stop();}catch(e){} srcNode.disconnect(); srcNode=null; }
+  if(rafId) cancelAnimationFrame(rafId);
+  isPlaying=false; $('play-btn').textContent='▶'; $('playhead').style.display='none';
+}
+function playPreview(){
+  if(!mergedBuffer) return;
+  stopPreview();
+  srcNode = AC.createBufferSource();
+  srcNode.buffer = mergedBuffer;
+  srcNode.connect(AC.destination);
+  playStartCtx = AC.currentTime;
+  srcNode.start(0);
+  srcNode.onended = ()=>{ if(isPlaying) stopPreview(); };
+  isPlaying = true; $('play-btn').textContent='⏸'; $('playhead').style.display='block';
+  animatePlayhead();
+}
+function animatePlayhead(){
+  if(!isPlaying) return;
+  const t = AC.currentTime - playStartCtx;
+  const total = mergedBuffer.length/mergedBuffer.sampleRate;
+  if(t>=total){ stopPreview(); return; }
+  const x = (t/total)*$('wave-stage').clientWidth;
+  $('playhead').style.left = x+'px';
+  $('playhead-tip').textContent = fmtTime(t);
+  rafId = requestAnimationFrame(animatePlayhead);
+}
+$('play-btn').addEventListener('click', ()=>{ isPlaying ? stopPreview() : playPreview(); });
+
+function setStatus(id,msg,isErr){ const el=$(id); el.textContent=msg||''; el.className='status-msg'+(isErr?' err':''); }
+
+// ── File loading ──────────────────────────────────────────────────────────
+async function addFiles(fileList){
+  const files = Array.from(fileList).filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(f.name));
+  if(files.length===0) return;
+  setStatus('load-status', `⏳ ${files.length} file(s) decode ho rahi hain...`);
+  for(const f of files){
+    try{
+      const arr = await f.arrayBuffer();
+      const buf = await AC.decodeAudioData(arr);
+      const peaks = computePeaks(buf, PEAK_RES_PER_SEC);
+      tracks.push({file:f, buffer:buf, peaks});
+    }catch(err){
+      setStatus('load-status', `❌ "${f.name}" decode nahi ho payi: ${err.message||err}`, true);
+    }
+  }
+  renderTrackList();
+  updateMergedPreview();
+  setStatus('load-status', `✅ ${tracks.length} track(s) loaded${tracks.length<2?' — merge karne ke liye kam se kam 2 files chahiye':''}`);
+}
+const mainInput = $('main-file');
+mainInput.addEventListener('change', ()=>{ addFiles(mainInput.files); mainInput.value=''; });
+const zone = $('dropzone');
+zone.addEventListener('click', ()=>mainInput.click());
+zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.style.borderColor='var(--brand)'; zone.style.background='var(--brand-light)'; });
+zone.addEventListener('dragleave', ()=>{ zone.style.borderColor=''; zone.style.background=''; });
+zone.addEventListener('drop', e=>{ e.preventDefault(); zone.style.borderColor=''; zone.style.background=''; addFiles(e.dataTransfer.files); });
+
+window.addEventListener('resize', ()=>{ if(mergedBuffer) updateMergedPreview(); });
+
+// ── Save / Export ───────────────────────────────────────────────────────
+$('process-btn').addEventListener('click', async ()=>{
+  if(!mergedBuffer || tracks.length<1){ alert('Pehle kam se kam ek audio file select karein!'); return; }
+  const btn = $('process-btn'); btn.disabled = true;
+  setStatus('process-status', '⏳ Export ho raha hai...');
+  try{
+    const fmt = $('fmt-select').value;
+    let blob, ext;
+    if(fmt==='mp3'){ blob = await bufferToMp3(mergedBuffer); ext='mp3'; }
+    else { blob = bufferToWav(mergedBuffer); ext='wav'; }
+    const outName = 'merged_audio_'+tracks.length+'tracks.'+ext;
+    $('result-card').classList.add('show');
+    $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${fmtTime(mergedBuffer.length/mergedBuffer.sampleRate)}</div><div class="stat-lbl">Duration</div></div><div class="stat-box"><div class="stat-val">${tracks.length}</div><div class="stat-lbl">Tracks</div></div><div class="stat-box"><div class="stat-val">${fmtBytes(blob.size)}</div><div class="stat-lbl">File Size</div></div>`;
+    $('dl-btn').onclick = ()=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=outName; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    };
+    setStatus('process-status', '✅ Ready! Neeche download button dabayein.');
+    $('result-card').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }catch(err){
+    setStatus('process-status', '❌ Export fail hua: '+(err.message||err), true);
+  }finally{
+    btn.disabled = tracks.length<1;
+  }
+});
+$('reset-btn').addEventListener('click', ()=>{
+  tracks = []; mergedBuffer=null; stopPreview();
+  renderTrackList();
+  $('preview-card').classList.remove('show');
+  $('result-card').classList.remove('show');
+  setStatus('load-status','');
+});
+
+renderTrackList();
+})();
 </script>
-</body>
-</html>
+</body></html>

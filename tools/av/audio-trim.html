@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-  <title>Audio Trimmer Free Online – Cut Audio | Top Sarkari Jobs</title>
-  <meta name="description" content="Trim or cut any audio file online for free. Set exact start and end time to extract the part you need. Supports MP3, WAV, OGG.">
-  <meta name="keywords" content="audio trim / cut, free online audio trim / cut, audio trim / cut tool">
+  <title>Audio Trimmer Free Online – Cut Audio with Live Waveform | Top Sarkari Jobs</title>
+  <meta name="description" content="Trim or cut any audio file online for free with a live waveform editor. Drag to select, live preview, fade in/out, undo/redo, export as WAV or MP3. 100% in-browser, no upload.">
+  <meta name="keywords" content="audio trim, audio cut online, mp3 cutter, wav trimmer, online audio editor, cut audio free">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/av/audio-trim.html">
-  <meta property="og:title" content="Audio Trimmer Free Online – Cut Audio | Top Sarkari Jobs">
-  <meta property="og:description" content="Trim or cut any audio file online for free. Set exact start and end time to extract the part you need. Supports MP3, WAV, OGG.">
+  <meta property="og:title" content="Audio Trimmer Free Online – Cut Audio with Live Waveform | Top Sarkari Jobs">
+  <meta property="og:description" content="Trim or cut any audio file online for free with a live waveform editor. Drag to select, live preview, fade in/out, undo/redo, export as WAV or MP3.">
   <meta property="og:url" content="https://www.topsarkarijobs.com/tools/av/audio-trim.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -23,6 +23,7 @@
       --ink: #101828; --muted: #6B7280; --line: #E5E7EB; --mist: #F8FAFC;
       --white: #ffffff; --success: #10B981; --radius: 12px;
       --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --wave: #34d399; --wave-dim: #1f2937;
     }
     body { font-family: 'Noto Sans', sans-serif; color: var(--ink); background: var(--mist); min-height: 100vh; }
     h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; }
@@ -38,10 +39,10 @@
     .tool-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(52,93,230,0.35) 0%, transparent 55%), radial-gradient(ellipse at 75% 50%, rgba(79,123,255,0.2) 0%, transparent 55%); }
     .hero-icon { width: 76px; height: 76px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 2rem; position: relative; z-index: 1; }
     .tool-hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
-    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
+    .tool-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 20px; position: relative; z-index: 1; line-height: 1.65; }
     .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
     .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
-    .main-container { max-width: 960px; margin: 0 auto; padding: 28px 20px 56px; }
+    .main-container { max-width: 980px; margin: 0 auto; padding: 28px 20px 56px; }
     .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
     .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
     .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 44px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--mist); }
@@ -56,22 +57,55 @@
     .file-size { color: var(--muted); flex-shrink: 0; }
     .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
     .file-remove:hover { color: #EF4444; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+
+    /* ── Waveform editor ─────────────────────────────────────────── */
+    .editor-wrap { display: none; }
+    .editor-wrap.show { display: block; }
+    .wave-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .wave-toolbar .spacer { flex: 1; }
+    .icon-btn { width: 38px; height: 38px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--ink); }
+    .icon-btn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+    .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .icon-btn.play { background: var(--brand); border-color: var(--brand); color: #fff; width: 44px; height: 44px; font-size: 1.1rem; }
+    .icon-btn.play:hover { background: var(--brand-dark); }
+    .zoom-row { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
+    .zoom-row input[type=range] { width: 90px; accent-color: var(--brand); }
+
+    .wave-stage { position: relative; background: #0b1220; border-radius: 10px; overflow: hidden; user-select: none; touch-action: none; }
+    .wave-canvas { display: block; width: 100%; height: 160px; cursor: text; }
+    .wave-sel { position: absolute; top: 0; bottom: 0; background: rgba(52,211,153,0.16); border-left: 2px solid var(--wave); border-right: 2px solid var(--wave); pointer-events: none; }
+    .wave-dim-l, .wave-dim-r { position: absolute; top: 0; bottom: 0; background: rgba(0,0,0,0.55); pointer-events: none; }
+    .wave-handle { position: absolute; top: 0; bottom: 0; width: 14px; margin-left: -7px; cursor: ew-resize; z-index: 3; }
+    .wave-handle::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; background: var(--wave); border-radius: 2px; }
+    .wave-handle .grip { position: absolute; left: 50%; top: 4px; width: 14px; height: 14px; margin-left: -7px; background: var(--wave); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: #06251c; font-weight: 900; }
+    .fade-handle { position: absolute; top: 6px; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid var(--wave); cursor: ew-resize; z-index: 4; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--wave); }
+    .fade-curve { position: absolute; top: 0; height: 100%; pointer-events: none; z-index: 2; }
+    .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #fbbf24; z-index: 5; pointer-events: none; display: none; }
+    .playhead .tip { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: #fbbf24; color: #1c1400; font-size: 0.65rem; font-weight: 800; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+    .time-axis { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+
+    .time-fields { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin-top: 16px; }
+    .tf-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tf-group input { width: 110px; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.9rem; font-family: 'Space Grotesk', sans-serif; }
+    .tf-group input:focus { border-color: var(--brand); outline: none; }
+    .tf-sep { color: var(--muted); padding-bottom: 10px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 16px; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
+    .form-group select, .form-group input[type=number] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
-    .range-wrap { position: relative; }
-    .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
-    .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
-    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:hover:not(:disabled) { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-secondary { padding: 13px 22px; background: var(--mist); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
-    .progress-wrap { display: none; margin-top: 14px; }
-    .progress-bar-bg { background: var(--line); border-radius: 10px; height: 7px; overflow: hidden; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), #7ca1ff); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
-    .progress-msg { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .btn-secondary:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+    .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .status-msg { font-size: 0.82rem; color: var(--muted); margin-top: 10px; min-height: 1.2em; }
+    .status-msg.err { color: #dc2626; font-weight: 600; }
+
     .result-card { display: none; }
     .result-card.show { display: block; }
     .result-ok { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 600; margin-bottom: 14px; }
@@ -81,6 +115,7 @@
     .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
     .btn-dl { padding: 12px 24px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
     .btn-dl:hover { filter: brightness(1.08); }
+
     .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
     .step { text-align: center; padding: 18px 10px; }
     .step-n { width: 38px; height: 38px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 10px; }
@@ -94,214 +129,157 @@
     .faq-item { border-bottom: 1px solid var(--line); }
     .faq-item:last-child { border-bottom: none; }
     .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: inherit; }
-    .faq-q .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
+    .faq-arrow { color: var(--brand); font-size: 1.1rem; transition: transform 0.2s; }
     .faq-q.open .faq-arrow { transform: rotate(45deg); }
     .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s; }
     .faq-a.open { max-height: 200px; padding-bottom: 12px; }
-    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
-    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 10px; border-radius: 10px; border: 1.5px solid var(--line); text-decoration: none; color: var(--ink); transition: all 0.2s; text-align: center; }
-    .rel-item:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-2px); }
-    .rel-item .ri { font-size: 1.5rem; }
-    .rel-item span { font-size: 0.78rem; font-weight: 600; }
-    .secure-note { background: var(--brand-light); border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 20px; }
-    .secure-note p { font-size: 0.82rem; color: var(--brand); font-weight: 600; }
-    .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
-    .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
-    .tool-footer a:hover { color: white; }
-    @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
-      .how-steps { grid-template-columns: 1fr 1fr; }
-      .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
-      .btn-primary { width: 100%; justify-content: center; }
-      .stat-row { flex-direction: column; }
-    }
-</style>
-
-  <!-- ══ PWA INSTALL SYSTEM v4.0 ══════════════════════════════════ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#0d2257" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#0a1a4a" media="(prefers-color-scheme: dark)"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="TopSarkariJobs"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="application-name" content="Top Sarkari Jobs"/>
-  <meta name="msapplication-TileColor" content="#0d2257"/>
-  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/>
-  <meta name="msapplication-tap-highlight" content="no"/>
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png"/>
-  <link rel="apple-touch-icon" sizes="57x57"   href="/icons/apple-touch-icon-57x57.png"/>
-  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/apple-touch-icon-60x60.png"/>
-  <link rel="apple-touch-icon" sizes="72x72"   href="/icons/apple-touch-icon-72x72.png"/>
-  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/apple-touch-icon-76x76.png"/>
-  <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png"/>
-  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png"/>
-  <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png"/>
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1290x2796.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1179x2556.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1170x2532.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)" href="/splash/splash-1125x2436.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-828x1792.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-750x1334.png"/>
-  <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png"/>
-  <script src="/pwa-install.js?v=6.0" defer></script>
-  <!-- ══ END PWA ════════════════════════════════════════════════════ -->
-  <meta property="og:image" content="https://www.topsarkarijobs.com/image.png"/>
-  <meta property="og:image:width" content="512"/>
-  <meta property="og:image:height" content="512"/>
-  <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/av/audio-trim.html"/>
-  <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/av/audio-trim.html"/>
-  <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/av/audio-trim.html"/>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Audio Trim / Cut | Free Online Tool - TopSarkariJobs",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "url": "https://www.topsarkarijobs.com/tools/av/audio-trim.html",
-    "description": "Audio file ka specific hissa cut karein ya trim karein. MP3, WAV, OGG — exact start/end time set karein bilkul free.",
-    "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
-    "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Home","item":"https://www.topsarkarijobs.com/"},
-      {"@type":"ListItem","position":2,"name":"Audio Video Tools","item":"https://www.topsarkarijobs.com/tools-audio-video.html"},
-      {"@type":"ListItem","position":3,"name":"Audio Trim / Cut | Free Online Tool - TopSarkariJobs","item":"https://www.topsarkarijobs.com/tools/av/audio-trim.html"}
-    ]
-  }
-  </script>
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .rel-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 10px; background: var(--mist); text-decoration: none; color: var(--ink); font-size: 0.78rem; font-weight: 600; text-align: center; }
+    .rel-item:hover { background: var(--brand-light); color: var(--brand); }
+    .ri { font-size: 1.3rem; }
+    .secure-note { text-align: center; font-size: 0.8rem; color: var(--muted); padding: 16px; }
+    .tool-footer { background: #0f172a; color: rgba(255,255,255,0.7); text-align: center; padding: 24px 20px; font-size: 0.82rem; }
+    .tool-footer a { color: rgba(255,255,255,0.85); text-decoration: none; margin: 0 8px; }
+    .tool-footer a:hover { color: #fff; }
+  </style>
 </head>
 <body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-brand" href="/">TopSarkariJobs</a>
+  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
+  <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-audio-video.html">Audio/Video</a>
+  <a class="nav-tools-link" href="/tools/">All Tools</a>
+</div></nav>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-inner">
-    <a class="nav-brand" href="/">TopSarkariJobs</a>
-    <span class="nav-sep">›</span>
-    <a class="nav-crumb" href="/tools/">Tools</a>
-    <span class="nav-sep">›</span>
-    <a class="nav-crumb" href="/tools/tools-audio-video.html">AV Tools</a>
-    <a class="nav-tools-link" href="/tools/">All Tools</a>
-  </div>
-</nav>
-
-<!-- HERO -->
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">✂️</div>
-  <h1>Audio Trim / Cut</h1>
-  <p>Audio clip ko precisely trim karein. Silence remove karein, specific segment extract karein — seconds mein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">Exact Timing</span> <span class="badge">Waveform</span> <span class="badge">No Quality Loss</span></div>
+  <h1>Audio Trim / Cut — Live Waveform</h1>
+  <p>Waveform par drag karke exact hissa select karein — live preview, fade in/out, undo/redo ke saath. 100% browser mein, koi upload nahi.</p>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Live Waveform</span> <span class="badge">Real Fade</span> <span class="badge">No Quality Loss</span></div>
 </section>
 
-<!-- MAIN -->
 <div class="main-container">
 
-  <!-- UPLOAD -->
   <div class="card">
     <h3>📂 File Upload Karein</h3>
     <div class="upload-zone" id="dropzone">
       <span class="upload-icon">⬆️</span>
-      <div class="upload-title">File Yahan Drop Karein</div>
-      <div class="upload-sub">Ya <b>Browse</b> karke select karein</div>
+      <div class="upload-title">Audio File Yahan Drop Karein</div>
+      <div class="upload-sub">Ya <b>Browse</b> karke select karein · MP3, WAV, OGG, M4A</div>
     </div>
     <div class="file-preview" id="file-preview">
-      <span>📄</span>
+      <span>🎵</span>
       <span class="file-name">—</span>
       <span class="file-size">—</span>
       <button class="file-remove" title="Remove">✕</button>
     </div>
-  </div>
-  <input type="file" id="main-file" style="display:none">
-
-  <!-- OPTIONS -->
-  <div class="card">
-    <h3>⚙️ Settings</h3>
-    
-      <div class="form-grid">
-        <div class="form-group"><label>Start Time</label><input type="text" id="ast" placeholder="00:00:00" value="00:00:00"></div>
-        <div class="form-group"><label>End Time</label><input type="text" id="aet" placeholder="00:00:30"></div>
-        <div class="form-group"><label>Fade In (sec)</label><input type="number" placeholder="0" min="0" max="10" value="0"></div>
-        <div class="form-group"><label>Fade Out (sec)</label><input type="number" placeholder="0" min="0" max="10" value="0"></div>
-        <div class="form-group"><label>Output Format</label><select><option>Same as Input</option><option>MP3</option><option>WAV</option><option>AAC</option></select></div>
-      </div>
-    
-    <div class="action-row" style="margin-top:18px;">
-      <button class="btn-primary" id="process-btn">
-        <span>🚀</span> Process Karein
-      </button>
-      <button class="btn-secondary" id="reset-btn">↺ Reset</button>
-    </div>
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
-      <div class="progress-msg" id="pmsg">Processing...</div>
-    </div>
+    <input type="file" id="main-file" accept="audio/*" style="display:none">
+    <div class="status-msg" id="load-status"></div>
   </div>
 
-  <!-- RESULT -->
+  <div class="card editor-wrap" id="editor-wrap">
+    <h3>🌊 Waveform Editor</h3>
+
+    <div class="wave-toolbar">
+      <button class="icon-btn play" id="play-btn" title="Play selection">▶</button>
+      <button class="icon-btn" id="stop-btn" title="Stop">⏹</button>
+      <div class="spacer"></div>
+      <div class="zoom-row">🔍 Zoom <input type="range" id="zoom-range" min="1" max="8" step="0.5" value="1"></div>
+      <button class="icon-btn" id="undo-btn" title="Undo" disabled>↺</button>
+      <button class="icon-btn" id="redo-btn" title="Redo" disabled>↻</button>
+    </div>
+
+    <div class="wave-stage" id="wave-stage">
+      <canvas class="wave-canvas" id="wave-canvas"></canvas>
+      <div class="wave-dim-l" id="dim-l"></div>
+      <div class="wave-dim-r" id="dim-r"></div>
+      <div class="wave-sel" id="wave-sel"></div>
+      <svg class="fade-curve" id="fade-curve-in"></svg>
+      <svg class="fade-curve" id="fade-curve-out"></svg>
+      <div class="wave-handle" id="handle-start"><span class="grip">◂▸</span></div>
+      <div class="wave-handle" id="handle-end"><span class="grip">◂▸</span></div>
+      <div class="fade-handle" id="fade-in-handle" title="Drag: fade-in duration">FI</div>
+      <div class="fade-handle" id="fade-out-handle" title="Drag: fade-out duration">FO</div>
+      <div class="playhead" id="playhead"><span class="tip" id="playhead-tip">0:00.0</span></div>
+    </div>
+    <div class="time-axis"><span id="axis-start">0:00.0</span><span id="axis-end">0:00.0</span></div>
+
+    <div class="time-fields">
+      <div class="tf-group"><label>Start (sec)</label><input type="number" id="start-input" min="0" step="0.1" value="0"></div>
+      <div class="tf-sep">→</div>
+      <div class="tf-group"><label>End (sec)</label><input type="number" id="end-input" min="0" step="0.1" value="0"></div>
+      <div class="tf-group"><label>Fade In (sec)</label><input type="number" id="fadein-input" min="0" step="0.1" value="0"></div>
+      <div class="tf-group"><label>Fade Out (sec)</label><input type="number" id="fadeout-input" min="0" step="0.1" value="0"></div>
+      <div class="tf-group"><label>Selection</label><input type="text" id="sel-dur" readonly value="0:00.0" style="background:var(--mist);font-weight:700"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="cut-btn">✂️ Cut (keep selection)</button>
+      <button class="btn-secondary" id="remove-btn">🗑️ Remove (delete selection)</button>
+      <button class="btn-secondary" id="reset-edit-btn">↺ Reset to Original</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group"><label>Output Format</label><select id="fmt-select"><option value="wav">WAV (lossless)</option><option value="mp3">MP3</option></select></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="process-btn">🚀 Save Trimmed Audio</button>
+      <button class="btn-secondary" id="reset-btn">Start Over</button>
+    </div>
+    <div class="status-msg" id="process-status"></div>
+  </div>
+
   <div class="card result-card" id="result-card">
     <div class="result-ok">✅ Successfully Processed!</div>
     <div class="stat-row" id="stat-row"></div>
     <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
   </div>
 
-  <!-- HOW IT WORKS -->
   <div class="card">
     <h3>📖 Kaise Use Karein</h3>
-    <div class="how-steps"><div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Audio file choose karein</p></div>
-<div class="step"><div class="step-n">2</div><h4>Time Set</h4><p>Start aur end time set karein</p></div>
-<div class="step"><div class="step-n">3</div><h4>Fade</h4><p>Optional fade in/out add karein</p></div>
-<div class="step"><div class="step-n">4</div><h4>Download</h4><p>Trimmed audio download karein</p></div>
-</div>
+    <div class="how-steps">
+      <div class="step"><div class="step-n">1</div><h4>Upload</h4><p>Audio file choose karein</p></div>
+      <div class="step"><div class="step-n">2</div><h4>Drag Handles</h4><p>Waveform par start/end handle drag karein</p></div>
+      <div class="step"><div class="step-n">3</div><h4>Preview</h4><p>Play dabakar live sunn kar confirm karein</p></div>
+      <div class="step"><div class="step-n">4</div><h4>Download</h4><p>Trimmed audio save karein</p></div>
+    </div>
   </div>
 
-  <!-- FEATURES -->
   <div class="card">
     <h3>✨ Features</h3>
-    <div class="features-grid"><div class="feat"><span class="feat-icon">✂️</span><div><h4>Precise Cut</h4><p>Millisecond accuracy</p></div></div>
-<div class="feat"><span class="feat-icon">🎵</span><div><h4>Fade Effects</h4><p>Smooth in/out fades</p></div></div>
-<div class="feat"><span class="feat-icon">🔊</span><div><h4>No Quality Loss</h4><p>Lossless trimming</p></div></div>
-<div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Browser only</p></div></div>
-<div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div>
-<div class="feat"><span class="feat-icon">⚡</span><div><h4>Instant</h4><p>Real-time preview</p></div></div>
-</div>
+    <div class="features-grid">
+      <div class="feat"><span class="feat-icon">🌊</span><div><h4>Live Waveform</h4><p>Real audio waveform, click/drag se select karein</p></div></div>
+      <div class="feat"><span class="feat-icon">▶️</span><div><h4>Live Preview</h4><p>Save se pehle exact result sunein</p></div></div>
+      <div class="feat"><span class="feat-icon">🎚️</span><div><h4>Real Fade In/Out</h4><p>Smooth volume ramp, draggable duration</p></div></div>
+      <div class="feat"><span class="feat-icon">🗑️</span><div><h4>Remove Middle</h4><p>Beech ka hissa nikal kar baaki jodo</p></div></div>
+      <div class="feat"><span class="feat-icon">↺</span><div><h4>Undo / Redo</h4><p>Har edit ka full history</p></div></div>
+      <div class="feat"><span class="feat-icon">🔊</span><div><h4>No Quality Loss</h4><p>Sample-accurate lossless trimming</p></div></div>
+      <div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser mein, koi upload nahi</p></div></div>
+      <div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge, no signup</p></div></div>
+    </div>
   </div>
 
-  <!-- FAQ -->
   <div class="card">
     <h3>❓ Aksar Puche Jane Wale Sawal (FAQ)</h3>
-    <div class="faq-item"><button class="faq-q">Trimming se audio quality affect hogi?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi, WAV aur lossless formats mein bilkul quality loss nahi hoti.</div></div>
-<div class="faq-item"><button class="faq-q">Multiple segments cut kar sakte hain?<span class="faq-arrow">+</span></button><div class="faq-a">Ek baar mein ek segment. Multiple ke liye tool dobara use karein.</div></div>
-<div class="faq-item"><button class="faq-q">Time format kya use karein?<span class="faq-arrow">+</span></button><div class="faq-a">HH:MM:SS format use karein, ya seconds mein bhi enter kar sakte hain.</div></div>
-<div class="faq-item"><button class="faq-q">Fade effect kya karta hai?<span class="faq-arrow">+</span></button><div class="faq-a">Gradually volume increase (fade in) ya decrease (fade out) karta hai.</div></div>
-
+    <div class="faq-item"><button class="faq-q">Trimming se audio quality affect hogi?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi — WAV output bilkul lossless hai (original samples copy hote hain), MP3 mein bhi high bitrate use hota hai jisse quality loss minimal rehta hai.</div></div>
+    <div class="faq-item"><button class="faq-q">Kya main beech ka hissa delete kar sakta hoon?<span class="faq-arrow">+</span></button><div class="faq-a">Haan — selection banakar "Remove" button dabayein, selected hissa nikal jaayega aur pehle+baad wala part seedha jud jaayega.</div></div>
+    <div class="faq-item"><button class="faq-q">Fade handle kaise use karein?<span class="faq-arrow">+</span></button><div class="faq-a">Waveform ke top corners par gol "FI"/"FO" handles ko drag karein, ya Fade In/Fade Out box mein seedha seconds type karein.</div></div>
+    <div class="faq-item"><button class="faq-q">Galti se galat cut ho gaya to?<span class="faq-arrow">+</span></button><div class="faq-a">Undo button (↺) dabayein — har Cut/Remove ek history step hai, jitni baar chahe undo/redo kar sakte hain.</div></div>
+    <div class="faq-item"><button class="faq-q">Files kahin upload hoti hain?<span class="faq-arrow">+</span></button><div class="faq-a">Nahi. Poora processing aapke browser ke andar Web Audio API se hota hai — koi file server par nahi jaati.</div></div>
   </div>
 
-  <!-- RELATED -->
   <div class="card">
     <h3>🔗 Related Tools</h3>
-    <div class="related-grid"><a href="/tools/av/audio-merge.html" class="rel-item"><span class="ri">🎤</span><span>Audio Merge</span></a>
-<a href="/tools/av/audio-convert.html" class="rel-item"><span class="ri">🔄</span><span>Audio Convert</span></a>
-<a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
-<a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
-<a href="/tools/av/video-trim.html" class="rel-item"><span class="ri">✂️</span><span>Video Trim</span></a>
-<a href="/tools/av/video-convert.html" class="rel-item"><span class="ri">🔄</span><span>Video Convert</span></a>
-<a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
-<a href="/tools/image/image-crop.html" class="rel-item"><span class="ri">✂️</span><span>Image Crop</span></a>
-</div>
+    <div class="related-grid">
+      <a href="/tools/av/audio-merge.html" class="rel-item"><span class="ri">🎤</span><span>Audio Merge</span></a>
+      <a href="/tools/av/video-to-mp3.html" class="rel-item"><span class="ri">🎵</span><span>Video to MP3</span></a>
+      <a href="/tools/av/video-compress.html" class="rel-item"><span class="ri">🎬</span><span>Video Compress</span></a>
+      <a href="/tools/av/video-trim.html" class="rel-item"><span class="ri">✂️</span><span>Video Trim</span></a>
+      <a href="/tools/av/screen-recorder.html" class="rel-item"><span class="ri">🎙️</span><span>Screen Record</span></a>
+    </div>
   </div>
 
-  <!-- SECURE NOTE -->
   <div class="secure-note">
     <p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi bhi file server par upload nahi hoti.</p>
   </div>
@@ -318,73 +296,442 @@
   </div>
 </footer>
 
-
 <script>
-  document.querySelectorAll('.faq-q').forEach(b => {
-    b.addEventListener('click', () => {
-      b.classList.toggle('open');
-      b.nextElementSibling.classList.toggle('open');
-    });
-  });
-  function formatBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
-  function bindFile(inputId, previewId){
-    const inp=document.getElementById(inputId), prev=document.getElementById(previewId);
-    if(!inp)return;
-    function handleFile(f){
-      if(!f)return;
-      if(prev){ prev.classList.add('show'); prev.querySelector('.file-name').textContent=f.name; prev.querySelector('.file-size').textContent=formatBytes(f.size); }
-    }
-    inp.addEventListener('change',()=>handleFile(inp.files[0]));
-    const zone=inp.closest('.upload-zone')||document.querySelector('.upload-zone');
-    if(zone){
-      zone.addEventListener('click',()=>inp.click());
-      zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});
-      zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});
-      zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;handleFile(f);}});
-    }
-    const rm=prev&&prev.querySelector('.file-remove');
-    if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
-  }
-  function animProgress(barId, msgEl, msg){
-    const bar=document.getElementById(barId), msgd=document.getElementById(msgEl);
-    if(msgd)msgd.textContent=msg||'Processing...';
-    if(!bar)return;
-    let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    return t;
-  }
-  function finishProgress(barId){ const b=document.getElementById(barId); if(b)b.style.width='100%'; }
-</script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
 
-<script>
-  bindFile('main-file','file-preview');
-  document.getElementById('process-btn').addEventListener('click', function(){
-    const f = document.getElementById('main-file').files[0];
-    if(!f){ alert('Pehle file select karein!'); return; }
-    const pw = document.getElementById('progress-wrap');
-    pw.style.display='block';
-    animProgress('pbar','pmsg','File process ho rahi hai...');
-    setTimeout(()=>{
-      finishProgress('pbar');
-      document.getElementById('pmsg').textContent='Done!';
-      const rc = document.getElementById('result-card');
-      rc.classList.add('show');
-      const sr = document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Original Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">New Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{
-        const url=URL.createObjectURL(f);
-        const a=document.createElement('a'); a.href=url; a.download='processed_'+f.name; a.click(); URL.revokeObjectURL(url);
-      };
-    },1800);
+document.querySelectorAll('.faq-q').forEach(b => {
+  b.addEventListener('click', () => { b.classList.toggle('open'); b.nextElementSibling.classList.toggle('open'); });
+});
+
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    if(document.querySelector('script[src="'+src+'"]')){ resolve(); return; }
+    const s=document.createElement('script'); s.src=src; s.onload=()=>resolve(); s.onerror=()=>reject(new Error('load failed: '+src));
+    document.head.appendChild(s);
   });
-  document.getElementById('reset-btn').addEventListener('click', function(){
-    document.getElementById('main-file').value='';
-    document.getElementById('file-preview').classList.remove('show');
-    document.getElementById('progress-wrap').style.display='none';
-    document.getElementById('pbar').style.width='0%';
-    document.getElementById('result-card').classList.remove('show');
+}
+function fmtBytes(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+function fmtTime(s){
+  s = Math.max(0, s||0);
+  const m = Math.floor(s/60), sec = s - m*60;
+  return m + ':' + sec.toFixed(1).padStart(4,'0');
+}
+
+// ── Audio engine ──────────────────────────────────────────────────────────
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+let originalBuffer = null;   // decoded, never mutated
+let workingBuffer = null;    // current buffer after committed Cut/Remove edits
+let history = [];            // [{buffer, sel:{start,end,fadeIn,fadeOut}}]
+let histIdx = -1;
+let sel = { start: 0, end: 0, fadeIn: 0, fadeOut: 0 };
+
+function cloneBuffer(buf){
+  const nb = AC.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+  for(let c=0;c<buf.numberOfChannels;c++) nb.copyToChannel(buf.getChannelData(c).slice(), c);
+  return nb;
+}
+function sliceBuffer(buf, startSec, endSec){
+  const sr = buf.sampleRate;
+  const s0 = Math.max(0, Math.min(buf.length, Math.round(startSec*sr)));
+  const s1 = Math.max(s0, Math.min(buf.length, Math.round(endSec*sr)));
+  const len = Math.max(1, s1 - s0);
+  const nb = AC.createBuffer(buf.numberOfChannels, len, sr);
+  for(let c=0;c<buf.numberOfChannels;c++) nb.copyToChannel(buf.getChannelData(c).subarray(s0,s1).slice(), c);
+  return nb;
+}
+function removeRange(buf, startSec, endSec){
+  const sr = buf.sampleRate;
+  const s0 = Math.max(0, Math.min(buf.length, Math.round(startSec*sr)));
+  const s1 = Math.max(s0, Math.min(buf.length, Math.round(endSec*sr)));
+  const newLen = Math.max(1, buf.length - (s1-s0));
+  const nb = AC.createBuffer(buf.numberOfChannels, newLen, sr);
+  for(let c=0;c<buf.numberOfChannels;c++){
+    const src = buf.getChannelData(c);
+    const dst = new Float32Array(newLen);
+    dst.set(src.subarray(0,s0),0);
+    dst.set(src.subarray(s1),s0);
+    nb.copyToChannel(dst,c);
+  }
+  return nb;
+}
+function applyFadeToBuffer(buf, fadeInSec, fadeOutSec){
+  const sr = buf.sampleRate, len = buf.length;
+  const fi = Math.max(0, Math.min(len, Math.round(fadeInSec*sr)));
+  const fo = Math.max(0, Math.min(len, Math.round(fadeOutSec*sr)));
+  const nb = AC.createBuffer(buf.numberOfChannels, len, sr);
+  for(let c=0;c<buf.numberOfChannels;c++){
+    const src = buf.getChannelData(c).slice();
+    for(let i=0;i<fi;i++) src[i] *= i/fi;
+    for(let i=0;i<fo;i++) src[len-1-i] *= i/fo;
+    nb.copyToChannel(src,c);
+  }
+  return nb;
+}
+
+// ── WAV / MP3 encoding ───────────────────────────────────────────────────
+function bufferToWav(buf){
+  const numCh = buf.numberOfChannels, sr = buf.sampleRate, len = buf.length;
+  const bytesPerSample = 2, blockAlign = numCh*bytesPerSample;
+  const dataSize = len*blockAlign;
+  const ab = new ArrayBuffer(44+dataSize);
+  const dv = new DataView(ab);
+  function ws(o,s){ for(let i=0;i<s.length;i++) dv.setUint8(o+i, s.charCodeAt(i)); }
+  ws(0,'RIFF'); dv.setUint32(4,36+dataSize,true); ws(8,'WAVE');
+  ws(12,'fmt '); dv.setUint32(16,16,true); dv.setUint16(20,1,true);
+  dv.setUint16(22,numCh,true); dv.setUint32(24,sr,true);
+  dv.setUint32(28,sr*blockAlign,true); dv.setUint16(32,blockAlign,true); dv.setUint16(34,16,true);
+  ws(36,'data'); dv.setUint32(40,dataSize,true);
+  const chans = []; for(let c=0;c<numCh;c++) chans.push(buf.getChannelData(c));
+  let off = 44;
+  for(let i=0;i<len;i++){
+    for(let c=0;c<numCh;c++){
+      let s = Math.max(-1, Math.min(1, chans[c][i]));
+      dv.setInt16(off, s<0 ? s*0x8000 : s*0x7FFF, true);
+      off += 2;
+    }
+  }
+  return new Blob([ab], {type:'audio/wav'});
+}
+async function bufferToMp3(buf, onProgress){
+  await loadScript('https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js');
+  const numCh = Math.min(2, buf.numberOfChannels), sr = buf.sampleRate;
+  const encoder = new lamejs.Mp3Encoder(numCh, sr, 160);
+  const chans = []; for(let c=0;c<numCh;c++) chans.push(buf.getChannelData(c));
+  const len = buf.length;
+  const toI16 = (f)=>{ const o=new Int16Array(f.length); for(let i=0;i<f.length;i++){ let s=Math.max(-1,Math.min(1,f[i])); o[i]=s<0?s*0x8000:s*0x7FFF; } return o; };
+  const ch0 = toI16(chans[0]);
+  const ch1 = numCh>1 ? toI16(chans[1]) : null;
+  const chunk = 1152;
+  const parts = [];
+  for(let i=0;i<len;i+=chunk){
+    const l = ch0.subarray(i, i+chunk);
+    const r = ch1 ? ch1.subarray(i, i+chunk) : undefined;
+    const mp3buf = ch1 ? encoder.encodeBuffer(l, r) : encoder.encodeBuffer(l);
+    if(mp3buf.length>0) parts.push(new Uint8Array(mp3buf));
+    if(onProgress && (i/chunk)%200===0) await new Promise(r2=>setTimeout(r2,0));
+  }
+  const end = encoder.flush();
+  if(end.length>0) parts.push(new Uint8Array(end));
+  return new Blob(parts, {type:'audio/mp3'});
+}
+
+// ── Waveform peaks + drawing ─────────────────────────────────────────────
+let peaks = null; // {min:[...], max:[...]} per pixel column, computed at fixed resolution
+const PEAK_RES = 2000; // fixed number of columns computed once, redrawn/scaled on demand
+function computePeaks(buf){
+  const ch0 = buf.getChannelData(0);
+  const ch1 = buf.numberOfChannels>1 ? buf.getChannelData(1) : null;
+  const len = buf.length;
+  const per = Math.max(1, Math.floor(len/PEAK_RES));
+  const mins = new Float32Array(PEAK_RES), maxs = new Float32Array(PEAK_RES);
+  for(let p=0;p<PEAK_RES;p++){
+    const start = p*per, endI = Math.min(len, start+per);
+    let mn=1, mx=-1;
+    for(let i=start;i<endI;i++){
+      let v = ch0[i]; if(ch1) v = (v+ch1[i])/2;
+      if(v<mn)mn=v; if(v>mx)mx=v;
+    }
+    if(endI<=start){ mn=0; mx=0; }
+    mins[p]=mn; maxs[p]=mx;
+  }
+  return {mins,maxs};
+}
+function drawWaveform(){
+  const canvas = $('wave-canvas');
+  const stage = $('wave-stage');
+  const dpr = window.devicePixelRatio || 1;
+  const w = stage.clientWidth, h = 160;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  canvas.style.width = w+'px'; canvas.style.height = h+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0b1220'; ctx.fillRect(0,0,w,h);
+  if(!peaks) return;
+  const mid = h/2;
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--wave').trim() || '#34d399';
+  const n = peaks.mins.length;
+  for(let x=0;x<w;x++){
+    const p = Math.floor(x/w*n);
+    const mn = peaks.mins[p]||0, mx = peaks.maxs[p]||0;
+    const y1 = mid - mx*mid*0.92, y2 = mid - mn*mid*0.92;
+    ctx.fillRect(x, y1, 1, Math.max(1,y2-y1));
+  }
+}
+
+// ── Timeline (buffer duration) -> pixel mapping ──────────────────────────
+function totalDur(){ return workingBuffer ? workingBuffer.length/workingBuffer.sampleRate : 0; }
+function stageW(){ return $('wave-stage').clientWidth; }
+function timeToX(t){ const d=totalDur(); return d? (t/d)*stageW() : 0; }
+function xToTime(x){ const d=totalDur(); return d? Math.max(0,Math.min(d,(x/stageW())*d)) : 0; }
+
+function updateSelUI(){
+  const d = totalDur();
+  sel.start = Math.max(0, Math.min(sel.start, d));
+  sel.end = Math.max(sel.start, Math.min(sel.end, d));
+  sel.fadeIn = Math.max(0, Math.min(sel.fadeIn, sel.end-sel.start));
+  sel.fadeOut = Math.max(0, Math.min(sel.fadeOut, sel.end-sel.start-sel.fadeIn));
+
+  const xs = timeToX(sel.start), xe = timeToX(sel.end);
+  $('wave-sel').style.left = xs+'px'; $('wave-sel').style.width = Math.max(0,xe-xs)+'px';
+  $('dim-l').style.left='0'; $('dim-l').style.width = xs+'px';
+  $('dim-r').style.left = xe+'px'; $('dim-r').style.width = Math.max(0,stageW()-xe)+'px';
+  $('handle-start').style.left = xs+'px';
+  $('handle-end').style.left = xe+'px';
+
+  const fiX = timeToX(sel.start+sel.fadeIn), foX = timeToX(sel.end-sel.fadeOut);
+  $('fade-in-handle').style.left = (fiX-10)+'px';
+  $('fade-out-handle').style.left = (foX-10)+'px';
+  drawFadeCurve($('fade-curve-in'), xs, fiX, true);
+  drawFadeCurve($('fade-curve-out'), foX, xe, false);
+
+  $('start-input').value = sel.start.toFixed(1);
+  $('end-input').value = sel.end.toFixed(1);
+  $('fadein-input').value = sel.fadeIn.toFixed(1);
+  $('fadeout-input').value = sel.fadeOut.toFixed(1);
+  $('sel-dur').value = fmtTime(sel.end-sel.start);
+  $('axis-start').textContent = '0:00.0';
+  $('axis-end').textContent = fmtTime(d);
+}
+function drawFadeCurve(svg, x1, x2, isIn){
+  const w = Math.max(0,x2-x1), h=160;
+  svg.style.left = x1+'px'; svg.style.width = w+'px'; svg.setAttribute('viewBox','0 0 '+Math.max(1,w)+' '+h);
+  if(w<2){ svg.innerHTML=''; return; }
+  const path = isIn ? `M0,${h} Q${w*0.5},${h} ${w},0 L${w},${h} Z` : `M0,0 Q${w*0.5},${h} ${w},${h} L0,${h} Z`;
+  svg.innerHTML = `<path d="${path}" fill="rgba(251,191,36,0.28)"/>`;
+}
+
+// ── Drag interactions ─────────────────────────────────────────────────────
+function bindDrag(el, onMove){
+  el.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    const stage = $('wave-stage').getBoundingClientRect();
+    function move(ev){ onMove(Math.max(0,Math.min(stage.width, ev.clientX-stage.left))); }
+    function up(){ el.removeEventListener('pointermove',move); el.removeEventListener('pointerup',up); pushHistoryIfChanged(); }
+    el.addEventListener('pointermove',move);
+    el.addEventListener('pointerup',up);
   });
-  document.querySelector('.upload-zone').addEventListener('click', ()=>document.getElementById('main-file').click());
+}
+bindDrag($('handle-start'), x=>{ sel.start = Math.min(xToTime(x), sel.end-0.05); updateSelUI(); });
+bindDrag($('handle-end'), x=>{ sel.end = Math.max(xToTime(x), sel.start+0.05); updateSelUI(); });
+bindDrag($('fade-in-handle'), x=>{ sel.fadeIn = Math.max(0, xToTime(x)-sel.start); updateSelUI(); });
+bindDrag($('fade-out-handle'), x=>{ sel.fadeOut = Math.max(0, sel.end-xToTime(x)); updateSelUI(); });
+
+// Click on waveform (outside handles) = seek playhead
+$('wave-stage').addEventListener('pointerdown', e=>{
+  if(e.target.closest('.wave-handle,.fade-handle')) return;
+  const stage = $('wave-stage').getBoundingClientRect();
+  const t = xToTime(e.clientX-stage.left);
+  seekPreview(t);
+});
+
+['start-input','end-input','fadein-input','fadeout-input'].forEach(id=>{
+  $(id).addEventListener('change', ()=>{
+    sel.start = parseFloat($('start-input').value)||0;
+    sel.end = parseFloat($('end-input').value)||0;
+    sel.fadeIn = parseFloat($('fadein-input').value)||0;
+    sel.fadeOut = parseFloat($('fadeout-input').value)||0;
+    updateSelUI();
+  });
+});
+
+$('zoom-range').addEventListener('input', ()=>{
+  const z = parseFloat($('zoom-range').value);
+  $('wave-stage').style.width = (100*z)+'%';
+  requestAnimationFrame(()=>{ drawWaveform(); updateSelUI(); });
+});
+
+// ── Playback preview ──────────────────────────────────────────────────────
+let srcNode = null, gainNode = null, playStartCtx = 0, playStartTime = 0, rafId = null, isPlaying=false;
+function stopPreview(){
+  if(srcNode){ try{srcNode.stop();}catch(e){} srcNode.disconnect(); srcNode=null; }
+  if(rafId) cancelAnimationFrame(rafId);
+  isPlaying=false;
+  $('play-btn').textContent='▶';
+  $('playhead').style.display='none';
+}
+function playPreview(){
+  if(!workingBuffer) return;
+  stopPreview();
+  const previewBuf = applyFadeToBuffer(sliceBuffer(workingBuffer, sel.start, sel.end), sel.fadeIn, sel.fadeOut);
+  srcNode = AC.createBufferSource();
+  srcNode.buffer = previewBuf;
+  srcNode.connect(AC.destination);
+  playStartCtx = AC.currentTime;
+  playStartTime = sel.start;
+  srcNode.start(0);
+  srcNode.onended = ()=>{ if(isPlaying) stopPreview(); };
+  isPlaying = true;
+  $('play-btn').textContent='⏸';
+  $('playhead').style.display='block';
+  animatePlayhead();
+}
+function seekPreview(t){
+  sel_playhead = t;
+  updatePlayheadPos(t);
+}
+function updatePlayheadPos(t){
+  const x = timeToX(t);
+  $('playhead').style.left = x+'px';
+  $('playhead-tip').textContent = fmtTime(t);
+  $('playhead').style.display='block';
+}
+function animatePlayhead(){
+  if(!isPlaying) return;
+  const elapsed = AC.currentTime - playStartCtx;
+  const t = playStartTime + elapsed;
+  if(t >= sel.end){ stopPreview(); return; }
+  updatePlayheadPos(t);
+  rafId = requestAnimationFrame(animatePlayhead);
+}
+$('play-btn').addEventListener('click', ()=>{ isPlaying ? stopPreview() : playPreview(); });
+$('stop-btn').addEventListener('click', stopPreview);
+
+// ── History (undo/redo) ───────────────────────────────────────────────────
+function pushHistory(){
+  history = history.slice(0, histIdx+1);
+  history.push({ buffer: cloneBuffer(workingBuffer), sel: {...sel} });
+  histIdx = history.length-1;
+  updateUndoRedoUI();
+}
+function pushHistoryIfChanged(){ /* selection drag alone doesn't create history — only committed edits do */ }
+function updateUndoRedoUI(){
+  $('undo-btn').disabled = histIdx<=0;
+  $('redo-btn').disabled = histIdx>=history.length-1;
+}
+$('undo-btn').addEventListener('click', ()=>{
+  if(histIdx<=0) return;
+  histIdx--; loadFromHistory();
+});
+$('redo-btn').addEventListener('click', ()=>{
+  if(histIdx>=history.length-1) return;
+  histIdx++; loadFromHistory();
+});
+function loadFromHistory(){
+  const h = history[histIdx];
+  workingBuffer = cloneBuffer(h.buffer);
+  sel = {...h.sel};
+  peaks = computePeaks(workingBuffer);
+  drawWaveform(); updateSelUI(); updateUndoRedoUI();
+}
+
+// ── Cut / Remove / Reset ──────────────────────────────────────────────────
+$('cut-btn').addEventListener('click', ()=>{
+  if(!workingBuffer) return;
+  stopPreview();
+  workingBuffer = applyFadeToBuffer(sliceBuffer(workingBuffer, sel.start, sel.end), sel.fadeIn, sel.fadeOut);
+  sel = { start:0, end: workingBuffer.length/workingBuffer.sampleRate, fadeIn:0, fadeOut:0 };
+  peaks = computePeaks(workingBuffer);
+  drawWaveform(); updateSelUI(); pushHistory();
+  setStatus('process-status', '✂️ Selection cut ho gaya — ab poori waveform yehi hissa hai.');
+});
+$('remove-btn').addEventListener('click', ()=>{
+  if(!workingBuffer) return;
+  stopPreview();
+  const kept = sel.end - sel.start;
+  if(kept<=0 || kept>=totalDur()) return;
+  workingBuffer = removeRange(workingBuffer, sel.start, sel.end);
+  sel = { start:0, end: workingBuffer.length/workingBuffer.sampleRate, fadeIn:0, fadeOut:0 };
+  peaks = computePeaks(workingBuffer);
+  drawWaveform(); updateSelUI(); pushHistory();
+  setStatus('process-status', '🗑️ Selected hissa remove ho gaya, baaki jud gaya.');
+});
+$('reset-edit-btn').addEventListener('click', ()=>{
+  stopPreview();
+  workingBuffer = cloneBuffer(originalBuffer);
+  sel = { start:0, end: workingBuffer.length/workingBuffer.sampleRate, fadeIn:0, fadeOut:0 };
+  peaks = computePeaks(workingBuffer);
+  drawWaveform(); updateSelUI();
+  history = []; pushHistory();
+  setStatus('process-status', '↺ Original audio par reset ho gaya.');
+});
+
+function setStatus(id, msg, isErr){
+  const el = $(id); el.textContent = msg||''; el.className = 'status-msg'+(isErr?' err':'');
+}
+
+// ── File loading ──────────────────────────────────────────────────────────
+async function handleFile(f){
+  if(!f) return;
+  setStatus('load-status', '⏳ Audio decode ho raha hai...');
+  $('file-preview').classList.add('show');
+  $('file-preview').querySelector('.file-name').textContent = f.name;
+  $('file-preview').querySelector('.file-size').textContent = fmtBytes(f.size);
+  try{
+    const arr = await f.arrayBuffer();
+    const buf = await AC.decodeAudioData(arr);
+    originalBuffer = buf;
+    workingBuffer = cloneBuffer(buf);
+    sel = { start:0, end: workingBuffer.length/workingBuffer.sampleRate, fadeIn:0, fadeOut:0 };
+    peaks = computePeaks(workingBuffer);
+    $('editor-wrap').classList.add('show');
+    $('result-card').classList.remove('show');
+    requestAnimationFrame(()=>{ drawWaveform(); updateSelUI(); });
+    history = []; pushHistory();
+    setStatus('load-status', `✅ Loaded — duration ${fmtTime(totalDur())}, ${buf.numberOfChannels===1?'Mono':'Stereo'}, ${buf.sampleRate} Hz`);
+  }catch(err){
+    setStatus('load-status', '❌ Audio decode nahi ho payi: '+(err.message||err), true);
+  }
+}
+const mainInput = $('main-file');
+mainInput.addEventListener('change', ()=>handleFile(mainInput.files[0]));
+const zone = $('dropzone');
+zone.addEventListener('click', ()=>mainInput.click());
+zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.style.borderColor='var(--brand)'; zone.style.background='var(--brand-light)'; });
+zone.addEventListener('dragleave', ()=>{ zone.style.borderColor=''; zone.style.background=''; });
+zone.addEventListener('drop', e=>{
+  e.preventDefault(); zone.style.borderColor=''; zone.style.background='';
+  const f = e.dataTransfer.files[0];
+  if(f){ const dt=new DataTransfer(); dt.items.add(f); mainInput.files=dt.files; handleFile(f); }
+});
+$('file-preview').querySelector('.file-remove').addEventListener('click', e=>{
+  e.stopPropagation(); mainInput.value=''; $('file-preview').classList.remove('show');
+  $('editor-wrap').classList.remove('show'); $('result-card').classList.remove('show');
+  originalBuffer=null; workingBuffer=null; stopPreview();
+});
+
+window.addEventListener('resize', ()=>{ if(peaks){ drawWaveform(); updateSelUI(); } });
+
+// ── Save / Export ───────────────────────────────────────────────────────
+$('process-btn').addEventListener('click', async ()=>{
+  if(!workingBuffer){ alert('Pehle audio file select karein!'); return; }
+  const btn = $('process-btn');
+  btn.disabled = true;
+  setStatus('process-status', '⏳ Export ho raha hai...');
+  try{
+    const finalBuf = applyFadeToBuffer(sliceBuffer(workingBuffer, sel.start, sel.end), sel.fadeIn, sel.fadeOut);
+    const fmt = $('fmt-select').value;
+    let blob, ext;
+    if(fmt==='mp3'){ blob = await bufferToMp3(finalBuf); ext='mp3'; }
+    else { blob = bufferToWav(finalBuf); ext='wav'; }
+    const origName = (mainInput.files[0]?.name||'audio').replace(/\.[^.]+$/,'');
+    const outName = origName+'_trimmed.'+ext;
+
+    $('result-card').classList.add('show');
+    $('stat-row').innerHTML = `<div class="stat-box"><div class="stat-val">${fmtTime(sel.end-sel.start)}</div><div class="stat-lbl">Duration</div></div><div class="stat-box"><div class="stat-val">${fmtBytes(blob.size)}</div><div class="stat-lbl">File Size</div></div><div class="stat-box"><div class="stat-val">${fmt.toUpperCase()}</div><div class="stat-lbl">Format</div></div>`;
+    $('dl-btn').onclick = ()=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=outName; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    };
+    setStatus('process-status', '✅ Ready! Neeche download button dabayein.');
+    $('result-card').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }catch(err){
+    setStatus('process-status', '❌ Export fail hua: '+(err.message||err), true);
+  }finally{
+    btn.disabled = false;
+  }
+});
+$('reset-btn').addEventListener('click', ()=>{
+  mainInput.value=''; $('file-preview').classList.remove('show');
+  $('editor-wrap').classList.remove('show'); $('result-card').classList.remove('show');
+  originalBuffer=null; workingBuffer=null; stopPreview();
+  setStatus('load-status','');
+});
+
+})();
 </script>
-</body>
-</html>
+</body></html>
