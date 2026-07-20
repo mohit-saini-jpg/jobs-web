@@ -80,7 +80,18 @@ a{color:inherit}
 .tl-scroll{overflow-x:auto;overflow-y:hidden;border-radius:6px}
 .tl-ruler{position:relative;height:18px;min-width:100%;border-bottom:1px solid var(--line)}
 .tl-ruler-tick{position:absolute;top:0;bottom:0;font-size:0.6rem;color:var(--muted);border-left:1px solid var(--line);padding-left:3px;white-space:nowrap}
-.tl-content{position:relative;height:70px;min-width:100%;cursor:text}
+.tl-content{position:relative;min-width:100%;cursor:text}
+.tl-video-row{position:relative;height:70px}
+.tl-audio-row{position:relative;height:52px;margin-top:6px;border-top:1px dashed var(--line);padding-top:4px}
+.tl-audio-empty-hint{position:absolute;left:6px;top:10px;font-size:0.68rem;color:var(--muted);pointer-events:none}
+.tl-audio-block{position:absolute;top:4px;height:44px;border-radius:6px;border:2px solid #22c55e;background:#0f2e22;cursor:grab;overflow:hidden}
+.tl-audio-block.selected{border-color:#4ade80}
+.tl-audio-block canvas{display:block;width:100%;height:100%}
+.tl-audio-block .tl-audio-label{position:absolute;top:1px;left:4px;font-size:0.6rem;color:#bbf7d0;background:rgba(0,0,0,.45);padding:0 3px;border-radius:3px;pointer-events:none;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-audio-block .tl-audio-rm{position:absolute;top:1px;right:1px;width:15px;height:15px;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;font-size:0.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.tl-audio-block .tl-trim{position:absolute;top:0;bottom:0;width:8px;background:rgba(34,197,94,.9);cursor:ew-resize;z-index:2}
+.tl-audio-block .tl-trim.left{left:0}
+.tl-audio-block .tl-trim.right{right:0}
 .tl-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff4d4f;z-index:30;pointer-events:none}
 .tl-playhead::before{content:'';position:absolute;top:-2px;left:-5px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff4d4f}
 .tl-clip{position:absolute;top:3px;height:64px;border:2px solid var(--line);border-radius:6px;overflow:hidden;background:#222;cursor:grab;background-size:cover;background-position:center;z-index:1}
@@ -218,6 +229,19 @@ a{color:inherit}
     <input type="file" id="main-file" accept="video/*" multiple style="display:none">
     <button class="tool-btn" id="add-clip-btn" style="text-align:center;justify-content:center">➕ Add Video Clips</button>
     <div id="clip-empty-msg" class="panel-empty">Koi clip nahi hai abhi. Upar se clips add karein — wo timeline mein bhi dikhengi.</div>
+
+    <h3 style="margin-top:22px">🎼 Background Audio</h3>
+    <input type="file" id="audio-track-file" accept="audio/*" style="display:none">
+    <button class="tool-btn" id="add-audio-track-btn" style="text-align:center;justify-content:center">➕ Add Audio Track</button>
+    <div id="audio-track-panel" style="display:none">
+      <div style="font-size:0.78rem;margin:10px 0;color:#e7e9ee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="audio-track-name"></div>
+      <div class="field">
+        <label>Track Volume (<span id="audio-track-vol-val">100</span>%)</label>
+        <input type="range" id="audio-track-volume" min="0" max="200" value="100">
+      </div>
+      <button class="tool-btn" id="remove-audio-track-btn" style="color:#fca5a5;border-color:#7f1d1d">🗑️ Remove Audio Track</button>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:8px">↔️ Timeline mein green waveform ko drag karke position set karein, edges khींचकर trim karein.</p>
+    </div>
   </div>
 
   <div class="panel" id="panel-text" style="display:none">
@@ -283,9 +307,10 @@ a{color:inherit}
   <div class="panel" id="panel-audio-fx" style="display:none">
     <h3>🎵 Audio Effects</h3>
     <div class="toggle-row">
-      <span>Include Audio</span>
+      <span>🎬 Original Video Audio</span>
       <label class="switch"><input type="checkbox" id="fx-include-audio" checked><span class="slider-tog"></span></label>
     </div>
+    <p style="font-size:0.7rem;color:var(--muted);margin-top:2px">Off karne se video ki apni recorded awaaz hat jaayegi — Files panel mein Background Audio track alag se add/control hoti hai.</p>
     <div class="field" style="margin-top:12px">
       <label>Volume (<span id="volume-val">100</span>%)</label>
       <input type="range" id="fx-volume" min="0" max="500" value="100">
@@ -393,7 +418,12 @@ a{color:inherit}
         <div class="tl-ruler" id="tl-ruler"></div>
         <div class="tl-content" id="tl-content">
           <div class="tl-playhead" id="tl-playhead" style="left:0px"></div>
-          <div class="tl-add" id="tl-add-btn" title="Add clips">➕</div>
+          <div class="tl-video-row" id="tl-video-row">
+            <div class="tl-add" id="tl-add-btn" title="Add clips">➕</div>
+          </div>
+          <div class="tl-audio-row" id="tl-audio-row">
+            <div class="tl-audio-empty-hint" id="tl-audio-empty-hint">🎵 Left panel se Background Audio add karein — yahan track dikhegi</div>
+          </div>
         </div>
       </div>
       <p style="font-size:0.7rem;color:var(--muted);margin-top:6px">✂️ Timeline par click karke playhead (red line) ko kahin bhi le jaayein, phir <b>Split</b> dabakar exact usi jagah clip cut ho jaayegi.</p>
@@ -497,6 +527,13 @@ const ST = {
 };
 let clips = [];       // {id, file, start, end, duration, _hasAudio, thumb}
 let clipSeq = 0, textSeq = 0;
+// Background audio track: a single, independently-positioned audio clip
+// that plays alongside the video (separate from each clip's own audio).
+// { file, name, duration, trimStart, trimEnd, offset (position on the
+//   global timeline, seconds), volume, buffer (decoded AudioBuffer,
+//   used for waveform + live preview), peaks (downsampled min/max pairs
+//   for drawing), _liveSourceNode (currently-playing AudioBufferSourceNode) }
+let audioTrack = null;
 let activeClipIndex = 0;
 let isPlaying = false;
 
@@ -920,6 +957,8 @@ document.querySelectorAll('.side-btn').forEach(btn=>{
 ========================================================= */
 const mainFileInput = document.getElementById('main-file');
 const tlContent = document.getElementById('tl-content');
+const tlVideoRow = document.getElementById('tl-video-row');
+const tlAudioRow = document.getElementById('tl-audio-row');
 const tlRuler = document.getElementById('tl-ruler');
 const tlScroll = document.getElementById('tl-scroll');
 const tlPlayhead = document.getElementById('tl-playhead');
@@ -982,7 +1021,7 @@ function totalTimelineDuration(){
 }
 
 function renderTimeline(){
-  tlContent.querySelectorAll('.tl-clip').forEach(el=>el.remove());
+  tlVideoRow.querySelectorAll('.tl-clip').forEach(el=>el.remove());
   const emptyMsg = document.getElementById('clip-empty-msg');
   emptyMsg.style.display = clips.length ? 'none' : 'block';
 
@@ -1023,7 +1062,7 @@ function renderTimeline(){
     el.addEventListener('dragover', ev=>ev.preventDefault());
     el.addEventListener('drop', ev=>{
       ev.preventDefault();
-      const draggingEl = tlContent.querySelector('.dragging');
+      const draggingEl = tlVideoRow.querySelector('.dragging');
       if (!draggingEl || draggingEl===el) return;
       const fromIdx = clips.findIndex(c=>c.id===draggingEl.dataset.id);
       const toIdx = clips.findIndex(c=>c.id===el.dataset.id);
@@ -1036,15 +1075,16 @@ function renderTimeline(){
     bindTrimHandle(el, el.querySelector('.tl-trim.left'), clip, 'start');
     bindTrimHandle(el, el.querySelector('.tl-trim.right'), clip, 'end');
 
-    tlContent.appendChild(el);
+    tlVideoRow.appendChild(el);
   });
 
-  const totalWidth = Math.max(tlScroll.clientWidth, layout.reduce((s,L)=>s+L.widthPx,0) + 70);
+  const totalWidth = Math.max(tlScroll.clientWidth, layout.reduce((s,L)=>s+L.widthPx,0) + 70, audioTrack ? (audioTrack.offset + (audioTrack.trimEnd-audioTrack.trimStart))*tlZoomPxPerSec + 70 : 0);
   tlContent.style.width = totalWidth+'px';
   tlRuler.style.width = totalWidth+'px';
   tlAddBtn.style.left = (layout.reduce((s,L)=>s+L.widthPx,0) + 6)+'px';
 
   renderRuler(totalWidth);
+  renderAudioTrackBlock();
   updatePlayhead();
 }
 
@@ -1099,6 +1139,239 @@ function bindTrimHandle(blockEl, handleEl, clip, which){
   });
 }
 
+/* =========================================================
+   BACKGROUND AUDIO TRACK
+========================================================= */
+const audioTrackFileInput = document.getElementById('audio-track-file');
+document.getElementById('add-audio-track-btn').addEventListener('click', ()=>audioTrackFileInput.click());
+audioTrackFileInput.addEventListener('change', e=>{
+  const file = e.target.files[0];
+  audioTrackFileInput.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('audio/') && !/\.(mp3|wav|m4a|aac|ogg|flac|opus)$/i.test(file.name)) {
+    showAlert('❌ Koi valid audio file nahi hai!', 'error');
+    return;
+  }
+  loadAudioTrackFile(file);
+});
+
+async function loadAudioTrackFile(file){
+  const track = { file, name: file.name, duration: 0, trimStart: 0, trimEnd: 0, offset: 0, volume: 1, buffer: null, peaks: null, _liveSourceNode: null };
+  audioTrack = track;
+  showAlert('🎵 Audio track decode ho raha hai...', 'success');
+  try {
+    const arrBuf = await file.arrayBuffer();
+    // A short-lived AudioContext just for decoding — safe to use even
+    // before the main live-preview graph exists.
+    const decodeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await decodeCtx.decodeAudioData(arrBuf.slice(0));
+    track.buffer = audioBuffer;
+    track.duration = audioBuffer.duration;
+    track.trimEnd = audioBuffer.duration;
+    track.peaks = computeWaveformPeaks(audioBuffer, 800);
+    try { decodeCtx.close(); } catch(e){}
+  } catch(err){
+    console.error('Audio decode error:', err);
+    showAlert('❌ Audio file decode nahi ho payi: ' + (err.message||'unknown'), 'error');
+    audioTrack = null;
+    return;
+  }
+
+  document.getElementById('audio-track-panel').style.display = 'block';
+  document.getElementById('audio-track-name').textContent = track.name;
+  renderTimeline();
+  showAlert('✅ Audio track add ho gayi — timeline mein drag/trim karein', 'success');
+}
+
+function computeWaveformPeaks(audioBuffer, numPoints){
+  const data = audioBuffer.getChannelData(0);
+  const blockSize = Math.max(1, Math.floor(data.length / numPoints));
+  const peaks = [];
+  for (let i=0; i<numPoints; i++){
+    let min=1, max=-1;
+    const start = i*blockSize;
+    const end = Math.min(data.length, start+blockSize);
+    for (let j=start; j<end; j++){
+      const v = data[j];
+      if (v<min) min=v;
+      if (v>max) max=v;
+    }
+    peaks.push([min===1?0:min, max===-1?0:max]);
+  }
+  return peaks;
+}
+
+function drawWaveform(canvas, peaks){
+  const w = canvas.width, h = canvas.height;
+  const ctx2d = canvas.getContext('2d');
+  ctx2d.clearRect(0,0,w,h);
+  ctx2d.fillStyle = '#4ade80';
+  const mid = h/2;
+  const step = w/peaks.length;
+  peaks.forEach((p,i)=>{
+    const [min,max] = p;
+    const y1 = mid + min*mid*0.9;
+    const y2 = mid + max*mid*0.9;
+    ctx2d.fillRect(i*step, Math.min(y1,y2), Math.max(1,step-0.5), Math.max(1,Math.abs(y2-y1)));
+  });
+}
+
+function renderAudioTrackBlock(){
+  tlAudioRow.querySelectorAll('.tl-audio-block').forEach(el=>el.remove());
+  const emptyHint = document.getElementById('tl-audio-empty-hint');
+  if (!audioTrack){ emptyHint.style.display = 'block'; return; }
+  emptyHint.style.display = 'none';
+
+  const trimmedDur = Math.max(0.1, audioTrack.trimEnd - audioTrack.trimStart);
+  const widthPx = Math.max(40, trimmedDur*tlZoomPxPerSec);
+  const offsetPx = audioTrack.offset*tlZoomPxPerSec;
+
+  const el = document.createElement('div');
+  el.className = 'tl-audio-block';
+  el.style.left = offsetPx+'px';
+  el.style.width = widthPx+'px';
+  el.innerHTML = `
+    <canvas width="${Math.round(widthPx)}" height="44"></canvas>
+    <div class="tl-audio-label">🎵 ${audioTrack.name}</div>
+    <div class="tl-audio-rm">✕</div>
+    <div class="tl-trim left"></div>
+    <div class="tl-trim right"></div>
+  `;
+
+  if (audioTrack.peaks){
+    // Only draw the slice of peaks currently within [trimStart, trimEnd]
+    const totalPeaks = audioTrack.peaks.length;
+    const peaksPerSec = totalPeaks / audioTrack.duration;
+    const startIdx = Math.max(0, Math.floor(audioTrack.trimStart*peaksPerSec));
+    const endIdx = Math.min(totalPeaks, Math.ceil(audioTrack.trimEnd*peaksPerSec));
+    const slice = audioTrack.peaks.slice(startIdx, endIdx);
+    drawWaveform(el.querySelector('canvas'), slice.length ? slice : [[0,0]]);
+  }
+
+  el.querySelector('.tl-audio-rm').addEventListener('click', ev=>{
+    ev.stopPropagation();
+    stopLiveAudioTrackPlayback();
+    audioTrack = null;
+    document.getElementById('audio-track-panel').style.display = 'none';
+    renderTimeline();
+  });
+
+  el.addEventListener('pointerdown', ev=>{
+    if (ev.target.classList.contains('tl-trim') || ev.target.classList.contains('tl-audio-rm')) return;
+    const rect = tlContent.getBoundingClientRect();
+    const startX = ev.clientX;
+    const origOffset = audioTrack.offset;
+    function onMove(e2){
+      const deltaSec = (e2.clientX-startX)/tlZoomPxPerSec;
+      audioTrack.offset = Math.max(0, origOffset + deltaSec);
+      el.style.left = (audioTrack.offset*tlZoomPxPerSec)+'px';
+    }
+    function onUp(){
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      renderTimeline();
+      resyncLiveAudioTrackIfPlaying();
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+
+  bindAudioTrimHandle(el, el.querySelector('.tl-trim.left'), 'start');
+  bindAudioTrimHandle(el, el.querySelector('.tl-trim.right'), 'end');
+
+  tlAudioRow.appendChild(el);
+}
+
+function bindAudioTrimHandle(blockEl, handleEl, which){
+  handleEl.addEventListener('pointerdown', e=>{
+    e.preventDefault(); e.stopPropagation();
+    const startX = e.clientX;
+    const origTrimStart = audioTrack.trimStart;
+    const origTrimEnd = audioTrack.trimEnd;
+    const origOffset = audioTrack.offset;
+    function onMove(ev){
+      const deltaSec = (ev.clientX-startX)/tlZoomPxPerSec;
+      if (which==='start'){
+        // Trimming the left edge shortens from the start AND shifts the
+        // block's timeline position forward by the same amount, so the
+        // content's END stays anchored (standard "trim in-point" behavior).
+        let ns = Math.min(Math.max(origTrimStart+deltaSec, 0), origTrimEnd-0.2);
+        audioTrack.trimStart = ns;
+        audioTrack.offset = Math.max(0, origOffset + (ns-origTrimStart));
+      } else {
+        let ne = Math.min(Math.max(origTrimEnd+deltaSec, origTrimStart+0.2), audioTrack.duration);
+        audioTrack.trimEnd = ne;
+      }
+      renderAudioTrackBlock();
+    }
+    function onUp(){
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      renderTimeline();
+      resyncLiveAudioTrackIfPlaying();
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+}
+
+document.getElementById('audio-track-volume').addEventListener('input', e=>{
+  if (!audioTrack) return;
+  audioTrack.volume = parseInt(e.target.value,10)/100;
+  document.getElementById('audio-track-vol-val').textContent = e.target.value;
+  if (audioTrack._liveGainNode) audioTrack._liveGainNode.gain.value = audioTrack.volume;
+});
+document.getElementById('remove-audio-track-btn').addEventListener('click', ()=>{
+  stopLiveAudioTrackPlayback();
+  audioTrack = null;
+  document.getElementById('audio-track-panel').style.display = 'none';
+  renderTimeline();
+});
+
+// ---- Live preview scheduling for the background audio track ----
+// A MediaElementSourceNode (used for the video's own audio) can't play
+// a second independent file, so the added track uses its own
+// AudioBufferSourceNode, scheduled to start/stop in sync with the
+// video's play/pause/seek — good enough for preview; the export uses
+// frame-accurate ffmpeg filters (adelay/atrim) for the real result.
+function stopLiveAudioTrackPlayback(){
+  if (audioTrack && audioTrack._liveSourceNode){
+    try { audioTrack._liveSourceNode.stop(); } catch(e){}
+    audioTrack._liveSourceNode = null;
+  }
+}
+function startLiveAudioTrackPlayback(currentGlobalTime){
+  if (!audioTrack || !audioTrack.buffer || !audioCtx) return;
+  stopLiveAudioTrackPlayback();
+  const trimmedDur = audioTrack.trimEnd - audioTrack.trimStart;
+  if (trimmedDur <= 0) return;
+  const trackEndGlobal = audioTrack.offset + trimmedDur;
+  if (currentGlobalTime >= trackEndGlobal) return; // playhead already past this track
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = audioTrack.buffer;
+  if (!audioTrack._liveGainNode){
+    audioTrack._liveGainNode = audioCtx.createGain();
+    audioTrack._liveGainNode.connect(audioCtx.destination);
+  }
+  audioTrack._liveGainNode.gain.value = audioTrack.volume;
+  source.connect(audioTrack._liveGainNode);
+
+  if (currentGlobalTime < audioTrack.offset){
+    // Track hasn't started yet — schedule it for the future.
+    const delaySec = audioTrack.offset - currentGlobalTime;
+    source.start(audioCtx.currentTime + delaySec, audioTrack.trimStart);
+  } else {
+    // We're already inside the track's time range — start now, partway in.
+    const into = currentGlobalTime - audioTrack.offset;
+    source.start(audioCtx.currentTime, audioTrack.trimStart + into);
+  }
+  audioTrack._liveSourceNode = source;
+}
+function resyncLiveAudioTrackIfPlaying(){
+  if (isPlaying && audioCtx) startLiveAudioTrackPlayback(getCurrentGlobalTime());
+}
+
 function loadClipIntoPreview(idx, atTime, onReady){
   if (typeof atTime === 'function'){ onReady = atTime; atTime = undefined; }
   const clip = clips[idx];
@@ -1118,14 +1391,15 @@ function loadClipIntoPreview(idx, atTime, onReady){
 }
 
 // ---- Global playhead: position + seeking ----
-function updatePlayhead(){
+function getCurrentGlobalTime(){
   const layout = getClipLayout();
   const L = layout[activeClipIndex];
-  let globalTime = 0, curLocal = 0;
-  if (L){
-    curLocal = Math.max(0, Math.min(L.trimmedDur, (previewVideo.currentTime||0) - L.start));
-    globalTime = L.offsetPx/tlZoomPxPerSec + curLocal;
-  }
+  if (!L) return 0;
+  const curLocal = Math.max(0, Math.min(L.trimmedDur, (previewVideo.currentTime||0) - L.start));
+  return L.offsetPx/tlZoomPxPerSec + curLocal;
+}
+function updatePlayhead(){
+  const globalTime = getCurrentGlobalTime();
   tlPlayhead.style.left = (globalTime*tlZoomPxPerSec)+'px';
   document.getElementById('tl-current').textContent = formatTime(globalTime);
   document.getElementById('tl-total').textContent = formatTime(totalTimelineDuration());
@@ -1146,11 +1420,15 @@ function seekToGlobalTime(globalTime){
         // Avoids reloading the whole video on every pixel of a scrub drag.
         try { previewVideo.currentTime = localTime; } catch(e){}
         updatePlayhead();
+        resyncLiveAudioTrackIfPlaying();
       } else {
         const wasPlaying = isPlaying;
         activeClipIndex = i;
         renderTimeline();
-        loadClipIntoPreview(i, localTime, ()=>{ if (wasPlaying) previewVideo.play().catch(()=>{}); });
+        loadClipIntoPreview(i, localTime, ()=>{
+          if (wasPlaying) previewVideo.play().catch(()=>{});
+          resyncLiveAudioTrackIfPlaying();
+        });
       }
       return;
     }
@@ -1245,10 +1523,15 @@ document.getElementById('tl-zoom-fit').addEventListener('click', ()=>{
 document.getElementById('play-btn').addEventListener('click', ()=>{
   if (!clips.length) { showAlert('❌ Pehle clips add karein!', 'error'); return; }
   ensureLiveAudioGraph(); // must run inside a user-gesture handler (browser autoplay policy)
-  if (isPlaying){ previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️'; return; }
+  if (isPlaying){
+    previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️';
+    stopLiveAudioTrackPlayback();
+    return;
+  }
   isPlaying = true; document.getElementById('play-btn').textContent='⏸️';
   loadClipIntoPreview(activeClipIndex, ()=>{
     if (isPlaying) previewVideo.play().catch(err=>{ console.warn('play() failed', err); showAlert('⚠️ Video play nahi ho paya — dobara try karein.', 'warn'); });
+    startLiveAudioTrackPlayback(getCurrentGlobalTime());
   });
 });
 previewVideo.addEventListener('timeupdate', ()=>{
@@ -1263,6 +1546,7 @@ previewVideo.addEventListener('timeupdate', ()=>{
       loadClipIntoPreview(activeClipIndex, ()=>{ if (isPlaying) previewVideo.play().catch(()=>{}); });
     } else {
       previewVideo.pause(); isPlaying=false; document.getElementById('play-btn').textContent='▶️';
+      stopLiveAudioTrackPlayback();
     }
   }
 });
@@ -1555,6 +1839,16 @@ function sanitizeExportState(){
   } else {
     ST.fx.eq = ST.fx.eq.map(v => Number.isFinite(v) ? Math.max(-12, Math.min(12, v)) : 0);
   }
+  if (audioTrack){
+    if (!Number.isFinite(audioTrack.offset) || audioTrack.offset < 0) audioTrack.offset = 0;
+    if (!Number.isFinite(audioTrack.trimStart) || audioTrack.trimStart < 0) audioTrack.trimStart = 0;
+    if (!Number.isFinite(audioTrack.trimEnd) || audioTrack.trimEnd <= audioTrack.trimStart) {
+      audioTrack.trimEnd = Math.max(audioTrack.trimStart + 0.1, audioTrack.duration || audioTrack.trimStart + 0.1);
+    }
+    audioTrack.trimEnd = Math.min(audioTrack.trimEnd, audioTrack.duration || audioTrack.trimEnd);
+    if (!Number.isFinite(audioTrack.volume) || audioTrack.volume < 0) audioTrack.volume = 1;
+    audioTrack.volume = Math.min(2, audioTrack.volume);
+  }
 }
 
 const RES_MAP = { '1080p':[1920,1080], '720p':[1280,720], '480p':[854,480] };
@@ -1634,6 +1928,7 @@ async function performExport(){
   ffmpeg.on('progress', onProgress);
 
   const inputNames = [];
+  let audioTrackInputName = null;
   try {
     pmsg.textContent = 'Clips load ho rahe hain...';
     for (let i=0;i<clips.length;i++){
@@ -1641,6 +1936,12 @@ async function performExport(){
       const inName = `in${i}.${(c.file.name.split('.').pop()||'mp4')}`;
       await ffmpeg.writeFile(inName, await fetchFile(c.file));
       inputNames.push(inName);
+    }
+
+    const hasAudioTrack = !!(audioTrack && audioTrack.buffer && (audioTrack.trimEnd - audioTrack.trimStart) > 0.05);
+    if (hasAudioTrack){
+      audioTrackInputName = `track.${(audioTrack.file.name.split('.').pop()||'mp3')}`;
+      await ffmpeg.writeFile(audioTrackInputName, await fetchFile(audioTrack.file));
     }
 
     const keepAudio = ST.fx.includeAudio;
@@ -1666,6 +1967,8 @@ async function performExport(){
 
     const args = [];
     inputNames.forEach(n=>args.push('-i', n));
+    const audioTrackInputIdx = inputNames.length; // index this input will get, if present
+    if (audioTrackInputName) args.push('-i', audioTrackInputName);
 
     let filter = '';
     const vLabels = [], aLabels = [];
@@ -1788,6 +2091,28 @@ async function performExport(){
       }
     }
 
+    // Background audio track: trim to its selected in/out points, delay it
+    // so it lands at the right position on the timeline, apply its own
+    // volume, then mix with the original video audio (if kept) or use it
+    // standalone (if original audio was turned off).
+    let trackLabel = null;
+    if (hasAudioTrack){
+      const trimS = audioTrack.trimStart, trimE = audioTrack.trimEnd;
+      const delayMs = Math.max(0, Math.round(audioTrack.offset * 1000));
+      filter += `[${audioTrackInputIdx}:a]atrim=start=${trimS.toFixed(3)}:end=${trimE.toFixed(3)},asetpts=PTS-STARTPTS,adelay=${delayMs}:all=1,volume=${audioTrack.volume.toFixed(2)}[atrack];`;
+      trackLabel = 'atrack';
+    }
+
+    let finalAudioLabel = null;
+    if (audioLabel && trackLabel){
+      filter += `[${audioLabel}][${trackLabel}]amix=inputs=2:duration=first:dropout_transition=2[amixed];`;
+      finalAudioLabel = 'amixed';
+    } else if (audioLabel){
+      finalAudioLabel = audioLabel;
+    } else if (trackLabel){
+      finalAudioLabel = trackLabel;
+    }
+
     // ROOT CAUSE FIX: ffmpeg.wasm's bundled engine (ffmpeg 5.1.4) is
     // stricter than modern desktop ffmpeg about a trailing semicolon at
     // the end of -filter_complex. Every chain we build above ends with
@@ -1807,7 +2132,7 @@ async function performExport(){
 
     // filter string is now fully built (video + text + audio steps) — push once.
     args.push('-filter_complex', filter, '-map', `[${videoLabel}]`);
-    if (keepAudio) args.push('-map', `[${audioLabel}]`);
+    if (finalAudioLabel) args.push('-map', `[${finalAudioLabel}]`);
 
     // fetch reliable universal font for drawtext (only if text layers exist)
     if (ST.texts.length){
@@ -1830,7 +2155,7 @@ async function performExport(){
       const presetMap = { turbo: 'ultrafast', fast: 'veryfast', quality: 'medium' };
       args.push('-preset', presetMap[speedMode] || 'veryfast', '-pix_fmt', 'yuv420p');
     }
-    if (keepAudio) args.push('-c:a', fmt.acodec, '-b:a','128k'); else args.push('-an');
+    if (finalAudioLabel) args.push('-c:a', fmt.acodec, '-b:a','128k'); else args.push('-an');
     if (outputFormat==='mp4') args.push('-movflags','+faststart');
     args.push('-t', totalDur.toFixed(2));
 
@@ -1854,6 +2179,7 @@ async function performExport(){
     }
 
     for (const n of inputNames){ try{ await ffmpeg.deleteFile(n); }catch(e){} }
+    if (audioTrackInputName){ try{ await ffmpeg.deleteFile(audioTrackInputName); }catch(e){} }
     try{ await ffmpeg.deleteFile(outputName); }catch(e){}
     ffmpeg.off('progress', onProgress);
     ffmpeg.off('log', globalLogHandler);
