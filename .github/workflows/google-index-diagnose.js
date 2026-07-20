@@ -117,33 +117,19 @@ function readJobUrlsSample() {
   // (sc-domain:example.com, DNS-verified) and a "URL-prefix" property
   // (https://www.example.com/) return "you do not own this site" for
   // urlInspection if you send the wrong one, even with Owner permission.
-  const SITE_URL_CANDIDATES = [
-    'sc-domain:topsarkarijobs.com',
-    `sc-domain:${HOST}`,
-    `${SITE}/`,
-    'https://topsarkarijobs.com/',
-    'http://www.topsarkarijobs.com/',
-    'http://topsarkarijobs.com/',
-  ];
-
-  console.log('🔎 Testing which Search Console property format is verified...\n');
-  for (const siteUrl of SITE_URL_CANDIDATES) {
-    const r = await inspect(token, `${SITE}/`, siteUrl);
-    console.log('════════════════════════════════════════════════');
-    console.log(JSON.stringify(r, null, 2));
-  }
-
   const { oldest, newest } = readJobUrlsSample();
   const urls = [
     `${SITE}/`,
     `${SITE}/section/latest-jobs/`,
+    `${SITE}/state/haryana/`,
+    `${SITE}/qualification/10th-pass/`,
     ...newest,
     ...oldest,
-  ].filter(Boolean).slice(0, 12);
+  ].filter(Boolean).slice(0, 16);
 
   console.log(`\n🔎 Inspecting ${urls.length} URLs (using sc-domain: property)...\n`);
   for (const url of urls) {
-    const r = await inspect(token, url, `sc-domain:${HOST}`);
+    const r = await inspect(token, url, 'sc-domain:topsarkarijobs.com');
     console.log('════════════════════════════════════════════════');
     console.log(JSON.stringify(r, null, 2));
     await new Promise(r2 => setTimeout(r2, 300));
