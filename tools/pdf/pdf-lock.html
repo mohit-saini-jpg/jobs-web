@@ -4,11 +4,11 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
   <title>Lock PDF – Password Protect PDF Free Online | Top Sarkari Jobs</title>
-  <meta name="description" content="Add password protection to your PDF online for free. Set user password and permissions with 256-bit AES encryption. No signup needed.">
+  <meta name="description" content="Add a password to your PDF online for free. Set an open password, control printing/copying/editing permissions, no signup, 100% browser-based.">
   <meta name="keywords" content="PDF Lock (Password Protect), free pdf lock (password protect), online pdf lock (password protect) tool, pdf lock (password protect) india">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html">
-  <meta property="og:title" content="Lock PDF – Password Protect PDF Free Online | Top Sarkari Jobs"><meta property="og:description" content="Add password protection to your PDF online for free. Set user password and permissions with 256-bit AES encryption. No signup needed."><meta property="og:type" content="website">
+  <meta property="og:title" content="Lock PDF – Password Protect PDF Free Online | Top Sarkari Jobs"><meta property="og:description" content="Add a password to your PDF online for free. Set an open password and control printing/copying/editing permissions. No signup needed."><meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -104,6 +104,20 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .card-title-sub { font-size: 0.84rem; font-weight: 800; margin: 20px 0 4px; padding-top: 16px; border-top: 2px dashed var(--line); }
+    .pwd-field-wrap { position: relative; }
+    .pwd-field-wrap input { padding-right: 38px; }
+    .pwd-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: var(--muted); padding: 4px; }
+    .pwd-strength { height: 5px; border-radius: 3px; background: var(--line); margin-top: 7px; overflow: hidden; }
+    .pwd-strength-bar { height: 100%; width: 0%; border-radius: 3px; transition: width .2s, background .2s; background: #EF4444; }
+    .pwd-strength-lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .pwd-mismatch { color: #EF4444; font-size: 0.72rem; margin-top: 4px; display: none; }
+    .pwd-mismatch.show { display: block; }
+    .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+    .perm-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 10px 12px; background: var(--mist); border-radius: 8px; cursor: pointer; }
+    .perm-item input { width: auto; accent-color: var(--brand); }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; }
+    .checkbox-row input { width: auto; accent-color: var(--brand); }
     @media(max-width:640px){
       .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
@@ -152,7 +166,7 @@
   <meta property="og:image:height" content="512"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="Lock PDF – Password Protect PDF Free Online | Top Sarkari Jobs"/>
-  <meta name="twitter:description" content="Add password protection to your PDF online for free. Set user password and permissions with 256-bit AES encryption. No signup needed."/>
+  <meta name="twitter:description" content="Add a password to your PDF online for free. Set an open password and control printing/copying/editing permissions. No signup needed."/>
   <link rel="alternate" hreflang="en" href="https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html"/>
   <link rel="alternate" hreflang="en-IN" href="https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html"/>
   <link rel="alternate" hreflang="x-default" href="https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html"/>
@@ -164,7 +178,7 @@
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Any",
     "url": "https://www.topsarkarijobs.com/tools/pdf/pdf-lock.html",
-    "description": "PDF ko password se protect karein. User password, permissions control — 256-bit AES encryption free mein.",
+    "description": "PDF ko password se protect karein — open password set karein, printing/copying/editing permissions control karein, bilkul free.",
     "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"},
     "provider": {"@type":"Organization","name":"Top Sarkari Jobs","url":"https://www.topsarkarijobs.com"}
   }
@@ -192,7 +206,7 @@
 <section class="tool-hero">
   <div class="hero-icon" style="background:linear-gradient(135deg,#f5576c,#f093fb)">🔐</div>
   <h1>PDF Lock (Password Protect)</h1><p>Confidential PDF documents ko password se lock karein. Print, copy, edit permissions customize karein.</p>
-  <div class="badges"><span class="badge">Free</span> <span class="badge">256-bit AES</span> <span class="badge">Permissions Control</span> <span class="badge">Secure</span></div>
+  <div class="badges"><span class="badge">Free</span> <span class="badge">Password Protect</span> <span class="badge">Permissions Control</span> <span class="badge">100% Browser</span></div>
 </section>
 
 <div class="main-container">
@@ -208,10 +222,54 @@
   </div>
 
   <div class="card">
-    <h3>⚙️ Settings</h3>
-    <div class="form-grid"><div class="form-group"><label>Open Password</label><input type="password" placeholder="Document kholne ke liye"></div><div class="form-group"><label>Owner Password</label><input type="password" placeholder="Permissions change ke liye"></div><div class="form-group"><label>Encryption</label><select><option>256-bit AES (Strongest)</option><option>128-bit AES</option></select></div><div class="form-group"><label>Allow Printing</label><select><option>Yes</option><option>No</option><option>Low Quality Only</option></select></div></div>
+    <h3>🔐 Password Set Karein</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Open Password</label>
+        <div class="pwd-field-wrap">
+          <input type="password" id="userPwd" placeholder="Document kholne ke liye">
+          <button type="button" class="pwd-toggle" data-target="userPwd">👁️</button>
+        </div>
+        <div class="pwd-strength"><div class="pwd-strength-bar" id="pwdStrengthBar"></div></div>
+        <div class="pwd-strength-lbl" id="pwdStrengthLbl">&nbsp;</div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="pwd-field-wrap">
+          <input type="password" id="userPwdConfirm" placeholder="Dobara type karein">
+          <button type="button" class="pwd-toggle" data-target="userPwdConfirm">👁️</button>
+        </div>
+        <div class="pwd-mismatch" id="pwdMismatch">❌ Passwords match nahi kar rahe</div>
+      </div>
+      <div class="form-group">
+        <label>Owner Password (Optional)</label>
+        <div class="pwd-field-wrap">
+          <input type="password" id="ownerPwd" placeholder="Khali chhodein to Open Password hi chalega">
+          <button type="button" class="pwd-toggle" data-target="ownerPwd">👁️</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Quality</label>
+        <select id="quality">
+          <option value="1.5">Standard (Chhota Size)</option>
+          <option value="2" selected>High (Recommended)</option>
+          <option value="3">Maximum (Sabse Sharp)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-title-sub">📋 Permissions (jo allow karna hai unhe checked rehne dein)</div>
+    <div class="perm-grid">
+      <label class="perm-item"><input type="checkbox" id="permPrint" checked> 🖨️ Printing Allow Karein</label>
+      <label class="perm-item"><input type="checkbox" id="permCopy" checked> 📋 Text Copy Allow Karein</label>
+      <label class="perm-item"><input type="checkbox" id="permModify"> ✏️ Editing Allow Karein</label>
+      <label class="perm-item"><input type="checkbox" id="permAnnotate" checked> 💬 Comments/Annotations Allow Karein</label>
+    </div>
+
+    <div class="warn-box">⚠️ <b>Zaroor padhein:</b> Ye tool document ko har page ka high-quality image bana kar lock karta hai, taaki password protection real PDF readers mein kaam kare — is se text ab select/search nahi hoga (dikhega bilkul original jaisa hi, sirf ab ek "picture" ki tarah). Password protection <b>standard-strength</b> hai (basic PDF security handler — casual/unauthorized access rokta hai) — bank-grade AES encryption <b>nahi</b> hai, isliye top-secret documents ke liye alag se advice lein. Password bhool gaye to file recover NAHI ho sakti — kahin safe likh kar rakhein.</div>
+
     <div class="action-row">
-      <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
+      <button class="btn-primary" id="process-btn"><span>🔐</span> PDF Lock Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
     </div>
     <div class="progress-wrap" id="progress-wrap">
@@ -227,8 +285,8 @@
   </div>
 
   <div class="card"><h3>📖 Kaise Use Karein</h3><div class="how-steps"><div class="step"><div class="step-n">1</div><h4>PDF Upload</h4><p>PDF choose karein</p></div><div class="step"><div class="step-n">2</div><h4>Password</h4><p>User aur owner password set karein</p></div><div class="step"><div class="step-n">3</div><h4>Permissions</h4><p>Print/copy set karein</p></div><div class="step"><div class="step-n">4</div><h4>Download</h4><p>Protected PDF milegi</p></div></div></div>
-  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">🔐</span><div><h4>Strong Encryption</h4><p>256-bit AES</p></div></div><div class="feat"><span class="feat-icon">🔑</span><div><h4>Two Passwords</h4><p>User + Owner</p></div></div><div class="feat"><span class="feat-icon">📋</span><div><h4>Permissions</h4><p>Print, copy control</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>Local</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div><div class="feat"><span class="feat-icon">⚡</span><div><h4>Instant</h4><p>Quick</p></div></div></div></div>
-  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">User vs Owner password?<span class="fa">+</span></button><div class="faq-a">User: open karne ke liye. Owner: permissions change ke liye.</div></div><div class="faq-item"><button class="faq-q">Password bhool gaye?<span class="fa">+</span></button><div class="faq-a">Recovery impossible — note karke rakhein.</div></div><div class="faq-item"><button class="faq-q">256-bit AES?<span class="fa">+</span></button><div class="faq-a">Industry-standard, practically unbreakable.</div></div><div class="faq-item"><button class="faq-q">Already locked PDF?<span class="fa">+</span></button><div class="faq-a">Pehle unlock, phir dobara lock.</div></div></div>
+  <div class="card"><h3>✨ Features</h3><div class="features-grid"><div class="feat"><span class="feat-icon">🔐</span><div><h4>Real Password Lock</h4><p>Adobe/pdf reader mein password maangega</p></div></div><div class="feat"><span class="feat-icon">🔑</span><div><h4>Open + Owner Password</h4><p>Do alag passwords set kar sakte hain</p></div></div><div class="feat"><span class="feat-icon">📋</span><div><h4>Permissions</h4><p>Print, copy, edit, annotate control</p></div></div><div class="feat"><span class="feat-icon">💪</span><div><h4>Password Strength</h4><p>Live meter dikhata hai kitna strong hai</p></div></div><div class="feat"><span class="feat-icon">🔒</span><div><h4>Secure</h4><p>100% browser mein, local</p></div></div><div class="feat"><span class="feat-icon">🆓</span><div><h4>Free</h4><p>No charge</p></div></div></div></div>
+  <div class="card"><h3>❓ FAQ</h3><div class="faq-item"><button class="faq-q">User (Open) vs Owner password?<span class="fa">+</span></button><div class="faq-a">Open Password: PDF ko dekhne/kholne ke liye chahiye. Owner Password: permissions (print/copy/edit) badalne ke liye — khali chhodein to Open Password hi dono ke liye kaam karega.</div></div><div class="faq-item"><button class="faq-q">Password bhool gaye to?<span class="fa">+</span></button><div class="faq-a">Recovery possible nahi hai — password kahin surakshit likh kar rakhein, warna file hamesha ke liye band ho jaayegi.</div></div><div class="faq-item"><button class="faq-q">Ye kitni strong encryption hai?<span class="fa">+</span></button><div class="faq-a">Ye standard PDF password security use karta hai — bina password ke koi bhi normal PDF reader file nahi khol payega, jo zyadatar use-cases (forms, sharing, casual protection) ke liye kaafi hai. Ye bank-level AES-256 encryption nahi hai, isliye highly sensitive/legal documents ke liye professional software use karein.</div></div><div class="faq-item"><button class="faq-q">Lock karne ke baad text select/search hoga?<span class="fa">+</span></button><div class="faq-a">Nahi — lock karte waqt har page ek high-quality image mein convert ho jaata hai (taaki password protection real PDF readers mein kaam kare), isliye text ab select ya search nahi hoga, lekin dikhega bilkul original jaisa hi.</div></div><div class="faq-item"><button class="faq-q">Already locked PDF?<span class="fa">+</span></button><div class="faq-a">Pehle "PDF Unlock" tool se unlock karein, phir dobara naye password se lock karein.</div></div></div>
   <div class="card"><h3>🔗 Related Tools</h3><div class="related-grid"><a href="/tools/pdf/any-file-to-pdf.html" class="rel-item"><span class="ri">🗂️</span><span>Any File to PDF</span></a><a href="/tools/pdf/pdf-unlock.html" class="rel-item"><span class="ri">🗝️</span><span>PDF Unlock</span></a><a href="/tools/pdf/compress-pdf.html" class="rel-item"><span class="ri">🗜️</span><span>Compress</span></a><a href="/tools/pdf/merge-pdf.html" class="rel-item"><span class="ri">🔀</span><span>Merge</span></a><a href="/tools/pdf/split-pdf.html" class="rel-item"><span class="ri">✂️</span><span>Split</span></a><a href="/tools/pdf/pdf-to-word.html" class="rel-item"><span class="ri">📝</span><span>to Word</span></a><a href="/tools/pdf/add-watermark.html" class="rel-item"><span class="ri">💧</span><span>Watermark</span></a><a href="/tools/pdf/sign-pdf.html" class="rel-item"><span class="ri">✍️</span><span>Sign</span></a></div></div>
 
   <div class="secure-note"><p>🔒 100% Secure — Aapki files sirf aapke browser mein process hoti hain. Koi server par upload nahi hoti.</p></div>
@@ -239,11 +297,18 @@
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
 </footer>
 
+<!-- libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script>
+(function(){
+  "use strict";
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const $=id=>document.getElementById(id);
   document.querySelectorAll('.faq-q').forEach(b=>{b.addEventListener('click',()=>{b.classList.toggle('open');b.nextElementSibling.classList.toggle('open');});});
   function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
   function bindFile(inputId,previewId){
-    const inp=document.getElementById(inputId),prev=document.getElementById(previewId);
+    const inp=$(inputId),prev=$(previewId);
     if(!inp)return;
     function hf(f){if(!f)return;if(prev){prev.classList.add('show');prev.querySelector('.file-name').textContent=f.name;prev.querySelector('.file-size').textContent=formatBytes(f.size);}}
     inp.addEventListener('change',()=>hf(inp.files[0]));
@@ -251,32 +316,128 @@
     if(zone){zone.addEventListener('click',()=>inp.click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--brand)';zone.style.background='var(--brand-light)';});zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background='';});zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;hf(f);}});}
     const rm=prev&&prev.querySelector('.file-remove');if(rm)rm.addEventListener('click',e=>{e.stopPropagation();inp.value='';if(prev)prev.classList.remove('show');});
   }
-  function runProcess(){
-    const inp=document.getElementById('main-file');
-    if(!inp||!inp.files[0]){alert('Pehle file select karein!');return;}
-    const f=inp.files[0];
-    const pw=document.getElementById('progress-wrap');pw.style.display='block';
-    const bar=document.getElementById('pbar');let w=0;
-    const t=setInterval(()=>{w=Math.min(w+Math.random()*18,88);bar.style.width=w+'%';if(w>=88)clearInterval(t);},200);
-    setTimeout(()=>{
-      bar.style.width='100%';document.getElementById('pmsg').textContent='Done!';
-      const rc=document.getElementById('result-card');rc.classList.add('show');
-      const sr=document.getElementById('stat-row');
-      sr.innerHTML=`<div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(Math.round(f.size*0.65))}</div><div class="stat-lbl">Output Size</div></div><div class="stat-box"><div class="stat-val">35%</div><div class="stat-lbl">Saved</div></div>`;
-      document.getElementById('dl-btn').onclick=()=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download='processed_'+f.name;a.click();URL.revokeObjectURL(u);};
-    },1800);
-  }
-  document.addEventListener('DOMContentLoaded',()=>{
-    bindFile('main-file','file-preview');
-    const pb=document.getElementById('process-btn');if(pb)pb.addEventListener('click',runProcess);
-    const rb=document.getElementById('reset-btn');if(rb)rb.addEventListener('click',()=>{
-      document.getElementById('main-file').value='';
-      const fp=document.getElementById('file-preview');if(fp)fp.classList.remove('show');
-      document.getElementById('progress-wrap').style.display='none';
-      document.getElementById('pbar').style.width='0%';
-      const rc=document.getElementById('result-card');if(rc)rc.classList.remove('show');
+
+  // ── Password show/hide toggles ──
+  document.querySelectorAll('.pwd-toggle').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const inp=$(btn.getAttribute('data-target'));
+      const show=inp.type==='password';
+      inp.type=show?'text':'password';
+      btn.textContent=show?'🙈':'👁️';
     });
   });
+
+  // ── Real (not decorative) password strength meter — length + character
+  // variety, same idea every modern signup form uses. ──
+  function pwdStrength(pw){
+    if(!pw) return {score:0,label:''};
+    let score=0;
+    if(pw.length>=6)score++;
+    if(pw.length>=10)score++;
+    if(/[a-z]/.test(pw)&&/[A-Z]/.test(pw))score++;
+    if(/\d/.test(pw))score++;
+    if(/[^A-Za-z0-9]/.test(pw))score++;
+    const labels=['Bahut Kamzor','Kamzor','Theek-Thaak','Achha','Strong','Bahut Strong'];
+    const colors=['#EF4444','#EF4444','#F59E0B','#F59E0B','#10B981','#10B981'];
+    return {score, label:labels[score], color:colors[score], pct:Math.min(100,score/5*100)};
+  }
+  function updateStrengthUI(){
+    const pw=$('userPwd').value;
+    const s=pwdStrength(pw);
+    $('pwdStrengthBar').style.width=s.pct+'%';
+    $('pwdStrengthBar').style.background=s.color||'var(--line)';
+    $('pwdStrengthLbl').textContent=pw?('Strength: '+s.label):' ';
+  }
+  function updateMismatchUI(){
+    const a=$('userPwd').value, b=$('userPwdConfirm').value;
+    $('pwdMismatch').classList.toggle('show', b.length>0 && a!==b);
+  }
+  $('userPwd').addEventListener('input',()=>{updateStrengthUI();updateMismatchUI();});
+  $('userPwdConfirm').addEventListener('input',updateMismatchUI);
+
+  function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector('script[src="'+src+'"]')){res();return;}const s=document.createElement('script');s.src=src;s.onload=()=>res();s.onerror=()=>rej(new Error('Library load fail'));document.head.appendChild(s);});}
+
+  async function runProcess(){
+    const inp=$('main-file');
+    if(!inp||!inp.files[0]){alert('Pehle PDF file select karein!');return;}
+    const f=inp.files[0];
+    const userPwd=$('userPwd').value, confirmPwd=$('userPwdConfirm').value, ownerPwdRaw=$('ownerPwd').value;
+    if(!userPwd){ alert('Open Password daalein — bina password ke lock nahi ho sakta.'); return; }
+    if(userPwd.length<4){ alert('Password kam se kam 4 characters ka hona chahiye.'); return; }
+    if(userPwd!==confirmPwd){ alert('Password aur Confirm Password match nahi kar rahe.'); return; }
+    const ownerPwd=ownerPwdRaw||userPwd;
+
+    const perms=[];
+    if($('permPrint').checked)perms.push('print');
+    if($('permCopy').checked)perms.push('copy');
+    if($('permModify').checked)perms.push('modify');
+    if($('permAnnotate').checked)perms.push('annot-forms');
+
+    const scale=parseFloat($('quality').value)||2;
+    const pw=$('progress-wrap');pw.style.display='block';
+    const bar=$('pbar');bar.style.width='6%';$('pmsg').textContent='PDF load ho rahi hai...';
+    $('process-btn').disabled=true;
+
+    try{
+      const bytes=new Uint8Array(await f.arrayBuffer());
+      const doc=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise;
+      const n=doc.numPages;
+      await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
+      const JsPDF=window.jspdf.jsPDF;
+      let outDoc=null;
+
+      for(let i=1;i<=n;i++){
+        bar.style.width=(8+Math.round((i-1)/n*75))+'%';
+        $('pmsg').textContent='Page '+i+' / '+n+' process ho rahi hai...';
+        const page=await doc.getPage(i);
+        const vp=page.getViewport({scale});
+        const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+        await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+        const imgData=cv.toDataURL('image/jpeg',0.92);
+        const orient=vp.width>=vp.height?'l':'p';
+        if(!outDoc){
+          outDoc=new JsPDF({
+            orientation:orient, unit:'px', format:[vp.width,vp.height],
+            encryption:{userPassword:userPwd, ownerPassword:ownerPwd, userPermissions:perms}
+          });
+        }else{
+          outDoc.addPage([vp.width,vp.height],orient);
+        }
+        outDoc.addImage(imgData,'JPEG',0,0,vp.width,vp.height);
+      }
+
+      bar.style.width='95%';$('pmsg').textContent='Lock ho raha hai...';
+      const outBytes=outDoc.output('arraybuffer');
+      const blob=new Blob([outBytes],{type:'application/pdf'});
+      bar.style.width='100%';$('pmsg').textContent='Done!';
+
+      const rc=$('result-card');rc.classList.add('show');
+      $('stat-row').innerHTML=`<div class="stat-box"><div class="stat-val">${n}</div><div class="stat-lbl">Pages Locked</div></div><div class="stat-box"><div class="stat-val">${formatBytes(f.size)}</div><div class="stat-lbl">Input Size</div></div><div class="stat-box"><div class="stat-val">${formatBytes(blob.size)}</div><div class="stat-lbl">Output Size</div></div>`;
+      const outName=f.name.replace(/\.pdf$/i,'')+'_locked.pdf';
+      $('dl-btn').onclick=()=>{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=outName;a.click();setTimeout(()=>URL.revokeObjectURL(u),4000);};
+      rc.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }catch(err){
+      alert('PDF lock nahi ho payi: '+(err&&err.message?err.message:err));
+    }finally{
+      $('process-btn').disabled=false;
+      setTimeout(()=>{pw.style.display='none';bar.style.width='0%';},800);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    bindFile('main-file','file-preview');
+    const pb=$('process-btn');if(pb)pb.addEventListener('click',runProcess);
+    const rb=$('reset-btn');if(rb)rb.addEventListener('click',()=>{
+      $('main-file').value='';
+      const fp=$('file-preview');if(fp)fp.classList.remove('show');
+      $('progress-wrap').style.display='none';
+      $('pbar').style.width='0%';
+      $('userPwd').value='';$('userPwdConfirm').value='';$('ownerPwd').value='';
+      updateStrengthUI();updateMismatchUI();
+      const rc=$('result-card');if(rc)rc.classList.remove('show');
+    });
+  });
+})();
 </script>
 
 </body></html>
