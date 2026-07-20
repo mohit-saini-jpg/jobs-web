@@ -69,13 +69,13 @@ async function getAccessToken() {
   if (res.status !== 200) { console.error(`❌ token exchange failed (${res.status}): ${res.body.slice(0,300)}`); return null; }
   return JSON.parse(res.body).access_token;
 }
-async function inspect(token, url) {
-  const body = JSON.stringify({ inspectionUrl: url, siteUrl: SITE + '/' });
+async function inspect(token, url, siteUrl) {
+  const body = JSON.stringify({ inspectionUrl: url, siteUrl });
   const res = await httpsRequest({
     hostname: 'searchconsole.googleapis.com', path: '/v1/urlInspection/index:inspect', method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'Content-Length': Buffer.byteLength(body) },
   }, body);
-  if (res.status !== 200) return { url, error: `HTTP ${res.status}: ${res.body.slice(0,200)}` };
+  if (res.status !== 200) return { url, siteUrl, error: `HTTP ${res.status}: ${res.body.slice(0,200)}` };
   try {
     const r = JSON.parse(res.body)?.inspectionResult?.indexStatusResult || {};
     return {
@@ -113,6 +113,19 @@ function readJobUrlsSample() {
   const token = await getAccessToken();
   if (!token) process.exit(1);
 
+  // Try both Search Console property formats — a "Domain" property
+  // (sc-domain:example.com, DNS-verified) and a "URL-prefix" property
+  // (https://www.example.com/) return "you do not own this site" for
+  // urlInspection if you send the wrong one, even with Owner permission.
+  const SITE_URL_CANDIDATES = [`sc-domain:${HOST}`, `${SITE}/`];
+
+  console.log('🔎 Testing which Search Console property format is verified...\n');
+  for (const siteUrl of SITE_URL_CANDIDATES) {
+    const r = await inspect(token, `${SITE}/`, siteUrl);
+    console.log('════════════════════════════════════════════════');
+    console.log(JSON.stringify(r, null, 2));
+  }
+
   const { oldest, newest } = readJobUrlsSample();
   const urls = [
     `${SITE}/`,
@@ -121,9 +134,9 @@ function readJobUrlsSample() {
     ...oldest,
   ].filter(Boolean).slice(0, 12);
 
-  console.log(`🔎 Inspecting ${urls.length} URLs...\n`);
+  console.log(`\n🔎 Inspecting ${urls.length} URLs (using sc-domain: property)...\n`);
   for (const url of urls) {
-    const r = await inspect(token, url);
+    const r = await inspect(token, url, `sc-domain:${HOST}`);
     console.log('════════════════════════════════════════════════');
     console.log(JSON.stringify(r, null, 2));
     await new Promise(r2 => setTimeout(r2, 300));
