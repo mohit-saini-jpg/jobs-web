@@ -7251,3 +7251,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ tools/av-tools.html — broken breadcrumb link (was on 8 pages, fixed at source too), 2026-07-19 ══
 /tools/av-tools.html  /tools/tools-audio-video.html  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/mdu-rohtak-research-assistant-vacancy-2026-apply-now/  /jobs/mdu-rohtak-research-assistant-recruitment-2026-walkin/  301
