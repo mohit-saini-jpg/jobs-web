@@ -7266,3 +7266,12 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # ══ pdf-tools.html — broken breadcrumb link (was on all 18 tools/pdf/*.html
 #    pages, fixed at source + JSON-LD BreadcrumbList too), 2026-07-20 ══
 /tools/pdf-tools.html  /tools/tools-pdf.html  301
+
+# ══ single-format PDF converters consolidated into any-file-to-pdf.html /
+#    pdf-to-any-format.html (same features, already there), 2026-07-20 ══
+/tools/pdf/jpg-to-pdf.html    /tools/pdf/any-file-to-pdf.html    301
+/tools/pdf/word-to-pdf.html   /tools/pdf/any-file-to-pdf.html    301
+/tools/pdf/excel-to-pdf.html  /tools/pdf/any-file-to-pdf.html    301
+/tools/pdf/ppt-to-pdf.html    /tools/pdf/any-file-to-pdf.html    301
+/tools/pdf/html-to-pdf.html   /tools/pdf/any-file-to-pdf.html    301
+/tools/pdf/pdf-to-jpg.html    /tools/pdf/pdf-to-any-format.html  301
