@@ -4952,6 +4952,8 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .job-card-title{font-size:1.1rem;font-weight:800;color:#0f172a;line-height:1.4;margin-bottom:5px}
 .job-card-title a{color:inherit}.job-card-title a:hover{color:#1d4ed8;text-decoration:underline}
 .job-card-org{color:#64748b;font-size:.79rem;margin-bottom:5px;display:flex;gap:5px;align-items:center}
+.job-card-qual{color:#7c3aed;font-size:.78rem;margin-bottom:5px;display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.job-card-qual i{margin-top:2px;flex-shrink:0}
 .job-card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
 .jm-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:12px}
 .job-card-date{font-size:.76rem;font-weight:700}.job-card-date.urgent{color:#dc2626}
@@ -6124,6 +6126,9 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
         jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job.get('last_date',''))
         jmode  = safe(bd.get('application_mode','') or job.get('apply_mode','') or 'Online')
+        _qraw  = (job.get('qualification') or {})
+        jqual  = safe(_qraw.get('details','') or _qraw.get('education_qualification','') or _qraw.get('minimum_qualification',''))
+        if len(jqual) > 90: jqual = jqual[:90].rsplit(' ',1)[0] + '…'
         # Quick links — with fallbacks for non-standard key names
         ql = ''
         # apply_online: try direct key, then click_here[0] as fallback
@@ -6185,6 +6190,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
   <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
+  {f'<div class="job-card-qual"><i class="fa-solid fa-graduation-cap"></i> {e(jqual)}</div>' if jqual else ''}
   <div class="job-card-meta">
     {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} {"Posts" if _row_url.startswith("/jobs/") else list_noun}</span>' if jvac else ''}
     {f'<span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>' if _row_url.startswith("/jobs/") else ''}
@@ -6534,10 +6540,15 @@ if not SJ_SEC:
                 _bd = _j2.get('basic_details', {}) or {}
                 _title = _bd.get('job_title','') or _j2.get('title','')
                 if _title:
+                    _qual2 = (_j2.get('qualification') or {})
+                    _idt2  = (_j2.get('important_dates') or {})
                     _st_jobs.append({'name': _title,
                                      'slug': _j2.get('slug',''),
                                      'total_vacancy': _bd.get('total_vacancies',''),
-                                     '_scraped_from': _u})
+                                     '_scraped_from': _u,
+                                     'organization_name': _bd.get('organization_name',''),
+                                     'last_date': _idt2.get('last_date_to_apply','') or _idt2.get('last_date',''),
+                                     'qualification': _qual2.get('details','') or _qual2.get('education_qualification','')})
             if _st_jobs:
                 _sj_sections.append({'state': _st, 'title': _st + ' Govt Jobs',
                                      'category': 'STATE WISE JOBS - ' + _st,
@@ -7650,6 +7661,31 @@ def _district_cards_html(state_name):
         f'<div class="dwj-grid">{_cards}</div></div>'
     )
 
+# Build a full listing-card norm dict from a state_jobs item — works with
+# both the legacy shape (item['detail'] holds the full scraped record) and
+# the unified-fallback shape (organization_name/last_date/qualification are
+# flat top-level keys, see SJ_SEC fallback above). Pulls real Company Name,
+# Qualification and Last Date through to the /state/ + /state-jobs/ cards
+# instead of leaving them blank or hardcoded to the state name.
+def _norm_state_job(it, state_name):
+    _detail = it.get('detail') or {}
+    if isinstance(_detail, str):
+        try: _detail = json.loads(_detail)
+        except Exception: _detail = {}
+    _dbd = (_detail.get('basic_details') or {})
+    _org = safe(_dbd.get('organization_name','') or it.get('organization_name','')) or state_name
+    _ld  = safe((_detail.get('important_dates') or {}).get('last_date_to_apply','') or
+                (_detail.get('important_dates') or {}).get('last_date','') or
+                it.get('last_date',''))
+    _qual = safe((_detail.get('qualification') or {}).get('details','') or
+                 (_detail.get('qualification') or {}).get('education_qualification','') or
+                 it.get('qualification',''))
+    return {'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),
+                              'organization_name':_org,
+                              'total_vacancies':safe(it.get('total_vacancy',''))},
+            'important_dates':{'last_date_to_apply':_ld},
+            'qualification':{'details':_qual}}
+
 _state_landing_items = []   # (state_name, slug, job_count) for /state/ landing index
 for sec in SJ_SEC:
     state_name = safe(sec.get('state') or sec.get('title',''))
@@ -7698,8 +7734,7 @@ for sec in SJ_SEC:
     _dist_cards = _district_cards_html(state_name)
     state_listing = build_listing_page(
         f"{state_name} Government Jobs {YEAR}",
-        [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
-          'total_vacancies':safe(it.get('total_vacancy',''))}}
+        [_norm_state_job(it, state_name)
          for it in state_jobs_list if (it.get('name') or it.get('title',''))],
         canon_listing,
         [('Home','/'),('State Jobs','/state-jobs/')],
@@ -7718,8 +7753,7 @@ for sec in SJ_SEC:
         canon_statejobs = f"{BASE_URL}/state-jobs/{_sj_slug}/"
         statejobs_listing = build_listing_page(
             f"{state_name} Government Jobs {YEAR}",
-            [{'basic_details':{'job_title':safe(it.get('name') or it.get('title','')),'organization_name':state_name,
-              'total_vacancies':safe(it.get('total_vacancy',''))}}
+            [_norm_state_job(it, state_name)
              for it in state_jobs_list if (it.get('name') or it.get('title',''))],
             canon_statejobs,
             [('Home','/'),('State Jobs','/state-jobs/')],
@@ -7885,11 +7919,19 @@ for _state_name, _districts in _DIST_BY_STATE.items():
             _title = safe(_bd.get('job_title', '') or _j.get('title', '') or _j.get('name', ''))
             if not _title:
                 continue
+            _dqual = (_j.get('qualification') or {})
+            _didt  = (_j.get('important_dates') or {})
             _djobs.append({
                 'basic_details': {
                     'job_title': _title,
                     'organization_name': safe(_bd.get('organization_name', '') or _dname),
                     'total_vacancies': safe(_bd.get('total_vacancies', '') or _j.get('total_post', '')),
+                },
+                'important_dates': {
+                    'last_date_to_apply': safe(_didt.get('last_date_to_apply', '') or _didt.get('last_date', '')),
+                },
+                'qualification': {
+                    'details': safe(_dqual.get('details', '') or _dqual.get('education_qualification', '')),
                 },
                 # Use get_canonical_slug to ensure district listing cards link
                 # to the same URL as the actual detail page on disk.
@@ -8800,7 +8842,9 @@ for cat_key, q_slug in QUAL_SLUG.items():
     q_label = QUAL_LABEL.get(cat_key, cat_key.replace('_',' ').title())
     jobs_q  = FJA.get(cat_key, [])
     if not jobs_q: continue
-    norm = [{'basic_details':{'job_title':safe((j.get('basic_details',{}) or {}).get('job_title','')),'organization_name':safe((j.get('basic_details',{}) or {}).get('organization_name','')),'total_vacancies':safe((j.get('basic_details',{}) or {}).get('total_vacancies',''))}} for j in jobs_q]
+    norm = [{'basic_details':{'job_title':safe((j.get('basic_details',{}) or {}).get('job_title','')),'organization_name':safe((j.get('basic_details',{}) or {}).get('organization_name','')),'total_vacancies':safe((j.get('basic_details',{}) or {}).get('total_vacancies',''))},
+             'important_dates':{'last_date_to_apply':safe((j.get('important_dates',{}) or {}).get('last_date_to_apply','') or (j.get('important_dates',{}) or {}).get('last_date',''))},
+             'qualification':{'details':safe((j.get('qualification',{}) or {}).get('details','') or (j.get('qualification',{}) or {}).get('education_qualification',''))}} for j in jobs_q]
     write(str(ROOT/'qualification'/q_slug/'index.html'), build_listing_page(f"{q_label} Government Jobs {YEAR}", norm, f"{BASE_URL}/qualification/{q_slug}/", [('Qualification Wise Jobs','/category/study/')]))
     q_count += 1
 
