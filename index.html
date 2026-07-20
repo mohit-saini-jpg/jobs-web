@@ -101,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <!-- dailyupdates.json is fetched with an hourly cache-bust in the cards script,
        so a static preload would just cache a stale copy — intentionally removed. -->
   <!-- PERF: sections-index.json — 16KB lightweight index for instant card rendering (instead of 18MB Complete_Jobs_Full_Data.json) -->
-  <link rel="preload" href="sections-index.json?v=202607190514" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="sections-index.json?v=202607200216" as="fetch" crossorigin="anonymous"/>
   <!-- PERF: Complete_Jobs_Full_Data.json fetched once — powers all SR cards + ticker -->
   <script>
   // Complete_Jobs_Full_Data.json is the single source of truth
@@ -126,7 +126,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     else { setTimeout(loadNow, 3500); }
   });
   // PERF: sections-index.json — fetch starts immediately at page load (16KB vs 18MB)
-  window.__sectionsIndexPromise = fetch('sections-index.json?v=202607190514')
+  window.__sectionsIndexPromise = fetch('sections-index.json?v=202607200216')
     .then(function(r){ return r.ok ? r.json() : null; })
     .catch(function(){ return null; });
   // PERF: dailyupdates.json — single shared fetch. The section-cards script and the
@@ -319,7 +319,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
   <link rel="apple-touch-startup-image" media="(device-width:768px)and(device-height:1024px)and(-webkit-device-pixel-ratio:2)" href="/splash/splash-1536x2048.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/image.png"/>
   <link rel="icon" type="image/png" sizes="192x192" href="/image.png"/>
-  <script src="/tsj-menu.js?v=20260719104330" defer></script>
+  <script src="/tsj-menu.js?v=20260720074528" defer></script>
   <script src="/pwa-install.js?v=6.0" defer></script>
   <!-- ══ END PWA ════════════════════════════════════════════════════ -->
 
@@ -804,7 +804,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
         if (cached && (Date.now() - cached.ts) < CACHE_TTL) return Promise.resolve(cached.data);
       } catch(e) {}
 
-      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202607190514').then(function(r){return r.ok?r.json():null;}))
+      return (window.__sectionsIndexPromise || fetch('/sections-index.json?v=202607200216').then(function(r){return r.ok?r.json():null;}))
         .then(function(json) {
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json })); } catch(e) {}
           return json;
@@ -1026,7 +1026,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
           // Both reuse the shared preloaded promises (no duplicate network request).
           function fetchAndRender(){
             Promise.all([
-              window.__sectionsIndexPromise || gj('/sections-index.json?v=202607190514'),
+              window.__sectionsIndexPromise || gj('/sections-index.json?v=202607200216'),
               (window.__getDU ? window.__getDU() : gj('/dailyupdates.json?v='+Math.floor(Date.now()/3600000)))
             ]).then(function(r){
               var si=r[0],dl=r[1];
@@ -1521,7 +1521,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',sans-se
     setTimeout(loadPush,10000);
   })();
 </script>
-<script src="/tsj-version.js?v=20260719104330" defer></script>
+<script src="/tsj-version.js?v=20260720074528" defer></script>
 
 <script>
 /* Auto lazy-load all images not already marked */
