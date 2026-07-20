@@ -119,11 +119,14 @@
     .place-wrap { margin-top:16px; text-align:center; background:var(--mist); border-radius:10px; padding:14px; }
     .place-canvas-holder { position:relative; display:inline-block; max-width:100%; }
     .place-canvas-holder canvas { max-width:100%; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); background:white; display:block; }
-    .sig-drag-box { position:absolute; border:2px dashed var(--brand); background:rgba(52,93,230,0.08); cursor:move; display:flex; align-items:center; justify-content:center; touch-action:none; border-radius:4px; }
+    .sig-drag-box { position:absolute; border:2px dashed var(--brand); background:rgba(52,93,230,0.08); cursor:move; display:flex; align-items:center; justify-content:center; touch-action:none; border-radius:4px; z-index:1; }
     .sig-drag-box img { max-width:100%; max-height:100%; pointer-events:none; }
     .sig-drag-box span { pointer-events:none; }
-    .sig-drag-box.other-page { border-style:solid; border-color:var(--muted); opacity:0.45; cursor:default; }
-    .sig-drag-box .rm-placement { position:absolute; top:-11px; right:-11px; width:22px; height:22px; border-radius:50%; background:#EF4444; color:#fff; border:2px solid #fff; font-size:12px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; pointer-events:auto; }
+    .sig-drag-box.other-page { border-style:solid; border-color:var(--muted); opacity:0.75; cursor:default; z-index:5; }
+    .sig-drag-box .rm-placement { position:absolute; top:-11px; right:-11px; width:22px; height:22px; border-radius:50%; background:#EF4444; color:#fff; border:2px solid #fff; font-size:12px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:2; }
+    .sig-resize-handle { position:absolute; bottom:-9px; right:-9px; width:18px; height:18px; border-radius:50%; background:var(--brand); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.35); cursor:nwse-resize; pointer-events:auto; touch-action:none; z-index:2; }
+    .sig-size-label { position:absolute; top:-26px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s; }
+    .sig-size-label.show { opacity:1; }
     .preview-nav { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:10px; }
     .pg-nav-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; }
     .pg-nav-btn:hover:not(:disabled) { border-color:var(--brand); color:var(--brand); }
@@ -586,11 +589,69 @@
     const boxH = boxW*(sig.h/sig.w);
     return {boxW,boxH};
   }
+  function baseBoxW(canvas){ return Math.min(canvas.width*0.32,180); }
+
+  // Custom resize (drag the blue corner dot) — was previously only 3 fixed
+  // presets (Small/Medium/Large). Dragging computes a new width from the
+  // pointer's distance from the box's fixed top-left corner, keeps the
+  // signature's own aspect ratio (never stretches/distorts it), and stores
+  // the result back as the SAME sizeFactor the presets use (just a
+  // continuous value instead of one of 3 fixed ones) — so everything
+  // downstream (preview math, final PDF placement) needs no special-casing.
+  let pendingSizeFactor=1;
+  function pctToPx(canvas,pct){ return {x:(pct.xPct/100)*canvas.width, y:(pct.yPct/100)*canvas.height}; }
+  function setupResizeHandle(box,canvas,sig,onResize){
+    const handle=box.querySelector('.sig-resize-handle');
+    if(!handle)return;
+    let resizing=false, startW=0, left0=0, top0=0;
+    function getXY(e){ const t=e.touches?e.touches[0]:e; return {x:t.clientX,y:t.clientY}; }
+    function down(e){
+      resizing=true; e.preventDefault(); e.stopPropagation();
+      left0=box.offsetLeft; top0=box.offsetTop; startW=box.offsetWidth;
+      const lbl=box.querySelector('.sig-size-label'); if(lbl)lbl.classList.add('show');
+    }
+    function move(e){
+      if(!resizing)return; e.preventDefault();
+      const rect=canvas.getBoundingClientRect();
+      const p=getXY(e);
+      const scaleX=canvas.width/rect.width;
+      const px=(p.x-rect.left)*scaleX;
+      // Width the user is asking for, based on distance from the box's
+      // ORIGINAL top-left corner -- NOT clamped to "canvas.width-left0" here,
+      // since a box already sitting flush against the right edge (e.g. the
+      // default Bottom-Right preset) would have zero room to grow under that
+      // clamp and resize would silently do nothing.
+      let newW=Math.max(30, Math.min(canvas.width-16, px-left0));
+      const newH=newW*(sig.h/sig.w);
+      // If growing would push the box past the canvas edge, slide its
+      // position back just enough to keep it fully visible instead of
+      // capping the size -- same effect as a real resize handle bumping
+      // against a window edge.
+      let newLeft=left0, newTop=top0;
+      if(newLeft+newW>canvas.width) newLeft=Math.max(0,canvas.width-newW);
+      if(newTop+newH>canvas.height) newTop=Math.max(0,canvas.height-newH);
+      box.style.width=newW+'px'; box.style.height=newH+'px';
+      box.style.left=newLeft+'px'; box.style.top=newTop+'px';
+      const lbl=box.querySelector('.sig-size-label');
+      const pct=Math.round(newW/baseBoxW(canvas)*100);
+      if(lbl)lbl.textContent=pct+'%';
+      onResize(newW,newH,newLeft,newTop);
+    }
+    function up(){
+      if(!resizing)return;
+      resizing=false;
+      const lbl=box.querySelector('.sig-size-label'); if(lbl)lbl.classList.remove('show');
+    }
+    handle.addEventListener('mousedown',down); handle.addEventListener('touchstart',down,{passive:false});
+    window.addEventListener('mousemove',move); window.addEventListener('touchmove',move,{passive:false});
+    window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
+  }
 
   // The one draggable/pending box reflects whatever the Placement form is
   // currently configured to (page/position/size) — this is what "+ Add"
   // actually commits. Existing (already-added) placements render as
-  // separate, dimmed, non-draggable boxes with their own remove button.
+  // separate, dimmed boxes with their own remove AND resize handle, so a
+  // signature already sitting on the page can be resized directly too.
   function updatePendingBoxVisibility(){
     const box=$('sig-drag-box');
     const canvas=$('place-canvas');
@@ -599,14 +660,22 @@
     const appliesToCurrentPreview = pageVal==='all' || +pageVal===currentPreviewPage;
     if(!appliesToCurrentPreview){ box.style.display='none'; return; }
     box.style.display='flex';
-    box.innerHTML = `<img src="${signature.dataUrl}" alt="signature preview">`;
-    const sizeFactor=+$('sig-size').value||1;
-    const {boxW,boxH}=boxSizeFor(canvas,sizeFactor,signature);
+    box.innerHTML = `<img src="${signature.dataUrl}" alt="signature preview"><span class="sig-size-label">${Math.round(pendingSizeFactor*100)}%</span><div class="sig-resize-handle" title="Drag to resize"></div>`;
+    const {boxW,boxH}=boxSizeFor(canvas,pendingSizeFactor,signature);
     box.style.width=boxW+'px'; box.style.height=boxH+'px';
     const posMode=$('sig-pos').value;
     if(posMode!=='custom'){ const pct=presetPct(posMode); dragPos.xPct=pct.xPct; dragPos.yPct=pct.yPct; }
     box.style.cursor = posMode==='custom' ? 'move' : 'default';
     positionDragBox();
+    setupResizeHandle(box,canvas,signature,(newW,newH,left0,top0)=>{
+      pendingSizeFactor = newW/baseBoxW(canvas);
+      // Keep the box's top-left corner fixed while resizing (natural corner-
+      // drag feel), then convert back to the CENTER-based xPct/yPct the rest
+      // of the system (drag-move, preset positions, final PDF) uses.
+      const cx=left0+newW/2, cy=top0+newH/2;
+      dragPos.xPct = Math.max(0,Math.min(100, cx/canvas.width*100));
+      dragPos.yPct = Math.max(0,Math.min(100, cy/canvas.height*100));
+    });
   }
 
   function renderPlacementBoxesForCurrentPage(){
@@ -621,8 +690,14 @@
       box.style.left=Math.max(0,Math.min(canvas.width-boxW,x))+'px';
       box.style.top=Math.max(0,Math.min(canvas.height-boxH,y))+'px';
       box.style.width=boxW+'px'; box.style.height=boxH+'px';
-      box.innerHTML=`<img src="${pl.sigDataUrl}" alt=""><span class="rm-placement" data-id="${pl.id}">✕</span>`;
+      box.innerHTML=`<img src="${pl.sigDataUrl}" alt=""><span class="sig-size-label">${Math.round(pl.sizeFactor*100)}%</span><div class="sig-resize-handle" title="Drag to resize"></div><span class="rm-placement" data-id="${pl.id}">✕</span>`;
       holder.appendChild(box);
+      setupResizeHandle(box,canvas,{w:pl.sigW,h:pl.sigH},(newW,newH,left0,top0)=>{
+        pl.sizeFactor = newW/baseBoxW(canvas);
+        const cx=left0+newW/2, cy=top0+newH/2;
+        pl.xPct = Math.max(0,Math.min(100, cx/canvas.width*100));
+        pl.yPct = Math.max(0,Math.min(100, cy/canvas.height*100));
+      });
     });
     holder.querySelectorAll('.rm-placement').forEach(btn=>{
       btn.addEventListener('click',(e)=>{
@@ -662,7 +737,7 @@
     else{ const pct=presetPct(posMode); xPct=pct.xPct; yPct=pct.yPct; }
     placements.push({
       id: nextPlacementId++, page, xPct, yPct,
-      sizeFactor: +$('sig-size').value||1,
+      sizeFactor: pendingSizeFactor,
       dateStamp: $('sig-date').checked,
       sigDataUrl: signature.dataUrl, sigW: signature.w, sigH: signature.h
     });
@@ -825,7 +900,7 @@
       $('saved-sig-banner').style.display='none';
     });
 
-    $('sig-size').addEventListener('change', updatePendingBoxVisibility);
+    $('sig-size').addEventListener('change', function(){ pendingSizeFactor=+this.value||1; updatePendingBoxVisibility(); });
     $('sig-pos').addEventListener('change', updatePendingBoxVisibility);
     $('sig-date').addEventListener('change', ()=>{});
     $('place-page').addEventListener('change', async function(){
@@ -850,6 +925,7 @@
       $('sig-info').textContent='✏️ Draw mode mein mouse ya touch se signature banayein — natural handwriting style mein.';
       signature=null; mainPdfDoc=null; pageCount=0; currentPreviewPage=1;
       placements=[]; renderPlacementsListUI();
+      pendingSizeFactor=1; $('sig-size').value='1';
       $('save-sig-prompt').style.display='none';
       checkSavedSignature();
       const rc=$('result-card'); if(rc) rc.classList.remove('show');
