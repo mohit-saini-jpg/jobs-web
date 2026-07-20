@@ -1,0 +1,44 @@
+{
+  "name": "Top Sarkari Jobs – Free Online Tools",
+  "short_name": "TSJ Tools",
+  "description": "50+ free online tools — PDF, Image, Video & Audio converters, resizers, compressors. 100% in-browser, no upload, no signup.",
+  "start_url": "/tools/?source=pwa",
+  "scope": "/tools/",
+  "id": "/tools/?source=pwa",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "background_color": "#0d2257",
+  "theme_color": "#0d2257",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "categories": [
+    "utilities",
+    "productivity",
+    "photo"
+  ],
+  "icons": [
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/image.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
