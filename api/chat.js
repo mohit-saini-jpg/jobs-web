@@ -25,18 +25,34 @@ const MODEL_FALLBACK_CHAIN = [
   'openai/gpt-oss-20b',
 ];
 
-const SYSTEM_PROMPT = `You are TSJ AI, the smart government job assistant built into TopSarkariJobs.com (topsarkarijobs.com) — an Indian government job/Sarkari Naukri portal.
+const SYSTEM_PROMPT = `You are TSJ AI, the smart government job assistant built into TopSarkariJobs.com (topsarkarijobs.com) — an Indian government job/Sarkari Naukri portal that also hosts government schemes, useful official links/PDFs, and free online tools (photo/PDF/video utilities).
 
-Answer ONLY government-job-related questions: recruitment notifications, vacancies, eligibility, exam patterns, syllabus, admit cards, results, answer keys, admissions, government schemes, and how to use the site's own tools (resize photo, compress PDF, background remover, etc). If asked something completely unrelated (general chit-chat, coding help, etc.), politely redirect: tell the user you're focused on government jobs and TopSarkariJobs.com tools.
+Answer ONLY government-job-related questions: recruitment notifications, vacancies, eligibility, exam patterns, syllabus, admit cards, results, answer keys, admissions, government schemes, state/district job listings, and how to use the site's own tools (resize photo, compress PDF, background remover, etc). If asked something completely unrelated (general chit-chat, coding help, etc.), politely redirect: tell the user you're focused on government jobs and TopSarkariJobs.com tools.
 
-Rules:
-- If "RELEVANT TOPSARKARIJOBS.COM DATA" is provided below, it came from a fuzzy search over the site's real listings, so it may include near-misses or nothing useful at all — use your judgment on whether each entry actually answers the user's question. For any entry that does genuinely match: you MUST prefer it over general/web knowledge, and you MUST include its exact URL (formatted as a Markdown link, e.g. "[Haryana Anganwadi Recruitment 2026](https://www.topsarkarijobs.com/jobs/...)") directly in your answer — never describe a real site listing without linking to it. If none of the entries actually match the question, ignore them and say this specific posting isn't listed on the site right now, then answer from web results / general knowledge instead.
-- If "LIVE WEB SEARCH RESULTS" is provided, you may use them for information not on the site, but only cite official sources (.gov.in, .nic.in, state government sites, official recruitment boards) — never unofficial job-aggregator blogs. Say "This information is based on official recruitment sources" when you rely on these.
-- If neither is provided and you're answering from your own training knowledge, say so plainly (e.g. "Based on general information — please verify on the official website before applying") rather than presenting it as live/confirmed data.
+TOP-PRIORITY RULE — SITE CITATION MUST COME FIRST:
+If "RELEVANT TOPSARKARIJOBS.COM CONTENT" is provided below and at least one entry genuinely matches the user's question, your reply MUST **begin** with that entry (or entries) — its Title as a Markdown link to its exact URL — before any explanation, summary, or other content. Do not bury it mid-answer or at the end. Any web-search / external links come strictly AFTER the site citation(s), clearly secondary. Format the opening like:
+📌 **[Exact Title](https://www.topsarkarijobs.com/...)**
+(then your explanation/details below it)
+If the user's query matches MULTIPLE relevant entries (e.g. a profile-based "which jobs am I eligible for" question), list ALL of them at the top as a bulleted list of title+link, most recent first — not just one.
+Only skip this opening citation if genuinely nothing in the provided site content matches the question — then say plainly this isn't listed on the site right now, and answer from web results / general knowledge instead.
+
+Other rules:
+- Entries below came from the site's own search index (fuzzy match, profile filter, or direct listing) — use judgment on whether each one actually answers the question; a "match confidence" score is given for fuzzy results (below ~0.3 = strong, above ~0.6 = weak guess, may not be relevant).
+- Each entry has a type: Job posting, Govt Scheme, Official Link, PDF Download, Today Update, Education Update, Tool, Section (category hub page), State jobs hub, or District jobs hub — describe it appropriately (e.g. don't call a scheme a "job").
+- If "USER PROFILE FILTER" is provided, the site-content list below was already filtered by the user's stated age/qualification — present it as "Aapki profile (qualification/age) ke hisaab se ye jobs mil sakti hain" (or English equivalent) followed by the full list; do not re-filter or second-guess it, and do not just pick one.
+- If "LIVE WEB SEARCH RESULTS" is provided, use them only for information not found on the site, and only cite official sources (.gov.in, .nic.in, state government sites, official recruitment boards) — never unofficial job-aggregator blogs. Say "This information is based on official recruitment sources" when relying on these, and place them after any site citations.
+- If neither site content nor web results are provided and you're answering from your own training knowledge, say so plainly (e.g. "Based on general information — please verify on the official website before applying") rather than presenting it as live/confirmed data.
 - Never just say "I don't know" — give the most useful answer you can (general eligibility patterns for that type of exam, how to check officially, etc.) and be upfront about the uncertainty.
 - Reply in the same language style the user used (Hindi, English, or Hinglish/Roman Hindi) — match them naturally.
 - Format with Markdown: use headings/bold for job name/organization/vacancy/qualification/age limit/salary/selection process/important dates/how to apply where relevant, and keep tables simple.
 - Be concise. Do not pad with generic disclaimers beyond what's asked.`;
+
+const TYPE_LABELS = {
+  job: 'Job posting', education: 'Education Update', scheme: 'Govt Scheme',
+  link: 'Official Link', pdf: 'PDF Download', update: 'Today Update',
+  tool: 'Tool', section: 'Section (category hub)', state: 'State jobs hub',
+  district: 'District jobs hub',
+};
 
 function jsonError(message, status) {
   return new Response(JSON.stringify({ error: message }), {
@@ -78,12 +94,19 @@ export default async function handler(request) {
 
   let context = '';
 
-  // Site data the widget already found via its own local fuzzy search
-  // (see tsj-chat.js) — passed in so this function never has to fetch/parse
-  // the site's large data files itself.
-  const siteMatches = Array.isArray(body.siteMatches) ? body.siteMatches.slice(0, 8) : [];
+  // Site data the widget already found via its own local search — local
+  // fuzzy match, a profile-based (age/qualification) filter, or a direct
+  // tool-keyword hit (see tsj-chat.js) — passed in so this function never
+  // has to fetch/parse the site's large data files itself.
+  const profileQuery = body.profileQuery && typeof body.profileQuery === 'object' ? body.profileQuery : null;
+  const maxMatches = profileQuery ? 20 : 8;
+  const siteMatches = Array.isArray(body.siteMatches) ? body.siteMatches.slice(0, maxMatches) : [];
   if (siteMatches.length) {
-    context += '\n\nRELEVANT TOPSARKARIJOBS.COM DATA (from fuzzy search — a "match confidence" is given for each; below ~0.3 is a strong match, above ~0.6 is a weak guess and may not actually be what the user asked about):\n';
+    if (profileQuery) {
+      const age = Number.isFinite(profileQuery.age) ? `age ${profileQuery.age}` : '';
+      context += `\n\nUSER PROFILE FILTER: ${[age, 'qualification-matched'].filter(Boolean).join(', ')} — the list below is every matching job on the site, already filtered. List ALL of them.\n`;
+    }
+    context += '\n\nRELEVANT TOPSARKARIJOBS.COM CONTENT (site\'s own search index; cite these FIRST per the top-priority rule):\n';
     for (const m of siteMatches) {
       if (!m || typeof m !== 'object') continue;
       const title = String(m.title || '').slice(0, 160);
@@ -91,9 +114,12 @@ export default async function handler(request) {
       const cat = String(m.category || '').slice(0, 60);
       const date = String(m.date || '').slice(0, 20);
       const url = String(m.url || '').slice(0, 200);
+      const type = TYPE_LABELS[m.type] || 'Job posting';
       const conf = typeof m.score === 'number' ? ` | match confidence: ${m.score.toFixed(2)}` : '';
       if (!title) continue;
-      context += `- ${title}${org ? ' | ' + org : ''}${cat ? ' | ' + cat : ''}${date ? ' | Last date: ' + date : ''}${conf} | https://www.topsarkarijobs.com${url}\n`;
+      const isAbsolute = /^https?:\/\//i.test(url);
+      const fullUrl = isAbsolute ? url : `https://www.topsarkarijobs.com${url}`;
+      context += `- [${type}] ${title}${org ? ' | ' + org : ''}${cat ? ' | ' + cat : ''}${date ? ' | Last date: ' + date : ''}${conf} | ${fullUrl}\n`;
     }
   }
 

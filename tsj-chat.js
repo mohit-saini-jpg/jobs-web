@@ -208,7 +208,7 @@ function localSearch(query){
   if(!state.fuse) return [];
   var cleaned = cleanQuery(query) || query;
   return state.fuse.search(cleaned, {limit: 8}).map(function(r){
-    return {title:r.item.t, org:r.item.o, category:r.item.c, date:r.item.d, url:r.item.u, score:r.score};
+    return {title:r.item.t, org:r.item.o, category:r.item.c, date:r.item.d, url:r.item.u, score:r.score, type:r.item.ty};
   });
 }
 function findToolLink(query){
@@ -220,6 +220,73 @@ function findToolLink(query){
     }
   }
   return null;
+}
+
+/* ============================== PROFILE-BASED JOB FILTER ============================== */
+// "Meri age 21 hai aur B.A pass hoon, job batao" style queries need every
+// matching job LISTED, not a single fuzzy title match — so instead of Fuse,
+// this filters the full index by qualification-category tags ('ql', reused
+// from sections-index.json's own classification) and, when stated, the
+// user's age against each job's ageLimit range.
+var AGE_RE = /\b(?:age|umar|umr)\D{0,6}(\d{2})\b|\b(\d{2})\s*(?:saal|sal|years?|yrs?)(?:\s*(?:ki|ka|old|age))?\b/i;
+function extractAge(q){
+  var m = AGE_RE.exec(q);
+  if(!m) return null;
+  var n = parseInt(m[1]||m[2], 10);
+  return (n>=14 && n<=70) ? n : null;
+}
+var QUALIFICATION_PATTERNS = [
+  [/\bb\.?\s?a\.?\s*pass\b|(?:^|\s)ba(?:\s|$)/i, ['B_A','Any_Graduate','B_Com']],
+  [/\bb\.?\s?com\b/i, ['B_Com','Any_Graduate']],
+  [/\bb\.?\s?sc\b/i, ['B_Sc','Any_Graduate']],
+  [/\bgraduate\b|\bgraduation\b/i, ['Any_Graduate','Any_Bachelors_Degree']],
+  [/\bpost.?graduate\b|\bpost.?graduation\b|\bmasters?\b|\bpg\b/i, ['Any_Post_Graduate','Any_Masters_Degree']],
+  [/\bb\.?\s?tech\b|\bb\.?\s?e\.?\b|\bengineering\b/i, ['B_Tech_BE']],
+  [/\bdiploma\b/i, ['Diploma']],
+  [/\biti\b/i, ['ITI']],
+  [/\b10th\b|\bmatric\b/i, ['10TH_Pass']],
+  [/\b8th\b/i, ['8TH_Pass']],
+  [/\b12th\b|\bintermediate\b|\bhsc\b/i, ['12TH_Pass','Intermediate']],
+  [/\bmba\b|\bpgdm\b/i, ['MBA_PGDM']],
+  [/\bmca\b/i, ['MCA']],
+  [/\bbca\b/i, ['BCA']],
+  [/\bllb\b/i, ['LLB']],
+  [/\bllm\b/i, ['LLM']],
+  [/\bb\.?\s?ed\b/i, ['B_Ed']],
+  [/\bmbbs\b/i, ['MBBS']],
+  [/\bbds\b/i, ['BDS']],
+  [/\bm\.?\s?sc\b/i, ['M_Sc']],
+  [/\bm\.?\s?com\b/i, ['M_Com']],
+  [/\bm\.?\s?a\.?\s*pass\b|(?:^|\s)ma(?:\s|$)/i, ['MA','M_A']],
+  [/\bphd\b|\bm\.?\s?phil\b/i, ['MPhil_PhD']],
+  [/\bgnm\b/i, ['GNM']],
+  [/\banm\b/i, ['ANM']],
+];
+function detectProfileQuery(query){
+  var quals = [];
+  QUALIFICATION_PATTERNS.forEach(function(pair){
+    if(pair[0].test(query)){
+      pair[1].forEach(function(k){ if(quals.indexOf(k)===-1) quals.push(k); });
+    }
+  });
+  if(!quals.length) return null;
+  return {age: extractAge(query), quals: quals};
+}
+function profileSearch(profile){
+  if(!state.searchIndex) return [];
+  var age = profile.age, quals = profile.quals;
+  var matches = state.searchIndex.filter(function(it){
+    if(it.ty !== 'job' || !it.ql || !it.ql.length) return false;
+    var qualHit = false;
+    for(var i=0;i<it.ql.length;i++){ if(quals.indexOf(it.ql[i]) !== -1){ qualHit = true; break; } }
+    if(!qualHit) return false;
+    if(age && it.age && it.age.length===2 && (age < it.age[0] || age > it.age[1])) return false;
+    return true;
+  });
+  matches.sort(function(a,b){ return (b.d||'').localeCompare(a.d||''); });
+  return matches.slice(0, 20).map(function(it){
+    return {title:it.t, org:it.o, category:it.c, date:it.d, url:it.u, type:it.ty};
+  });
 }
 
 /* ============================== CSS ============================== */
@@ -309,9 +376,19 @@ var CSS = ''+
 '.tsj-send-btn:disabled{opacity:.4;cursor:not-allowed}'+
 '.tsj-footer-links{display:flex;justify-content:center;gap:12px;padding:6px 0 2px;font-size:.68rem;color:#9CA3AF}'+
 '.tsj-footer-links button{background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:.68rem;text-decoration:underline}'+
+/* Site's mobile bottom tab bar (.mobile-bottom-bar) shows under this same
+   900px breakpoint — the fab must clear it or it sits on top of the "Home"
+   tab. --tsj-nav-h is measured live from the real element (syncNavOffset())
+   since its rendered height varies by page/device and doesn't match a
+   single hardcoded guess; the var()'s 72px fallback covers pages where the
+   bar hasn't been measured yet. */
+'@media(max-width:900px){'+
+'#tsj-chat-fab{bottom:calc(var(--tsj-nav-h,72px) + 10px)}'+
+'.tsj-fab-label{bottom:calc(var(--tsj-nav-h,72px) + 22px)}'+
+'#tsj-chat-panel{bottom:calc(var(--tsj-nav-h,72px) + 82px)}'+
+'}'+
 '@media(max-width:480px){'+
 '#tsj-chat-panel{right:8px;left:8px;width:auto;bottom:0;height:82vh;max-height:82vh;border-radius:16px 16px 0 0}'+
-'#tsj-chat-fab{bottom:16px;left:16px}'+
 '}'+
 '.tsj-profile-card{background:#eef4ff;border-radius:10px;padding:10px;font-size:.78rem;margin-bottom:8px}'+
 'html.tsj-dark .tsj-profile-card{background:#1c2740}'+
@@ -447,8 +524,15 @@ async function sendMessage(text){
   saveConversation();
 
   await ensureSearchIndex();
-  var siteMatches = localSearch(text);
-  var needsWebSearch = detectNeedsWebSearch(text, siteMatches);
+  var profileQuery = detectProfileQuery(text);
+  var profileMatches = profileQuery ? profileSearch(profileQuery) : [];
+  var siteMatches = profileMatches.length ? profileMatches : localSearch(text);
+  if(!profileMatches.length && toolMatch){
+    // Let the AI itself know about the deep-link too (not just the button
+    // rendered after streaming), so it can mention/cite it if relevant.
+    siteMatches = [{title:toolMatch.label, org:'', category:'Tool', date:'', url:toolMatch.url, type:'tool'}].concat(siteMatches).slice(0,8);
+  }
+  var needsWebSearch = profileMatches.length ? false : detectNeedsWebSearch(text, siteMatches);
 
   renderTyping();
   state.streaming = true;
@@ -463,6 +547,7 @@ async function sendMessage(text){
     siteMatches: siteMatches,
     needsWebSearch: needsWebSearch,
     profile: state.profile,
+    profileQuery: profileMatches.length ? profileQuery : null,
   };
 
   try{
@@ -801,6 +886,17 @@ function wireEvents(){
   });
 }
 
+/* The site's mobile bottom tab bar's actual rendered height varies by page
+   (font metrics can push it past its own CSS's nominal min-height) — measure
+   it directly rather than trusting a hardcoded guess, which was found to
+   still overlap the fab on real devices. */
+function syncNavOffset(){
+  var nav = document.querySelector('.mobile-bottom-bar');
+  if(nav && nav.offsetHeight){
+    document.documentElement.style.setProperty('--tsj-nav-h', nav.offsetHeight + 'px');
+  }
+}
+
 /* ============================== INIT ============================== */
 function init(){
   buildHTML();
@@ -809,6 +905,13 @@ function init(){
   document.head.appendChild(style);
   applyDarkMode();
   wireEvents();
+  syncNavOffset();
+  // On generate_all.py pages the bottom bar comes from header.html, fetched
+  // and injected asynchronously by tsj-init.js — it may not exist yet at
+  // DOMContentLoaded, so re-check a few times until it shows up.
+  [100, 400, 1000, 2000, 4000].forEach(function(ms){ setTimeout(syncNavOffset, ms); });
+  window.addEventListener('resize', syncNavOffset);
+  window.addEventListener('orientationchange', syncNavOffset);
   maybeShowFabLabel();
   idbLoadLatest().then(function(conv){
     if(conv && conv.messages && conv.messages.length){
