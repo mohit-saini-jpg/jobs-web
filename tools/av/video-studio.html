@@ -405,7 +405,7 @@ a{color:inherit}
     <div class="timeline-area">
       <div class="tl-controls">
         <button id="split-btn" title="Playhead par split/cut karein">✂️ Split</button>
-        <button id="delete-clip-btn" title="Selected clip delete karein">🗑️</button>
+        <button id="delete-clip-btn" title="Selected video clip YA audio track delete karein">🗑️</button>
         <button id="duplicate-clip-btn" title="Selected clip duplicate karein">⧉</button>
         <div style="width:1px;height:20px;background:var(--line);margin:0 4px"></div>
         <button id="prev-frame-btn" title="Peeche">⏮️</button>
@@ -431,7 +431,7 @@ a{color:inherit}
           </div>
         </div>
       </div>
-      <p style="font-size:0.7rem;color:var(--muted);margin-top:6px">✂️ Timeline par click karke playhead (red line) ko kahin bhi le jaayein, phir <b>Split</b> dabakar exact usi jagah clip cut ho jaayegi.</p>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:6px">✂️ Timeline par click karke playhead (red line) ko kahin bhi le jaayein, phir <b>Split</b> dabakar exact usi jagah clip cut ho jaayegi. 🗑️ <b>Delete</b> button us cheez ko delete karta hai jo abhi selected hai — video clip par ya audio waveform par click karke usse select karein, phir Delete dabayein.</p>
     </div>
   </div>
 </div>
@@ -539,6 +539,11 @@ let clipSeq = 0, textSeq = 0;
 //   used for waveform + live preview), peaks (downsampled min/max pairs
 //   for drawing), _liveSourceNode (currently-playing AudioBufferSourceNode) }
 let audioTrack = null;
+// Which item on the timeline is currently "selected" for the Split/
+// Duplicate/Delete toolbar — either a video clip (activeClipIndex is
+// used) or the background audio track. Clicking either one selects it
+// and deselects the other, so Delete always knows what to act on.
+let audioTrackSelected = false;
 let activeClipIndex = 0;
 let isPlaying = false;
 
@@ -1035,7 +1040,7 @@ function renderTimeline(){
   layout.forEach(L=>{
     const { clip, idx, trimmedDur, widthPx, offsetPx } = L;
     const el = document.createElement('div');
-    el.className = 'tl-clip' + (idx===activeClipIndex?' selected':'');
+    el.className = 'tl-clip' + (idx===activeClipIndex && !audioTrackSelected ?' selected':'');
     el.style.left = offsetPx+'px';
     el.style.width = widthPx+'px';
     el.draggable = true;
@@ -1051,7 +1056,9 @@ function renderTimeline(){
     `;
     el.addEventListener('click', (ev)=>{
       if (ev.target.classList.contains('tl-trim') || ev.target.classList.contains('tl-clip-rm')) return;
+      audioTrackSelected = false;
       seekToGlobalTime(pixelToGlobalTime(ev.clientX));
+      renderAudioTrackBlock(); // refresh selection highlight on the audio block
     });
     el.querySelector('.tl-clip-rm').addEventListener('click', ev=>{
       ev.stopPropagation();
@@ -1232,7 +1239,7 @@ function renderAudioTrackBlock(){
   const offsetPx = audioTrack.offset*tlZoomPxPerSec;
 
   const el = document.createElement('div');
-  el.className = 'tl-audio-block';
+  el.className = 'tl-audio-block' + (audioTrackSelected ? ' selected' : '');
   el.style.left = offsetPx+'px';
   el.style.width = widthPx+'px';
   el.innerHTML = `
@@ -1257,19 +1264,23 @@ function renderAudioTrackBlock(){
     ev.stopPropagation();
     stopLiveAudioTrackPlayback();
     audioTrack = null;
+    audioTrackSelected = false;
     document.getElementById('audio-track-panel').style.display = 'none';
     renderTimeline();
   });
 
   el.addEventListener('pointerdown', ev=>{
     if (ev.target.classList.contains('tl-trim') || ev.target.classList.contains('tl-audio-rm')) return;
+    audioTrackSelected = true;
+    renderTimeline(); // refreshes both this block's highlight and clears any selected video clip
     const rect = tlContent.getBoundingClientRect();
     const startX = ev.clientX;
     const origOffset = audioTrack.offset;
     function onMove(e2){
       const deltaSec = (e2.clientX-startX)/tlZoomPxPerSec;
       audioTrack.offset = Math.max(0, origOffset + deltaSec);
-      el.style.left = (audioTrack.offset*tlZoomPxPerSec)+'px';
+      const liveEl = tlAudioRow.querySelector('.tl-audio-block');
+      if (liveEl) liveEl.style.left = (audioTrack.offset*tlZoomPxPerSec)+'px';
     }
     function onUp(){
       document.removeEventListener('pointermove', onMove);
@@ -1329,6 +1340,7 @@ document.getElementById('audio-track-volume').addEventListener('input', e=>{
 document.getElementById('remove-audio-track-btn').addEventListener('click', ()=>{
   stopLiveAudioTrackPlayback();
   audioTrack = null;
+  audioTrackSelected = false;
   document.getElementById('audio-track-panel').style.display = 'none';
   renderTimeline();
 });
@@ -1479,19 +1491,38 @@ document.getElementById('split-btn').addEventListener('click', ()=>{
   showAlert('✅ Clip split ho gayi playhead par!', 'success');
 });
 document.getElementById('duplicate-clip-btn').addEventListener('click', ()=>{
+  if (audioTrackSelected){
+    showAlert('ℹ️ Audio track duplicate abhi supported nahi hai — sirf ek Background Audio track ek time par rakh sakte hain. Duplicate sirf video clips ke liye kaam karta hai.', 'warn');
+    return;
+  }
   const clip = clips[activeClipIndex];
-  if (!clip){ showAlert('❌ Pehle ek clip select karein!', 'error'); return; }
+  if (!clip){ showAlert('❌ Pehle ek video clip select karein!', 'error'); return; }
+  // Full, exact duplicate of the selected clip's current trimmed range —
+  // same file, same start/end, same audio-detection cache — inserted
+  // directly after the original so it's easy to find and remove again.
   const copy = { ...clip, id:'c'+(clipSeq++) };
   clips.splice(activeClipIndex+1, 0, copy);
   activeClipIndex++;
   renderTimeline();
+  showAlert('✅ Clip duplicate ho gayi — agar galat lage to 🗑️ Delete se turant hata sakte hain.', 'success');
 });
 document.getElementById('delete-clip-btn').addEventListener('click', ()=>{
+  if (audioTrackSelected){
+    if (!audioTrack){ showAlert('❌ Koi audio track selected nahi hai!', 'error'); return; }
+    stopLiveAudioTrackPlayback();
+    audioTrack = null;
+    audioTrackSelected = false;
+    document.getElementById('audio-track-panel').style.display = 'none';
+    renderTimeline();
+    showAlert('✅ Audio track delete ho gayi.', 'success');
+    return;
+  }
   if (!clips.length){ showAlert('❌ Koi clip nahi hai!', 'error'); return; }
   clips.splice(activeClipIndex, 1);
   if (activeClipIndex>=clips.length) activeClipIndex=Math.max(0,clips.length-1);
   renderTimeline();
   if (clips.length) loadClipIntoPreview(activeClipIndex);
+  showAlert('✅ Video clip delete ho gayi.', 'success');
 });
 document.getElementById('prev-frame-btn').addEventListener('click', ()=>{
   if (!clips.length) return;
