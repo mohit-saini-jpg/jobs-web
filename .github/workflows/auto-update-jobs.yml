@@ -307,6 +307,23 @@ jobs:
               if si_items:
                   sindex[cat] = si_items
 
+          # PRESERVE DU-sourced sections (dailyupdates.json: Govt Scheme & Yojna,
+          # ImportantCSC PDF, ImportantCSC link, Today Updates). This step only
+          # knows about Complete_Jobs_Full_Data.json categories, so without this
+          # the blind overwrite below would silently drop the DU sections that
+          # generate_all.py just correctly wrote moments earlier (including its
+          # Hindi-title slug handling) -> homepage cards + section pages 404.
+          _DU_SECTION_KEYS = ('Govt Scheme & Yojna', 'ImportantCSC PDF', 'ImportantCSC link', 'Today Updates')
+          if os.path.exists('sections-index.json'):
+              try:
+                  with open('sections-index.json', encoding='utf-8') as f:
+                      _old_sindex = json.load(f)
+                  for _k in _DU_SECTION_KEYS:
+                      if _k in _old_sindex:
+                          sindex[_k] = _old_sindex[_k]
+              except Exception as e:
+                  print(f"  ⚠️ could not preserve DU sections: {e}")
+
           # ALWAYS overwrite sections-index.json from root JSON (source of truth)
           # This ensures JSON insertion order = display order on site for ALL 53+ categories
           with open('sections-index.json', 'w', encoding='utf-8') as f:
