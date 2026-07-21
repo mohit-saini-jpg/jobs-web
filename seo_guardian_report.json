@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-21T04:42:51.193914+00:00",
+  "timestamp": "2026-07-21T05:01:21.723773+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 5270,
@@ -68,7 +68,7 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links: No new redirects needed — all links OK"
+    "broken_links:   [Today Updates] 2026-pdf"
   ],
-  "duration_sec": 18.6
+  "duration_sec": 33.2
 }
