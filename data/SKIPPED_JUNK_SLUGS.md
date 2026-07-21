@@ -33,3 +33,5 @@
 - `48`  (skipped 2026-07-21)
 - `haryana-2026-50`  (skipped 2026-07-21)
 - `48`  (skipped 2026-07-21)
+- `haryana-2026-50`  (skipped 2026-07-21)
+- `48`  (skipped 2026-07-21)
