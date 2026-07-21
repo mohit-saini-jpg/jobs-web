@@ -8833,9 +8833,15 @@ for sec in DU_SECS:
     for it in items:
         nm = it.get('name','') or it.get('title','')
         if not nm: continue
-        # slugify(title) resolves to the generated /jobs/<slug>/ page more reliably
-        # than the raw dailyupdates 'slug' field, so we let build_listing_page slugify.
-        norm.append({'basic_details':{'job_title':nm}})
+        it_url = (it.get('url') or '').strip()
+        # BUGFIX: previously left slug-less and relied on build_listing_page's
+        # generic plain-slugify() fallback to guess the /jobs/<slug>/ page —
+        # that guess disagrees with what the _du_page-writing loop above
+        # actually wrote whenever _du_slug() had to use its transliteration
+        # (or hash) fallback, e.g. for a Hindi-heavy title. Compute the exact
+        # same slug here so this listing card always links to a real page.
+        it_slug = _du_slug(nm, it_url)
+        norm.append({'basic_details':{'job_title':nm}, '_canonical_slug':it_slug, '_slug':it_slug})
     write(str(ROOT/'section'/url_slug/'index.html'), build_listing_page(sec_title, norm, f"{BASE_URL}/section/{url_slug}/", []))
     sec_count2 += 1
 
@@ -9154,6 +9160,18 @@ for _du_si_sec in DU_SECS:
         _url  = (_du_si_item.get('url') or '').strip()
         if not _name:
             continue
+        # BUGFIX: a brand-new dailyupdates.json entry has no pre-populated
+        # 'slug' field yet (whatever external process normally adds one
+        # hasn't run on it). Previously this silently fell back to the raw
+        # URL, which is fine on its own — but the _du_page-writing loop
+        # below computes its OWN slug via _du_slug() to decide where to
+        # WRITE the detail page, and the two could disagree once a slug
+        # eventually did get set (e.g. by plain slugify() elsewhere)
+        # producing a weak/colliding value for Hindi titles. Always deriving
+        # it here via the same _du_slug() keeps the homepage/section-listing
+        # link and the actual written page in permanent agreement.
+        if not _slug:
+            _slug = _du_slug(_name, _url)
         # Use slug if present (links to /jobs/slug/), else fall back to url
         _du_si_items.append({
             'slug': _slug,
