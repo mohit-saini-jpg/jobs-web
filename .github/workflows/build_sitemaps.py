@@ -75,6 +75,17 @@ def is_junk_slug(slug):
 def has_index(p):
     return os.path.isfile(os.path.join(p, "index.html"))
 
+def _is_noindex(index_path):
+    """True if the page's <head> declares noindex — such pages (e.g.
+    dailyupdates.json-sourced /jobs/ pages, which are meant to be shown to
+    users but never indexed) must not be advertised to Google via sitemap."""
+    try:
+        with open(index_path, encoding="utf-8", errors="ignore") as f:
+            head = f.read(2000)
+        return 'name="robots"' in head.lower() and "noindex" in head.lower()
+    except Exception:
+        return False
+
 def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False):
     """Collect clean URLs for every subdir containing index.html under rel_root."""
     out = []
@@ -87,11 +98,15 @@ def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False
                 rel = os.path.relpath(dp, ROOT).replace(os.sep, "/")
                 if rel == rel_root:  # skip the hub root itself here; added separately
                     continue
+                if _is_noindex(os.path.join(dp, "index.html")):
+                    continue
                 out.append(f"{BASE}/{rel}/")
     else:
         for name in sorted(os.listdir(base_dir)):
             d = os.path.join(base_dir, name)
             if os.path.isdir(d) and has_index(d):
+                if _is_noindex(os.path.join(d, "index.html")):
+                    continue
                 out.append(f"{BASE}/{rel_root}/{name}/")
     return out
 
