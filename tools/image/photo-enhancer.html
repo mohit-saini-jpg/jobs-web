@@ -21,6 +21,7 @@
     document.head.appendChild(l);})();
   </script>
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Photo Enhancer","applicationCategory":"PhotographyApplication","operatingSystem":"Any (Web Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Free browser-based AI photo enhancer with super-resolution, auto color correction, face enhancement and passport photo mode."}
   </script>
@@ -231,6 +232,9 @@
         <div class="canvas-wrap" id="canvasWrap">
           <div class="canvas-empty" id="canvasEmpty"><i class="fa-solid fa-image"></i><div>Photo preview will appear here</div></div>
           <canvas id="mainCanvas" style="display:none"></canvas>
+          <div id="cropImgWrap" style="display:none;width:100%;max-height:70vh;overflow:hidden">
+            <img id="cropImg" style="max-width:100%;display:block">
+          </div>
           <div class="split-wrap" id="splitWrap">
             <img id="splitBefore" alt="Before">
             <div class="split-after" id="splitAfter"><canvas id="splitAfterCanvas"></canvas></div>
@@ -289,13 +293,20 @@
         <!-- CROP MODE -->
         <div class="mode-panel" id="panel-crop" style="display:none">
           <div class="field-row"><label>Aspect Ratio</label>
-            <select id="cropAspect">
-              <option value="free">Free</option><option value="1:1">Square 1:1</option>
-              <option value="4:3">4:3</option><option value="16:9">16:9</option>
-              <option value="3:4">3:4 (Portrait)</option><option value="passport">Passport 3.5:4.5</option>
-            </select>
+            <div class="seg-row" id="cropAspectSeg" style="grid-template-columns:repeat(3,1fr)">
+              <div class="seg-opt active" data-ratio="NaN">Free</div>
+              <div class="seg-opt" data-ratio="1">Square</div>
+              <div class="seg-opt" data-ratio="1.333333">4:3</div>
+              <div class="seg-opt" data-ratio="1.777778">16:9</div>
+              <div class="seg-opt" data-ratio="0.75">3:4</div>
+              <div class="seg-opt" data-ratio="0.777778">Passport</div>
+            </div>
           </div>
-          <button class="btn block" id="btnCropApply"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
+          <div class="btn-row">
+            <button class="btn" id="btnCropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button class="btn" id="btnCropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button class="btn" id="btnCropReset" title="Reset Crop Box"><i class="fa-solid fa-arrows-rotate"></i></button>
+          </div>
           <div class="btn-row">
             <button class="btn" id="btnRotateL"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
             <button class="btn" id="btnRotateR"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
@@ -304,6 +315,8 @@
             <button class="btn" id="btnFlipH"><i class="fa-solid fa-left-right"></i> Flip H</button>
             <button class="btn" id="btnFlipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
           </div>
+          <button class="btn primary block" id="btnCropApply" style="margin-top:10px"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
+          <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Click Apply Crop when ready.</div>
           <div class="field-row" style="margin-top:14px"><label>Resize Width (px)</label><input type="number" id="resizeW" placeholder="e.g. 1200"></div>
           <div class="field-row"><label>Resize Height (px)</label><input type="number" id="resizeH" placeholder="e.g. 1600"></div>
           <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
@@ -376,6 +389,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/default-model@1.0.0/dist/umd/index.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/upscaler@1.0.0/dist/browser/umd/upscaler.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script>
 /* AI Photo Enhancer — all processing runs on-device. No uploads. */
 (function(){
@@ -419,13 +433,31 @@ function fmtBytes(n){
 }
 
 /* ============================== CANVAS <-> DATA ============================== */
+// Real phone photos (3000-4000px+) make every per-pixel filter loop below run
+// many seconds per pass; capping the working resolution is what keeps the tab
+// responsive. PREVIEW_DIM is a second, much smaller cap used only while a
+// manual slider is being dragged (see enterManualPreviewMode below) — full
+// quality is always restored the moment "Apply Adjustments" is clicked.
+const MAX_WORKING_DIM = 2600;
+const PREVIEW_DIM = 640;
+
 function setCanvasSize(w,h){
   state.canvas.width = w; state.canvas.height = h;
 }
 function loadImageToCanvas(img){
-  setCanvasSize(img.naturalWidth || img.width, img.naturalHeight || img.height);
-  ctx.clearRect(0,0,state.canvas.width, state.canvas.height);
-  ctx.drawImage(img, 0, 0, state.canvas.width, state.canvas.height);
+  let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  if(Math.max(w,h) > MAX_WORKING_DIM){
+    const scale = MAX_WORKING_DIM / Math.max(w,h);
+    w = Math.max(1, Math.round(w*scale));
+    h = Math.max(1, Math.round(h*scale));
+    toast(`Large photo scaled to ${w}×${h}px so editing stays smooth`);
+  }
+  setCanvasSize(w, h);
+  ctx.clearRect(0,0,w,h);
+  ctx.drawImage(img, 0, 0, w, h);
+}
+function yieldToUI(){
+  return new Promise(res => requestAnimationFrame(()=>setTimeout(res, 0)));
 }
 function getData(){ return ctx.getImageData(0,0,state.canvas.width, state.canvas.height); }
 function putData(id){ ctx.putImageData(id,0,0); }
@@ -958,6 +990,11 @@ async function getUpscaler(){
 async function aiUpscale(factor){
   if(factor<=1) return;
   const stages = Math.round(Math.log2(factor)); // 2x=1 stage, 4x=2 stages, 8x=3 stages
+  const projectedFinal = Math.max(state.canvas.width, state.canvas.height) * factor;
+  if(projectedFinal > 6000){
+    toast(`This photo is too large for ${factor}× upscale on this device — try a smaller multiplier.`, true);
+    return;
+  }
   showProgress(true, 'Loading AI model…');
   let upscaler;
   try{ upscaler = await getUpscaler(); }
@@ -1010,6 +1047,7 @@ function updateProgress(pct, label){
 async function runAutoEnhance(){
   const btn = $('btnAutoEnhance');
   btn.classList.add('busy'); btn.disabled = true;
+  await yieldToUI(); // let the busy spinner actually paint before the heavy synchronous pass below
   try{
     if(!state.lastAnalysis) await runAutoAnalysis();
     const a = state.lastAnalysis;
@@ -1057,51 +1095,122 @@ function resetManualSliders(){
     $('v-'+k).textContent = el.value;
   });
 }
+// Slider dragging must never re-run the full pipeline at full photo resolution
+// (that's what was hanging the tab — a rAF callback that takes seconds to run
+// back-to-back leaves the browser unable to paint or respond to input). While
+// dragging, preview runs on a small cached copy (PREVIEW_DIM) instead; the
+// full-resolution pipeline only runs once, on "Apply Adjustments".
+let previewSmallData = null, previewSmallW = 0, previewSmallH = 0;
+function buildPreviewSmall(){
+  const src = state.baseImageData;
+  const scale = Math.min(1, PREVIEW_DIM / Math.max(src.width, src.height));
+  previewSmallW = Math.max(1, Math.round(src.width*scale));
+  previewSmallH = Math.max(1, Math.round(src.height*scale));
+  const full = document.createElement('canvas'); full.width=src.width; full.height=src.height;
+  full.getContext('2d').putImageData(src, 0, 0);
+  const small = document.createElement('canvas'); small.width=previewSmallW; small.height=previewSmallH;
+  small.getContext('2d').drawImage(full, 0, 0, previewSmallW, previewSmallH);
+  previewSmallData = small.getContext('2d').getImageData(0,0,previewSmallW,previewSmallH);
+}
+function enterManualPreviewMode(){
+  if(!state.baseImageData) return;
+  buildPreviewSmall();
+  setCanvasSize(previewSmallW, previewSmallH);
+  putData(new ImageData(new Uint8ClampedArray(previewSmallData.data), previewSmallW, previewSmallH));
+}
+function exitManualPreviewMode(){
+  if(!state.baseImageData) return;
+  setCanvasSize(state.baseImageData.width, state.baseImageData.height);
+  putData(state.baseImageData);
+  previewSmallData = null;
+  resetManualSliders();
+}
+function runManualPipeline(id, s, faceBoxes){
+  id = applyToneColor(id, s);
+  id = applyDenoise(id, s.denoise);
+  id = applyDehaze(id, s.dehaze);
+  id = applyHDR(id, s.hdr);
+  id = applySharpenClarityTexture(id, s.sharpen, s.clarity, s.texture);
+  if(faceBoxes && faceBoxes.length){
+    id = applyFaceAwareEnhance(id, faceBoxes, s.facestrength);
+  }
+  return id;
+}
 let previewRaf = null;
 function schedulePreview(){
   if(previewRaf) cancelAnimationFrame(previewRaf);
   previewRaf = requestAnimationFrame(renderManualPreview);
 }
 function renderManualPreview(){
-  if(!state.baseImageData) return;
+  if(!previewSmallData) return;
   const s = readSliders();
-  let id = new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height);
-  id = applyToneColor(id, s);
-  id = applyDenoise(id, s.denoise);
-  id = applyDehaze(id, s.dehaze);
-  id = applyHDR(id, s.hdr);
-  id = applySharpenClarityTexture(id, s.sharpen, s.clarity, s.texture);
+  let id = new ImageData(new Uint8ClampedArray(previewSmallData.data), previewSmallW, previewSmallH);
+  let faceBoxes = null;
   if(state.lastAnalysis && state.lastAnalysis.faceCount>0){
-    id = applyFaceAwareEnhance(id, state.lastAnalysis.faceBoxes, s.facestrength);
+    const sx = previewSmallW/state.baseImageData.width, sy = previewSmallH/state.baseImageData.height;
+    faceBoxes = state.lastAnalysis.faceBoxes.map(b=>({x:b.x*sx,y:b.y*sy,w:b.w*sx,h:b.h*sy}));
   }
+  id = runManualPipeline(id, s, faceBoxes);
   putData(id);
 }
-function applyManualCommit(){
+async function applyManualCommit(){
   if(!state.baseImageData) return;
-  renderManualPreview();
+  const s = readSliders();
+  const btn = $('btnApplyManual');
+  btn.disabled = true; btn.textContent = 'Applying…';
+  await yieldToUI(); // let the "Applying…" state paint before the heavy full-res pass
+  let id = new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height);
+  const faceBoxes = (state.lastAnalysis && state.lastAnalysis.faceCount>0) ? state.lastAnalysis.faceBoxes : null;
+  id = runManualPipeline(id, s, faceBoxes);
+  setCanvasSize(id.width, id.height);
+  putData(id);
   state.baseImageData = getData();
   pushHistory();
   resetManualSliders();
+  enterManualPreviewMode();
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Apply Adjustments';
   toast('Adjustments applied ✓');
 }
 
-/* ============================== CROP / ROTATE / FLIP / RESIZE / BORDER ============================== */
-let cropBox = null; // {x,y,w,h} in canvas display coords -- simplified: apply center-based aspect crop
-function applyCropAspect(aspect){
-  const w = state.canvas.width, h = state.canvas.height;
-  let targetRatio;
-  if(aspect==='free') { toast('Drag not enabled in Free mode — pick a ratio to auto-crop centered'); return; }
-  if(aspect==='passport') targetRatio = 35/45;
-  else { const [a,b] = aspect.split(':').map(Number); targetRatio = a/b; }
-  let cw=w, ch=h;
-  if(w/h > targetRatio){ cw = h*targetRatio; } else { ch = w/targetRatio; }
-  const cx=(w-cw)/2, cy=(h-ch)/2;
-  const tmp = document.createElement('canvas'); tmp.width=cw; tmp.height=ch;
-  tmp.getContext('2d').drawImage(state.canvas, cx,cy,cw,ch, 0,0,cw,ch);
-  setCanvasSize(cw,ch); ctx.drawImage(tmp,0,0);
-  state.baseImageData = getData(); pushHistory();
-  toast('Crop applied');
+/* ============================== INTERACTIVE CROP (Cropper.js — same lib as image-resizer.html) ============================== */
+let cropperInst = null;
+let cropRot = 0, cropFlipX = 1, cropFlipY = 1;
+function initCropper(){
+  const img = $('cropImg');
+  if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
+  cropRot = 0; cropFlipX = 1; cropFlipY = 1;
+  img.onload = ()=>{
+    cropperInst = new Cropper(img, {
+      viewMode: 1, autoCropArea: 1, guides: true, center: true, highlight: true,
+      background: true, responsive: true, movable: true, zoomable: true, rotatable: true,
+      scalable: true, cropBoxMovable: true, cropBoxResizable: true,
+      aspectRatio: NaN, minCropBoxWidth: 40, minCropBoxHeight: 40,
+    });
+  };
+  img.src = state.canvas.toDataURL('image/png');
+  $('cropImgWrap').style.display = '';
+  state.canvas.style.display = 'none';
+  document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
 }
+function destroyCropper(){
+  if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
+  $('cropImgWrap').style.display = 'none';
+  if(state.canvas.width) state.canvas.style.display = '';
+}
+function applyCropperCrop(){
+  if(!cropperInst){ toast('Nothing to crop', true); return; }
+  const cropped = cropperInst.getCroppedCanvas({ imageSmoothingQuality:'high' });
+  if(!cropped || !cropped.width){ toast('Could not read crop area', true); return; }
+  setCanvasSize(cropped.width, cropped.height);
+  ctx.drawImage(cropped,0,0);
+  state.baseImageData = getData();
+  pushHistory();
+  destroyCropper();
+  switchMode('crop'); // re-render panel state, keep user in crop tab for further edits
+  toast('Crop applied ✓');
+}
+
+/* ============================== ROTATE / FLIP / RESIZE / BORDER ============================== */
 function rotateCanvas(deg){
   const w=state.canvas.width, h=state.canvas.height;
   const tmp = document.createElement('canvas');
@@ -1206,7 +1315,9 @@ async function passportAutoMode(){
 }
 
 /* ============================== DOCUMENT MODE ============================== */
-function applyDocumentMode(type){
+async function applyDocumentMode(type){
+  const btn = $('btnDocApply'); btn.disabled = true;
+  await yieldToUI();
   let id = getData();
   const {data} = id;
   if(type==='bw'){
@@ -1222,11 +1333,14 @@ function applyDocumentMode(type){
   id = applySharpenClarityTexture(id, 60, 0, 0);
   putData(id);
   state.baseImageData = getData(); pushHistory();
+  btn.disabled = false;
   toast('Document enhanced for readability');
 }
 
 /* ============================== OLD PHOTO RESTORE ============================== */
-function applyOldPhotoRestore(){
+async function applyOldPhotoRestore(){
+  const btn = $('btnOldPhotoApply'); btn.disabled = true;
+  await yieldToUI();
   let id = getData();
   // detect + neutralize sepia/yellow cast: if avg R notably > avg B, cool it down
   const {data} = id;
@@ -1240,21 +1354,30 @@ function applyOldPhotoRestore(){
   id = applySharpenClarityTexture(id, 24, 10, 0);
   putData(id);
   state.baseImageData = getData(); pushHistory();
+  btn.disabled = false;
   toast('Old photo restored');
 }
 
 /* ============================== BEFORE/AFTER SPLIT & ZOOM & FULLSCREEN ============================== */
+function getFullResCanvas(){
+  if(!state.baseImageData) return state.canvas;
+  const tmp = document.createElement('canvas');
+  tmp.width = state.baseImageData.width; tmp.height = state.baseImageData.height;
+  tmp.getContext('2d').putImageData(state.baseImageData, 0, 0);
+  return tmp;
+}
 function toggleCompare(){
   state.compareOn = !state.compareOn;
   $('splitWrap').classList.toggle('show', state.compareOn);
   state.canvas.style.display = state.compareOn ? 'none' : '';
   if(state.compareOn){
+    const full = getFullResCanvas();
     $('splitBefore').src = state.originalDataURL;
     const ac = $('splitAfterCanvas');
-    ac.width = state.canvas.width; ac.height = state.canvas.height;
-    ac.getContext('2d').drawImage(state.canvas,0,0);
-    $('splitBefore').style.width = state.canvas.width+'px';
-    ac.style.width = state.canvas.width+'px';
+    ac.width = full.width; ac.height = full.height;
+    ac.getContext('2d').drawImage(full,0,0);
+    $('splitBefore').style.width = full.width+'px';
+    ac.style.width = full.width+'px';
   }
 }
 function initSplitDrag(){
@@ -1277,17 +1400,28 @@ function applyZoom(delta){
   state.canvas.style.transformOrigin = 'center';
 }
 function openFullscreen(){
-  $('fsImg').src = state.canvas.toDataURL('image/png');
+  $('fsImg').src = getFullResDataURL('image/png');
   $('fsOverlay').classList.add('show');
 }
 
 /* ============================== DOWNLOAD ============================== */
+// Export must always read the authoritative full-resolution state.baseImageData,
+// never state.canvas directly — the display canvas is intentionally shrunk to
+// PREVIEW_DIM while a manual slider session is active (see enterManualPreviewMode),
+// and reading it straight would silently export that low-res preview instead.
+function getFullResDataURL(fmt, q){
+  if(!state.baseImageData) return state.canvas.toDataURL(fmt, q);
+  const tmp = document.createElement('canvas');
+  tmp.width = state.baseImageData.width; tmp.height = state.baseImageData.height;
+  tmp.getContext('2d').putImageData(state.baseImageData, 0, 0);
+  return tmp.toDataURL(fmt, q);
+}
 function downloadCurrent(){
   const fmt = $('outFormat').value;
   const q = Number($('s-quality').value)/100;
   const name = ($('outName').value || 'enhanced-photo').replace(/[^a-z0-9_\-]+/gi,'-');
   const ext = fmt==='image/png' ? 'png' : (fmt==='image/webp'?'webp':'jpg');
-  const url = state.canvas.toDataURL(fmt, q);
+  const url = getFullResDataURL(fmt, q);
   const a = document.createElement('a');
   a.href = url; a.download = `${name}.${ext}`;
   document.body.appendChild(a); a.click(); a.remove();
@@ -1305,7 +1439,7 @@ async function downloadZip(){
   for(let i=0;i<state.queue.length;i++){
     await selectQueueItem(i);
     await runAutoEnhance();
-    const url = state.canvas.toDataURL(fmt,q);
+    const url = getFullResDataURL(fmt, q);
     const base64 = url.split(',')[1];
     zip.file(`enhanced-${i+1}.${ext}`, base64, {base64:true});
   }
@@ -1319,10 +1453,14 @@ async function downloadZip(){
 
 /* ============================== MODE TABS ============================== */
 function switchMode(mode){
+  if(state.mode==='crop' && mode!=='crop') destroyCropper();
+  if(state.mode==='manual' && mode!=='manual') exitManualPreviewMode();
   state.mode = mode;
   document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
   document.querySelectorAll('.mode-panel').forEach(p=>p.style.display='none');
   const panel = $('panel-'+mode); if(panel) panel.style.display='';
+  if(mode==='crop' && state.canvas.width) initCropper();
+  if(mode==='manual' && state.baseImageData) enterManualPreviewMode();
 }
 
 /* ============================== EVENT WIRING ============================== */
@@ -1358,12 +1496,27 @@ function wireEvents(){
   });
   $('btnApplyManual').addEventListener('click', applyManualCommit);
 
-  $('cropAspect').addEventListener('change', ()=>{});
-  $('btnCropApply').addEventListener('click', ()=>applyCropAspect($('cropAspect').value));
-  $('btnRotateL').addEventListener('click', ()=>rotateCanvas(-90));
-  $('btnRotateR').addEventListener('click', ()=>rotateCanvas(90));
-  $('btnFlipH').addEventListener('click', ()=>flipCanvas('h'));
-  $('btnFlipV').addEventListener('click', ()=>flipCanvas('v'));
+  document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
+    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+    if(cropperInst) cropperInst.setAspectRatio(Number(o.dataset.ratio));
+  }));
+  $('btnCropZoomIn').addEventListener('click', ()=>{ if(cropperInst) cropperInst.zoom(0.1); });
+  $('btnCropZoomOut').addEventListener('click', ()=>{ if(cropperInst) cropperInst.zoom(-0.1); });
+  $('btnCropReset').addEventListener('click', ()=>{ if(cropperInst) cropperInst.reset(); });
+  $('btnCropApply').addEventListener('click', applyCropperCrop);
+  $('btnRotateL').addEventListener('click', ()=>{
+    if(cropperInst){ cropRot-=90; cropperInst.rotateTo(cropRot); } else rotateCanvas(-90);
+  });
+  $('btnRotateR').addEventListener('click', ()=>{
+    if(cropperInst){ cropRot+=90; cropperInst.rotateTo(cropRot); } else rotateCanvas(90);
+  });
+  $('btnFlipH').addEventListener('click', ()=>{
+    if(cropperInst){ cropFlipX*=-1; cropperInst.scaleX(cropFlipX); } else flipCanvas('h');
+  });
+  $('btnFlipV').addEventListener('click', ()=>{
+    if(cropperInst){ cropFlipY*=-1; cropperInst.scaleY(cropFlipY); } else flipCanvas('v');
+  });
   $('btnResizeApply').addEventListener('click', ()=>applyResize(Number($('resizeW').value)||0, Number($('resizeH').value)||0));
   $('btnBorderApply').addEventListener('click', ()=>applyBorder($('borderStyle').value));
 
@@ -1403,4 +1556,3 @@ wireEvents();
 </script>
 </body>
 </html>
-<!-- deploy-check 1784640262 -->
