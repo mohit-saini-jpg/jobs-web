@@ -8525,8 +8525,87 @@ _DU_SEC_META = {
 _du_count = 0
 _du_seen  = set()
 
+# ── Devanagari → Hinglish transliteration (pure stdlib, no pip dependency) ──
+# Used only as a slug fallback (see _du_slug below). Doesn't need to be
+# linguistically perfect — just needs to turn a Hindi title into a readable,
+# UNIQUE Latin string so two unrelated Hindi items don't collide on the same
+# slug (e.g. two different titles that both happen to contain only "2026"
+# and "PDF" in Latin script both stripping down to slug "2026-pdf").
+_DEVANAGARI_INDEP_VOWELS = {
+    'अ':'a','आ':'aa','इ':'i','ई':'ee','उ':'u','ऊ':'oo',
+    'ऋ':'ri','ए':'e','ऐ':'ai','ओ':'o','औ':'au',
+    'ॲ':'a','ऄ':'a','ऍ':'e','ऑ':'o',
+}
+_DEVANAGARI_MATRAS = {
+    'ा':'aa','ि':'i','ी':'ee','ु':'u','ू':'oo',
+    'ृ':'ri','े':'e','ै':'ai','ो':'o','ौ':'au',
+    'ॢ':'ri','ॣ':'ri','ॅ':'e','ॉ':'o',
+}
+_DEVANAGARI_CONSONANTS = {
+    'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'ng',
+    'च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'ny',
+    'ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
+    'त':'t','थ':'th','द':'d','ध':'dh','न':'n',
+    'प':'p','फ':'ph','ब':'b','भ':'bh','म':'m',
+    'य':'y','र':'r','ल':'l','व':'v','ळ':'l',
+    'श':'sh','ष':'sh','स':'s','ह':'h',
+    'क़':'q','ख़':'kh','ग़':'g','ज़':'z','ड़':'r',
+    'ढ़':'rh','फ़':'f','य़':'y','ऩ':'n',
+}
+_DEVANAGARI_OTHER = {
+    'ं':'n','ँ':'n','ः':'h','्':'','।':'.', '॥':'.',
+    '०':'0','१':'1','२':'2','३':'3','४':'4',
+    '५':'5','६':'6','७':'7','८':'8','९':'9',
+    '़':'',   # standalone combining nukta (only appears if NFC didn't compose
+              # it onto the preceding consonant) — safe to drop for a slug
+}
+def _transliterate_hi(text):
+    import unicodedata as _ud
+    text = _ud.normalize('NFC', text)   # compose decomposed sequences (e.g.
+                                         # base consonant + combining nukta)
+                                         # into single precomposed characters
+                                         # so the _DEVANAGARI_CONSONANTS nukta
+                                         # entries (ड़, ग़, ...) match correctly.
+    out = []
+    i, n = 0, len(text)
+    while i < n:
+        c = text[i]
+        if c in _DEVANAGARI_CONSONANTS:
+            out.append(_DEVANAGARI_CONSONANTS[c])
+            nxt = text[i+1] if i+1 < n else ''
+            if nxt in _DEVANAGARI_MATRAS:
+                out.append(_DEVANAGARI_MATRAS[nxt]); i += 2; continue
+            elif nxt == '्':   # virama — suppress inherent 'a', consonant stays bare
+                i += 2; continue
+            else:
+                out.append('a'); i += 1; continue
+        elif c in _DEVANAGARI_INDEP_VOWELS:
+            out.append(_DEVANAGARI_INDEP_VOWELS[c]); i += 1; continue
+        elif c in _DEVANAGARI_OTHER:
+            out.append(_DEVANAGARI_OTHER[c]); i += 1; continue
+        elif c in _DEVANAGARI_MATRAS:
+            i += 1; continue   # stray matra with no preceding consonant — skip
+        else:
+            out.append(c); i += 1
+    return ''.join(out)
+
 def _du_slug(name, url=''):
     s = slugify(name)
+    # A Hindi-heavy title often strips down to almost nothing usable in pure
+    # ASCII (e.g. "हरियाणा आंगनवाड़ी भर्ती 2026 ... (PDF) जारी" -> just "2026-pdf")
+    # — short AND generic enough that a second, unrelated Hindi item can
+    # easily collide on the exact same slug, silently losing its own page
+    # (see _du_seen dedup below). Prefer a transliterated Hinglish slug
+    # instead so it stays unique and readable, UNLESS a real page already
+    # exists at the plain slug from an earlier run (don't orphan/break an
+    # already-built, possibly already-indexed URL).
+    has_devanagari = any('ऀ' <= ch <= 'ॿ' for ch in name)
+    if has_devanagari and (not s or len(s) < 20):
+        already_built = bool(s) and (ROOT/'jobs'/s/'index.html').exists()
+        if not already_built:
+            translit_slug = slugify(_transliterate_hi(name))
+            if translit_slug and len(translit_slug) >= 8:
+                return translit_slug
     if s: return s
     # Hindi or empty: use url domain + md5 hash
     dom = re.sub(r'https?://(www\.)?','',url).split('/')[0].replace('.','-')[:20]
