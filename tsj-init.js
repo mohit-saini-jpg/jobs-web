@@ -26,3 +26,14 @@
       }
     });
 })();
+
+// TSJ AI floating assistant — loaded on every page that includes this file.
+// Deferred script tag (not a fetch+eval) so it behaves like a normal script
+// include: cached by the browser, executes after parse, doesn't block render.
+(function(){
+  if(document.querySelector('script[src^="/tsj-chat.js"]')) return;
+  var s = document.createElement('script');
+  s.src = '/tsj-chat.js';
+  s.defer = true;
+  document.head.appendChild(s);
+})();

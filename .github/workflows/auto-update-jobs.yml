@@ -337,6 +337,10 @@ jobs:
       - name: 🔃 Fix sections-index.json order (all 53+ categories)
         run: python3 update_sections_index.py
 
+      - name: 🤖 Rebuild TSJ AI chat search index
+        continue-on-error: true
+        run: python3 scripts/build_chat_index.py
+
       # ── STEP 8: SEO fixes (non-critical) ─────────────────────────
       - name: 🔍 Run SEO fixes
         continue-on-error: true
@@ -365,7 +369,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add version.json sw.js
-          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json 2>/dev/null || true
+          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json 2>/dev/null || true
           git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
