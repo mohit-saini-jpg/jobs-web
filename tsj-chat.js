@@ -165,6 +165,29 @@ function idbLoadLatest(){
 }
 
 /* ============================== LOCAL SITE SEARCH ============================== */
+// Filler words that add noise to a fuzzy match without adding meaning
+// ("details batao 2026 ke liye" etc.) — stripped before searching so the
+// distinctive terms (place/scheme/org names) carry full weight.
+var SEARCH_NOISE_RE = /\b(detail|details|batao|batye|batayein|bataye|please|kya|hai|ka|ki|ke|the|for|about|info|information|update|kare|karo|karein|tell|show|dikhao|puche|puchna|puchein|krna|de|do|dijiye)\b/gi;
+// Common Hinglish/Roman-Hindi misspellings of high-frequency government-job
+// terms on this site — plain character-fuzzy matching alone scores heavy
+// typos like "agrwari" almost as badly as a genuinely-nonexistent query, so
+// domain aliases correct the common ones outright before searching.
+var SEARCH_ALIASES = [
+  [/\b(agrwari|angwanwadi|aganwadi|angawadi|anganwari|aanganwadi|aganvadi)\b/gi, 'anganwadi'],
+  [/\bbharti\b/gi, 'recruitment bharti'],
+  [/\bbharthi\b/gi, 'recruitment bharti'],
+  [/\bnaukri\b/gi, 'job recruitment'],
+  [/\bsipahi\b/gi, 'constable'],
+  [/\bshikshak\b/gi, 'teacher'],
+  [/\bparinam\b/gi, 'result'],
+];
+function cleanQuery(q){
+  var out = String(q||'');
+  SEARCH_ALIASES.forEach(function(pair){ out = out.replace(pair[0], pair[1]); });
+  out = out.replace(SEARCH_NOISE_RE, ' ').replace(/\b(19|20)\d{2}\b/g, ' ');
+  return out.replace(/\s+/g, ' ').trim();
+}
 function ensureSearchIndex(){
   if(state.fuse) return Promise.resolve(state.fuse);
   return Promise.all([
@@ -175,7 +198,7 @@ function ensureSearchIndex(){
     if(window.Fuse && state.searchIndex.length){
       state.fuse = new window.Fuse(state.searchIndex, {
         keys: [{name:'t', weight:0.7}, {name:'o', weight:0.2}, {name:'c', weight:0.1}],
-        threshold: 0.38, ignoreLocation: true, minMatchCharLength: 2,
+        threshold: 0.42, ignoreLocation: true, minMatchCharLength: 2, includeScore: true,
       });
     }
     return state.fuse;
@@ -183,8 +206,9 @@ function ensureSearchIndex(){
 }
 function localSearch(query){
   if(!state.fuse) return [];
-  return state.fuse.search(query, {limit: 8}).map(function(r){
-    return {title:r.item.t, org:r.item.o, category:r.item.c, date:r.item.d, url:r.item.u};
+  var cleaned = cleanQuery(query) || query;
+  return state.fuse.search(cleaned, {limit: 8}).map(function(r){
+    return {title:r.item.t, org:r.item.o, category:r.item.c, date:r.item.d, url:r.item.u, score:r.score};
   });
 }
 function findToolLink(query){
@@ -201,12 +225,20 @@ function findToolLink(query){
 /* ============================== CSS ============================== */
 var CSS = ''+
 '#tsj-chat-root{position:fixed;z-index:99990;font-family:"Noto Sans",system-ui,sans-serif}'+
-'#tsj-chat-fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#345de6,#7c3aed);box-shadow:0 8px 24px rgba(52,93,230,.4);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;z-index:99991;transition:transform .2s}'+
+'#tsj-chat-fab{position:fixed;bottom:20px;left:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#345de6,#7c3aed);box-shadow:0 8px 24px rgba(52,93,230,.4);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;z-index:99991;transition:transform .2s}'+
+// Deliberately bottom-LEFT: the site's existing push-notification bell
+// button already owns the bottom-right corner (see tsj-push.js #tsj-bell),
+// and the two floating circles were overlapping there.
 '#tsj-chat-fab:hover{transform:scale(1.07)}'+
 '#tsj-chat-fab .tsj-fab-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#10B981;border:2px solid #fff;border-radius:50%}'+
-'#tsj-chat-panel{position:fixed;bottom:92px;right:20px;width:396px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 120px);background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.25);display:none;flex-direction:column;overflow:hidden;z-index:99990;border:1px solid #e5e7eb}'+
+'.tsj-fab-label{position:fixed;bottom:32px;left:88px;z-index:99991;background:#101828;color:#fff;padding:8px 14px;border-radius:10px;font-size:.78rem;font-weight:700;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:tsjLabelIn .3s ease-out}'+
+'.tsj-fab-label::after{content:"";position:absolute;left:-6px;bottom:14px;border:6px solid transparent;border-right-color:#101828}'+
+'.tsj-fab-label button{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;margin-left:8px;font-size:.85rem;vertical-align:middle}'+
+'@keyframes tsjLabelIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}'+
+'@media(max-width:480px){.tsj-fab-label{bottom:80px;left:16px;font-size:.72rem}}'+
+'#tsj-chat-panel{position:fixed;bottom:92px;left:20px;width:396px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 120px);background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.25);display:none;flex-direction:column;overflow:hidden;z-index:99990;border:1px solid #e5e7eb}'+
 '#tsj-chat-panel.open{display:flex}'+
-'#tsj-chat-panel.fullscreen{position:fixed;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;bottom:0;right:0}'+
+'#tsj-chat-panel.fullscreen{position:fixed;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;bottom:0;left:0}'+
 'html.tsj-dark #tsj-chat-panel{background:#0f172a;border-color:#2a3441;color:#f1f5f9}'+
 '.tsj-hd{background:linear-gradient(135deg,#345de6,#7c3aed);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}'+
 '.tsj-hd-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1rem}'+
@@ -279,7 +311,7 @@ var CSS = ''+
 '.tsj-footer-links button{background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:.68rem;text-decoration:underline}'+
 '@media(max-width:480px){'+
 '#tsj-chat-panel{right:8px;left:8px;width:auto;bottom:0;height:82vh;max-height:82vh;border-radius:16px 16px 0 0}'+
-'#tsj-chat-fab{bottom:16px;right:16px}'+
+'#tsj-chat-fab{bottom:16px;left:16px}'+
 '}'+
 '.tsj-profile-card{background:#eef4ff;border-radius:10px;padding:10px;font-size:.78rem;margin-bottom:8px}'+
 'html.tsj-dark .tsj-profile-card{background:#1c2740}'+
@@ -298,7 +330,8 @@ function buildHTML(){
   var root = document.createElement('div');
   root.id = 'tsj-chat-root';
   root.innerHTML =
-    '<button id="tsj-chat-fab" aria-label="Open TSJ AI Assistant" aria-expanded="false"><i class="fa-solid fa-robot"></i><span class="tsj-fab-badge"></span></button>'+
+    '<button id="tsj-chat-fab" aria-label="Open TSJ AI — AI assistant to help you find the best government job for you" aria-expanded="false"><i class="fa-solid fa-robot"></i><span class="tsj-fab-badge"></span></button>'+
+    '<div class="tsj-fab-label" id="tsj-fab-label" role="status">🎯 <strong>TSJ AI</strong> — Aapke liye Best Government Job Dhundhne mein Help karega!<button id="tsj-fab-label-close" aria-label="Dismiss">&times;</button></div>'+
     '<div id="tsj-chat-panel" role="dialog" aria-label="TSJ AI Assistant chat">'+
       '<div class="tsj-hd">'+
         '<div class="tsj-hd-icon"><i class="fa-solid fa-robot"></i></div>'+
@@ -388,10 +421,15 @@ function saveConversation(){
 }
 
 function detectNeedsWebSearch(query, siteMatches){
-  // If local site search found nothing useful, let the backend try live web
-  // search (only if the operator has configured a Tavily key — the backend
-  // handles that check; this is just the client's signal of intent).
-  return siteMatches.length === 0;
+  // No local match at all -> definitely worth a live search.
+  if(siteMatches.length === 0) return true;
+  // Character-fuzzy scoring can't reliably tell "correct match with a heavy
+  // typo" apart from "nothing real matched, here's the least-bad guess" —
+  // both score poorly. Rather than silently trusting (or discarding) a
+  // shaky match, also fetch live results as a second opinion; the model
+  // sees both and picks whichever actually answers the question.
+  var best = siteMatches[0].score;
+  return typeof best === 'number' && best > 0.3;
 }
 
 async function sendMessage(text){
@@ -630,9 +668,30 @@ function showProfileForm(){
   });
 }
 
+/* ============================== FAB DISCOVERY LABEL ============================== */
+function dismissFabLabel(){
+  var label = $('#tsj-fab-label');
+  if(label) label.remove();
+  sessionStorage.setItem('tsj_ai_label_seen', '1');
+}
+function maybeShowFabLabel(){
+  if(sessionStorage.getItem('tsj_ai_label_seen')){
+    var label = $('#tsj-fab-label');
+    if(label) label.remove();
+    return;
+  }
+  setTimeout(function(){
+    var btn = $('#tsj-fab-label-close');
+    if(btn) btn.addEventListener('click', function(e){ e.stopPropagation(); dismissFabLabel(); });
+  }, 0);
+  // Auto-dismiss after a while so it doesn't nag returning visitors mid-session.
+  setTimeout(dismissFabLabel, 9000);
+}
+
 /* ============================== EVENT WIRING ============================== */
 function openPanel(){
   state.open = true;
+  dismissFabLabel();
   $('#tsj-chat-panel').classList.add('open');
   $('#tsj-chat-fab').setAttribute('aria-expanded','true');
   setTimeout(function(){ $('#tsj-input').focus(); }, 100);
@@ -750,6 +809,7 @@ function init(){
   document.head.appendChild(style);
   applyDarkMode();
   wireEvents();
+  maybeShowFabLabel();
   idbLoadLatest().then(function(conv){
     if(conv && conv.messages && conv.messages.length){
       state.messages = conv.messages;

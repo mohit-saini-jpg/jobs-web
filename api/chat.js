@@ -30,7 +30,7 @@ const SYSTEM_PROMPT = `You are TSJ AI, the smart government job assistant built 
 Answer ONLY government-job-related questions: recruitment notifications, vacancies, eligibility, exam patterns, syllabus, admit cards, results, answer keys, admissions, government schemes, and how to use the site's own tools (resize photo, compress PDF, background remover, etc). If asked something completely unrelated (general chit-chat, coding help, etc.), politely redirect: tell the user you're focused on government jobs and TopSarkariJobs.com tools.
 
 Rules:
-- If "RELEVANT TOPSARKARIJOBS.COM DATA" is provided below, treat it as the most trustworthy, current source — prefer it over your own general knowledge, and always include the real URL(s) it gives you so the user can click through.
+- If "RELEVANT TOPSARKARIJOBS.COM DATA" is provided below, it came from a fuzzy search over the site's real listings, so it may include near-misses or nothing useful at all — use your judgment on whether each entry actually answers the user's question. For any entry that does genuinely match: you MUST prefer it over general/web knowledge, and you MUST include its exact URL (formatted as a Markdown link, e.g. "[Haryana Anganwadi Recruitment 2026](https://www.topsarkarijobs.com/jobs/...)") directly in your answer — never describe a real site listing without linking to it. If none of the entries actually match the question, ignore them and say this specific posting isn't listed on the site right now, then answer from web results / general knowledge instead.
 - If "LIVE WEB SEARCH RESULTS" is provided, you may use them for information not on the site, but only cite official sources (.gov.in, .nic.in, state government sites, official recruitment boards) — never unofficial job-aggregator blogs. Say "This information is based on official recruitment sources" when you rely on these.
 - If neither is provided and you're answering from your own training knowledge, say so plainly (e.g. "Based on general information — please verify on the official website before applying") rather than presenting it as live/confirmed data.
 - Never just say "I don't know" — give the most useful answer you can (general eligibility patterns for that type of exam, how to check officially, etc.) and be upfront about the uncertainty.
@@ -83,7 +83,7 @@ export default async function handler(request) {
   // the site's large data files itself.
   const siteMatches = Array.isArray(body.siteMatches) ? body.siteMatches.slice(0, 8) : [];
   if (siteMatches.length) {
-    context += '\n\nRELEVANT TOPSARKARIJOBS.COM DATA (real, current — prefer this):\n';
+    context += '\n\nRELEVANT TOPSARKARIJOBS.COM DATA (from fuzzy search — a "match confidence" is given for each; below ~0.3 is a strong match, above ~0.6 is a weak guess and may not actually be what the user asked about):\n';
     for (const m of siteMatches) {
       if (!m || typeof m !== 'object') continue;
       const title = String(m.title || '').slice(0, 160);
@@ -91,8 +91,9 @@ export default async function handler(request) {
       const cat = String(m.category || '').slice(0, 60);
       const date = String(m.date || '').slice(0, 20);
       const url = String(m.url || '').slice(0, 200);
+      const conf = typeof m.score === 'number' ? ` | match confidence: ${m.score.toFixed(2)}` : '';
       if (!title) continue;
-      context += `- ${title}${org ? ' | ' + org : ''}${cat ? ' | ' + cat : ''}${date ? ' | Last date: ' + date : ''} | https://www.topsarkarijobs.com${url}\n`;
+      context += `- ${title}${org ? ' | ' + org : ''}${cat ? ' | ' + cat : ''}${date ? ' | Last date: ' + date : ''}${conf} | https://www.topsarkarijobs.com${url}\n`;
     }
   }
 
