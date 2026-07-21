@@ -5909,7 +5909,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /jobs/hssc-cet-group-d-registration-form-2026-apply-online/  /jobs/hssc-cet-group-d-registration-form-2026-apply-online-link-active/  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
-/jobs/upsssc-up-forest-guard-wild-life-guard-recruitment-2026/  /jobs/upsssc-forest-guard-recruitment-2026-notification-out-apply-online-for-708-pos/  301
 /jobs/bank-of-india-boi-credit-officer-recruitment-2026/  /jobs/bank-of-india-credit-officer-recruitment-2026-notification-out-apply-online-fo/  301
 /jobs/iocl-apprentice-vacancy-2026-trade-technician-apprentice-posts/  /jobs/iocl-apprentice-recruitment-2026-apply-online-for-1524-trade-technician-appren/  301
 /jobs/bank-of-india-credit-officer-vacancy-2026/  /jobs/bank-of-india-credit-officer-recruitment-2026-notification-out-apply-online-fo/  301
@@ -7275,3 +7274,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /tools/pdf/ppt-to-pdf.html    /tools/pdf/any-file-to-pdf.html    301
 /tools/pdf/html-to-pdf.html   /tools/pdf/any-file-to-pdf.html    301
 /tools/pdf/pdf-to-jpg.html    /tools/pdf/pdf-to-any-format.html  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/army-ncc-special-entry-men-online-form/  /jobs/indian-army-ncc-special-entry-scheme-125th-course-men-recruitment-2026-apply-o/  301
