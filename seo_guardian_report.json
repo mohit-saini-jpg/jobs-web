@@ -1,13 +1,14 @@
 {
-  "timestamp": "2026-07-21T01:59:08.727720+00:00",
+  "timestamp": "2026-07-21T02:33:11.520552+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 5159,
+  "files_scanned": 5269,
   "issues_found_by_check": {
-    "ai_marker_integrity": 7,
-    "jobposting_schema": 31
+    "ai_marker_integrity": 6,
+    "jobposting_schema": 36,
+    "sitemap_sync": 110
   },
-  "issues_auto_fixed": 30,
+  "issues_auto_fixed": 144,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -22,6 +23,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
     },
     {
+      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
+    },
+    {
       "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
@@ -29,12 +36,6 @@
     },
     {
       "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/iit-kanpur-assistant-project-manager-recruitment-2026-apply-online/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
@@ -61,7 +62,8 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links: No new redirects needed — all links OK"
+    "broken_links: No new redirects needed — all links OK",
+    "build_sitemaps:   sitemap.xml                     108 urls [ok]"
   ],
-  "duration_sec": 17.5
+  "duration_sec": 17.6
 }
