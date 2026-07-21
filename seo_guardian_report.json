@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-07-21T05:01:21.723773+00:00",
+  "timestamp": "2026-07-21T05:51:42.283342+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 5270,
   "issues_found_by_check": {
     "ai_marker_integrity": 6,
-    "jobposting_schema": 36,
-    "slug_validate": 1
+    "jobposting_schema": 36
   },
   "issues_auto_fixed": 34,
   "unfixable": [
@@ -57,18 +56,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
-    },
-    {
-      "file": "",
-      "check": "slug_validate",
-      "severity": "non_critical",
-      "reason": "validate [WARN]  Link to /jobs/2026-pdf/ in [index.html] has no built page"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links:   [Today Updates] 2026-pdf"
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e"
   ],
-  "duration_sec": 33.2
+  "duration_sec": 18.0
 }
