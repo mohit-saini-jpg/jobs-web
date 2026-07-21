@@ -7276,4 +7276,8 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/punjab-national-bank-pnb-local-bank-officer-lbo-recruitment-2026-apply-online-fo/  /jobs/pnb-lbo-recruitment-2026-notification-out-apply-online-for-545-local-bank-offi/  301
 /jobs/igcar-various-trade-apprentice-2026-apply-online-for-200-post/  /jobs/igcar-apprentice-recruitment-2026-apply-online-for-200-trade-apprentice-posts/  301
-/jobs/union-bank-395-specialist-officer-online-form/  /jobs/union-bank-of-india-so-recruitment-2026-apply-online-for-395-officer-specialis/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/union-bank-of-india-ubi-specialist-officers-so-various-post-online-form-2026-for/  /jobs/union-bank-of-india-so-recruitment-2026-apply-online-for-395-officer-specialis/  301
+/jobs/mdu-rohtak-research-assistant-vacancy-2026-apply-now-9e81800f88/  /jobs/mdu-rohtak-research-assistant-recruitment-2026-walkin/  301
+/jobs/echs-agra-vacancy-2026-driver-peon-chowkidar-female-attendant-other-p-19ee5c2f5a/  /jobs/echs-agra-recruitment-2026-apply-offline-for-25-driver-peon-and-more-posts/  301

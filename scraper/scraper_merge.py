@@ -121,7 +121,17 @@ def _job_key(job):
     # `_scraped_from` set karta hai. Ye sabse reliable unique ID hai.
     scraped_from = job.get("_scraped_from", "")
     if isinstance(scraped_from, str) and scraped_from.strip().startswith("http"):
-        return "src::" + scraped_from.strip().rstrip("/")
+        key = "src::" + scraped_from.strip().rstrip("/")
+        # SARKARI FIX: sarkariresultshine.com articles can legitimately be
+        # listed under BOTH "LATEST_JOBS NEW" and "OFFLINE_FORM" (same source
+        # site/article, two different site sections). Without this, plain
+        # _scraped_from collapses them into "the same job" and one category's
+        # copy gets silently dropped during merge — even though the site
+        # renders both categories as separate sections that each need it.
+        cat = job.get("category", "")
+        if cat in ("LATEST_JOBS NEW", "OFFLINE_FORM"):
+            key += "::" + cat
+        return key
 
     # ── Priority 1: STATE-JOBS item shape (fallback for old cached data) ──
     # state_jobs items are {name, url, board, lastDate, detail:{...}}
@@ -557,9 +567,11 @@ def _count_sections(data):
     return sum(len(s.get("items", [])) for s in data.get("sections", []))
 
 def _count_sarkari(data):
+    # NOTE: always count the actual list contents, never trust a "total" key
+    # carried over from the pre-sync input dict — after _sync_sarkari() runs,
+    # that stale field can disagree with the real (deduped) "jobs" list
+    # length, which made the merge summary print a misleading count.
     if isinstance(data, dict):
-        if "total" in data:
-            return data["total"]
         return sum(len(v) for v in data.values() if isinstance(v, list))
     return 0
 
