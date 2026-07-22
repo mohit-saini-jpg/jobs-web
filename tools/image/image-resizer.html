@@ -290,6 +290,14 @@
       <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap set ho jayenge. Baad mein chahe to manually badal sakte hain.</p>
     </div>
 
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📐 Quick Size Presets — Print, Passport/ID, Social Media</label>
+      <select id="printPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="original" selected>📷 Original (Uploaded Image Size) — default</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Default mein hamesha upload ki hui image ka <b>original size</b> hi selected rehta hai. Print, Passport/ID ya Social Media ke liye standard size chahiye to yahan se choose karein (300 DPI par exact print pixels) — nahi to original size hi use hoga.</p>
+    </div>
+
     <div class="form-grid">
       <div class="form-group"><label>Width</label><input type="number" id="w" placeholder="width" min="0" step="any"></div>
       <div class="form-group"><label>Height</label><input type="number" id="h" placeholder="height" min="0" step="any"></div>
@@ -943,11 +951,61 @@
     });
   }
 
+  // Quick Size Presets → [group_label, [name, width_px, height_px]] — Print,
+  // Passport/ID and Social Media standard sizes (pixels @ 300 DPI where a
+  // physical/mm size is involved). No KB target here (unlike exam presets) —
+  // print/social sizes are about pixel dimensions, not a file-size limit.
+  var PRINT_PRESETS=[
+    {g:'🖨️ Print',items:[
+      ['Postcard 6×4in',1800,1200],
+      ['4×6 Photo',1200,1800],
+      ['5×7 Photo',1500,2100],
+      ['8×10 Photo',2400,3000],
+      ['A4',2480,3508]
+    ]},
+    {g:'🪪 Passport / ID',items:[
+      ['India / UK / Australia / Europe — 35×45mm',413,531],
+      ['USA / Philippines — 2×2 Inch',600,600],
+      ['Canada Passport — 50×70mm',590,826],
+      ['PAN Card / Aadhaar — 25×35mm',295,413],
+      ['SSC / IBPS Form',200,230]
+    ]},
+    {g:'📱 Social Media',items:[
+      ['Instagram Square',1080,1080],
+      ['Instagram Profile',320,320],
+      ['Facebook Profile',170,170],
+      ['LinkedIn Photo',400,400],
+      ['WhatsApp DP',500,500],
+      ['Twitter / X Profile',400,400]
+    ]}
+  ];
+  function populatePrintPreset(data){
+    var sel=G('printPreset');if(!sel)return;
+    data.forEach(function(grp){
+      var og=document.createElement('optgroup');og.label=grp.g;
+      grp.items.forEach(function(it){
+        var o=document.createElement('option');
+        o.value=it[0];o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);
+        o.textContent=it[0]+'  —  '+it[1]+'×'+it[2]+'px';
+        og.appendChild(o);
+      });
+      sel.appendChild(og);
+    });
+    sel.addEventListener('change',function(){
+      if(sel.value==='original'){prefill();return;}
+      var o=sel.options[sel.selectedIndex];if(!o||!o.getAttribute('data-w'))return;
+      G('unit').value='px';
+      G('w').value=o.getAttribute('data-w');
+      G('h').value=o.getAttribute('data-h');
+    });
+  }
+
   document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
     populateJobPreset(JOB_PRESETS_PHOTO);
+    populatePrintPreset(PRINT_PRESETS);
     var mf=G('main-file');
-    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err){prefill();initCrop();}});});
+    if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0],function(err){if(!err){if(G('printPreset'))G('printPreset').value='original';prefill();initCrop();}});});
     if(G('unit'))G('unit').addEventListener('change',prefill);
     if(G('dpi'))G('dpi').addEventListener('input',function(){if(natW)prefill();});
     if(G('w'))G('w').addEventListener('input',function(){syncAR('w');});
@@ -967,6 +1025,7 @@
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';
+      if(G('printPreset'))G('printPreset').value='original';
       var fp=G('file-preview');if(fp)fp.classList.remove('show');
       G('progress-wrap').style.display='none';G('pbar').style.width='0%';
       var rc=G('result-card');if(rc)rc.classList.remove('show');
