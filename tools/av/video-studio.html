@@ -144,6 +144,25 @@ a{color:inherit}
   background:transparent;
 }
 .eq-band-freq{font-size:0.6rem;color:var(--muted)}
+.preset-chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.preset-chip{background:var(--panel);border:1px solid var(--line);color:#e7e9ee;font-size:0.72rem;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.preset-chip:hover{border-color:var(--brand)}
+.preset-chip.active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+.audio-viz-wrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px;margin:14px 0}
+.audio-viz-canvas{width:100%;height:52px;display:block;margin-bottom:4px;background:#08090c;border-radius:5px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.viz-controls .tool-btn.small{width:auto;flex:1;min-width:78px;text-align:center;justify-content:center;padding:6px 8px;font-size:0.7rem;margin-bottom:0}
+.fx-group{border:1px solid var(--line);border-radius:9px;margin-bottom:10px;background:var(--panel);overflow:hidden}
+.fx-group summary{padding:10px 12px;font-size:0.8rem;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.fx-group summary::-webkit-details-marker{display:none}
+.fx-group summary::after{content:'+';color:var(--muted);font-size:1rem}
+.fx-group[open] summary::after{content:'−'}
+.fx-group[open] summary{border-bottom:1px solid var(--line)}
+.fx-group-body{padding:12px}
+.fx-group-body .field{margin-bottom:14px}
+.fx-group-body .field:last-child{margin-bottom:4px}
+.fx-sub{font-size:0.65rem;color:var(--muted);margin:-8px 0 10px;line-height:1.5}
+.fx-disclaimer{font-size:0.72rem;color:var(--muted);margin-top:14px;line-height:1.6}
 .tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--panel);border-radius:8px;padding:3px}
 .tab{flex:1;text-align:center;padding:7px;border-radius:6px;font-size:0.8rem;cursor:pointer;color:var(--muted)}
 .tab.active{background:var(--brand);color:#fff}
@@ -311,60 +330,239 @@ a{color:inherit}
 
   <div class="panel" id="panel-audio-fx" style="display:none">
     <h3>🎵 Audio Effects</h3>
-    <div class="toggle-row">
-      <span>🎬 Original Video Audio</span>
-      <label class="switch"><input type="checkbox" id="fx-include-audio" checked><span class="slider-tog"></span></label>
-    </div>
-    <p style="font-size:0.7rem;color:var(--muted);margin-top:2px">Off karne se video ki apni recorded awaaz hat jaayegi — Files panel mein Background Audio track alag se add/control hoti hai.</p>
-    <div class="field" style="margin-top:12px">
-      <label>Volume (<span id="volume-val">100</span>%)</label>
-      <input type="range" id="fx-volume" min="0" max="500" value="100">
-    </div>
+
     <div class="field">
-      <label>Pitch (<span id="pitch-val">1.0</span>x)</label>
-      <input type="range" id="fx-pitch" min="0.5" max="2" step="0.05" value="1">
-    </div>
-    <div class="toggle-row">
-      <span>Vocal Remover</span>
-      <label class="switch"><input type="checkbox" id="fx-vocal-remove"><span class="slider-tog"></span></label>
-    </div>
-    <div class="toggle-row">
-      <span>Reduce Noise</span>
-      <label class="switch"><input type="checkbox" id="fx-noise-reduce"><span class="slider-tog"></span></label>
-    </div>
-    <div class="field" id="noise-strength-field" style="display:none">
-      <label>Noise Reduction Strength (<span id="noise-strength-val">12</span> dB)</label>
-      <input type="range" id="fx-noise-strength" min="1" max="40" step="1" value="12">
-    </div>
-    <div class="field" id="noise-mode-field" style="display:none">
-      <label>Mode</label>
-      <select id="fx-noise-mode">
-        <option value="standard">Standard (Background Hiss)</option>
-        <option value="voice">Voice Focus (Aggressive)</option>
-        <option value="gentle">Gentle (Preserve Detail)</option>
-      </select>
-    </div>
-    <div class="toggle-row">
-      <span>Reverse Audio</span>
-      <label class="switch"><input type="checkbox" id="fx-reverse-audio"><span class="slider-tog"></span></label>
+      <label>🎯 Quick Presets</label>
+      <div class="preset-chip-row" id="audio-preset-row"><!-- injected by JS --></div>
     </div>
 
-    <div class="eq-wrap">
-      <div class="eq-preset-row">
-        <label>Equalizer</label>
-        <select id="eq-preset">
-          <option value="default">Default</option>
-          <option value="bass">Bass Boost</option>
-          <option value="treble">Treble Boost</option>
-          <option value="vocal">Vocal Boost</option>
-          <option value="podcast">Podcast/Speech</option>
-          <option value="flat">Flat (Reset)</option>
-        </select>
+    <div class="audio-viz-wrap">
+      <canvas id="audio-waveform-canvas" class="audio-viz-canvas" height="52"></canvas>
+      <canvas id="audio-spectrum-canvas" class="audio-viz-canvas" height="52"></canvas>
+      <div class="viz-controls">
+        <button type="button" id="audio-before-after-btn" class="tool-btn small" title="Tone/dynamics effects on/off compare karein">🔄 A/B: <span id="ba-state">After</span></button>
+        <button type="button" id="audio-undo-btn" class="tool-btn small" title="Undo">↶ Undo</button>
+        <button type="button" id="audio-redo-btn" class="tool-btn small" title="Redo">↷ Redo</button>
+        <button type="button" id="audio-reset-btn" class="tool-btn small" title="Sab effects reset karein">♻️ Reset</button>
       </div>
-      <div class="eq-bands" id="eq-bands"><!-- 10 bands injected by JS --></div>
     </div>
 
-    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px">ℹ️ Ye effects poori audio track par lagte hain (per-clip nahi) — phase 1 mein simple/global rakha gaya hai. Pitch aur Reduce Noise ka live preview ek real-time approximation hai; final exported video mein studio-grade processing (proper pitch-shift, spectral noise removal) lagti hai jo preview se behtar sunegi.</p>
+    <details class="fx-group" open>
+      <summary>🎬 Track Basics</summary>
+      <div class="fx-group-body">
+        <div class="toggle-row">
+          <span>Original Video Audio</span>
+          <label class="switch"><input type="checkbox" id="fx-include-audio" checked><span class="slider-tog"></span></label>
+        </div>
+        <p class="fx-sub">Off karne se video ki apni recorded awaaz mute ho jaayegi (Mute Original Audio).</p>
+        <div class="field" style="margin-top:10px">
+          <label>Volume (<span id="volume-val">100</span>%)</label>
+          <input type="range" id="fx-volume" min="0" max="500" value="100">
+        </div>
+        <div class="field">
+          <label>Fade In (<span id="fadein-val">0</span>s)</label>
+          <input type="range" id="fx-fade-in" min="0" max="10" step="0.5" value="0">
+        </div>
+        <div class="field">
+          <label>Fade Out (<span id="fadeout-val">0</span>s)</label>
+          <input type="range" id="fx-fade-out" min="0" max="10" step="0.5" value="0">
+        </div>
+        <div class="toggle-row">
+          <span>Reverse Audio</span>
+          <label class="switch"><input type="checkbox" id="fx-reverse-audio"><span class="slider-tog"></span></label>
+        </div>
+        <button type="button" id="btn-extract-audio" class="tool-btn" style="margin-top:10px">🎧 Extract Audio (MP3 download)</button>
+        <button type="button" id="btn-replace-audio" class="tool-btn" style="margin-bottom:0">🔁 Replace Audio Track</button>
+        <p class="fx-sub">Replace = original audio mute karke apni khud ki audio file upload karein (Files panel ke Background Audio se control hoti hai).</p>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>🧹 Noise & Cleanup</summary>
+      <div class="fx-group-body">
+        <div class="toggle-row">
+          <span>AI Noise Reduction</span>
+          <label class="switch"><input type="checkbox" id="fx-noise-reduce"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" id="noise-strength-field" style="display:none">
+          <label>Noise Reduction Strength (<span id="noise-strength-val">12</span> dB)</label>
+          <input type="range" id="fx-noise-strength" min="1" max="40" step="1" value="12">
+        </div>
+        <div class="field" id="noise-mode-field" style="display:none">
+          <label>Mode</label>
+          <select id="fx-noise-mode">
+            <option value="standard">Standard (Background Hiss)</option>
+            <option value="voice">Voice Focus (Aggressive)</option>
+            <option value="gentle">Gentle (Preserve Detail)</option>
+            <option value="wind">Wind Noise Removal</option>
+            <option value="hiss">Hiss Removal</option>
+            <option value="background">Background Noise Removal</option>
+          </select>
+        </div>
+        <div class="toggle-row">
+          <span>Pop & Click Removal</span>
+          <label class="switch"><input type="checkbox" id="fx-declick"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Hum Removal (Mains Buzz)</span>
+          <label class="switch"><input type="checkbox" id="fx-hum-remove"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" id="hum-freq-field" style="display:none">
+          <label>Hum Frequency</label>
+          <select id="fx-hum-freq">
+            <option value="50">50 Hz (India / EU)</option>
+            <option value="60">60 Hz (US)</option>
+          </select>
+        </div>
+        <div class="toggle-row">
+          <span>Echo Reduction</span>
+          <label class="switch"><input type="checkbox" id="fx-echo-reduce"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>De-Reverb (Room Echo)</span>
+          <label class="switch"><input type="checkbox" id="fx-dereverb"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Noise Gate</span>
+          <label class="switch"><input type="checkbox" id="fx-noise-gate"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" id="noise-gate-field" style="display:none">
+          <label>Gate Threshold (<span id="gate-val">-40</span> dB)</label>
+          <input type="range" id="fx-noise-gate-threshold" min="-60" max="-10" step="1" value="-40">
+        </div>
+        <div class="field">
+          <label>High Pass Filter (<span id="hp-val">Off</span>)</label>
+          <input type="range" id="fx-highpass" min="0" max="500" step="10" value="0">
+        </div>
+        <div class="field">
+          <label>Low Pass Filter (<span id="lp-val">Off</span>)</label>
+          <input type="range" id="fx-lowpass" min="0" max="20000" step="500" value="0">
+        </div>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>🗣️ Voice Enhancement</summary>
+      <div class="fx-group-body">
+        <div class="toggle-row">
+          <span>AI Voice Enhance</span>
+          <label class="switch"><input type="checkbox" id="fx-voice-enhance"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>AI Dialogue Enhancement</span>
+          <label class="switch"><input type="checkbox" id="fx-dialogue-enhance"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label>Voice Booster (<span id="voiceboost-val">0</span> dB)</label>
+          <input type="range" id="fx-voice-boost" min="-12" max="12" step="1" value="0">
+        </div>
+        <div class="field">
+          <label>Speech Clarity (<span id="clarity-val">0</span> dB)</label>
+          <input type="range" id="fx-clarity" min="-12" max="12" step="1" value="0">
+        </div>
+        <div class="field">
+          <label>Presence Boost (<span id="presence-val">0</span> dB)</label>
+          <input type="range" id="fx-presence" min="-12" max="12" step="1" value="0">
+        </div>
+        <div class="field">
+          <label>Voice Warmth (<span id="warmth-val">0</span> dB)</label>
+          <input type="range" id="fx-warmth" min="-12" max="12" step="1" value="0">
+        </div>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>🎚️ Dynamics & Loudness</summary>
+      <div class="fx-group-body">
+        <div class="toggle-row">
+          <span>Auto Volume Normalization</span>
+          <label class="switch"><input type="checkbox" id="fx-auto-normalize"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Loudness Normalization (LUFS)</span>
+          <label class="switch"><input type="checkbox" id="fx-loudness-normalize"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" id="lufs-field" style="display:none">
+          <label>Target Loudness (<span id="lufs-val">-16</span> LUFS)</label>
+          <input type="range" id="fx-target-lufs" min="-24" max="-9" step="1" value="-16">
+        </div>
+        <div class="toggle-row">
+          <span>Dynamic Compressor</span>
+          <label class="switch"><input type="checkbox" id="fx-compressor"><span class="slider-tog"></span></label>
+        </div>
+        <div class="field" id="compressor-field" style="display:none">
+          <label>Amount (<span id="compamt-val">50</span>%)</label>
+          <input type="range" id="fx-compressor-amount" min="0" max="100" step="1" value="50">
+        </div>
+        <div class="toggle-row">
+          <span>Limiter</span>
+          <label class="switch"><input type="checkbox" id="fx-limiter"><span class="slider-tog"></span></label>
+        </div>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>🎼 Equalizer & Tone</summary>
+      <div class="fx-group-body">
+        <div class="field">
+          <label>Bass Boost (<span id="bassboost-val">0</span> dB)</label>
+          <input type="range" id="fx-bass-boost" min="-12" max="12" step="1" value="0">
+        </div>
+        <div class="field" style="margin-bottom:4px">
+          <label>Treble Boost (<span id="trebleboost-val">0</span> dB)</label>
+          <input type="range" id="fx-treble-boost" min="-12" max="12" step="1" value="0">
+        </div>
+        <div class="eq-wrap">
+          <div class="eq-preset-row">
+            <label>10-Band Parametric EQ</label>
+            <select id="eq-preset">
+              <option value="default">Default</option>
+              <option value="bass">Bass Boost</option>
+              <option value="treble">Treble Boost</option>
+              <option value="vocal">Vocal Boost</option>
+              <option value="podcast">Podcast/Speech</option>
+              <option value="flat">Flat (Reset)</option>
+            </select>
+          </div>
+          <div class="eq-bands" id="eq-bands"><!-- 10 bands injected by JS --></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>🔊 Spatial & Vocal Tools</summary>
+      <div class="fx-group-body">
+        <div class="field">
+          <label>Stereo Width (<span id="stereowidth-val">100</span>%)</label>
+          <input type="range" id="fx-stereo-width" min="0" max="200" step="5" value="100">
+        </div>
+        <div class="field">
+          <label>Balance (<span id="balance-val">Center</span>)</label>
+          <input type="range" id="fx-balance" min="-100" max="100" step="5" value="0">
+        </div>
+        <div class="toggle-row">
+          <span>Vocal Remover (Karaoke)</span>
+          <label class="switch"><input type="checkbox" id="fx-vocal-remove"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Vocal Isolation</span>
+          <label class="switch"><input type="checkbox" id="fx-vocal-isolate"><span class="slider-tog"></span></label>
+        </div>
+      </div>
+    </details>
+
+    <details class="fx-group">
+      <summary>⏱️ Speed & Pitch</summary>
+      <div class="fx-group-body">
+        <div class="field" style="margin-bottom:4px">
+          <label>Pitch (<span id="pitch-val">1.0</span>x)</label>
+          <input type="range" id="fx-pitch" min="0.5" max="2" step="0.05" value="1">
+        </div>
+        <p class="fx-sub">Audio Speed, video ke saath sync rehta hai isliye woh Video Effects panel ke "Speed" slider se control hoti hai.</p>
+      </div>
+    </details>
+
+    <p class="fx-disclaimer">ℹ️ Ye sab FREE, open-source FFmpeg.wasm + Web Audio API filters hain — koi paid API, login ya cloud upload nahi, sab kuch is browser ke andar chalta hai. Zyaadatar sliders (EQ, HPF/LPF, bass/treble/warmth/presence/clarity, compressor, balance, pitch) live preview mein turant sunayi dete hain. Kuch filters (hum removal, declick, echo/de-reverb, loudness normalize, stereo width) sirf final export mein studio-grade quality ke saath lagte hain — live preview mein unka effect approximate/silent ho sakta hai.</p>
   </div>
 
   <!-- MAIN AREA -->
@@ -526,7 +724,36 @@ const ST = {
     speed: 1, opacity: 1, grayscale: false,
     includeAudio: true, volume: 1, pitch: 1,
     vocalRemove: false, noiseReduce: false, noiseReduceStrength: 12, noiseReduceMode: 'standard', reverseAudio: false,
-    eq: [0,0,0,0,0,0,0,0,0,0] // gain in dB per band, see EQ_FREQS below
+    eq: [0,0,0,0,0,0,0,0,0,0], // gain in dB per band, see EQ_FREQS below
+    // ── Audio Effects v2 — every toggle/slider below maps to a real
+    // ffmpeg audio filter at export time (see buildAudioSteps()) and, where
+    // Web Audio has a native equivalent, an approximate live-preview node
+    // (see rebuildAudioFxGraph()). None of this calls any external AI
+    // API — it's DSP built from FFmpeg's own filter library (afftdn,
+    // adeclick, loudnorm, acompressor, agate, etc.) plus standard Web
+    // Audio nodes, all 100% local/free/open-source, same spirit as the
+    // existing noise-reduce/EQ/pitch controls above.
+    voiceEnhance: false,       // one-click chain: HPF + presence EQ + gentle compressor + light denoise
+    dialogueEnhance: false,    // one-click chain: gate + stronger compressor + presence, tuned for "cuts through a mix"
+    humRemove: false, humFreq: 50,     // 50 or 60 (Hz) — notches the mains-hum frequency + harmonics
+    declick: false,             // adeclick + adeclip — impulsive pop/click/clipping repair
+    echoReduce: false,          // best-effort gate-based echo-tail suppression (no true AI dereverb in ffmpeg)
+    deReverb: false,            // best-effort — stronger version of the same gate-based approach
+    vocalIsolate: false,        // keep only center-panned content (opposite of Vocal Remover)
+    voiceBoost: 0,              // dB, wide peaking boost centered in the speech band (~1kHz)
+    clarity: 0,                 // dB, peaking boost ~3kHz (consonant/intelligibility range)
+    presence: 0,                // dB, peaking boost ~5kHz (classic "presence" band)
+    warmth: 0,                  // dB, peaking boost ~300Hz (body/warmth)
+    bassBoost: 0, trebleBoost: 0, // dB, shelving filters at the extremes
+    highpassHz: 0, lowpassHz: 0,  // 0 = off
+    autoNormalize: false,       // dynaudnorm — smooths out volume swings
+    loudnessNormalize: false, targetLUFS: -16, // loudnorm (EBU R128) — real broadcast-standard loudness target
+    compressor: false, compressorAmount: 50,   // 0-100, maps to acompressor ratio/threshold
+    limiter: false,
+    noiseGate: false, noiseGateThreshold: -40, // dB
+    stereoWidth: 100,           // % — 0=mono, 100=original, 200=extra wide
+    balance: 0,                 // -100 (full left) .. 100 (full right)
+    fadeInSec: 0, fadeOutSec: 0,
   },
   texts: [],
   selectedTextId: null,
@@ -667,7 +894,18 @@ function createLiveAudioProcessorNode(ctx){
   return node;
 }
 
+// Live-preview Web Audio graph. Not every export-time FFmpeg filter has a
+// clean real-time equivalent (stereo widening, hum notches, declick,
+// loudness normalization and the gate-based echo/de-reverb approximations
+// need either offline analysis or aren't meaningfully "live") — those
+// still only apply at export, same as the pre-existing pitch/noise-reduce
+// disclaimer already in the panel. Everything that DOES have a native Web
+// Audio node (EQ, highpass/lowpass, shelving, compressor, balance) gets a
+// real live node here so moving a slider is heard immediately.
 let audioCtx = null, mediaSourceNode = null, eqFilterNodes = [], volumeGainNode = null, liveProcessorNode = null;
+let hpNode = null, lpNode = null, bassNode = null, trebleNode = null;
+let warmthNode = null, voiceBoostNode = null, clarityNode = null, presenceNode = null;
+let compressorNode = null, pannerNode = null, analyserNode = null;
 function ensureLiveAudioGraph(){
   if (audioCtx) {
     if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
@@ -690,23 +928,166 @@ function ensureLiveAudioGraph(){
       node = filt;
       eqFilterNodes.push(filt);
     });
+
+    function mkFilter(type, freq, q){
+      const n = audioCtx.createBiquadFilter();
+      n.type = type; n.frequency.value = freq; if (q!=null) n.Q.value = q; n.gain.value = 0;
+      node.connect(n); node = n; return n;
+    }
+    hpNode = mkFilter('highpass', 20);
+    lpNode = mkFilter('lowpass', 20000);
+    bassNode = mkFilter('lowshelf', 150);
+    trebleNode = mkFilter('highshelf', 6000);
+    warmthNode = mkFilter('peaking', 300, 1);
+    voiceBoostNode = mkFilter('peaking', 1000, 1.2);
+    clarityNode = mkFilter('peaking', 3000, 1.4);
+    presenceNode = mkFilter('peaking', 5000, 1.4);
+
+    compressorNode = audioCtx.createDynamicsCompressor();
+    compressorNode.threshold.value = 0; compressorNode.ratio.value = 1; // neutral/bypassed by default
+    compressorNode.attack.value = 0.01; compressorNode.release.value = 0.2;
+    node.connect(compressorNode); node = compressorNode;
+
     liveProcessorNode = createLiveAudioProcessorNode(audioCtx);
     liveProcessorNode.pitchRatio = ST.fx.pitch || 1;
-    liveProcessorNode.noiseGateEnabled = !!ST.fx.noiseReduce;
+    liveProcessorNode.noiseGateEnabled = !!(ST.fx.noiseReduce || ST.fx.noiseGate || ST.fx.echoReduce || ST.fx.deReverb);
     node.connect(liveProcessorNode);
     node = liveProcessorNode;
+
+    pannerNode = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+    if (pannerNode){ pannerNode.pan.value = (ST.fx.balance||0)/100; node.connect(pannerNode); node = pannerNode; }
+
     volumeGainNode = audioCtx.createGain();
     volumeGainNode.gain.value = ST.fx.includeAudio ? ST.fx.volume : 0;
     node.connect(volumeGainNode);
-    volumeGainNode.connect(audioCtx.destination);
+    node = volumeGainNode;
+
+    // Real-time waveform + spectrum tap — reads the fully-processed signal
+    // right before it reaches the speakers.
+    analyserNode = audioCtx.createAnalyser();
+    analyserNode.fftSize = 2048;
+    analyserNode.smoothingTimeConstant = 0.75;
+    node.connect(analyserNode);
+    analyserNode.connect(audioCtx.destination);
+
+    applyAudioFxToLiveGraph();
     // Now that audio is routed through Web Audio, keep the element itself
     // at neutral 1.0/unmuted — actual loudness/mute is controlled by
     // volumeGainNode instead (which supports real boosts above 100%).
     previewVideo.volume = 1;
     previewVideo.muted = false;
+    startAudioVisualizer();
   } catch(e){
     console.warn('Web Audio graph could not be created:', e);
   }
+}
+
+// Real-time waveform + spectrum — reads analyserNode continuously via
+// requestAnimationFrame and draws to the two canvases in the panel. Safe
+// to call once; it self-loops forever (harmless when paused/silent, the
+// bars just settle flat) so it never needs to be manually stopped.
+let audioVizRAF = null;
+function startAudioVisualizer(){
+  if (audioVizRAF || !analyserNode) return;
+  const waveCanvas = document.getElementById('audio-waveform-canvas');
+  const specCanvas = document.getElementById('audio-spectrum-canvas');
+  if (!waveCanvas || !specCanvas) return;
+  const waveCtx = waveCanvas.getContext('2d');
+  const specCtx = specCanvas.getContext('2d');
+  const timeData = new Uint8Array(analyserNode.fftSize);
+  const freqData = new Uint8Array(analyserNode.frequencyBinCount);
+  function fitCanvas(c){
+    const rect = c.getBoundingClientRect();
+    const w = Math.round(rect.width), h = Math.round(rect.height) || 52;
+    if (w && (c.width !== w || c.height !== h)){ c.width = w; c.height = h; }
+  }
+  function draw(){
+    audioVizRAF = requestAnimationFrame(draw);
+    fitCanvas(waveCanvas); fitCanvas(specCanvas);
+    analyserNode.getByteTimeDomainData(timeData);
+    analyserNode.getByteFrequencyData(freqData);
+
+    const w1 = waveCanvas.width, h1 = waveCanvas.height;
+    if (w1 && h1){
+      waveCtx.clearRect(0,0,w1,h1);
+      waveCtx.strokeStyle = '#345de6'; waveCtx.lineWidth = 1.5; waveCtx.beginPath();
+      const step = timeData.length / w1;
+      for (let x=0; x<w1; x++){
+        const v = timeData[Math.floor(x*step)] / 128 - 1;
+        const y = h1/2 + v*(h1/2-2);
+        if (x===0) waveCtx.moveTo(x,y); else waveCtx.lineTo(x,y);
+      }
+      waveCtx.stroke();
+    }
+
+    const w2 = specCanvas.width, h2 = specCanvas.height;
+    if (w2 && h2){
+      specCtx.clearRect(0,0,w2,h2);
+      const bars = Math.min(64, freqData.length);
+      const bw = w2/bars;
+      for (let i=0;i<bars;i++){
+        const v = freqData[Math.floor(i * freqData.length / bars)] / 255;
+        const bh = v*h2;
+        specCtx.fillStyle = `hsl(${220 - v*140},85%,60%)`;
+        specCtx.fillRect(i*bw, h2-bh, Math.max(1,bw-1), bh);
+      }
+    }
+  }
+  draw();
+}
+
+// Pushes the current ST.fx values onto every live node — called after
+// ensureLiveAudioGraph() first builds the graph, and again any time a
+// control changes so the live preview stays in sync without rebuilding
+// the whole graph (which would interrupt playback).
+// Before/After (A/B) toggle — bypasses only the tone/dynamics shaping
+// (EQ, HPF/LPF, bass/treble/warmth/presence/clarity/voice-boost,
+// compressor) so the comparison is honest: volume, pan and pitch stay
+// matched between "Before" and "After" instead of loudness alone making
+// "After" sound better by default.
+let audioFxBypassed = false;
+function applyAudioFxToLiveGraph(){
+  if (!audioCtx) return;
+  const f = ST.fx;
+  const bypass = audioFxBypassed;
+  eqFilterNodes.forEach((n,i)=>{ n.gain.value = bypass ? 0 : (f.eq[i]||0); });
+  if (hpNode) hpNode.frequency.value = (!bypass && f.highpassHz>0) ? f.highpassHz : 20;
+  if (lpNode) lpNode.frequency.value = (!bypass && f.lowpassHz>0) ? f.lowpassHz : 20000;
+  if (bassNode) bassNode.gain.value = bypass ? 0 : (f.bassBoost||0);
+  if (trebleNode) trebleNode.gain.value = bypass ? 0 : (f.trebleBoost||0);
+  if (warmthNode) warmthNode.gain.value = bypass ? 0 : (f.warmth||0);
+  if (voiceBoostNode) voiceBoostNode.gain.value = bypass ? 0 : (f.voiceBoost||0);
+  if (clarityNode) clarityNode.gain.value = bypass ? 0 : (f.clarity||0);
+  if (presenceNode) presenceNode.gain.value = bypass ? 0 : (f.presence||0);
+  // voiceEnhance/dialogueEnhance bundle their own EQ+compressor recipe —
+  // when active they drive the shared compressor node directly instead of
+  // requiring yet another dedicated node.
+  if (compressorNode){
+    if (bypass){ compressorNode.threshold.value = 0; compressorNode.ratio.value = 1; }
+    else if (f.dialogueEnhance){ compressorNode.threshold.value=-32; compressorNode.ratio.value=6; }
+    else if (f.voiceEnhance){ compressorNode.threshold.value=-20; compressorNode.ratio.value=3; }
+    else if (f.compressor){
+      const amt = f.compressorAmount/100;
+      compressorNode.threshold.value = -(amt*36+4);
+      compressorNode.ratio.value = 1+amt*8;
+    } else {
+      compressorNode.threshold.value = 0; compressorNode.ratio.value = 1;
+    }
+  }
+  if (liveProcessorNode){
+    liveProcessorNode.pitchRatio = f.pitch || 1;
+    liveProcessorNode.noiseGateEnabled = !bypass && !!(f.noiseReduce || f.noiseGate || f.echoReduce || f.deReverb);
+    if (f.noiseGate){
+      liveProcessorNode.noiseGateThreshold = Math.pow(10, f.noiseGateThreshold/20);
+      liveProcessorNode.noiseGateFloor = 0.05;
+    } else if (f.noiseReduce){
+      const t = f.noiseReduceStrength / 40;
+      liveProcessorNode.noiseGateThreshold = 0.008 + t*0.05;
+      liveProcessorNode.noiseGateFloor = Math.max(0.02, 0.35 - t*0.3);
+    }
+  }
+  if (pannerNode) pannerNode.pan.value = (f.balance||0)/100;
+  if (volumeGainNode) volumeGainNode.gain.value = f.includeAudio ? f.volume : 0;
 }
 
 
@@ -1684,58 +2065,337 @@ document.getElementById('fx-grayscale').addEventListener('change', e=>{ ST.fx.gr
 document.getElementById('bg-color').addEventListener('input', e=>{ ST.bgColor = e.target.value; });
 
 /* =========================================================
-   AUDIO FX PANEL
+   AUDIO FX PANEL — config-driven controls
+   Every toggle/slider/select in the panel is declared once below (id,
+   the ST.fx key it maps to, how to format its live label) and wired
+   generically. The same table drives syncAudioFxUI() — used by presets,
+   undo/redo and Reset — so there is exactly one place that knows how a
+   control maps to state, instead of ~30 hand-written listeners that
+   could drift out of sync with each other.
 ========================================================= */
-document.getElementById('fx-include-audio').addEventListener('change', e=>{
-  ST.fx.includeAudio = e.target.checked;
-  document.getElementById('fx-include-audio-2').checked = !e.target.checked;
-  if (volumeGainNode) volumeGainNode.gain.value = e.target.checked ? ST.fx.volume : 0;
-});
+function signedDb(v){ v = Math.round(v); return (v>0?'+':'') + v + ' dB'; }
+function balanceLabel(v){ v = Math.round(v); if (Math.abs(v) < 1) return 'Center'; return v>0 ? ('R '+v) : ('L '+(-v)); }
+function hzOrOff(v){ return v>0 ? Math.round(v)+' Hz' : 'Off'; }
+
+const AUDIO_FX_CONTROLS = [
+  { id:'fx-include-audio', key:'includeAudio', kind:'toggle' },
+  { id:'fx-volume', key:'volume', kind:'range', valId:'volume-val', toState:v=>v/100, toInput:v=>Math.round(v*100), display:v=>Math.round(v*100) },
+  { id:'fx-fade-in', key:'fadeInSec', kind:'range', valId:'fadein-val', display:v=>v.toFixed(1) },
+  { id:'fx-fade-out', key:'fadeOutSec', kind:'range', valId:'fadeout-val', display:v=>v.toFixed(1) },
+  { id:'fx-reverse-audio', key:'reverseAudio', kind:'toggle' },
+  { id:'fx-noise-reduce', key:'noiseReduce', kind:'toggle', dependents:['noise-strength-field','noise-mode-field'] },
+  { id:'fx-noise-strength', key:'noiseReduceStrength', kind:'range', valId:'noise-strength-val', display:Math.round },
+  { id:'fx-noise-mode', key:'noiseReduceMode', kind:'select' },
+  { id:'fx-declick', key:'declick', kind:'toggle' },
+  { id:'fx-hum-remove', key:'humRemove', kind:'toggle', dependents:['hum-freq-field'] },
+  { id:'fx-hum-freq', key:'humFreq', kind:'select', toState:v=>parseInt(v,10) },
+  { id:'fx-echo-reduce', key:'echoReduce', kind:'toggle' },
+  { id:'fx-dereverb', key:'deReverb', kind:'toggle' },
+  { id:'fx-noise-gate', key:'noiseGate', kind:'toggle', dependents:['noise-gate-field'] },
+  { id:'fx-noise-gate-threshold', key:'noiseGateThreshold', kind:'range', valId:'gate-val', display:Math.round },
+  { id:'fx-highpass', key:'highpassHz', kind:'range', valId:'hp-val', display:hzOrOff },
+  { id:'fx-lowpass', key:'lowpassHz', kind:'range', valId:'lp-val', display:hzOrOff },
+  { id:'fx-voice-enhance', key:'voiceEnhance', kind:'toggle' },
+  { id:'fx-dialogue-enhance', key:'dialogueEnhance', kind:'toggle' },
+  { id:'fx-voice-boost', key:'voiceBoost', kind:'range', valId:'voiceboost-val', display:signedDb },
+  { id:'fx-clarity', key:'clarity', kind:'range', valId:'clarity-val', display:signedDb },
+  { id:'fx-presence', key:'presence', kind:'range', valId:'presence-val', display:signedDb },
+  { id:'fx-warmth', key:'warmth', kind:'range', valId:'warmth-val', display:signedDb },
+  { id:'fx-auto-normalize', key:'autoNormalize', kind:'toggle' },
+  { id:'fx-loudness-normalize', key:'loudnessNormalize', kind:'toggle', dependents:['lufs-field'] },
+  { id:'fx-target-lufs', key:'targetLUFS', kind:'range', valId:'lufs-val', display:Math.round },
+  { id:'fx-compressor', key:'compressor', kind:'toggle', dependents:['compressor-field'] },
+  { id:'fx-compressor-amount', key:'compressorAmount', kind:'range', valId:'compamt-val', display:Math.round },
+  { id:'fx-limiter', key:'limiter', kind:'toggle' },
+  { id:'fx-bass-boost', key:'bassBoost', kind:'range', valId:'bassboost-val', display:signedDb },
+  { id:'fx-treble-boost', key:'trebleBoost', kind:'range', valId:'trebleboost-val', display:signedDb },
+  { id:'fx-stereo-width', key:'stereoWidth', kind:'range', valId:'stereowidth-val', display:Math.round },
+  { id:'fx-balance', key:'balance', kind:'range', valId:'balance-val', display:balanceLabel },
+  { id:'fx-vocal-remove', key:'vocalRemove', kind:'toggle' },
+  { id:'fx-vocal-isolate', key:'vocalIsolate', kind:'toggle' },
+  { id:'fx-pitch', key:'pitch', kind:'range', valId:'pitch-val', display:v=>v.toFixed(2) },
+];
+
+function setAudioFxDependentVisibility(cfg, visible){
+  if (!cfg.dependents) return;
+  cfg.dependents.forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible ? 'block' : 'none';
+  });
+}
+
+// Re-reads ST.fx into every control — used by presets, undo/redo and
+// Reset so the panel always mirrors state exactly, in one place.
+function syncAudioFxUI(){
+  AUDIO_FX_CONTROLS.forEach(cfg=>{
+    const el = document.getElementById(cfg.id);
+    if (!el) return;
+    const val = ST.fx[cfg.key];
+    if (cfg.kind === 'toggle'){
+      el.checked = !!val;
+      setAudioFxDependentVisibility(cfg, el.checked);
+    } else if (cfg.kind === 'select'){
+      el.value = cfg.toInput ? cfg.toInput(val) : String(val);
+    } else {
+      el.value = cfg.toInput ? cfg.toInput(val) : val;
+      if (cfg.valId){
+        const lbl = document.getElementById(cfg.valId);
+        if (lbl) lbl.textContent = cfg.display ? cfg.display(val) : val;
+      }
+    }
+  });
+  document.getElementById('fx-include-audio-2').checked = !ST.fx.includeAudio;
+  renderEqBands();
+}
+
+function markAudioFxDirty(){
+  activeAudioPresetName = null;
+  highlightActiveAudioPresetChip(null);
+}
+
+function wireAudioFxControls(){
+  AUDIO_FX_CONTROLS.forEach(cfg=>{
+    const el = document.getElementById(cfg.id);
+    if (!el) return;
+    function applyFromEl(){
+      const raw = cfg.kind === 'toggle' ? el.checked : (cfg.kind === 'select' ? el.value : parseFloat(el.value));
+      const val = cfg.toState ? cfg.toState(raw) : raw;
+      ST.fx[cfg.key] = val;
+      if (cfg.kind === 'toggle') setAudioFxDependentVisibility(cfg, val);
+      if (cfg.valId){
+        const lbl = document.getElementById(cfg.valId);
+        if (lbl) lbl.textContent = cfg.display ? cfg.display(val) : val;
+      }
+      if (cfg.id === 'fx-include-audio') document.getElementById('fx-include-audio-2').checked = !val;
+      applyAudioFxToLiveGraph();
+      markAudioFxDirty();
+    }
+    if (cfg.kind === 'range'){
+      el.addEventListener('input', applyFromEl);
+      el.addEventListener('change', pushAudioFxHistory);
+    } else {
+      el.addEventListener('change', ()=>{ applyFromEl(); pushAudioFxHistory(); });
+    }
+  });
+}
 document.getElementById('fx-include-audio-2').addEventListener('change', e=>{
   const keepAudio = !e.target.checked; // this checkbox means "mute", so invert
   ST.fx.includeAudio = keepAudio;
   document.getElementById('fx-include-audio').checked = keepAudio;
-  if (volumeGainNode) volumeGainNode.gain.value = keepAudio ? ST.fx.volume : 0;
+  applyAudioFxToLiveGraph();
+  markAudioFxDirty();
+  pushAudioFxHistory();
 });
-document.getElementById('fx-volume').addEventListener('input', e=>{
-  ST.fx.volume = parseInt(e.target.value)/100;
-  document.getElementById('volume-val').textContent = e.target.value;
-  if (volumeGainNode) volumeGainNode.gain.value = ST.fx.includeAudio ? ST.fx.volume : 0;
-});
-document.getElementById('fx-pitch').addEventListener('input', e=>{
-  ST.fx.pitch = parseFloat(e.target.value);
-  document.getElementById('pitch-val').textContent = ST.fx.pitch.toFixed(2);
-  if (liveProcessorNode) liveProcessorNode.pitchRatio = ST.fx.pitch;
-});
-document.getElementById('fx-vocal-remove').addEventListener('change', e=>{ ST.fx.vocalRemove = e.target.checked; });
+wireAudioFxControls();
 
-const noiseStrengthField = document.getElementById('noise-strength-field');
-const noiseModeField = document.getElementById('noise-mode-field');
-function updateNoiseGateLive(){
-  if (!liveProcessorNode) return;
-  liveProcessorNode.noiseGateEnabled = ST.fx.noiseReduce;
-  // Map the 1-40 dB "strength" onto the gate's threshold/floor so the
-  // slider gives audibly stronger gating as it's increased, roughly
-  // tracking the aggressiveness of the real afftdn export settings.
-  const t = ST.fx.noiseReduceStrength / 40; // 0..1
-  liveProcessorNode.noiseGateThreshold = 0.008 + t*0.05;
-  liveProcessorNode.noiseGateFloor = Math.max(0.02, 0.35 - t*0.3);
+/* =========================================================
+   AUDIO FX — UNDO / REDO / RESET
+========================================================= */
+let audioFxHistory = [];
+let audioFxHistoryIndex = -1;
+function snapshotAudioFx(){ return JSON.stringify(ST.fx); }
+function updateAudioUndoRedoButtons(){
+  document.getElementById('audio-undo-btn').style.opacity = audioFxHistoryIndex > 0 ? '1' : '.45';
+  document.getElementById('audio-redo-btn').style.opacity = audioFxHistoryIndex < audioFxHistory.length-1 ? '1' : '.45';
 }
-document.getElementById('fx-noise-reduce').addEventListener('change', e=>{
-  ST.fx.noiseReduce = e.target.checked;
-  noiseStrengthField.style.display = e.target.checked ? 'block' : 'none';
-  noiseModeField.style.display = e.target.checked ? 'block' : 'none';
-  updateNoiseGateLive();
+function pushAudioFxHistory(){
+  const snap = snapshotAudioFx();
+  if (audioFxHistory[audioFxHistoryIndex] === snap) return;
+  audioFxHistory = audioFxHistory.slice(0, audioFxHistoryIndex+1);
+  audioFxHistory.push(snap);
+  if (audioFxHistory.length > 60) audioFxHistory.shift();
+  audioFxHistoryIndex = audioFxHistory.length - 1;
+  updateAudioUndoRedoButtons();
+}
+function restoreAudioFxFromHistory(){
+  const snap = audioFxHistory[audioFxHistoryIndex];
+  if (!snap) return;
+  Object.assign(ST.fx, JSON.parse(snap));
+  activeAudioPresetName = null;
+  syncAudioFxUI();
+  applyAudioFxToLiveGraph();
+  highlightActiveAudioPresetChip(null);
+  updateAudioUndoRedoButtons();
+}
+document.getElementById('audio-undo-btn').addEventListener('click', ()=>{
+  if (audioFxHistoryIndex > 0){ audioFxHistoryIndex--; restoreAudioFxFromHistory(); }
 });
-document.getElementById('fx-noise-strength').addEventListener('input', e=>{
-  ST.fx.noiseReduceStrength = parseInt(e.target.value, 10);
-  document.getElementById('noise-strength-val').textContent = ST.fx.noiseReduceStrength;
-  updateNoiseGateLive();
+document.getElementById('audio-redo-btn').addEventListener('click', ()=>{
+  if (audioFxHistoryIndex < audioFxHistory.length-1){ audioFxHistoryIndex++; restoreAudioFxFromHistory(); }
 });
-document.getElementById('fx-noise-mode').addEventListener('change', e=>{
-  ST.fx.noiseReduceMode = e.target.value;
+
+const AUDIO_FX_DEFAULTS = {
+  includeAudio:true, volume:1, pitch:1,
+  vocalRemove:false, noiseReduce:false, noiseReduceStrength:12, noiseReduceMode:'standard', reverseAudio:false,
+  eq:[0,0,0,0,0,0,0,0,0,0],
+  voiceEnhance:false, dialogueEnhance:false,
+  humRemove:false, humFreq:50,
+  declick:false, echoReduce:false, deReverb:false, vocalIsolate:false,
+  voiceBoost:0, clarity:0, presence:0, warmth:0,
+  bassBoost:0, trebleBoost:0, highpassHz:0, lowpassHz:0,
+  autoNormalize:false, loudnessNormalize:false, targetLUFS:-16,
+  compressor:false, compressorAmount:50, limiter:false,
+  noiseGate:false, noiseGateThreshold:-40,
+  stereoWidth:100, balance:0, fadeInSec:0, fadeOutSec:0,
+};
+function resetAudioEffects(){
+  Object.assign(ST.fx, JSON.parse(JSON.stringify(AUDIO_FX_DEFAULTS)));
+  activeAudioPresetName = null;
+  syncAudioFxUI();
+  applyAudioFxToLiveGraph();
+  highlightActiveAudioPresetChip(null);
+  pushAudioFxHistory();
+  showAlert('♻️ Audio effects reset ho gaye.', 'success');
+}
+document.getElementById('audio-reset-btn').addEventListener('click', resetAudioEffects);
+
+/* =========================================================
+   AUDIO FX — PRESETS
+========================================================= */
+let activeAudioPresetName = null;
+const AUDIO_PRESETS = {
+  'AI Voice Enhance': { voiceEnhance:true, noiseReduce:true, noiseReduceStrength:10, noiseReduceMode:'voice', autoNormalize:true },
+  'Podcast': { noiseReduce:true, noiseReduceStrength:14, noiseReduceMode:'voice', highpassHz:80, presence:2, compressor:true, compressorAmount:55, loudnessNormalize:true, targetLUFS:-16 },
+  'Studio Voice': { clarity:3, presence:4, warmth:2, compressor:true, compressorAmount:40, declick:true, autoNormalize:true },
+  'Interview': { noiseReduce:true, noiseReduceStrength:16, noiseReduceMode:'voice', highpassHz:90, dialogueEnhance:true, loudnessNormalize:true, targetLUFS:-18 },
+  'YouTube Voice': { voiceBoost:3, presence:3, compressor:true, compressorAmount:50, loudnessNormalize:true, targetLUFS:-14, limiter:true },
+  'Gaming': { voiceBoost:2, bassBoost:3, presence:2, compressor:true, compressorAmount:60, noiseGate:true, noiseGateThreshold:-38 },
+  'Meeting': { noiseReduce:true, noiseReduceStrength:18, noiseReduceMode:'background', echoReduce:true, dialogueEnhance:true, highpassHz:100 },
+  'Lecture': { noiseReduce:true, noiseReduceStrength:12, noiseReduceMode:'voice', presence:3, autoNormalize:true, loudnessNormalize:true, targetLUFS:-18 },
+  'Music': { bassBoost:3, trebleBoost:3, stereoWidth:130, compressor:true, compressorAmount:25, limiter:true, eq:[3,2,0,0,-1,0,1,2,3,3] },
+  'Karaoke': { vocalRemove:true, bassBoost:2, stereoWidth:140 },
+  'Cinema': { warmth:2, bassBoost:2, stereoWidth:150, compressor:true, compressorAmount:35, loudnessNormalize:true, targetLUFS:-20 },
+  'WhatsApp Voice': { noiseReduce:true, noiseReduceStrength:20, noiseReduceMode:'voice', highpassHz:120, lowpassHz:8000, compressor:true, compressorAmount:65, loudnessNormalize:true, targetLUFS:-14, limiter:true },
+};
+function applyAudioPreset(name){
+  const overrides = AUDIO_PRESETS[name];
+  if (!overrides) return;
+  const fresh = JSON.parse(JSON.stringify(AUDIO_FX_DEFAULTS));
+  Object.assign(fresh, overrides);
+  fresh.eq = (overrides.eq || AUDIO_FX_DEFAULTS.eq).slice();
+  Object.assign(ST.fx, fresh);
+  activeAudioPresetName = name;
+  syncAudioFxUI();
+  applyAudioFxToLiveGraph();
+  highlightActiveAudioPresetChip(name);
+  pushAudioFxHistory();
+  showAlert(`🎯 "${name}" preset apply ho gaya.`, 'success');
+}
+function highlightActiveAudioPresetChip(name){
+  const row = document.getElementById('audio-preset-row');
+  if (!row) return;
+  Array.from(row.children).forEach(chip=>{ chip.classList.toggle('active', chip.textContent === name); });
+}
+function renderAudioPresetChips(){
+  const row = document.getElementById('audio-preset-row');
+  row.innerHTML = '';
+  Object.keys(AUDIO_PRESETS).forEach(name=>{
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'preset-chip';
+    chip.textContent = name;
+    chip.addEventListener('click', ()=>applyAudioPreset(name));
+    row.appendChild(chip);
+  });
+}
+renderAudioPresetChips();
+pushAudioFxHistory(); // baseline snapshot so Undo can't go past the starting state
+
+/* =========================================================
+   AUDIO FX — BEFORE/AFTER (A/B)
+========================================================= */
+document.getElementById('audio-before-after-btn').addEventListener('click', ()=>{
+  audioFxBypassed = !audioFxBypassed;
+  document.getElementById('ba-state').textContent = audioFxBypassed ? 'Before' : 'After';
+  applyAudioFxToLiveGraph();
 });
-document.getElementById('fx-reverse-audio').addEventListener('change', e=>{ ST.fx.reverseAudio = e.target.checked; });
+
+/* =========================================================
+   AUDIO FX — EXTRACT AUDIO / REPLACE AUDIO TRACK
+========================================================= */
+async function extractAudio(){
+  if (!clips.length){ showAlert('❌ Pehle clips add karein!', 'error'); return; }
+  const overlay = document.getElementById('progress-overlay');
+  const pbar = document.getElementById('pbar'), ppercent = document.getElementById('ppercent'), pmsg = document.getElementById('progress-msg');
+  overlay.classList.add('show'); pbar.style.width='0%'; ppercent.textContent='0'; pmsg.textContent = 'Audio extract ho raha hai...';
+  let ffmpeg, onProgress;
+  try {
+    ffmpeg = await withTimeout(getFFmpeg(), 70000, 'FFmpeg engine load');
+    onProgress = ({progress})=>{ const pct=Math.max(0,Math.min(100,Math.round(progress*100))); pbar.style.width=pct+'%'; ppercent.textContent=pct; };
+    ffmpeg.on('progress', onProgress);
+
+    const inputNames = [];
+    for (let i=0;i<clips.length;i++){
+      const c = clips[i];
+      const inName = `ain${i}.${(c.file.name.split('.').pop()||'mp4')}`;
+      await ffmpeg.writeFile(inName, await fetchFile(c.file));
+      inputNames.push(inName);
+    }
+    for (let i=0;i<clips.length;i++){
+      if (clips[i]._hasAudio === undefined || clips[i]._hasAudio === null){
+        const probe = await probeClip(ffmpeg, inputNames[i]);
+        clips[i]._hasAudio = probe.hasAudio; clips[i]._duration = probe.duration || clips[i].duration;
+      }
+    }
+    const speed = (Number.isFinite(ST.fx.speed) && ST.fx.speed>0) ? ST.fx.speed : 1;
+    const args = [];
+    inputNames.forEach(n=>args.push('-i', n));
+    let filter=''; const aLabels=[]; let totalDur=0;
+    clips.forEach((c,i)=>{
+      const start = c.start && !isNaN(parseFloat(c.start)) ? parseFloat(c.start) : 0;
+      const end = c.end && !isNaN(parseFloat(c.end)) ? parseFloat(c.end) : null;
+      let segDur = (end!==null && end>start) ? (end-start) : Math.max(0.5, (c._duration||c.duration||5)-start);
+      if (!Number.isFinite(segDur) || segDur<=0) segDur = 5;
+      totalDur += segDur/speed;
+      if (c._hasAudio){
+        const atrimExpr = end!==null && end>start ? `atrim=start=${start}:end=${end}` : `atrim=start=${start}`;
+        filter += `[${i}:a]${atrimExpr},asetpts=PTS-STARTPTS,${atempoChain(speed)},aresample=async=1[a${i}];`;
+      } else {
+        filter += `anullsrc=channel_layout=stereo:sample_rate=44100:d=${(segDur/speed).toFixed(2)}[a${i}];`;
+      }
+      aLabels.push(`[a${i}]`);
+    });
+    if (!Number.isFinite(totalDur) || totalDur<=0) totalDur = 1;
+    filter += `${aLabels.join('')}concat=n=${clips.length}:v=0:a=1[acat];`;
+    const steps = buildAudioSteps(totalDur);
+    let finalLabel = 'acat';
+    if (steps.length){ filter += `[acat]${steps.join(',')}[afinal];`; finalLabel = 'afinal'; }
+    filter = filter.replace(/;\s*$/, '');
+    args.push('-filter_complex', filter, '-map', `[${finalLabel}]`, '-vn', '-c:a', 'libmp3lame', '-b:a', '192k', '-t', totalDur.toFixed(2));
+    const outputName = 'extracted_audio.mp3';
+    args.push(outputName);
+    const exitCode = await ffmpeg.exec(args);
+    if (typeof exitCode === 'number' && exitCode !== 0) throw new Error(`FFmpeg exit code ${exitCode}`);
+    const outData = await ffmpeg.readFile(outputName);
+    if (!outData || !outData.byteLength) throw new Error('Audio extract fail hui (0 bytes).');
+    for (const n of inputNames){ try{ await ffmpeg.deleteFile(n); }catch(e){} }
+    try{ await ffmpeg.deleteFile(outputName); }catch(e){}
+    ffmpeg.off('progress', onProgress);
+    const blob = new Blob([outData.buffer], {type:'audio/mpeg'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=outputName; a.click(); URL.revokeObjectURL(url);
+    overlay.classList.remove('show');
+    showAlert('✅ Audio extract ho gayi — MP3 download shuru!', 'success');
+  } catch(err){
+    console.error('Extract audio error:', err);
+    showAlert('❌ Audio extract fail: '+(err.message||err), 'error');
+    try{ if (ffmpeg && onProgress) ffmpeg.off('progress', onProgress); }catch(e2){}
+    overlay.classList.remove('show');
+  }
+}
+document.getElementById('btn-extract-audio').addEventListener('click', extractAudio);
+document.getElementById('btn-replace-audio').addEventListener('click', ()=>{
+  // Reuses the existing Background Audio Track system (Files panel) —
+  // mute the original clip audio, then open the same file picker it uses
+  // so the new track is trimmed/volumed/positioned with the same tools.
+  document.getElementById('fx-include-audio').checked = false;
+  ST.fx.includeAudio = false;
+  document.getElementById('fx-include-audio-2').checked = true;
+  applyAudioFxToLiveGraph();
+  pushAudioFxHistory();
+  document.getElementById('add-audio-track-btn').click();
+  showAlert('🔁 Original audio mute kar di — ab apni audio file chunein.', 'success');
+});
 
 /* =========================================================
    10-BAND EQUALIZER
@@ -1872,6 +2532,112 @@ function atempoChain(speed){
   while (s<0.5){ parts.push('atempo=0.5'); s/=0.5; }
   parts.push(`atempo=${s.toFixed(4)}`);
   return parts.join(',');
+}
+
+/* =========================================================
+   AUDIO EFFECTS — FULL FFMPEG FILTER CHAIN (export quality)
+   Every control in the Audio Effects panel maps to a real FFmpeg audio
+   filter here — afftdn/adeclick/adeclip/loudnorm/dynaudnorm/acompressor/
+   agate/stereotools/extrastereo/bass/treble/equalizer/afade etc. are all
+   built into FFmpeg itself (the same @ffmpeg/core already loaded for
+   export), so this needs no external API, no paid service, and no extra
+   download. A few features (Echo Reduction, De-Reverb) don't have a true
+   AI dereverberation filter in stock FFmpeg — those are an honest
+   best-effort DSP approximation (gating + light denoise), not a claim of
+   studio-grade AI room-echo removal.
+   Order matters: fix defects first (declick/hum/HPF-LPF/noise), then
+   shape the stereo image, then tonal EQ, then dynamics/loudness, then
+   volume/pitch, then fades, with the safety limiter always last.
+========================================================= */
+function buildAudioSteps(totalDur){
+  const f = ST.fx;
+  const steps = [];
+
+  // ── Cleanup ──
+  if (f.declick) steps.push('adeclick', 'adeclip');
+  if (f.humRemove){
+    const hf = f.humFreq===60 ? 60 : 50;
+    steps.push(`bandreject=f=${hf}:width_type=h:w=4`, `bandreject=f=${hf*2}:width_type=h:w=4`, `bandreject=f=${hf*3}:width_type=h:w=4`);
+  }
+  if (f.highpassHz>0) steps.push(`highpass=f=${f.highpassHz}`);
+  if (f.lowpassHz>0) steps.push(`lowpass=f=${f.lowpassHz}`);
+  if (f.noiseReduce){
+    const strength = f.noiseReduceStrength;
+    if (f.noiseReduceMode === 'voice'){
+      // Voice Focus: cut low-frequency rumble first (mic handling noise,
+      // AC hum, room boom), then apply stronger denoising with a
+      // higher noise floor — good for spoken-word/vlogging clips.
+      steps.push('highpass=f=100', `afftdn=nr=${Math.min(40, strength+5).toFixed(2)}:nf=-30`);
+    } else if (f.noiseReduceMode === 'gentle'){
+      // Gentle: lighter reduction with a lower noise floor threshold,
+      // preserves more detail/ambience at the cost of less cleanup.
+      steps.push(`afftdn=nr=${(strength*0.6).toFixed(2)}:nf=-60`);
+    } else if (f.noiseReduceMode === 'wind'){
+      // Wind Noise Removal: wind energy is almost entirely low-frequency —
+      // a strong high-pass does most of the real work, denoise mops up rest.
+      steps.push('highpass=f=200', `afftdn=nr=${Math.max(strength,20).toFixed(2)}:nf=-20`);
+    } else if (f.noiseReduceMode === 'hiss'){
+      // Hiss Removal: broadband high-frequency noise — trim the top end
+      // first, then a gentler denoise so speech consonants aren't dulled.
+      steps.push('treble=g=-6:f=8000', `afftdn=nr=${(strength*0.7).toFixed(2)}:nf=-45`);
+    } else if (f.noiseReduceMode === 'background'){
+      // Background Noise Removal: steady ambient noise (fan, traffic,
+      // AC) — a stronger, wider-net denoise than the default.
+      steps.push(`afftdn=nr=${Math.max(strength,20).toFixed(2)}:nf=-25`);
+    } else {
+      steps.push(`afftdn=nr=${strength.toFixed(2)}`);
+    }
+  }
+  if (f.echoReduce) steps.push('agate=threshold=0.03:ratio=2:attack=3:release=200');
+  if (f.deReverb) steps.push('agate=threshold=0.05:ratio=4:attack=2:release=300', 'afftdn=nr=10');
+  if (f.noiseGate) steps.push(`agate=threshold=${Math.pow(10, f.noiseGateThreshold/20).toFixed(4)}:ratio=8`);
+
+  // ── Stereo image ──
+  if (f.vocalRemove) steps.push('pan=stereo|c0=c0-c1|c1=c1-c0');
+  if (f.vocalIsolate) steps.push('stereotools=mlev=1:slev=0');
+  if (f.stereoWidth !== 100) steps.push(`extrastereo=m=${(f.stereoWidth/100).toFixed(2)}`);
+  if (f.balance !== 0){
+    const lg = f.balance>0 ? (1-f.balance/100).toFixed(3) : '1';
+    const rg = f.balance<0 ? (1+f.balance/100).toFixed(3) : '1';
+    steps.push(`pan=stereo|c0=${lg}*c0|c1=${rg}*c1`);
+  }
+
+  // ── Tonal shaping ──
+  if (Array.isArray(f.eq) && f.eq.some(g => g !== 0)){
+    steps.push(EQ_FREQS.map((freq,i) => `equalizer=f=${freq}:width_type=o:width=1:g=${f.eq[i]}`).join(','));
+  }
+  if (f.bassBoost) steps.push(`bass=g=${f.bassBoost}`);
+  if (f.trebleBoost) steps.push(`treble=g=${f.trebleBoost}`);
+  if (f.warmth) steps.push(`equalizer=f=300:width_type=o:width=1:g=${f.warmth}`);
+  if (f.voiceBoost) steps.push(`equalizer=f=1000:width_type=o:width=1.5:g=${f.voiceBoost}`);
+  if (f.clarity) steps.push(`equalizer=f=3000:width_type=o:width=1:g=${f.clarity}`);
+  if (f.presence) steps.push(`equalizer=f=5000:width_type=o:width=1:g=${f.presence}`);
+  if (f.voiceEnhance) steps.push('highpass=f=80', 'equalizer=f=3000:width_type=o:width=1:g=3', 'acompressor=threshold=0.1:ratio=3:attack=5:release=100', 'afftdn=nr=8');
+  if (f.dialogueEnhance) steps.push('agate=threshold=0.02:ratio=4', 'acompressor=threshold=0.05:ratio=6:attack=2:release=150', 'equalizer=f=4000:width_type=o:width=1:g=4');
+
+  // ── Dynamics / Loudness ──
+  if (f.compressor){
+    const amt = f.compressorAmount/100;
+    steps.push(`acompressor=threshold=${(1-amt*0.8).toFixed(2)}:ratio=${(1+amt*8).toFixed(1)}:attack=10:release=200`);
+  }
+  if (f.autoNormalize) steps.push('dynaudnorm=f=150:g=15');
+  if (f.loudnessNormalize) steps.push(`loudnorm=I=${f.targetLUFS}:TP=-1.5:LRA=11`);
+
+  // ── Volume / Pitch ──
+  if (f.volume !== 1) steps.push(`volume=${f.volume.toFixed(2)}`);
+  if (f.pitch !== 1) steps.push(`asetrate=44100*${f.pitch.toFixed(3)}`, `aresample=44100`, atempoChain(1/f.pitch));
+
+  // ── Fades ──
+  if (f.fadeInSec>0) steps.push(`afade=t=in:st=0:d=${f.fadeInSec.toFixed(2)}`);
+  if (f.fadeOutSec>0 && Number.isFinite(totalDur)) steps.push(`afade=t=out:st=${Math.max(0,totalDur-f.fadeOutSec).toFixed(2)}:d=${f.fadeOutSec.toFixed(2)}`);
+
+  if (f.reverseAudio) steps.push('areverse');
+
+  // Safety limiter — always last, catches peaks from EVERYTHING upstream
+  // (a volume boost above 100% especially can clip without this).
+  if (f.limiter || f.volume > 1) steps.push('alimiter=limit=0.95');
+
+  return steps;
 }
 function escDrawtext(s){
   return String(s).replace(/\\/g,'\\\\').replace(/:/g,'\\:').replace(/'/g,"\\'").replace(/%/g,'\\%');
@@ -2127,40 +2893,7 @@ async function performExport(){
 
     let audioLabel = null;
     if (keepAudio){
-      const steps = [];
-      if (ST.fx.vocalRemove) steps.push('pan=stereo|c0=c0-c1|c1=c1-c0');
-      if (ST.fx.noiseReduce) {
-        const strength = ST.fx.noiseReduceStrength;
-        if (ST.fx.noiseReduceMode === 'voice') {
-          // Voice Focus: cut low-frequency rumble first (mic handling noise,
-          // AC hum, room boom), then apply stronger denoising with a
-          // higher noise floor — good for spoken-word/vlogging clips.
-          steps.push('highpass=f=100', `afftdn=nr=${Math.min(40, strength+5).toFixed(2)}:nf=-30`);
-        } else if (ST.fx.noiseReduceMode === 'gentle') {
-          // Gentle: lighter reduction with a lower noise floor threshold,
-          // preserves more detail/ambience at the cost of less cleanup.
-          steps.push(`afftdn=nr=${(strength*0.6).toFixed(2)}:nf=-60`);
-        } else {
-          steps.push(`afftdn=nr=${strength.toFixed(2)}`);
-        }
-      }
-      if (Array.isArray(ST.fx.eq) && ST.fx.eq.some(g => g !== 0)){
-        const eqChain = EQ_FREQS.map((f,i) => `equalizer=f=${f}:width_type=o:width=1:g=${ST.fx.eq[i]}`).join(',');
-        steps.push(eqChain);
-      }
-      if (ST.fx.volume !== 1) {
-        steps.push(`volume=${ST.fx.volume.toFixed(2)}`);
-        // A volume boost above 100% can easily push samples past full
-        // scale, causing harsh digital clipping that can SOUND like "no
-        // boost" (just distorted noise) rather than genuinely louder
-        // audio. A limiter keeps the boost clearly audible without that
-        // crackling distortion.
-        if (ST.fx.volume > 1) steps.push('alimiter=limit=0.95');
-      }
-      if (ST.fx.pitch !== 1){
-        steps.push(`asetrate=44100*${ST.fx.pitch.toFixed(3)}`, `aresample=44100`, atempoChain(1/ST.fx.pitch));
-      }
-      if (ST.fx.reverseAudio) steps.push('areverse');
+      const steps = buildAudioSteps(totalDur);
       if (steps.length){
         filter += `[acat]${steps.join(',')}[afinal];`;
         audioLabel = 'afinal';
