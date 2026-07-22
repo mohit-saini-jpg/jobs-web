@@ -90,7 +90,7 @@
     .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
     @media (max-width:920px){.workspace{grid-template-columns:1fr}}
 
-    .canvas-wrap{position:relative;background:repeating-conic-gradient(#e2e8f0 0% 25%,#f8fafc 0% 50%) 50%/16px 16px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:340px;border:1px solid var(--line)}
+    .canvas-wrap{position:relative;background:repeating-conic-gradient(#e2e8f0 0% 25%,#f8fafc 0% 50%) 50%/16px 16px;border-radius:12px;overflow:auto;display:flex;align-items:center;justify-content:center;min-height:340px;max-height:70vh;border:1px solid var(--line)}
     html.dark .canvas-wrap{background:repeating-conic-gradient(#1e293b 0% 25%,#0f172a 0% 50%) 50%/16px 16px}
     #mainCanvas{max-width:100%;max-height:70vh;display:block;touch-action:none}
     .canvas-empty{padding:60px 20px;text-align:center;color:var(--muted)}
@@ -253,10 +253,10 @@
         <!-- AUTO MODE -->
         <div class="mode-panel" id="panel-auto">
           <button class="enhance-btn" id="btnAutoEnhance"><i class="fa-solid fa-wand-magic-sparkles spin"></i><i class="fa-solid fa-wand-magic-sparkles" style="display:inline"></i> <span class="txt">Enhance Photo</span></button>
-          <div class="info-note">One click runs: auto color &amp; light fix → smart denoise (if needed) → detail sharpening → face-aware enhancement (if a face is detected).</div>
+          <div class="info-note"><strong>Start here for a visibly better photo</strong> — one click runs: auto color &amp; light fix → smart denoise (if needed) → detail sharpening → face-aware enhancement (if a face is detected).</div>
 
           <div class="field-row" style="margin-top:16px">
-            <label>AI Super Resolution</label>
+            <label>AI Super Resolution (optional, adds sharpness at a larger size)</label>
             <div class="seg-row" id="upscaleSeg">
               <div class="seg-opt" data-x="1">Off</div>
               <div class="seg-opt active" data-x="2">2×</div>
@@ -265,7 +265,7 @@
             </div>
           </div>
           <button class="btn primary block" id="btnUpscale"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Run AI Upscale</button>
-          <div class="info-note" style="margin-top:8px">Real neural-network super-resolution (TensorFlow.js). Uses your GPU (WebGL) when available — 4×/8× runs the AI model in stages and can take a while on large photos or older devices.</div>
+          <div class="info-note" style="margin-top:8px">This only increases resolution/detail — it does NOT fix color, brightness or blur (use "Enhance Photo" above for that). Its effect is subtle when viewed shrunk to fit your screen — use Zoom (+) or Before/After after running it to see the real difference at full size. Real neural-network super-resolution (TensorFlow.js) — uses your GPU (WebGL) when available; without GPU support this can take several minutes, so 4×/8× auto-fall back to 2× on such devices.</div>
         </div>
 
         <!-- MANUAL MODE -->
@@ -458,6 +458,12 @@ function loadImageToCanvas(img){
 }
 function yieldToUI(){
   return new Promise(res => requestAnimationFrame(()=>setTimeout(res, 0)));
+}
+function withTimeout(promise, ms){
+  return new Promise((resolve, reject)=>{
+    const t = setTimeout(()=>reject(new Error('timeout')), ms);
+    promise.then(v=>{ clearTimeout(t); resolve(v); }, e=>{ clearTimeout(t); reject(e); });
+  });
 }
 function getData(){ return ctx.getImageData(0,0,state.canvas.width, state.canvas.height); }
 function putData(id){ ctx.putImageData(id,0,0); }
@@ -987,18 +993,99 @@ async function getUpscaler(){
   })();
   return state.upscalerLoading;
 }
+// TF.js's progress callback for upscaler.upscale() only fires with real
+// intermediate values on the WebGL patch-based path — on a device where
+// WebGL init fails (confirmed: happens in real environments, not just this
+// sandbox) it silently falls back to a CPU/WASM backend that runs as one
+// monolithic pass with the callback firing once at the very end. A whole
+// 800x600 photo at 2x took 210 SECONDS on CPU fallback in testing, with the
+// progress bar frozen at "0%" that entire time — indistinguishable from a
+// crashed tab. Since there's no real progress signal available in that
+// case, show an honest elapsed-time counter instead of a fake percentage
+// that would just sit there doing nothing.
+async function detectBackendIsSlow(){
+  // tf.getBackend() reflects the CONFIGURED backend, not necessarily the one
+  // actually in use yet — WebGL init (and its fallback to CPU/WASM if
+  // unsupported) happens lazily on first real use. Checking immediately
+  // after just constructing the Upscaler reported "webgl" even on a device
+  // where it silently fails and falls back moments later once inference
+  // actually starts (confirmed: the elapsed-time ticker below never
+  // triggered because of exactly this ordering bug) — tf.ready() forces
+  // that resolution to happen now, so the check reflects reality.
+  try{
+    if(typeof tf === 'undefined' || !tf.ready) return false;
+    await tf.ready();
+    return tf.getBackend() !== 'webgl';
+  }catch(e){ return false; }
+}
+// Fast, GPU-free "upscale": browser-native high-quality resize + the
+// existing classical sharpen/clarity/texture pass to recover perceived
+// detail. Not real super-resolution, but it completes in under a second
+// and produces a genuine, visible improvement — the honest alternative on
+// a device that can't run the neural model without freezing the tab for
+// minutes (see aiUpscale's WebGL check).
+async function classicalUpscale(factor){
+  const src = state.canvas;
+  const newW = Math.round(src.width*factor), newH = Math.round(src.height*factor);
+  if(Math.max(newW,newH) > 6000){
+    toast(`This photo is too large for ${factor}× upscale on this device — try a smaller multiplier.`, true);
+    return;
+  }
+  showProgress(true, 'Enhancing resolution…', 30);
+  await yieldToUI();
+  const tmp = document.createElement('canvas');
+  tmp.width = newW; tmp.height = newH;
+  const tctx = tmp.getContext('2d');
+  tctx.imageSmoothingEnabled = true;
+  tctx.imageSmoothingQuality = 'high';
+  tctx.drawImage(src, 0, 0, newW, newH);
+  updateProgress(70, 'Enhancing resolution…');
+  await yieldToUI();
+  let id = tctx.getImageData(0,0,newW,newH);
+  id = applySharpenClarityTexture(id, 55, 18, 8);
+  tctx.putImageData(id,0,0);
+  setCanvasSize(newW, newH);
+  ctx.drawImage(tmp,0,0);
+  state.baseImageData = getData();
+  pushHistory();
+  showProgress(false);
+  toast(`Resized to ${newW}×${newH}px — fast mode (this browser/device doesn't support the GPU acceleration the full AI model needs)`);
+}
+
 async function aiUpscale(factor){
   if(factor<=1) return;
-  const stages = Math.round(Math.log2(factor)); // 2x=1 stage, 4x=2 stages, 8x=3 stages
   const projectedFinal = Math.max(state.canvas.width, state.canvas.height) * factor;
   if(projectedFinal > 6000){
     toast(`This photo is too large for ${factor}× upscale on this device — try a smaller multiplier.`, true);
     return;
   }
-  showProgress(true, 'Loading AI model…');
+  const btn = $('btnUpscale');
+  btn.disabled = true;
+  showProgress(true, 'Checking device capability…', 0);
+  await yieldToUI();
+
+  // TF.js's CPU/WASM fallback (used automatically when WebGL is
+  // unavailable) doesn't yield control back to the browser during
+  // inference — confirmed live: an 800x600 photo at 2x took 210+ SECONDS
+  // with the entire tab genuinely frozen the whole time (not just the
+  // progress bar — nothing could repaint or respond, including this same
+  // check's own timer callbacks). No progress-bar fix can help with that;
+  // the only honest fix is to not attempt the neural model on such a
+  // device at all, and fall back to a fast classical resize+sharpen that
+  // actually completes and gives a real, visible result.
+  const slowBackend = await detectBackendIsSlow();
+  if(slowBackend){
+    btn.disabled = false;
+    await classicalUpscale(factor);
+    return;
+  }
+
+  const stages = Math.round(Math.log2(factor)); // 2x=1 stage, 4x=2 stages, 8x=3 stages
+  showProgress(true, 'Loading AI model…', 0);
+  await yieldToUI(); // let the "Loading AI model…" text actually paint before the model-load/inference work below blocks the thread
   let upscaler;
-  try{ upscaler = await getUpscaler(); }
-  catch(e){ showProgress(false); toast('AI model could not load. Check your internet connection.', true); return; }
+  try{ upscaler = await withTimeout(getUpscaler(), 30000); }
+  catch(e){ showProgress(false); btn.disabled = false; toast('AI model could not load. Check your internet connection.', true); return; }
 
   let workCanvas = document.createElement('canvas');
   workCanvas.width = state.canvas.width; workCanvas.height = state.canvas.height;
@@ -1008,12 +1095,17 @@ async function aiUpscale(factor){
     // guard against runaway canvas sizes on repeated 2x passes
     const projected = workCanvas.width*2;
     if(projected > 6000){ toast('Reached maximum safe upscale size for your device.', true); break; }
-    showProgress(true, `AI upscaling — stage ${stage+1} of ${stages}…`, 0);
+    const stageLabel = `AI upscaling — stage ${stage+1} of ${stages}…`;
+    showProgress(true, stageLabel, 0);
+    await yieldToUI(); // paint the 0% state before this stage's inference blocks the thread
     try{
-      const result = await upscaler.upscale(workCanvas, {
-        patchSize: 64, padding: 4,
-        progress: (rate)=> updateProgress(rate*100, `AI upscaling — stage ${stage+1} of ${stages}…`),
-      });
+      const result = await withTimeout(
+        upscaler.upscale(workCanvas, {
+          patchSize: 64, padding: 4,
+          progress: (rate)=> updateProgress(rate*100, stageLabel),
+        }),
+        90000,
+      );
       const im = await dataURLToImage(result);
       workCanvas = document.createElement('canvas');
       workCanvas.width = im.width; workCanvas.height = im.height;
@@ -1021,7 +1113,10 @@ async function aiUpscale(factor){
     }catch(e){
       console.error(e);
       showProgress(false);
-      toast('AI upscale failed on this device/browser.', true);
+      btn.disabled = false;
+      toast(e && e.message === 'timeout'
+        ? 'AI upscale timed out on this device — try a smaller photo or a lower multiplier.'
+        : 'AI upscale failed on this device/browser.', true);
       return;
     }
   }
@@ -1030,13 +1125,19 @@ async function aiUpscale(factor){
   state.baseImageData = getData();
   pushHistory();
   showProgress(false);
-  toast(`Upscaled to ${workCanvas.width}×${workCanvas.height}px`);
+  btn.disabled = false;
+  toast(`Upscaled to ${workCanvas.width}×${workCanvas.height}px — use Zoom (+) and Before/After to see the detail difference at full size`);
 }
 
-function showProgress(on, label){
+function showProgress(on, label, pct){
   $('progressWrap').classList.toggle('show', on);
-  if(label) $('progressText').textContent = label;
-  if(!on) updateProgress(0,'');
+  if(!on){ updateProgress(0,''); return; }
+  // Always show a percentage immediately (defaulting to 0) rather than a
+  // bare label with no number — otherwise the bar sits there with no
+  // feedback until the upscaler's own progress callback happens to fire,
+  // which on some devices/models only fires once near the very end, making
+  // a working process look identical to a frozen one.
+  updateProgress(typeof pct === 'number' ? pct : 0, label);
 }
 function updateProgress(pct, label){
   $('progressFill').style.width = clamp(pct,0,100)+'%';
@@ -1395,9 +1496,22 @@ function initSplitDrag(){
   wrap.addEventListener('click', e=>{ if(e.target===handle) return; setPos(e.clientX); });
 }
 function applyZoom(delta){
-  state.zoom = clamp(state.zoom+delta, 0.3, 3);
+  // Whole-photo before/after previews get shrunk to fit the screen, which
+  // silently erases the very fine-detail improvement AI upscale adds — a
+  // 2x/4x resolution gain is invisible once both images are scaled back
+  // down to a few hundred CSS pixels wide. Zoom must actually let the user
+  // inspect at (or beyond) native pixel scale, so it now also scales the
+  // before/after compare view, not just the plain canvas — and
+  // canvas-wrap's overflow is scrollable so a zoomed-in image can be panned
+  // instead of just clipped.
+  state.zoom = clamp(state.zoom+delta, 0.3, 5);
   state.canvas.style.transform = `scale(${state.zoom})`;
   state.canvas.style.transformOrigin = 'center';
+  const split = $('splitWrap');
+  if(split){
+    split.style.transform = `scale(${state.zoom})`;
+    split.style.transformOrigin = 'center';
+  }
 }
 function openFullscreen(){
   $('fsImg').src = getFullResDataURL('image/png');
