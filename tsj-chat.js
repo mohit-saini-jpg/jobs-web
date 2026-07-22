@@ -191,7 +191,14 @@ function idbLoadLatest(){
 // Filler words that add noise to a fuzzy match without adding meaning
 // ("details batao 2026 ke liye" etc.) — stripped before searching so the
 // distinctive terms (place/scheme/org names) carry full weight.
-var SEARCH_NOISE_RE = /\b(detail|details|batao|batye|batayein|bataye|please|kya|hai|ka|ki|ke|the|for|about|info|information|update|kare|karo|karein|tell|show|dikhao|puche|puchna|puchein|krna|de|do|dijiye)\b/gi;
+// "X ka link bhejo/dekhne ka link do" is a very common request shape —
+// without stripping its action words too, Fuse's edit-distance scoring
+// counted them against the match and pushed a genuinely exact result
+// (score 0.90, "weak guess" territory) close to indistinguishable from a
+// real non-match, risking the model skipping a citation that was actually
+// correct (confirmed live: "UPPSC GIC Lecturer Result dekhne ka link beje"
+// found the right job, but scored so poorly it wasn't a safe citation).
+var SEARCH_NOISE_RE = /\b(detail|details|batao|batye|batayein|bataye|please|kya|hai|ka|ki|ke|the|for|about|info|information|update|kare|karo|karein|tell|show|dikhao|puche|puchna|puchein|krna|de|do|dijiye|dekhne|dekhna|dekho|dekhein|link|bhejo|bheje|beje|bhejdo|bhejein|bhej|chahiye|chaiye|mujhe|muje|send|sendme|milega|milegi|jaye|jaayega|jayega|sakta|sakte|hoga|hogi)\b/gi;
 // Common Hinglish/Roman-Hindi misspellings of high-frequency government-job
 // terms on this site — plain character-fuzzy matching alone scores heavy
 // typos like "agrwari" almost as badly as a genuinely-nonexistent query, so
@@ -211,8 +218,69 @@ function cleanQuery(q){
   out = out.replace(SEARCH_NOISE_RE, ' ').replace(/\b(19|20)\d{2}\b/g, ' ');
   return out.replace(/\s+/g, ' ').trim();
 }
+// ── Hybrid search: Fuse.js (character-fuzzy, typo-tolerant) + BM25
+// (classic search-engine term-weighting — rare/meaningful words count for
+// more than common ones). Fuse alone under-ranks a result that shares every
+// RIGHT word with the query just because of extra/reordered text (confirmed
+// live: a genuinely exact "UPPSC GIC Lecturer Result" match scored 0.90 —
+// "weak guess" territory — purely from how the question was phrased). BM25
+// catches those by weighting on shared distinctive words instead of raw
+// character edit-distance, so running both and merging catches what either
+// alone would miss. Both run entirely client-side over the already-fetched
+// index — no new page markup, requests, or URLs, so this has no SEO/crawl
+// impact at all.
+var BM25_K1 = 1.5, BM25_B = 0.75;
+function tokenize(s){
+  return String(s||'').toLowerCase().replace(/[^a-z0-9ऀ-ॿ\s]/g,' ').split(/\s+/).filter(function(t){ return t.length>1; });
+}
+function buildBm25Index(items){
+  var docs = items.map(function(it){ return tokenize(it.t); });
+  var df = {}, totalLen = 0;
+  docs.forEach(function(toks){
+    totalLen += toks.length;
+    var seen = {};
+    toks.forEach(function(t){ if(!seen[t]){ seen[t]=1; df[t] = (df[t]||0)+1; } });
+  });
+  var N = docs.length;
+  var avgdl = N ? totalLen/N : 1;
+  var idf = {};
+  Object.keys(df).forEach(function(t){
+    idf[t] = Math.log(1 + (N - df[t] + 0.5)/(df[t] + 0.5));
+  });
+  return {docs:docs, idf:idf, avgdl:avgdl, N:N};
+}
+function bm25Search(query, limit){
+  if(!state.bm25) return [];
+  var idx = state.bm25;
+  var qToks = [];
+  tokenize(cleanQuery(query) || query).forEach(function(t){ if(qToks.indexOf(t)===-1) qToks.push(t); });
+  if(!qToks.length) return [];
+  var scored = [];
+  for(var i=0;i<idx.docs.length;i++){
+    var doc = idx.docs[i];
+    if(!doc.length) continue;
+    var tf = {};
+    doc.forEach(function(t){ tf[t] = (tf[t]||0)+1; });
+    var score = 0;
+    for(var j=0;j<qToks.length;j++){
+      var f = tf[qToks[j]];
+      if(!f) continue;
+      var idfv = idx.idf[qToks[j]] || 0;
+      score += idfv * (f*(BM25_K1+1)) / (f + BM25_K1*(1 - BM25_B + BM25_B*doc.length/idx.avgdl));
+    }
+    if(score > 0) scored.push({i:i, score:score});
+  }
+  scored.sort(function(a,b){ return b.score - a.score; });
+  return scored.slice(0, limit||8).map(function(s){
+    var it = state.searchIndex[s.i];
+    // Normalize to Fuse's "lower is better" convention (~0 = strong, ~1 =
+    // weak) so the two signals share one scale downstream (detectNeedsWebSearch,
+    // the prompt's confidence explanation) without needing separate handling.
+    return {title:it.t, org:it.o, category:it.c, date:it.d, url:it.u, score:1/(1+s.score), type:it.ty};
+  });
+}
 function ensureSearchIndex(){
-  if(state.fuse) return Promise.resolve(state.fuse);
+  if(state.fuse || state.bm25) return Promise.resolve(state.fuse);
   return Promise.all([
     fetch(SEARCH_INDEX_URL).then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; }),
     loadScript(FUSE_CDN).catch(function(){}),
@@ -224,15 +292,29 @@ function ensureSearchIndex(){
         threshold: 0.42, ignoreLocation: true, minMatchCharLength: 2, includeScore: true,
       });
     }
+    if(state.searchIndex.length){
+      state.bm25 = buildBm25Index(state.searchIndex);
+    }
     return state.fuse;
   });
 }
 function localSearch(query){
-  if(!state.fuse) return [];
   var cleaned = cleanQuery(query) || query;
-  return state.fuse.search(cleaned, {limit: 8}).map(function(r){
+  var fuseResults = state.fuse ? state.fuse.search(cleaned, {limit: 8}).map(function(r){
     return {title:r.item.t, org:r.item.o, category:r.item.c, date:r.item.d, url:r.item.u, score:r.score, type:r.item.ty};
+  }) : [];
+  var bm25Results = bm25Search(query, 8);
+  // Merge by URL — when both engines find the same page, keep whichever
+  // scored it more confidently (lower).
+  var byUrl = {};
+  fuseResults.concat(bm25Results).forEach(function(m){
+    var existing = byUrl[m.url];
+    if(!existing || (typeof m.score==='number' && m.score < existing.score)) byUrl[m.url] = m;
   });
+  var merged = [];
+  for(var u in byUrl){ merged.push(byUrl[u]); }
+  merged.sort(function(a,b){ return (a.score==null?1:a.score) - (b.score==null?1:b.score); });
+  return merged.slice(0, 8);
 }
 function findToolLink(query){
   var q = query.toLowerCase();
@@ -604,9 +686,11 @@ async function sendMessage(text){
   var profileQuery = detectProfileQuery(text);
   var profileMatches = profileQuery ? profileSearch(profileQuery) : [];
   var siteMatches = profileMatches.length ? profileMatches : localSearch(text);
-  if(!profileMatches.length && toolMatch){
+  if(!profileMatches.length && toolMatch && siteMatches.every(function(m){ return m.url !== toolMatch.url; })){
     // Let the AI itself know about the deep-link too (not just the button
     // rendered after streaming), so it can mention/cite it if relevant.
+    // The hybrid (BM25+Fuse) search now often finds the same tool on its
+    // own too — only prepend here if it isn't already in the results.
     siteMatches = [{title:toolMatch.label, org:'', category:'Tool', date:'', url:toolMatch.url, type:'tool'}].concat(siteMatches).slice(0,8);
   }
   var needsWebSearch = profileMatches.length ? false : detectNeedsWebSearch(text, siteMatches);

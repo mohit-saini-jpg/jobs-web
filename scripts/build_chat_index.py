@@ -155,12 +155,47 @@ def slugify(text):
     return text.strip('-')[:80] or 'job'
 
 
-def canonical_slug(job, title):
-    """Mirrors get_canonical_slug()'s Priority 1/2 (direct fields) — the
-    registry-dependent Priority 3 fallback is intentionally not replicated
-    here (this index is best-effort search context, not the page generator;
-    a rare mismatched link is an acceptable trade-off for staying a simple,
-    self-contained script)."""
+# Mirrors generate_all.py's _sr_fingerprint()/registered_slug(): when a job
+# has neither _canonical_slug nor slug set (~26% of sarkari_data jobs,
+# confirmed by audit), a plain slugify(title) frequently doesn't match the
+# real page directory — the page's slug was minted from an EARLIER version
+# of the title (e.g. "...Download Answer Key 2026") that has since drifted
+# to a new one ("...Download Result 2026"), and without this lookup those
+# jobs were silently dropped from the whole index (never findable by the
+# chat at all). data/slug-registry.json is the same file generate_all.py
+# itself maintains for exactly this reason — read-only here, never written.
+_SR_STOP = frozenset((
+    'the', 'and', 'for', 'of', 'in', 'to', 'a', 'an', 'with', 'on', 'at', 'by', 'top',
+    'sarkari', 'jobs', 'recruitment', 'apply', 'online', 'offline', 'notification',
+    'out', 'check', 'details', 'post', 'posts', 'vacancy', 'vacancies', 'form',
+    'registration', 'last', 'date', 'here', 'now', 'download', 'pdf', '2024',
+    '2025', '2026', '2027', '2028', 'latest', 'govt', 'government', 'result',
+    'admit', 'card', 'answer', 'key', 'syllabus', 'exam', 'new', 'all', 'various',
+))
+
+
+def _sr_fingerprint(title):
+    t = re.sub(r'[^a-z0-9\s]', ' ', str(title or '').lower())
+    toks = [w for w in t.split() if w and w not in _SR_STOP and len(w) > 1]
+    return ' '.join(sorted(toks))
+
+
+def load_slug_registry(root):
+    path = os.path.join(root, 'data', 'slug-registry.json')
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def canonical_slug(job, title, slug_registry=None):
+    """Mirrors get_canonical_slug()'s Priority 1/2/3 (direct fields, then the
+    title-fingerprint slug registry) — only the true last-resort slugify(title)
+    guess (which the site itself never actually uses to mint a URL) is not
+    replicated further than that."""
     cs = str(job.get('_canonical_slug') or '').strip()
     if cs:
         return _norm_slug(cs)
@@ -173,6 +208,12 @@ def canonical_slug(job, title):
         s = _norm_slug(raw)
         if s:
             return s
+    if slug_registry:
+        fp = _sr_fingerprint(title)
+        if fp and fp in slug_registry:
+            s = _norm_slug(slug_registry[fp])
+            if s:
+                return s
     return slugify(title)
 
 
@@ -251,6 +292,7 @@ def main():
     if os.path.isdir(jobs_dir):
         _disk_slugs = set(os.listdir(jobs_dir))
 
+    slug_registry = load_slug_registry(ROOT)
     qual_map = build_qual_map(ROOT)
 
     seen_slugs = set()
@@ -285,7 +327,7 @@ def main():
         title = str(j.get('title', '')).strip()
         if not title:
             continue
-        slug = canonical_slug(j, title)
+        slug = canonical_slug(j, title, slug_registry)
         date = j.get('important_dates', {}).get('last_date', '') if isinstance(j.get('important_dates'), dict) else ''
         add(title, j.get('organization', ''), j.get('category', ''), date or j.get('postDate', ''), slug,
             ty='job', age=parse_age_range(j), ql=qual_map.get(slug), q=eligibility_text(j))
@@ -296,7 +338,7 @@ def main():
         title = str(bd.get('job_title', '')).strip()
         if not title:
             continue
-        slug = canonical_slug(j, title)
+        slug = canonical_slug(j, title, slug_registry)
         imp = j.get('important_dates', {}) or {}
         date = imp.get('last_date_to_apply', '') or imp.get('last_date', '')
         qual = j.get('qualification', {}) or {}
@@ -310,7 +352,7 @@ def main():
             title = str(it.get('name', '') or it.get('title', '')).strip()
             if not title:
                 continue
-            slug = canonical_slug(it, title)
+            slug = canonical_slug(it, title, slug_registry)
             add(title, it.get('organization', ''), cat, it.get('postDate', '') or it.get('date', ''), slug, ty='education')
 
     job_count = len(out)
