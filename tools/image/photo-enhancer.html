@@ -1027,7 +1027,8 @@ async function detectBackendIsSlow(){
 async function classicalUpscale(factor){
   const src = state.canvas;
   const newW = Math.round(src.width*factor), newH = Math.round(src.height*factor);
-  if(Math.max(newW,newH) > 6000){
+  if(Math.max(newW,newH) > MAX_UPSCALE_DIM){
+    // defensive only — aiUpscale() already picks a factor that fits before calling this
     toast(`This photo is too large for ${factor}× upscale on this device — try a smaller multiplier.`, true);
     return;
   }
@@ -1052,12 +1053,29 @@ async function classicalUpscale(factor){
   toast(`Resized to ${newW}×${newH}px — fast mode (this browser/device doesn't support the GPU acceleration the full AI model needs)`);
 }
 
+// A 6000px cap meant even a 2x/4x upscale of an ordinary modern phone photo
+// (commonly 3000-4000px on the long side already) failed outright — most
+// real uploads hit this. Raised the ceiling and, more importantly, auto-
+// downgrade to the largest multiplier that DOES fit instead of just
+// refusing — matching the existing slow-device 4x/8x->2x fallback pattern
+// — so the user gets the best result their photo/device can actually
+// support rather than a dead end.
+const MAX_UPSCALE_DIM = 8000;
+function largestSafeUpscaleFactor(factor, maxDim){
+  const smaller = [8,4,2].filter(f => f < factor);
+  return smaller.find(f => maxDim*f <= MAX_UPSCALE_DIM) || null;
+}
 async function aiUpscale(factor){
   if(factor<=1) return;
-  const projectedFinal = Math.max(state.canvas.width, state.canvas.height) * factor;
-  if(projectedFinal > 6000){
-    toast(`This photo is too large for ${factor}× upscale on this device — try a smaller multiplier.`, true);
-    return;
+  const maxDim = Math.max(state.canvas.width, state.canvas.height);
+  if(maxDim*factor > MAX_UPSCALE_DIM){
+    const safeFactor = largestSafeUpscaleFactor(factor, maxDim);
+    if(!safeFactor){
+      toast(`This photo (${state.canvas.width}×${state.canvas.height}px) is already too large to upscale further on this device.`, true);
+      return;
+    }
+    toast(`${factor}× would make this photo too large for this device's memory — using ${safeFactor}× instead.`, true);
+    factor = safeFactor;
   }
   const btn = $('btnUpscale');
   btn.disabled = true;
@@ -1094,7 +1112,7 @@ async function aiUpscale(factor){
   for(let stage=0; stage<stages; stage++){
     // guard against runaway canvas sizes on repeated 2x passes
     const projected = workCanvas.width*2;
-    if(projected > 6000){ toast('Reached maximum safe upscale size for your device.', true); break; }
+    if(projected > MAX_UPSCALE_DIM){ toast('Reached maximum safe upscale size for your device.', true); break; }
     const stageLabel = `AI upscaling — stage ${stage+1} of ${stages}…`;
     showProgress(true, stageLabel, 0);
     await yieldToUI(); // paint the 0% state before this stage's inference blocks the thread
