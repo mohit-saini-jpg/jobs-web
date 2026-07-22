@@ -259,7 +259,7 @@
 
   <div class="card" id="crop-card" style="display:none">
     <h3>✂️ Crop Karein</h3>
-    <div id="cropImgWrap" style="max-height:440px;background:#0f172a;border-radius:10px;overflow:hidden">
+    <div id="cropImgWrap" style="max-height:440px;background:#0f172a;border-radius:10px;overflow:visible">
       <img id="cropImg" style="max-width:100%;display:block">
     </div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
@@ -842,6 +842,26 @@
     if(row)row.style.display=freeSelectActive?'none':'flex';
     if(note)note.style.display=freeSelectActive?'block':'none';
   }
+  // Shared, hardened Cropper.js setup — was duplicated inline 3x, which also
+  // meant a fix here would've needed applying 3 separate times.
+  //   • ready: forces the crop box to exactly match the rendered canvas the
+  //     moment Cropper finishes setup. viewMode:1+autoCropArea:1 SHOULD
+  //     already guarantee this, but this is a hard guarantee regardless of
+  //     any container-not-yet-laid-out edge case — reported symptom was the
+  //     crop box (and its drag handles, especially top/bottom — hard to grab
+  //     on mobile) extending past the visible image into the checkered
+  //     background area.
+  //   • cropperReady flips true only once 'ready' has actually fired, so the
+  //     Zoom buttons never call into a Cropper instance mid-setup.
+  var cropperReady=false;
+  function cropperReadyClamp(){
+    cropperReady=true;
+    try{var cd=this.getCanvasData();this.setCropBoxData({left:cd.left,top:cd.top,width:cd.width,height:cd.height});}catch(e){}
+  }
+  function makeCropperOptions(){
+    cropperReady=false;
+    return {viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,ready:cropperReadyClamp,crop:function(){_bgCache=null;syncSizeFromCrop();}};
+  }
   function initCrop(){
     var card=G('crop-card'),img=G('cropImg');
     if(!srcImg){if(card)card.style.display='none';if(cropperInst){cropperInst.destroy();cropperInst=null;}if(quadUI)quadUI.deactivate();return;}
@@ -852,10 +872,20 @@
     resetCropRotationState();
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
-      if(cropperInst)cropperInst.destroy();
-      if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img,syncSizeFromCrop);
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}
-      _bgCache=null;
+      // Wait a frame for the browser to actually LAY OUT the crop-card that
+      // was just made visible above before Cropper.js measures its
+      // container — otherwise, when the image is served from cache (very
+      // common here since it was already decoded once by loadImageFromFile),
+      // onload can fire in the SAME tick as display:'' with no layout pass
+      // in between, handing Cropper a stale/zero container size.
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          if(cropperInst)cropperInst.destroy();
+          if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img,syncSizeFromCrop);
+          try{cropperInst=new Cropper(img,makeCropperOptions());}catch(e){}
+          _bgCache=null;
+        });
+      });
     };
     img.src=srcImg.src;
     if(img.complete&&img.naturalWidth>0)img.onload();
@@ -873,7 +903,7 @@
       quadUI.deactivate();
       if(cropperInst)cropperInst.destroy();
       resetCropRotationState();
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}
+      try{cropperInst=new Cropper(img,makeCropperOptions());}catch(e){}
       setFreeSelBtnState(false);
       syncRotUIForMode(false);
     }else{
@@ -1046,10 +1076,10 @@
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst){cropperInst.setAspectRatio(this.checked?1:NaN);syncSizeFromCrop();}});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,makeCropperOptions());}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
     if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
-    if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst)cropperInst.zoom(0.1);});
-    if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst)cropperInst.zoom(-0.1);});
+    if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst&&cropperReady)cropperInst.zoom(0.1);});
+    if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst&&cropperReady)cropperInst.zoom(-0.1);});
     if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){rot90=((rot90-90)%360+360)%360;applyCropRotation();});
     if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){rot90=(rot90+90)%360;applyCropRotation();});
     if(G('cropFineRot'))G('cropFineRot').addEventListener('input',function(){rotFine=parseFloat(this.value);G('cropFineRotVal').textContent=rotFine+'°';applyCropRotation();});
