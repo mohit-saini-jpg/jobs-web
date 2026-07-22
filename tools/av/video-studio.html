@@ -371,6 +371,7 @@ a{color:inherit}
   <div class="main">
     <div class="toolbar">
       <select id="aspect-select">
+        <option value="original" selected>Original (Match Source)</option>
         <option value="16:9">16:9 Landscape</option>
         <option value="9:16">9:16 Portrait (Reels)</option>
         <option value="1:1">1:1 Square</option>
@@ -381,8 +382,9 @@ a{color:inherit}
         <option value="mkv">MKV (H.264)</option>
       </select>
       <select id="out-resolution">
+        <option value="original" selected>Original (Same as Source)</option>
         <option value="1080p">1080p</option>
-        <option value="720p" selected>720p</option>
+        <option value="720p">720p</option>
         <option value="480p">480p</option>
       </select>
       <select id="export-speed" title="Export speed vs quality trade-off">
@@ -726,15 +728,24 @@ function formatTime(s){ if(!isFinite(s)) s=0; const m=Math.floor(s/60), sec=(s%6
 /* =========================================================
    ASPECT / CANVAS SIZE
 ========================================================= */
+// The exact pixel dimensions of the first uploaded clip — used by the
+// 'original' aspect/resolution option so the export matches the source
+// exactly instead of always landing on a fixed 16:9/1080p-family preset
+// (confirmed live: a vertical 9:16 upload came back letterboxed with black
+// bars because the canvas defaulted to 16:9 regardless of what was
+// uploaded, and even the resolution presets were landscape-only).
+let sourceVideoW = 0, sourceVideoH = 0;
 function setAspect(ratioStr){
   const base = 720;
-  if (ratioStr === '16:9'){ ST.W = Math.round(base*16/9); ST.H = base; }
+  if (ratioStr === 'original' && sourceVideoW && sourceVideoH){ ST.W = sourceVideoW; ST.H = sourceVideoH; }
+  else if (ratioStr === '16:9'){ ST.W = Math.round(base*16/9); ST.H = base; }
   else if (ratioStr === '9:16'){ ST.W = Math.round(base*9/16); ST.H = base; }
+  else if (ratioStr === 'original'){ ST.W = Math.round(base*16/9); ST.H = base; } // no clip loaded yet — fall back until one is
   else { ST.W = base; ST.H = base; }
   canvas.width = ST.W; canvas.height = ST.H;
 }
 document.getElementById('aspect-select').addEventListener('change', e=>{ setAspect(e.target.value); renderOverlays(); });
-setAspect('16:9');
+setAspect('original'); // no clip yet — falls back to 16:9 until the first upload sets sourceVideoW/H (see addFiles)
 
 /* =========================================================
    RENDER LOOP (true live canvas)
@@ -989,7 +1000,22 @@ function addFiles(fileList){
     genThumb(clip, ()=>{ pending--; if(pending===0) renderTimeline(); });
   });
   renderTimeline();
-  if (hadNoClipsBefore){ activeClipIndex = 0; loadClipIntoPreview(0); }
+  if (hadNoClipsBefore){
+    activeClipIndex = 0;
+    // First clip sets the reference "Original" size — read its real pixel
+    // dimensions once its metadata is available and, if the user hasn't
+    // touched the aspect/resolution dropdowns away from Original, apply
+    // them immediately so the canvas (and therefore the export) matches
+    // the source exactly by default instead of the old fixed 16:9 canvas.
+    loadClipIntoPreview(0, ()=>{
+      sourceVideoW = previewVideo.videoWidth || 0;
+      sourceVideoH = previewVideo.videoHeight || 0;
+      if (sourceVideoW && sourceVideoH && document.getElementById('aspect-select').value === 'original'){
+        setAspect('original');
+        renderOverlays();
+      }
+    });
+  }
   showAlert(`✅ ${files.length} clip(s) add ho gaye`, 'success');
 }
 
@@ -1908,11 +1934,20 @@ async function performExport(){
 
   const outputFormat = document.getElementById('out-format').value;
   const resKey = document.getElementById('out-resolution').value;
-  const [outW, outH] = RES_MAP[resKey];
-  // maintain chosen aspect but scale to resolution preset (use out-resolution's larger dim mapped to canvas aspect)
-  const canvasAspect = ST.W/ST.H;
-  let W = outW, H = Math.round(outW/canvasAspect);
-  if (canvasAspect < 1){ H = outW; W = Math.round(outW*canvasAspect); } // portrait
+  let W, H;
+  if (resKey === 'original' && sourceVideoW && sourceVideoH){
+    // Exact source pixels, not a fixed 1080p/720p/480p preset — this is
+    // what "Original" actually promises; RES_MAP entries are all
+    // landscape-shaped so a portrait/square source went through them
+    // rescaled+letterboxed even when the user just wanted their own size back.
+    W = sourceVideoW; H = sourceVideoH;
+  } else {
+    const [outW] = RES_MAP[resKey] || RES_MAP['720p'];
+    // maintain chosen aspect but scale to resolution preset (use out-resolution's larger dim mapped to canvas aspect)
+    const canvasAspect = ST.W/ST.H;
+    W = outW; H = Math.round(outW/canvasAspect);
+    if (canvasAspect < 1){ H = outW; W = Math.round(outW*canvasAspect); } // portrait
+  }
   W = W - (W%2); H = H - (H%2);
   if (W < 2 || H < 2 || !Number.isFinite(W) || !Number.isFinite(H)){ W = 1280; H = 720; }
 
