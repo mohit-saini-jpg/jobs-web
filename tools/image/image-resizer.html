@@ -294,6 +294,7 @@
       <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📐 Quick Size Presets — Print, Passport/ID, Social Media</label>
       <select id="printPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
         <option value="original" selected>📷 Original (Uploaded Image Size) — default</option>
+        <option value="A4" data-w="2480" data-h="3508">🅰️ A4  —  2480×3508px (Most Used)</option>
       </select>
       <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Default mein hamesha upload ki hui image ka <b>original size</b> hi selected rehta hai. Print, Passport/ID ya Social Media ke liye standard size chahiye to yahan se choose karein (300 DPI par exact print pixels) — nahi to original size hi use hoga.</p>
     </div>
@@ -432,7 +433,7 @@
     drawTri([0,2,3],[0,2,3]);
     return cnv;
   }
-  function QuadCropUI(containerEl,imgEl){
+  function QuadCropUI(containerEl,imgEl,onChange){
     var svgNS='http://www.w3.org/2000/svg';
     var svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1,rafId=null;
     var origImgStyle=imgEl.getAttribute('style')||'';
@@ -475,6 +476,7 @@
       mask.setAttribute('d',d);
       poly.setAttribute('points',pts.map(function(p){return p.x+','+p.y;}).join(' '));
       handles.forEach(function(hd,i){hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+      if(onChange)onChange();
     }
     function scheduleRender(){
       // Batch drag updates into a single paint per frame instead of once per
@@ -560,16 +562,29 @@
       frameSvg();
       render();
     };
+    // Natural-pixel size the current quad selection would warp to — used both
+    // by getWarpedCanvas() below (the real export) and by the live width/height
+    // fields in the Settings panel, so what's shown as the "default" size always
+    // matches what dragging the crop corners actually produces (fixes stretched/
+    // distorted output when a cropped region was resized against the ORIGINAL
+    // uploaded image's dimensions instead of the crop's own dimensions).
+    this.getSize=function(){
+      if(!active)return null;
+      var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+      var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+      var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
+      var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
+      var leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
+      return {w:Math.round(Math.max(topW,botW))||1, h:Math.round(Math.max(leftH,rightH))||1};
+    };
     this.getWarpedCanvas=function(outW,outH){
       if(!active)return null;
       var scaleX=imgEl.naturalWidth/imgEl.clientWidth;
       var scaleY=imgEl.naturalHeight/imgEl.clientHeight;
       var natPts=pts.map(function(p){return {x:p.x*scaleX,y:p.y*scaleY};});
       if(!outW||!outH){
-        var topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
-        var leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
-        outW=Math.round(Math.max(topW,botW))||1;
-        outH=Math.round(Math.max(leftH,rightH))||1;
+        var sz=this.getSize();
+        outW=sz.w;outH=sz.h;
       }
       return warpQuadToCanvas(imgEl,natPts,outW,outH);
     };
@@ -607,6 +622,23 @@
   function prefill(){
     if(!natW)return;var unit=G('unit').value,dpi=G('dpi').value;
     G('w').value=fromPx(natW,unit,dpi,natW);G('h').value=fromPx(natH,unit,dpi,natH);
+  }
+  // Keeps Width/Height in sync with whatever is ACTUALLY being cropped, so the
+  // "default" output size always matches the crop area instead of the full
+  // original image — fixes cropped text/photos coming out stretched because
+  // the crop's own shape was being force-fit into the original long image's
+  // dimensions (the default resize mode is "Exact/Stretch").
+  function syncSizeFromCrop(){
+    if(!natW)return;
+    var unit=G('unit').value,dpi=G('dpi').value,cw=natW,ch=natH;
+    if(quadUI&&quadUI.isActive()){
+      var sz=quadUI.getSize();
+      if(sz&&sz.w&&sz.h){cw=sz.w;ch=sz.h;}
+    }else if(cropperInst){
+      var d=cropperInst.getData();
+      if(d&&d.width&&d.height){cw=Math.round(d.width);ch=Math.round(d.height);}
+    }
+    G('w').value=fromPx(cw,unit,dpi,natW);G('h').value=fromPx(ch,unit,dpi,natH);
   }
   function syncAR(from){
     if(!G('lockAR').checked||!natW||!natH)return;
@@ -821,8 +853,8 @@
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       if(cropperInst)cropperInst.destroy();
-      if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
+      if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img,syncSizeFromCrop);
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}
       _bgCache=null;
     };
     img.src=srcImg.src;
@@ -836,12 +868,12 @@
   function toggleFreeSelect(){
     var img=G('cropImg');
     if(!cropperInst&&!quadUI)return;
-    if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img);
+    if(!quadUI)quadUI=new QuadCropUI(G('cropImgWrap'),img,syncSizeFromCrop);
     if(quadUI.isActive()){
       quadUI.deactivate();
       if(cropperInst)cropperInst.destroy();
       resetCropRotationState();
-      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}
+      try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}
       setFreeSelBtnState(false);
       syncRotUIForMode(false);
     }else{
@@ -960,8 +992,7 @@
       ['Postcard 6×4in',1800,1200],
       ['4×6 Photo',1200,1800],
       ['5×7 Photo',1500,2100],
-      ['8×10 Photo',2400,3000],
-      ['A4',2480,3508]
+      ['8×10 Photo',2400,3000]
     ]},
     {g:'🪪 Passport / ID',items:[
       ['India / UK / Australia / Europe — 35×45mm',413,531],
@@ -1014,8 +1045,8 @@
     if(G('tkb'))G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
-    if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst)cropperInst.setAspectRatio(this.checked?1:NaN);});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;}});}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
+    if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst){cropperInst.setAspectRatio(this.checked?1:NaN);syncSizeFromCrop();}});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,{viewMode:1,autoCropArea:1,guides:true,center:true,highlight:true,background:true,responsive:true,movable:true,zoomable:true,rotatable:true,cropBoxMovable:true,cropBoxResizable:true,aspectRatio:(G('cropSquare')&&G('cropSquare').checked)?1:NaN,minCropBoxWidth:60,minCropBoxHeight:60,crop:function(){_bgCache=null;syncSizeFromCrop();}});}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
     if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
     if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst)cropperInst.zoom(0.1);});
     if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst)cropperInst.zoom(-0.1);});
