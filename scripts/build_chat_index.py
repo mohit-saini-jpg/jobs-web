@@ -76,6 +76,7 @@ TOOLS = [
     ('Trim Video', 'Cut/trim a video online', '/tools/av/video-trim.html'),
     ('Video Editor', 'Edit video online — trim, merge, add text', '/tools/av/video-editor.html'),
     ('Video to MP3', 'Extract audio (MP3) from a video file', '/tools/av/video-to-mp3.html'),
+    ('Audio Studio', 'AI voice enhance, real RNNoise AI noise removal, 31-band equalizer, batch audio processing', '/tools/av/audio-studio.html'),
     ('Audio Format Converter', 'Convert audio between formats', '/tools/av/audio-convert.html'),
     ('Merge Audio', 'Combine multiple audio files into one', '/tools/av/audio-merge.html'),
     ('Trim Audio', 'Cut/trim an audio file online', '/tools/av/audio-trim.html'),
