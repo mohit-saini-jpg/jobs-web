@@ -533,8 +533,11 @@ var CSS = ''+
 '@keyframes tsjpulse{50%{opacity:.5}}'+
 '.tsj-send-btn{background:#345de6;color:#fff}'+
 '.tsj-send-btn:disabled{opacity:.4;cursor:not-allowed}'+
-'.tsj-footer-links{display:flex;justify-content:center;gap:12px;padding:6px 0 2px;font-size:.68rem;color:#9CA3AF}'+
-'.tsj-footer-links button{background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:.68rem;text-decoration:underline}'+
+'.tsj-footer-links{display:flex;justify-content:center;padding:6px 0 2px}'+
+'.tsj-footer-links button{background:#eef4ff;border:1px solid #dbe6ff;color:#1d4ed8;cursor:pointer;font-size:.72rem;font-weight:700;padding:6px 12px;border-radius:20px;display:flex;align-items:center;gap:6px}'+
+'.tsj-footer-links button:hover{background:#dbe6ff}'+
+'html.tsj-dark .tsj-footer-links button{background:#1c2740;color:#93c5fd;border-color:#2a3441}'+
+'html.tsj-dark .tsj-footer-links button:hover{background:#243254}'+
 /* Site's mobile bottom tab bar (.mobile-bottom-bar) shows under this same
    900px breakpoint — the fab must clear it or it sits on top of the "Home"
    tab. --tsj-nav-h is measured live from the real element (syncNavOffset())
@@ -596,8 +599,7 @@ function buildHTML(){
           '<button class="tsj-input-btn tsj-send-btn" id="tsj-send-btn" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>'+
         '</div>'+
         '<div class="tsj-footer-links">'+
-          '<button id="tsj-profile-btn">My Profile</button>'+
-          '<span>·</span><span>Powered by Groq AI</span>'+
+          '<button id="tsj-profile-btn"><i class="fa-solid fa-user-pen"></i> Apni Profile Bharein — Best Job Matches Paayein</button>'+
         '</div>'+
       '</div>'+
     '</div>';
