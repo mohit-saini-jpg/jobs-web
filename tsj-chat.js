@@ -79,7 +79,25 @@ function loadScript(src){
 }
 
 /* ============================== SAFE MARKDOWN ============================== */
+// The backend wraps any web-search-derived portion of the reply between
+// [[WEBINFO]]/[[/WEBINFO]] marker lines (see api/chat.js) — site content is
+// the priority, so that part renders collapsed behind a "More" toggle
+// instead of competing for attention with the site's own citations.
 function renderMarkdown(md){
+  var webInfo = '';
+  md = String(md||'').replace(/\[\[WEBINFO\]\]([\s\S]*?)\[\[\/WEBINFO\]\]/, function(m, inner){
+    webInfo = inner;
+    return '';
+  }).replace(/\n{3,}/g, '\n\n').trim();
+  var html = renderMarkdownCore(md);
+  if(webInfo.trim()){
+    html += '<details class="tsj-web-details"><summary>'+
+      '<i class="fa-solid fa-globe"></i> More — other web sources</summary>'+
+      renderMarkdownCore(webInfo)+'</details>';
+  }
+  return html;
+}
+function renderMarkdownCore(md){
   var html = esc(md);
   // fenced code blocks
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(m, lang, code){
@@ -244,11 +262,22 @@ var QUALIFICATION_PATTERNS = [
   [/\bb\.?\s?a\.?\s*pass\b|(?:^|\s)ba(?:\s|$)/i, ['B_A','Any_Graduate','B_Com']],
   [/\bb\.?\s?com\b/i, ['B_Com','Any_Graduate']],
   [/\bb\.?\s?sc\b/i, ['B_Sc','Any_Graduate']],
-  [/\bgraduate\b|\bgraduation\b/i, ['Any_Graduate','Any_Bachelors_Degree']],
-  [/\bpost.?graduate\b|\bpost.?graduation\b|\bmasters?\b|\bpg\b/i, ['Any_Post_Graduate','Any_Masters_Degree']],
+  [/\bgraduate\b|\bgraduation\b|स्नातक(?!ोत्तर)|\bsnatak\b/i, ['Any_Graduate','Any_Bachelors_Degree']],
+  [/\bpost.?graduate\b|\bpost.?graduation\b|\bmasters?\b|\bpg\b|स्नातकोत्तर|\bsnatakottar\b/i, ['Any_Post_Graduate','Any_Masters_Degree']],
   [/\bb\.?\s?tech\b|\bb\.?\s?e\.?\b|\bengineering\b/i, ['B_Tech_BE']],
   [/\bdiploma\b/i, ['Diploma']],
   [/\biti\b/i, ['ITI']],
+  // Voice-to-text input produces spoken Hindi ("dasvin pass ke liye job
+  // bataen") rather than the ASCII "10th" a typed query would use — without
+  // these, a voice query matched nothing at all and the widget silently
+  // fell through to web-only answers with zero site citations.
+  // Note: no trailing \b after a Devanagari run — \b only fires at a
+  // word/non-word transition, and Devanagari characters aren't \w, so a
+  // boundary can never be found right after one (confirmed: matched fine
+  // without the trailing \b, silently failed 100% of the time with it).
+  [/\b10\s?वीं|दसवीं|\bdasvi[nm]?\b|\bdaswi[nm]?\b/i, ['10TH_Pass']],
+  [/\b8\s?वीं|आठवीं|\baathvi[nm]?\b|\bathvi[nm]?\b/i, ['8TH_Pass']],
+  [/\b12\s?वीं|बारहवीं|\bbarvi[nm]?\b|\bbarahvi[nm]?\b/i, ['12TH_Pass','Intermediate']],
   [/\b10th\b|\bmatric\b/i, ['10TH_Pass']],
   [/\b8th\b/i, ['8TH_Pass']],
   [/\b12th\b|\bintermediate\b|\bhsc\b/i, ['12TH_Pass','Intermediate']],
@@ -387,6 +416,15 @@ var CSS = ''+
 '.tsj-cite-btn i{flex-shrink:0;font-size:.74rem;opacity:.7}'+
 'html.tsj-dark .tsj-cite-btn{background:#1c2740;color:#93c5fd!important;border-color:#2a3441}'+
 'html.tsj-dark .tsj-cite-btn:hover{background:#243254}'+
+'.tsj-web-details{margin-top:8px;border-top:1px dashed #e5e7eb;padding-top:6px}'+
+'.tsj-web-details summary{cursor:pointer;font-size:.74rem;font-weight:700;color:#6B7280;list-style:none;display:flex;align-items:center;gap:6px}'+
+'.tsj-web-details summary::-webkit-details-marker{display:none}'+
+'.tsj-web-details summary:hover{color:#345de6}'+
+'.tsj-web-details[open] summary{margin-bottom:6px}'+
+'.tsj-web-details p{font-size:.8rem;color:#6B7280;margin:4px 0}'+
+'html.tsj-dark .tsj-web-details{border-color:#2a3441}'+
+'html.tsj-dark .tsj-web-details summary{color:#94a3b8}'+
+'html.tsj-dark .tsj-web-details p{color:#94a3b8}'+
 // Explicit row/nowrap + !important: this widget's CSS is appended after the
 // site's own stylesheets, and a generic site-wide button/flex rule was
 // winning the cascade and stacking these vertically instead of in a row.
