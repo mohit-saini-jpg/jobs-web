@@ -191,8 +191,9 @@ a{color:inherit}
 
 <div class="hero">
   <h1>🎧 Audio Studio</h1>
-  <p>AI Voice Enhance, real RNNoise AI noise removal, 31-band equalizer, dynamics aur loudness normalization — sab kuch browser mein, 100% free, koi upload nahi.</p>
+  <p>Background mein doosre logo ki awaaz hataayein, AI Voice Enhance, real RNNoise AI noise removal, 31-band equalizer — sab kuch browser mein, 100% free, koi upload nahi.</p>
   <div class="hero-badges">
+    <span class="hero-badge">🗣️ Background Voice Removal</span>
     <span class="hero-badge">✅ 100% Free</span>
     <span class="hero-badge">🔒 No Upload — Browser Only</span>
     <span class="hero-badge">🚫 No Watermark</span>
@@ -247,6 +248,14 @@ a{color:inherit}
         <button id="reset-btn">♻️ Reset</button>
         <button id="replace-btn">🔁 Replace</button>
       </div>
+    </div>
+
+    <div class="fx-flagship" id="auto-enhance-card" style="border-color:#f59e0b;background:rgba(245,158,11,.1)">
+      <div class="toggle-row" style="border-bottom:none">
+        <span>✨ Auto Enhance — Background Voice Remove + Voice Quality (1-Click)</span>
+        <label class="switch"><input type="checkbox" id="fx-auto-enhance"><span class="slider-tog"></span></label>
+      </div>
+      <p class="fx-sub" style="margin-bottom:0">Ek click mein: Background Voice Removal + AI Noise Removal (RNNoise) + AI Voice Enhance + Auto Volume Normalize — sab ek saath ON ho jaate hain. Baad mein neeche tabs mein jaakar har ek ko alag se fine-tune bhi kar sakte hain.</p>
     </div>
 
     <div class="tabs">
@@ -324,9 +333,14 @@ a{color:inherit}
 
     <!-- TAB: Noise Removal -->
     <div class="tab-panel" id="panel-noise">
+      <div class="fx-flagship" style="border-color:#f59e0b;background:rgba(245,158,11,.1)">
+        <div class="toggle-row" style="border-bottom:none"><span>🗣️ Background Voice Removal (Doosre Logo Ki Awaaz Hataayein)</span><label class="switch"><input type="checkbox" id="fx-bg-voice-remove"><span class="slider-tog"></span></label></div>
+        <div class="field" id="bg-voice-strength-field" style="display:none;margin-top:10px;margin-bottom:0"><label>Strength (<span id="bgvoice-val">65</span>%)</label><input type="range" id="fx-bg-voice-strength" min="0" max="100" step="5" value="65"></div>
+        <p class="fx-sub" style="margin-top:8px;margin-bottom:0">Aapki (main) awaaz ko loud rakhte hue background mein baaki logo ki baatein/chatter kam kar deta hai — sabse acha result tab milta hai jab aapki awaaz background talkers se zyada loud/close ho (jaise phone mic aapke paas ho). 100% perfect voice-separation nahi hai (woh alag heavy AI model hota hai), lekin real, sunayi dene laayak reduction hai.</p>
+      </div>
       <div class="fx-flagship">
         <div class="toggle-row"><span>🧠 AI Noise Removal (RNNoise Neural Network)</span><label class="switch"><input type="checkbox" id="fx-ai-noise-remove"><span class="slider-tog"></span></label></div>
-        <p class="fx-sub" style="margin-top:8px;margin-bottom:0">Genuine open-source RNNoise AI model (via FFmpeg's arnndn filter) — automatically learns and removes background noise. Export-only; live preview shows an approximate gate-based stand-in.</p>
+        <p class="fx-sub" style="margin-top:8px;margin-bottom:0">Genuine open-source RNNoise AI model (via FFmpeg's arnndn filter) — automatically learns and removes background noise (fan, hiss, hum). Yeh non-speech noise ke liye hai; doosre logo ki AWAAZ ke liye upar wala "Background Voice Removal" use karein. Export-only; live preview mein approximate gate-based stand-in dikhta hai.</p>
       </div>
       <div class="toggle-row"><span>Background / Wind / Hiss Noise Reduction</span><label class="switch"><input type="checkbox" id="fx-noise-reduce"><span class="slider-tog"></span></label></div>
       <div class="field" id="noise-strength-field" style="display:none;margin-top:10px"><label>Strength (<span id="noise-strength-val">12</span> dB)</label><input type="range" id="fx-noise-strength" min="1" max="40" step="1" value="12"></div>
@@ -397,8 +411,12 @@ a{color:inherit}
   <div class="card">
     <h3>❓ FAQ</h3>
     <div class="faq-item">
+      <button class="faq-q">Background mein doosre logo ki awaaz kaise hataayein?<span class="faq-arrow">+</span></button>
+      <div class="faq-a">🔊 Noise Removal tab kholein aur sabse upar "🗣️ Background Voice Removal" ON karein — Strength slider se aggressiveness control karein. Yeh aapki loud/close awaaz ko rakhte hue background chatter kam karta hai. Jaldi ke liye player ke upar "✨ Auto Enhance" ek click mein background voice removal + AI noise removal + voice quality enhance sab ek saath ON kar deta hai. Note: yeh ek real, sunayi dene laayak reduction hai — 100% perfect voice-separation (jaise do gaano ki tarah alag karna) ek alag, bahut heavy AI model maangta hai jo browser mein practical nahi hai; best result tab milta hai jab aapki awaaz background talkers se zyada loud/close ho.</div>
+    </div>
+    <div class="faq-item">
       <button class="faq-q">Kya AI Noise Removal sach mein AI hai?<span class="faq-arrow">+</span></button>
-      <div class="faq-a">Haan — yeh FFmpeg ke <code>arnndn</code> filter aur ek genuine open-source RNNoise neural network model se chalta hai, koi fake label nahi. Yeh export ke time apply hota hai; live preview mein ek approximate (non-AI) gate-based stand-in dikhta hai kyunki neural model live playback mein real-time chalana browser mein practical nahi hai.</p></div>
+      <div class="faq-a">Haan — yeh FFmpeg ke <code>arnndn</code> filter aur ek genuine open-source RNNoise neural network model se chalta hai, koi fake label nahi. Yeh export ke time apply hota hai; live preview mein ek approximate (non-AI) gate-based stand-in dikhta hai kyunki neural model live playback mein real-time chalana browser mein practical nahi hai.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q">Kya mujhe file upload karni padegi?<span class="faq-arrow">+</span></button>
@@ -467,6 +485,7 @@ function freshFx(){
     volume:1, pitch:1, speed:1, fadeInSec:0, fadeOutSec:0, reverseAudio:false,
     voiceEnhance:false, speechEnhance:false, vocalIsolate:false, dialogueEnhance:false, voiceBoost:0, clarity:0,
     aiNoiseRemove:false,
+    bgVoiceRemove:false, bgVoiceStrength:65,
     noiseReduce:false, noiseReduceStrength:12, noiseReduceMode:'standard',
     echoReduce:false, humRemove:false, humFreq:50, declick:false,
     noiseGate:false, noiseGateThreshold:-40,
@@ -721,8 +740,9 @@ function applyFxToLiveGraph(){
   }
   if (liveProcessorNode){
     liveProcessorNode.pitchRatio = f.pitch || 1;
-    liveProcessorNode.noiseGateEnabled = !bypass && !!(f.noiseReduce || f.noiseGate || f.echoReduce || f.aiNoiseRemove);
-    if (f.noiseGate){ liveProcessorNode.noiseGateThreshold = Math.pow(10, f.noiseGateThreshold/20); liveProcessorNode.noiseGateFloor = 0.05; }
+    liveProcessorNode.noiseGateEnabled = !bypass && !!(f.bgVoiceRemove || f.noiseReduce || f.noiseGate || f.echoReduce || f.aiNoiseRemove);
+    if (f.bgVoiceRemove){ const t=f.bgVoiceStrength/100; liveProcessorNode.noiseGateThreshold=0.01+t*0.09; liveProcessorNode.noiseGateFloor=Math.max(0.03,0.3-t*0.27); }
+    else if (f.noiseGate){ liveProcessorNode.noiseGateThreshold = Math.pow(10, f.noiseGateThreshold/20); liveProcessorNode.noiseGateFloor = 0.05; }
     else if (f.noiseReduce || f.aiNoiseRemove){ const t=f.noiseReduceStrength/40; liveProcessorNode.noiseGateThreshold=0.008+t*0.05; liveProcessorNode.noiseGateFloor=Math.max(0.02,0.35-t*0.3); }
   }
   if (pannerNode) pannerNode.pan.value = (f.balance||0)/100;
@@ -789,6 +809,8 @@ const FX_CONTROLS = [
   { id:'fx-clarity', key:'clarity', kind:'range', valId:'clarity-val', display:signedDb },
 
   { id:'fx-ai-noise-remove', key:'aiNoiseRemove', kind:'toggle' },
+  { id:'fx-bg-voice-remove', key:'bgVoiceRemove', kind:'toggle', dependents:['bg-voice-strength-field'] },
+  { id:'fx-bg-voice-strength', key:'bgVoiceStrength', kind:'range', valId:'bgvoice-val', display:Math.round },
   { id:'fx-noise-reduce', key:'noiseReduce', kind:'toggle', dependents:['noise-strength-field','noise-mode-field'] },
   { id:'fx-noise-strength', key:'noiseReduceStrength', kind:'range', valId:'noise-strength-val', display:Math.round },
   { id:'fx-noise-mode', key:'noiseReduceMode', kind:'select' },
@@ -832,8 +854,24 @@ function syncFxUI(){
   });
   renderEqBands();
   renderParaBands();
+  syncAutoEnhanceCheckbox();
 }
-function markFxDirty(){ activePresetName=null; highlightActivePresetChip(null); }
+function markFxDirty(){ activePresetName=null; highlightActivePresetChip(null); syncAutoEnhanceCheckbox(); }
+
+/* One-click "Auto Enhance" — a meta-toggle over the bundle below. Its
+   checked state is DERIVED (recomputed every time state changes) rather
+   than tracked separately, so it never goes stale if the user later
+   tweaks one of the bundled controls individually — same pattern already
+   used for preset-chip highlighting. */
+const AUTO_ENHANCE_BUNDLE = { bgVoiceRemove:true, aiNoiseRemove:true, voiceEnhance:true, autoNormalize:true };
+function isAutoEnhanceActive(){ return Object.entries(AUTO_ENHANCE_BUNDLE).every(([k,v])=>ST.fx[k]===v); }
+function syncAutoEnhanceCheckbox(){ const el=document.getElementById('fx-auto-enhance'); if (el) el.checked = isAutoEnhanceActive(); }
+document.getElementById('fx-auto-enhance').addEventListener('change', e=>{
+  const on = e.target.checked;
+  Object.entries(AUTO_ENHANCE_BUNDLE).forEach(([k,v])=>{ ST.fx[k] = on ? v : FX_DEFAULTS[k]; });
+  syncFxUI(); applyFxToLiveGraph(); markFxDirty(); pushHistory();
+  showAlert(on ? '✨ Auto Enhance ON — background voice removal + AI noise removal + voice enhance + auto normalize apply ho gaye.' : '✨ Auto Enhance OFF.', 'success');
+});
 function wireFxControls(){
   FX_CONTROLS.forEach(cfg=>{
     const el = document.getElementById(cfg.id); if (!el) return;
@@ -997,18 +1035,18 @@ document.getElementById('reset-btn').addEventListener('click', ()=>{
 ========================================================= */
 let activePresetName = null;
 const PRESETS = {
-  'AI Auto Enhance': { aiNoiseRemove:true, voiceEnhance:true, autoNormalize:true },
+  'AI Auto Enhance': { bgVoiceRemove:true, bgVoiceStrength:60, aiNoiseRemove:true, voiceEnhance:true, autoNormalize:true },
   'Studio Voice': { clarity:3, voiceBoost:2, compressor:true, compressorAmount:40, declick:true, autoNormalize:true },
-  'Podcast': { aiNoiseRemove:true, noiseReduce:true, noiseReduceStrength:10, noiseReduceMode:'voice', compressor:true, compressorAmount:55, loudnessNormalize:true, targetLUFS:-16 },
+  'Podcast': { bgVoiceRemove:true, bgVoiceStrength:55, aiNoiseRemove:true, noiseReduce:true, noiseReduceStrength:10, noiseReduceMode:'voice', compressor:true, compressorAmount:55, loudnessNormalize:true, targetLUFS:-16 },
   'YouTube': { voiceBoost:3, clarity:2, compressor:true, compressorAmount:50, loudnessNormalize:true, targetLUFS:-14, limiter:true },
-  'Interview': { aiNoiseRemove:true, dialogueEnhance:true, loudnessNormalize:true, targetLUFS:-18 },
+  'Interview': { bgVoiceRemove:true, bgVoiceStrength:60, aiNoiseRemove:true, dialogueEnhance:true, loudnessNormalize:true, targetLUFS:-18 },
   'Gaming': { voiceBoost:2, bassBoost:3, compressor:true, compressorAmount:60, noiseGate:true, noiseGateThreshold:-38 },
-  'Meeting': { aiNoiseRemove:true, echoReduce:true, dialogueEnhance:true, noiseReduce:true, noiseReduceMode:'background', noiseReduceStrength:16 },
+  'Meeting': { bgVoiceRemove:true, bgVoiceStrength:70, aiNoiseRemove:true, echoReduce:true, dialogueEnhance:true, noiseReduce:true, noiseReduceMode:'background', noiseReduceStrength:16 },
   'Lecture': { aiNoiseRemove:true, clarity:3, autoNormalize:true, loudnessNormalize:true, targetLUFS:-18 },
   'Music': { bassBoost:3, trebleBoost:3, stereoWidth:130, compressor:true, compressorAmount:25, limiter:true },
   'Karaoke': { vocalRemove:true, bassBoost:2, stereoWidth:140 },
   'Cinema': { bassBoost:2, stereoWidth:150, compressor:true, compressorAmount:35, loudnessNormalize:true, targetLUFS:-20 },
-  'WhatsApp Voice': { aiNoiseRemove:true, noiseReduce:true, noiseReduceStrength:20, noiseReduceMode:'voice', compressor:true, compressorAmount:65, loudnessNormalize:true, targetLUFS:-14, limiter:true },
+  'WhatsApp Voice': { bgVoiceRemove:true, bgVoiceStrength:65, aiNoiseRemove:true, noiseReduce:true, noiseReduceStrength:20, noiseReduceMode:'voice', compressor:true, compressorAmount:65, loudnessNormalize:true, targetLUFS:-14, limiter:true },
 };
 function applyPreset(name){
   const overrides = PRESETS[name]; if (!overrides) return;
@@ -1116,6 +1154,20 @@ function atempoChain(speed){
 }
 function buildFilterChain(totalDur, aiNoiseAvailable){
   const f = ST.fx, steps = [];
+  // Background Voice Removal — a tuned downward-expander (agate) that keeps
+  // the loud/close foreground voice intact while pushing down quieter
+  // background talkers, plus a partial stereo center-weighting (real
+  // "separate one overlapping voice from another" needs a full ML source-
+  // separation model, out of scope here; this is an honest, real reduction,
+  // not a claim of perfect isolation). Runs first, before other cleanup.
+  if (f.bgVoiceRemove){
+    const t = f.bgVoiceStrength/100;
+    const thresholdDb = -40 + t*25;      // -40dB (gentle) .. -15dB (aggressive)
+    const ratio = 4 + t*16;              // 4 .. 20
+    const range = 0.25 - t*0.22;         // 0.25 .. 0.03 residual gain when gated
+    steps.push(`agate=threshold=${Math.pow(10,thresholdDb/20).toFixed(4)}:ratio=${ratio.toFixed(1)}:attack=6:release=220:range=${range.toFixed(3)}`);
+    steps.push(`stereotools=mlev=1:slev=${(1 - t*0.7).toFixed(2)}`);
+  }
   if (f.aiNoiseRemove && aiNoiseAvailable) steps.push("arnndn=m='sh.rnnn'");
   if (f.declick) steps.push('adeclick','adeclip');
   if (f.humRemove){ const hf=f.humFreq===60?60:50; steps.push(`bandreject=f=${hf}:width_type=h:w=4`,`bandreject=f=${hf*2}:width_type=h:w=4`,`bandreject=f=${hf*3}:width_type=h:w=4`); }
