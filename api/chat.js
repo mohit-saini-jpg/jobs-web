@@ -97,11 +97,12 @@ function siteUrl(m) {
 // exact official URLs actually handed to it this turn. Buffers across SSE
 // chunk boundaries so a token/link split mid-stream can't leak through
 // unresolved or unfiltered.
-function createTokenResolverStream(siteMatches, allowedExternalHosts) {
+function createTokenResolverStream(siteMatches, allowedExternalHosts, opts) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let sseBuf = '';
   let textBuf = '';
+  const referencedIndices = new Set();
 
   function resolveSiteTokens(text) {
     // Forced blank-line isolation on every side: even when the model ignores
@@ -110,17 +111,30 @@ function createTokenResolverStream(siteMatches, allowedExternalHosts) {
     // unreadable run-on paragraph), each citation still lands as its own
     // paragraph rather than merging into its neighbors.
     return text.replace(/\[\[SITE:(\d+)\]\]/g, (whole, idxStr) => {
-      const m = siteMatches[parseInt(idxStr, 10)];
+      const idx = parseInt(idxStr, 10);
+      const m = siteMatches[idx];
       if (!m) return '';
+      referencedIndices.add(idx);
       const title = String(m.title || '').replace(/[[\]]/g, '').slice(0, 160);
       return `\n\n[${title}](${siteUrl(m)})\n\n`;
     });
   }
 
+  // Every legitimate topsarkarijobs.com URL the model can possibly need was
+  // already handed to it this turn (siteMatches) — resolveSiteTokens()
+  // produces exactly these strings, verbatim, via siteUrl(m). So a
+  // topsarkarijobs.com link is only trusted if it EXACTLY matches one of
+  // them — trusting the domain alone was the gap that let the model write
+  // its own fabricated-but-real-looking page directly (confirmed live: a
+  // fully invented "/latest-jobs/mechanical-diploma-jobs" page, on the real
+  // domain, sailed straight through the old hostname-only check).
+  const allowedSiteUrls = new Set(siteMatches.map(siteUrl));
   function isAllowedHost(url) {
     try {
       const host = new URL(url).hostname.toLowerCase();
-      if (host === 'topsarkarijobs.com' || host === 'www.topsarkarijobs.com') return true;
+      if (host === 'topsarkarijobs.com' || host === 'www.topsarkarijobs.com') {
+        return allowedSiteUrls.has(url);
+      }
       return allowedExternalHosts.has(host);
     } catch (e) {
       return false;
@@ -219,6 +233,26 @@ function createTokenResolverStream(siteMatches, allowedExternalHosts) {
     },
     flush(controller) {
       if (textBuf) emitDelta(controller, stripDisallowedLinks(resolveSiteTokens(textBuf)));
+      // For a profile-filtered query (age/qualification), the whole point
+      // was "list every matching job" — but a model that tokens only 1 of
+      // 18 given entries and describes the rest as untethered prose (no
+      // link at all) has been observed live, so completeness can't rely on
+      // instruction-following alone. Any entry the model never referenced
+      // gets appended here, guaranteeing the full list reaches the user
+      // regardless of how well the model followed the prompt.
+      if (opts && opts.forceCompleteList) {
+        const missing = siteMatches
+          .map((m, i) => [m, i])
+          .filter(([, i]) => !referencedIndices.has(i));
+        if (missing.length) {
+          let extra = '';
+          for (const [m] of missing) {
+            const title = String(m.title || '').replace(/[[\]]/g, '').slice(0, 160);
+            extra += `\n\n[${title}](${siteUrl(m)})\n\n`;
+          }
+          emitDelta(controller, extra);
+        }
+      }
       controller.enqueue(encoder.encode('data: [DONE]\n\n'));
     },
   });
@@ -355,7 +389,9 @@ export default async function handler(request) {
         lastErr = `${model}: HTTP ${groqRes.status}`;
         continue;
       }
-      const resolvedStream = groqRes.body.pipeThrough(createTokenResolverStream(siteMatches, allowedExternalHosts));
+      const resolvedStream = groqRes.body.pipeThrough(
+        createTokenResolverStream(siteMatches, allowedExternalHosts, { forceCompleteList: !!profileQuery })
+      );
       return new Response(resolvedStream, {
         status: 200,
         headers: {
