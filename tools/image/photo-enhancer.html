@@ -1003,20 +1003,36 @@ async function getUpscaler(){
 // crashed tab. Since there's no real progress signal available in that
 // case, show an honest elapsed-time counter instead of a fake percentage
 // that would just sit there doing nothing.
-async function detectBackendIsSlow(){
-  // tf.getBackend() reflects the CONFIGURED backend, not necessarily the one
-  // actually in use yet — WebGL init (and its fallback to CPU/WASM if
-  // unsupported) happens lazily on first real use. Checking immediately
-  // after just constructing the Upscaler reported "webgl" even on a device
-  // where it silently fails and falls back moments later once inference
-  // actually starts (confirmed: the elapsed-time ticker below never
-  // triggered because of exactly this ordering bug) — tf.ready() forces
-  // that resolution to happen now, so the check reflects reality.
+// Checking tf.getBackend()==='webgl' alone isn't reliable — some
+// devices/browsers report "webgl" even when it's backed by a software
+// rasterizer (no real GPU acceleration), which is just as slow as the
+// CPU/WASM path this was meant to catch, and still hangs the tab for
+// minutes (confirmed: a user hit "Page Unresponsive" again after that fix
+// shipped). The only trustworthy signal is actually measuring speed: run a
+// tiny throwaway upscale through the real model and time it. A real GPU
+// does this in well under a second; a slow/software/CPU path takes
+// multiple seconds even for a TINY image (fixed per-call overhead
+// dominates at this size, so the gap is easy to detect long before
+// committing to the full-size photo that would take 200+ seconds).
+async function benchmarkUpscaleSpeed(upscaler){
+  // Empirically tuned — this isn't a clean linear proxy (tried 32x32 and
+  // 64x64 first, both misjudged a device as "fast" that then took 200+
+  // SECONDS on the real photo; something about the model's internal
+  // handling only gets expensive above a size threshold, not smoothly with
+  // patch count). 128x128 is the smallest test that reliably reproduced
+  // the same slowness the real photo hits — confirmed directly: ~13s on
+  // the same device that takes 200+s at full size, still a large
+  // improvement even though 13s isn't instant.
   try{
-    if(typeof tf === 'undefined' || !tf.ready) return false;
-    await tf.ready();
-    return tf.getBackend() !== 'webgl';
-  }catch(e){ return false; }
+    const test = document.createElement('canvas');
+    test.width = 128; test.height = 128;
+    test.getContext('2d').fillRect(0,0,128,128);
+    const t0 = performance.now();
+    await withTimeout(upscaler.upscale(test, { patchSize: 64, padding: 4 }), 20000);
+    return performance.now() - t0;
+  }catch(e){
+    return Infinity; // failed or timed out — treat as unusable
+  }
 }
 // Fast, GPU-free "upscale": browser-native high-quality resize + the
 // existing classical sharpen/clarity/texture pass to recover perceived
@@ -1079,32 +1095,34 @@ async function aiUpscale(factor){
   }
   const btn = $('btnUpscale');
   btn.disabled = true;
-  showProgress(true, 'Checking device capability…', 0);
-  await yieldToUI();
-
-  // TF.js's CPU/WASM fallback (used automatically when WebGL is
-  // unavailable) doesn't yield control back to the browser during
-  // inference — confirmed live: an 800x600 photo at 2x took 210+ SECONDS
-  // with the entire tab genuinely frozen the whole time (not just the
-  // progress bar — nothing could repaint or respond, including this same
-  // check's own timer callbacks). No progress-bar fix can help with that;
-  // the only honest fix is to not attempt the neural model on such a
-  // device at all, and fall back to a fast classical resize+sharpen that
-  // actually completes and gives a real, visible result.
-  const slowBackend = await detectBackendIsSlow();
-  if(slowBackend){
-    btn.disabled = false;
-    await classicalUpscale(factor);
-    return;
-  }
-
-  const stages = Math.round(Math.log2(factor)); // 2x=1 stage, 4x=2 stages, 8x=3 stages
   showProgress(true, 'Loading AI model…', 0);
   await yieldToUI(); // let the "Loading AI model…" text actually paint before the model-load/inference work below blocks the thread
   let upscaler;
   try{ upscaler = await withTimeout(getUpscaler(), 30000); }
   catch(e){ showProgress(false); btn.disabled = false; toast('AI model could not load. Check your internet connection.', true); return; }
 
+  // A device/browser without real GPU acceleration for TF.js (no WebGL, or
+  // a software-rendered "webgl" that's just as slow) doesn't yield control
+  // back to the browser during inference — confirmed live: an 800x600
+  // photo at 2x took 210+ SECONDS with the entire tab genuinely frozen the
+  // whole time (not just the progress bar — nothing could repaint or
+  // respond). No progress-bar fix can help with that; the only honest fix
+  // is to not attempt the neural model on such a device at all. Checking
+  // tf.getBackend()==='webgl' alone isn't reliable enough — some
+  // browsers/devices report "webgl" even on a software rasterizer that's
+  // just as slow (confirmed: a user hit the freeze again after that
+  // narrower check shipped) — so this actually TIMES a tiny real upscale
+  // through the loaded model and judges by real speed, not by name.
+  showProgress(true, 'Checking device speed…', 0);
+  await yieldToUI();
+  const benchMs = await benchmarkUpscaleSpeed(upscaler);
+  if(benchMs > 2000){
+    btn.disabled = false;
+    await classicalUpscale(factor);
+    return;
+  }
+
+  const stages = Math.round(Math.log2(factor)); // 2x=1 stage, 4x=2 stages, 8x=3 stages
   let workCanvas = document.createElement('canvas');
   workCanvas.width = state.canvas.width; workCanvas.height = state.canvas.height;
   workCanvas.getContext('2d').drawImage(state.canvas,0,0);
