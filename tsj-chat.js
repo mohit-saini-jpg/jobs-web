@@ -351,8 +351,11 @@ var CSS = ''+
 'html.tsj-dark .tsj-tbl th{background:#1c2740}'+
 '.tsj-bubble a{color:#345de6;text-decoration:underline}'+
 '.tsj-msg.user .tsj-bubble a{color:#dbe6ff}'+
-'.tsj-actions{display:flex;gap:4px;margin-top:4px;padding-left:34px}'+
-'.tsj-act-btn{width:24px;height:24px;border:none;background:none;color:#9CA3AF;cursor:pointer;font-size:.72rem;border-radius:5px;display:flex;align-items:center;justify-content:center}'+
+// Explicit row/nowrap + !important: this widget's CSS is appended after the
+// site's own stylesheets, and a generic site-wide button/flex rule was
+// winning the cascade and stacking these vertically instead of in a row.
+'.tsj-actions{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:4px;margin-top:4px;padding-left:34px}'+
+'.tsj-act-btn{width:24px;height:24px;flex-shrink:0;border:none;background:none;color:#9CA3AF;cursor:pointer;font-size:.72rem;border-radius:5px;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center}'+
 '.tsj-act-btn:hover{background:#eef4ff;color:#345de6}'+
 '.tsj-act-btn.active{color:#345de6}'+
 '.tsj-cursor{display:inline-block;width:7px;height:14px;background:#345de6;margin-left:2px;animation:tsjblink 1s step-start infinite;vertical-align:middle}'+
