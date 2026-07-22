@@ -191,7 +191,14 @@ function idbLoadLatest(){
 // Filler words that add noise to a fuzzy match without adding meaning
 // ("details batao 2026 ke liye" etc.) — stripped before searching so the
 // distinctive terms (place/scheme/org names) carry full weight.
-var SEARCH_NOISE_RE = /\b(detail|details|batao|batye|batayein|bataye|please|kya|hai|ka|ki|ke|the|for|about|info|information|update|kare|karo|karein|tell|show|dikhao|puche|puchna|puchein|krna|de|do|dijiye)\b/gi;
+// "X ka link bhejo/dekhne ka link do" is a very common request shape —
+// without stripping its action words too, Fuse's edit-distance scoring
+// counted them against the match and pushed a genuinely exact result
+// (score 0.90, "weak guess" territory) close to indistinguishable from a
+// real non-match, risking the model skipping a citation that was actually
+// correct (confirmed live: "UPPSC GIC Lecturer Result dekhne ka link beje"
+// found the right job, but scored so poorly it wasn't a safe citation).
+var SEARCH_NOISE_RE = /\b(detail|details|batao|batye|batayein|bataye|please|kya|hai|ka|ki|ke|the|for|about|info|information|update|kare|karo|karein|tell|show|dikhao|puche|puchna|puchein|krna|de|do|dijiye|dekhne|dekhna|dekho|dekhein|link|bhejo|bheje|beje|bhejdo|bhejein|bhej|chahiye|chaiye|mujhe|muje|send|sendme|milega|milegi|jaye|jaayega|jayega|sakta|sakte|hoga|hogi)\b/gi;
 // Common Hinglish/Roman-Hindi misspellings of high-frequency government-job
 // terms on this site — plain character-fuzzy matching alone scores heavy
 // typos like "agrwari" almost as badly as a genuinely-nonexistent query, so
