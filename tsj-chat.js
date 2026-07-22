@@ -108,8 +108,13 @@ function renderMarkdown(md){
   html = html.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
   // inline code
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  // links (scheme-restricted, safe)
+  // links (scheme-restricted, safe) — a topsarkarijobs.com link renders as
+  // a distinct button/card (title + open icon) rather than an inline text
+  // link, so it reads as "here's the page" instead of blending into prose.
   html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(m, text, url){
+    if(/^https?:\/\/(www\.)?topsarkarijobs\.com\//i.test(url)){
+      return '<a href="'+url+'" target="_blank" rel="noopener noreferrer" class="tsj-cite-btn"><span>'+text+'</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>';
+    }
     return '<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+text+'</a>';
   });
   // bullet lists
@@ -262,6 +267,16 @@ var QUALIFICATION_PATTERNS = [
   [/\bgnm\b/i, ['GNM']],
   [/\banm\b/i, ['ANM']],
 ];
+// Qualification category -> its /section/{slug}/ browse-all hub page
+// (matches generate_all.py's FJA_CAT_MAP/SARK_CAT_MAP / build_chat_index.py's
+// SECTIONS list) — so a "10th pass job" query surfaces both the individual
+// matching jobs AND the category page to browse the full current list.
+var QUAL_SECTION_SLUG = {
+  '10TH_Pass':'10th-pass-jobs', '8TH_Pass':'8th-pass', '12TH_Pass':'12th-pass-jobs',
+  'Diploma':'diploma-jobs', 'ITI':'iti-jobs', 'B_Tech_BE':'btech-jobs',
+  'Any_Graduate':'graduation-jobs', 'Any_Post_Graduate':'post-graduation-jobs',
+  'B_Com':'ba-pass', 'B_A':'ba-pass',
+};
 function detectProfileQuery(query){
   var quals = [];
   QUALIFICATION_PATTERNS.forEach(function(pair){
@@ -284,9 +299,23 @@ function profileSearch(profile){
     return true;
   });
   matches.sort(function(a,b){ return (b.d||'').localeCompare(a.d||''); });
-  return matches.slice(0, 20).map(function(it){
+  var jobResults = matches.slice(0, 18).map(function(it){
     return {title:it.t, org:it.o, category:it.c, date:it.d, url:it.u, type:it.ty};
   });
+  var sectionSlugs = [];
+  quals.forEach(function(q){
+    var slug = QUAL_SECTION_SLUG[q];
+    if(slug && sectionSlugs.indexOf(slug) === -1) sectionSlugs.push(slug);
+  });
+  var sectionResults = sectionSlugs.map(function(slug){
+    var found = null;
+    for(var i=0;i<state.searchIndex.length;i++){
+      var it = state.searchIndex[i];
+      if(it.ty === 'section' && it.u === '/section/'+slug+'/'){ found = it; break; }
+    }
+    return found ? {title:found.t, org:'', category:'Section', date:'', url:found.u, type:'section'} : null;
+  }).filter(Boolean);
+  return sectionResults.concat(jobResults).slice(0, 20);
 }
 
 /* ============================== CSS ============================== */
@@ -351,6 +380,13 @@ var CSS = ''+
 'html.tsj-dark .tsj-tbl th{background:#1c2740}'+
 '.tsj-bubble a{color:#345de6;text-decoration:underline}'+
 '.tsj-msg.user .tsj-bubble a{color:#dbe6ff}'+
+'.tsj-bubble p:has(> a.tsj-cite-btn:only-child){margin:6px 0}'+
+'.tsj-cite-btn{display:flex!important;align-items:center;gap:8px;background:#eef4ff;color:#1d4ed8!important;text-decoration:none!important;font-weight:700;font-size:.82rem;padding:10px 12px;border-radius:10px;border:1px solid #dbe6ff}'+
+'.tsj-cite-btn:hover{background:#dbe6ff}'+
+'.tsj-cite-btn span{flex:1}'+
+'.tsj-cite-btn i{flex-shrink:0;font-size:.74rem;opacity:.7}'+
+'html.tsj-dark .tsj-cite-btn{background:#1c2740;color:#93c5fd!important;border-color:#2a3441}'+
+'html.tsj-dark .tsj-cite-btn:hover{background:#243254}'+
 // Explicit row/nowrap + !important: this widget's CSS is appended after the
 // site's own stylesheets, and a generic site-wide button/flex rule was
 // winning the cascade and stacking these vertically instead of in a row.

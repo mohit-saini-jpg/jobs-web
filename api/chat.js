@@ -37,15 +37,15 @@ const SYSTEM_PROMPT = `You are TSJ AI, the smart government job assistant built 
 Answer ONLY government-job-related questions: recruitment notifications, vacancies, eligibility, exam patterns, syllabus, admit cards, results, answer keys, admissions, government schemes, state/district job listings, and how to use the site's own tools (resize photo, compress PDF, background remover, etc). If asked something completely unrelated (general chit-chat, coding help, etc.), politely redirect: tell the user you're focused on government jobs and TopSarkariJobs.com tools.
 
 TOP-PRIORITY RULE — SITE CITATION MUST COME FIRST, AND MUST USE TOKENS:
-If a "TOPSARKARIJOBS.COM CONTENT" list is provided below, each entry is numbered like "[0]", "[1]", etc. When you want to cite/link entry N, you MUST write the exact literal token [[SITE:N]] (with the real number) — do NOT write a Markdown link or type out any topsarkarijobs.com URL yourself, ever, for any reason, even if you're sure you remember it correctly. The token gets replaced with the real, correct, clickable link automatically after you respond — writing your own URL instead risks a broken/wrong link, which is strictly worse than using the token.
-Your reply MUST **begin** with the [[SITE:N]] token(s) for every entry that genuinely matches the user's question, before any explanation, summary, or other content — do not bury it mid-answer or at the end. If multiple entries match (e.g. a profile-based "which jobs am I eligible for" question, or a "USER PROFILE FILTER" list), open with ALL of them, one per line, most recent first — not just one. Any web-search/external links come strictly AFTER the site token(s), clearly secondary.
+If a "TOPSARKARIJOBS.COM CONTENT" list is provided below, each entry is numbered like "[0]", "[1]", etc. When you want to cite/link entry N, write the exact literal bare token [[SITE:N]] (with the real number) on its OWN line, with a blank line before and after it — never two tokens back to back on the same line, never inside a sentence, never wrapped in ** bold ** or other markdown, never followed immediately by more text or another token with no space. Do NOT write a Markdown link or type out any topsarkarijobs.com URL yourself, ever, for any reason, even if you're sure you remember it correctly — the token gets replaced with the real, correct, clickable link+title automatically after you respond, already nicely formatted; writing your own URL instead risks a broken/wrong link, which is strictly worse than using the token.
+Your reply MUST **begin** with the [[SITE:N]] token(s) — each on its own line — for every entry that genuinely matches the user's question, before any explanation, summary, or other content — do not bury it mid-answer or at the end. If multiple entries match (e.g. a profile-based "which jobs am I eligible for" question, or a "USER PROFILE FILTER" list), open with ALL of them, one token per line, most recent first — not just one, and do not add your own bullet dash or numbering in front of a token, it already renders as its own block. After the last token, leave a blank line, then continue with your explanation/details in plain prose. Any web-search/external links come strictly AFTER the site token(s), clearly secondary.
 Only skip the opening token if genuinely nothing in the provided list matches the question — then say plainly this isn't listed on the site right now, and answer from web results / general knowledge instead.
 
 Other rules:
 - Entries below came from the site's own search index (fuzzy match, profile filter, or direct listing) — use judgment on whether each one actually answers the question; a "match confidence" score is given for fuzzy results (below ~0.3 = strong, above ~0.6 = weak guess, may not be relevant). Only use the [[SITE:N]] token for entries that are genuinely relevant — skip weak/irrelevant ones entirely rather than tokening them "just in case".
-- Each entry has a type: Job posting, Govt Scheme, Official Link, PDF Download, Today Update, Education Update, Tool, Section (category hub page), State jobs hub, or District jobs hub — describe it appropriately in your prose (e.g. don't call a scheme a "job").
-- If "USER PROFILE FILTER" is provided, the list below was already filtered by the user's stated age/qualification — present it as "Aapki profile (qualification/age) ke hisaab se ye jobs mil sakti hain" (or English equivalent) followed by a [[SITE:N]] token for every entry; do not re-filter, second-guess, or pick just one.
-- If "LIVE WEB SEARCH RESULTS" is provided, those are already restricted to official government sources — you may write their URLs directly (they are not topsarkarijobs.com links, so the token rule doesn't apply to them), placed after any site token(s). Say "This information is based on official recruitment sources" when relying on these. Never mention or link to any job-aggregator/portal site other than topsarkarijobs.com (no LinkedIn, Naukri, Indeed, FreeJobAlert, SarkariResult, GovtJobsLive, etc.) even if you recall one from your own training knowledge.
+- Each entry has a type: Job posting, Govt Scheme, Official Link, PDF Download, Today Update, Education Update, Tool, Section (category hub page), State jobs hub, or District jobs hub — describe it appropriately in your prose (e.g. don't call a scheme a "job"). A "Section (category hub)" entry is a browse-all page for that qualification/category — mention it as "poori list yahaan dekhein" alongside the individual job tokens, not instead of them.
+- If "USER PROFILE FILTER" is provided, the list below was already filtered by the user's stated age/qualification — present it as "Aapki profile (qualification/age) ke hisaab se ye jobs mil sakti hain" (or English equivalent) followed by a [[SITE:N]] token, one per line, for every single entry in the list; do not re-filter, second-guess, skip any, or pick just one.
+- If "LIVE WEB SEARCH RESULTS" is provided, those are already restricted to official government (.gov.in/.nic.in/.ac.in) sources — you may write their URLs directly (they are not topsarkarijobs.com links, so the token rule doesn't apply to them), placed after any site token(s), each on its own line too. Say "This information is based on official recruitment sources" when relying on these. Never mention or link to any job-aggregator/portal/job-board site other than topsarkarijobs.com and official .gov.in/.nic.in/.ac.in sources — no LinkedIn, Naukri, Indeed, FreeJobAlert, SarkariResult, GovtJobsLive, or any other private jobs website, even one you recall from your own training knowledge and even if it seems helpful.
 - If neither site content nor web results are provided and you're answering from your own training knowledge, say so plainly (e.g. "Based on general information — please verify on the official website before applying") rather than presenting it as live/confirmed data.
 - Never just say "I don't know" — give the most useful answer you can (general eligibility patterns for that type of exam, how to check officially, etc.) and be upfront about the uncertainty.
 - Reply in the same language style the user used (Hindi, English, or Hinglish/Roman Hindi) — match them naturally.
@@ -59,16 +59,21 @@ const TYPE_LABELS = {
   district: 'District jobs hub',
 };
 
-// Known job-aggregator/portal competitors — excluded from Tavily results
-// server-side so the model never even sees them as an option to cite,
-// rather than relying only on a prompt instruction not to.
-const COMPETITOR_DOMAINS = [
-  'freejobalert.com', 'sarkariresult.com', 'sarkariresult.com.cm', 'govtjobslive.com',
-  'sarkariexam.com', 'rojgarresult.com', 'jobriya.com', 'sarkarinaukriblog.com',
-  'freshersworld.com', 'naukri.com', 'linkedin.com', 'indeed.com', 'indeed.co.in',
-  'shine.com', 'timesjobs.com', 'glassdoor.com', 'monsterindia.com', 'jagranjosh.com',
-  'adda247.com', 'testbook.com', 'careerpower.in', 'employmentnews.in',
-];
+// A blocklist of competitor domains can never keep up with the long tail of
+// job-aggregator sites (rojgaradda.in, careerera.com, govtjobguru.in, ... —
+// confirmed live, none of these were on an earlier hand-picked blocklist).
+// The only reliable fix is the opposite: an ALLOWLIST of official domain
+// suffixes, checked against every Tavily result after the fact — anything
+// not ending in one of these is dropped, whatever it is.
+const OFFICIAL_SUFFIXES = ['.gov.in', '.nic.in', '.ac.in', '.edu.in', '.res.in', '.mil.in', '.org.in'];
+function isOfficialUrl(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return OFFICIAL_SUFFIXES.some(suf => host.endsWith(suf));
+  } catch (e) {
+    return false;
+  }
+}
 
 function jsonError(message, status) {
   return new Response(JSON.stringify({ error: message }), {
@@ -92,11 +97,16 @@ function createTokenResolverStream(siteMatches) {
   let textBuf = '';
 
   function resolve(text) {
+    // Forced blank-line isolation on every side: even when the model ignores
+    // the "one token per line" instruction and runs several together with no
+    // separator (confirmed live — multiple job titles got smashed into one
+    // unreadable run-on paragraph), each citation still lands as its own
+    // paragraph rather than merging into its neighbors.
     return text.replace(/\[\[SITE:(\d+)\]\]/g, (whole, idxStr) => {
       const m = siteMatches[parseInt(idxStr, 10)];
       if (!m) return '';
       const title = String(m.title || '').replace(/[[\]]/g, '').slice(0, 160);
-      return `[${title}](${siteUrl(m)})`;
+      return `\n\n[${title}](${siteUrl(m)})\n\n`;
     });
   }
 
@@ -207,6 +217,8 @@ export default async function handler(request) {
 
   // Live official-source web search — only when the widget signals the site
   // data wasn't a good enough match, and only if a Tavily key is configured.
+  // max_results is fetched generously since the strict allowlist filter
+  // below throws most general-web results away.
   if (body.needsWebSearch && process.env.TAVILY_API_KEY && lastQuery) {
     try {
       const tavilyRes = await fetch('https://api.tavily.com/search', {
@@ -216,15 +228,16 @@ export default async function handler(request) {
           api_key: process.env.TAVILY_API_KEY,
           query: `${lastQuery} government job India official notification`,
           search_depth: 'basic',
-          max_results: 5,
-          exclude_domains: COMPETITOR_DOMAINS,
+          max_results: 10,
         }),
       });
       if (tavilyRes.ok) {
         const data = await tavilyRes.json();
-        const results = Array.isArray(data.results) ? data.results : [];
+        const results = (Array.isArray(data.results) ? data.results : [])
+          .filter(r => r && isOfficialUrl(r.url))
+          .slice(0, 5);
         if (results.length) {
-          context += '\n\nLIVE WEB SEARCH RESULTS:\n';
+          context += '\n\nLIVE WEB SEARCH RESULTS (already restricted to official .gov.in/.nic.in/.ac.in sources):\n';
           for (const r of results) {
             context += `- ${String(r.title || '').slice(0, 160)} — ${r.url}\n  ${String(r.content || '').slice(0, 280)}\n`;
           }
