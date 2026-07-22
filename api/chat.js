@@ -48,6 +48,7 @@ Other rules:
 - If a "LIVE WEB SEARCH RESULTS" block is provided below, those are already restricted to official government (.gov.in/.nic.in/.ac.in) sources — wrap that whole part of your answer between literal marker lines [[WEBINFO]] and [[/WEBINFO]] (each marker alone on its own line), and inside it you may write those URLs directly (they are not topsarkarijobs.com links, so the token rule doesn't apply to them). Say "This information is based on official recruitment sources" when relying on these.
 - If NO "LIVE WEB SEARCH RESULTS" block is provided below, that means no live search ran for this question — you MUST NOT write the phrase "live web search", "ke anusaar", or any specific number/statistic/website name as if it came from one. Never invent a website domain from memory (real or plausible-sounding — e.g. never write anything like "govtjobguru.in" or "rojgaradda.in" or "careerera.com" or ANY third-party job-portal domain) and never fabricate vacancy counts. Simply answer from general knowledge and say so plainly, or point the user to the official site of the department/exam by name (not a guessed URL).
 - Never mention or link to any job-aggregator/portal/job-board site other than topsarkarijobs.com and official .gov.in/.nic.in/.ac.in sources — no LinkedIn, Naukri, Indeed, FreeJobAlert, SarkariResult, GovtJobsLive, or any other private jobs website, ever, under any circumstance, even one you recall from your own training knowledge and even if it seems helpful.
+- If "FULL PAGE CONTENT" is provided for an entry, that's the real, complete content of that page (dates, fees, age limit, full eligibility, vacancy breakdown, how-to-apply steps) fetched live from the site itself — use the actual numbers/dates/steps in it instead of vague placeholders like "check the official website for dates" or "click the link below for the form". Combine with any LIVE WEB SEARCH RESULTS for a fuller answer, but this page's own content takes priority for anything it already covers.
 - If neither site content nor web results are provided and you're answering from your own training knowledge, say so plainly (e.g. "Based on general information — please verify on the official website before applying") rather than presenting it as live/confirmed data.
 - Never just say "I don't know" — give the most useful answer you can (general eligibility patterns for that type of exam, how to check officially, etc.) and be upfront about the uncertainty.
 - Reply in the same language style the user used (Hindi, English, or Hinglish/Roman Hindi) — match them naturally.
@@ -87,6 +88,62 @@ function jsonError(message, status) {
 function siteUrl(m) {
   const url = String(m.url || '').slice(0, 200);
   return /^https?:\/\//i.test(url) ? url : `https://www.topsarkarijobs.com${url}`;
+}
+
+// chat-search-index.json is deliberately lightweight (title/org/date only)
+// so the browser can fetch/search it fast — it never carried vacancy
+// breakdowns, fees, age limits, or how-to-apply steps, so a "give me full
+// details" question could only get a shallow answer even for an exact
+// match. The live page itself already has all of that, rendered — pull its
+// <main> content (skips header/nav/footer boilerplate) and hand it to the
+// model as real, current text instead of vague "check the official
+// website" placeholders.
+function extractMainText(html) {
+  const m = /<main[^>]*>([\s\S]*?)<\/main>/i.exec(html);
+  let t = m ? m[1] : html;
+  t = t
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+  return t;
+}
+
+// Fetches the live page for the top site match and returns its extracted
+// text — but only when the query looks like it's about ONE specific
+// posting (a confident single match, not a broad list), and only for page
+// types that actually have substantive detail content. Best-effort with a
+// short timeout: a slow/failed fetch just means the answer stays at the
+// existing (shallower) level, never blocks the response.
+async function fetchTopMatchDetail(siteMatches, profileQuery) {
+  if (!siteMatches.length || profileQuery) return '';
+  const top = siteMatches[0];
+  const detailableTypes = ['job', 'education', 'scheme', 'pdf', 'link', 'update'];
+  if (!detailableTypes.includes(top.type || 'job')) return '';
+  const isConfident = typeof top.score !== 'number' || top.score <= 0.15;
+  if (!isConfident) return '';
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 3500);
+    const res = await fetch(siteUrl(top), { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!res.ok) return '';
+    const html = await res.text();
+    const text = extractMainText(html).slice(0, 4500);
+    if (!text) return '';
+    const title = String(top.title || '').slice(0, 160);
+    return `\n\nFULL PAGE CONTENT for [0] "${title}" (fetched live from the site itself):\n${text}\n`;
+  } catch (e) {
+    return '';
+  }
 }
 
 // Resolves [[SITE:N]] tokens into real Markdown links, and — since the
@@ -328,8 +385,13 @@ export default async function handler(request) {
   // fabricated domain from rendering as a link, not just the prompt asking
   // nicely, since the model has been caught inventing "live search" results
   // (specific fake stats and domain names) even when this block was empty.
+  //
+  // Runs in parallel with the top-match detail-page fetch below — both are
+  // independent best-effort network calls, no reason to pay their latency
+  // twice in series.
   const allowedExternalHosts = new Set();
-  if (body.needsWebSearch && process.env.TAVILY_API_KEY && lastQuery) {
+  async function fetchWebSearch() {
+    if (!(body.needsWebSearch && process.env.TAVILY_API_KEY && lastQuery)) return '';
     try {
       const tavilyRes = await fetch('https://api.tavily.com/search', {
         method: 'POST',
@@ -341,23 +403,28 @@ export default async function handler(request) {
           max_results: 10,
         }),
       });
-      if (tavilyRes.ok) {
-        const data = await tavilyRes.json();
-        const results = (Array.isArray(data.results) ? data.results : [])
-          .filter(r => r && isOfficialUrl(r.url))
-          .slice(0, 5);
-        if (results.length) {
-          context += '\n\nLIVE WEB SEARCH RESULTS (already restricted to official .gov.in/.nic.in/.ac.in sources):\n';
-          for (const r of results) {
-            context += `- ${String(r.title || '').slice(0, 160)} — ${r.url}\n  ${String(r.content || '').slice(0, 280)}\n`;
-            try { allowedExternalHosts.add(new URL(r.url).hostname.toLowerCase()); } catch (e) {}
-          }
-        }
+      if (!tavilyRes.ok) return '';
+      const data = await tavilyRes.json();
+      const results = (Array.isArray(data.results) ? data.results : [])
+        .filter(r => r && isOfficialUrl(r.url))
+        .slice(0, 5);
+      if (!results.length) return '';
+      let addition = '\n\nLIVE WEB SEARCH RESULTS (already restricted to official .gov.in/.nic.in/.ac.in sources):\n';
+      for (const r of results) {
+        addition += `- ${String(r.title || '').slice(0, 160)} — ${r.url}\n  ${String(r.content || '').slice(0, 280)}\n`;
+        try { allowedExternalHosts.add(new URL(r.url).hostname.toLowerCase()); } catch (e) {}
       }
+      return addition;
     } catch (e) {
-      // best-effort only — chat still works without live search
+      return ''; // best-effort only — chat still works without live search
     }
   }
+
+  const [webSearchAddition, detailAddition] = await Promise.all([
+    fetchWebSearch(),
+    fetchTopMatchDetail(siteMatches, profileQuery),
+  ]);
+  context += detailAddition + webSearchAddition;
 
   if (!process.env.GROQ_API_KEY) {
     return jsonError('AI is not configured yet (missing GROQ_API_KEY).', 500);
