@@ -218,6 +218,20 @@
 
   <div class="card">
     <h3>⚙️ Settings</h3>
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📋 Exam / Job Preset — auto photo size</label>
+      <select id="jobPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="">— Apna exam / job choose karein (size apne aap set) —</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi output <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap us exam ke hisaab se set ho jayenge.</p>
+    </div>
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📐 Quick Size Presets — Print, Passport/ID, Social Media</label>
+      <select id="printPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="original" selected>📷 Original (Uploaded Image Size) — default</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Default mein hamesha upload ki hui image ka <b>original size</b> hi selected rehta hai — kisi bhi Exam/Passport size ke liye yahan se choose karein.</p>
+    </div>
     <div class="form-grid">
       <div class="form-group"><label>Brightness</label><input type="range" id="br" min="-100" max="100" value="0"><div class="range-val" id="br-val">0</div></div>
       <div class="form-group"><label>Contrast</label><input type="range" id="con" min="-100" max="100" value="0"><div class="range-val" id="con-val">0</div></div>
@@ -360,23 +374,35 @@
         L.fs=fs; L.lineH=Math.ceil(fs*1.35); sumH+=L.lineH;
       });
     }
-    var extra=0;
-    if(ws){ extra=sumH+pad*2; }              // white strip grows to fit the two lines
-    else if(lines.length){                   // overlay: keep inside bottom region
+    // FIX: output canvas size must always equal the uploaded photo's own
+    // size (iw × ih) — it must NEVER grow taller than the original just
+    // because whitespace was turned on (that silently changed the output
+    // dimensions away from what the user uploaded / what an exam form
+    // expects). To make room for the white strip, the PHOTO is scaled
+    // down UNIFORMLY (same factor on both axes, so it's never stretched/
+    // squished) and top-aligned + horizontally centered; the freed-up
+    // space at the bottom (and slim margins on the sides) is filled white.
+    var extra=0, photoW=iw, photoH=ih, photoX=0, photoY=0;
+    if(ws){
+      extra=Math.min(ih-1, sumH+pad*2);
+      var avail=Math.max(1, ih-extra), k=avail/ih;
+      photoW=Math.round(iw*k); photoH=avail;
+      photoX=Math.round((iw-photoW)/2);
+    } else if(lines.length){                 // overlay: keep inside bottom region
       var region=Math.round(ih*0.30);
-      if(sumH>region){var k=region/sumH;lines.forEach(function(L){L.fs*=k;L.lineH*=k;});sumH*=k;}
+      if(sumH>region){var k2=region/sumH;lines.forEach(function(L){L.fs*=k2;L.lineH*=k2;});sumH*=k2;}
     }
 
-    canvas.width=iw; canvas.height=ih+extra;
+    canvas.width=iw; canvas.height=ih;        // ALWAYS the original size — never grows
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,iw,ih);
     ctx.filter=buildFilter();
-    ctx.drawImage(srcImg,0,0,iw,ih);
+    ctx.drawImage(srcImg,photoX,photoY,photoW,photoH);
     ctx.filter='none';
-    if(extra>0){ctx.fillStyle='#ffffff';ctx.fillRect(0,ih,iw,extra);}
 
     if(lines.length){
-      var regionTop = ws ? ih : (ih - sumH - pad);
-      var regionH   = ws ? extra : (sumH + pad);
+      var regionTop = ws ? photoH : (ih - sumH - pad);
+      var regionH   = ws ? (ih-photoH) : (sumH + pad);
       var y = regionTop + (regionH - sumH)/2;
       ctx.textAlign='center'; ctx.textBaseline='top';
       lines.forEach(function(L){
@@ -403,12 +429,57 @@
     img.src=url;
   }
 
-  function runProcess(){   // render at FULL resolution + download
+  // ── Target-size (px) + target-file-size (KB) support, for the Exam/Job
+  // and Passport/ID/Print presets — same binary-search-quality approach
+  // used by tools/image/compress-image.html's encodeTarget(). ───────────
+  function canvasToBlobP(cv,mime,q){return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error(mime+' encode fail'));},mime,q);});}
+  async function encodeTargetKB(cv,targetKB){
+    var target=Math.max(1,targetKB)*1024, lo=0.05, hi=0.95, best=null;
+    for(var i=0;i<10;i++){
+      var q=(lo+hi)/2, b=await canvasToBlobP(cv,'image/jpeg',q);
+      if(b.size<=target){best=b;lo=q;} else {hi=q;}
+    }
+    if(!best) best=await canvasToBlobP(cv,'image/jpeg',0.05);
+    return best;
+  }
+
+  function getTargetSize(){
+    var jp=G('jobPreset'), pp=G('printPreset');
+    if(jp && jp.value){
+      var o=jp.options[jp.selectedIndex];
+      return {w:+o.getAttribute('data-w'), h:+o.getAttribute('data-h'), kb:+o.getAttribute('data-kb')||0};
+    }
+    if(pp && pp.value && pp.value!=='original'){
+      var o2=pp.options[pp.selectedIndex];
+      if(o2 && o2.getAttribute('data-w')) return {w:+o2.getAttribute('data-w'), h:+o2.getAttribute('data-h'), kb:0};
+    }
+    return null;
+  }
+
+  async function runProcess(){   // render at FULL resolution + download
     if(!srcImg){alert('Pehle image select karein!');return;}
-    var pw=G('progress-wrap');pw.style.display='block';G('pbar').style.width='60%';G('pmsg').textContent='Final image ban raha hai...';
+    var pw=G('progress-wrap');pw.style.display='block';G('pbar').style.width='40%';G('pmsg').textContent='Final image ban raha hai...';
     var out=document.createElement('canvas');
     renderTo(out,1);
-    out.toBlob(function(blob){
+
+    // Exam/Passport preset selected? Stretch-fit the fully-edited photo
+    // into the EXACT target pixel size the form/exam expects.
+    var target=getTargetSize();
+    if(target && target.w>0 && target.h>0){
+      var sized=document.createElement('canvas');
+      sized.width=target.w; sized.height=target.h;
+      sized.getContext('2d').drawImage(out,0,0,target.w,target.h);
+      out=sized;
+    }
+
+    try{
+      var blob;
+      if(target && target.kb>0){
+        G('pmsg').textContent='Target '+target.kb+' KB ke liye adjust ho raha hai...';
+        blob=await encodeTargetKB(out,target.kb);
+      } else {
+        blob=await canvasToBlobP(out,'image/jpeg',0.92);
+      }
       G('pbar').style.width='100%';G('pmsg').textContent='Done!';
       var url=URL.createObjectURL(blob||new Blob());
       var rc=G('result-card');rc.classList.add('show');
@@ -416,11 +487,95 @@
       var fn=G('main-file').files[0], base=(fn?fn.name:'photo').replace(/\.[^.]+$/,'');
       var dl=G('dl-btn');dl.textContent='⬇️ Download JPG';
       dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download=base+'-edited.jpg';a.click();};
-    },'image/jpeg',0.92);
+    }catch(err){
+      G('pbar').style.width='0%';G('pmsg').textContent='';
+      alert('Process nahi ho paya, dobara try karein.');
+    }
+  }
+
+  // Exam/Job → [name, width_px, height_px, max_KB] (same master list as
+  // tools/image/image-resizer.html — kept in sync there).
+  var JOB_PRESETS_PHOTO=[
+    {g:'HSSC (20–50 KB, 200×230)',items:[['HSSC CET',200,230,50],['HSSC Group C & D / Clerk',200,230,50],['Haryana Police',200,230,50]]},
+    {g:'SSC (20–50 KB, 200×240)',items:[['SSC CGL',200,240,50],['SSC CHSL',200,240,50],['SSC MTS',200,240,50],['SSC GD Constable',200,240,50],['SSC JE',200,240,50],['SSC Stenographer',200,240,50]]},
+    {g:'IBPS / SBI / Banking (20–50 KB, 200×230)',items:[['IBPS PO',200,230,50],['IBPS Clerk',200,230,50],['IBPS SO',200,230,50],['IBPS RRB Officer',200,230,50],['IBPS RRB Assistant',200,230,50],['SBI PO',200,230,50],['SBI Clerk',200,230,50],['SBI SO',200,230,50],['RBI Assistant',200,230,50],['RBI Grade B',200,230,50],['NABARD',200,230,50],['GIC',200,230,50]]},
+    {g:'UPSC (20–300 KB, min 350×350)',items:[['UPSC Civil Services (IAS/IFS)',350,350,300],['UPSC NDA',350,350,300],['UPSC CDS',350,350,300],['UPSC CMS',350,350,300],['UPSC CAPF AC',350,350,300]]},
+    {g:'Railway / RRB (20–50 KB, 320×240)',items:[['Railway NTPC',320,240,50],['Railway Group D',320,240,50],['Railway ALP',320,240,50],['Railway Technician',320,240,50],['RPF SI / Constable',320,240,50],['RRB JE',320,240,50]]},
+    {g:'DSSSB (40–100 KB, Postcard 480×672)',items:[['DSSSB (All Teaching & Non-Teaching Posts)',480,672,100]]},
+    {g:'KVS / NVS / NTA / CTET / UGC NET (10–200 KB, 200×230)',items:[['KVS Recruitment',200,230,200],['NVS Recruitment',200,230,200],['NTA CUET / Central Univ',200,230,200],['CTET / UGC NET / CSIR NET',200,230,200]]},
+    {g:'Delhi Police (20–50 KB, 200×240)',items:[['Delhi Police (Constable / SI)',200,240,50]]},
+    {g:'UP / Bihar / Rajasthan Police (20–50 KB, 350×450)',items:[['UP Police',350,450,50],['Bihar Police',350,450,50],['Rajasthan Police',350,450,50],['MP Police / Vyapam',350,450,50]]},
+    {g:'Defence (10–50 KB, 350×450)',items:[['Army Agniveer',350,450,50],['Air Force Agniveer',350,450,50],['Navy Agniveer SSR/MR',350,450,50]]},
+    {g:'Paramilitary (10–50 KB, 350×450)',items:[['BSF',350,450,50],['CRPF',350,450,50],['CISF',350,450,50],['ITBP',350,450,50],['SSB',350,450,50],['Assam Rifles',350,450,50]]},
+    {g:'AIIMS / ESIC / FSSAI (20–100 KB, 200×230)',items:[['AIIMS (NORCET / Group A,B,C)',200,230,100],['ESIC',200,230,100],['FSSAI',200,230,100]]},
+    {g:'State PSC (20–100 KB, 275×354)',items:[['UPPSC',275,354,100],['BPSC',275,354,100],['RPSC',275,354,100],['MPPSC',275,354,100],['State PSC (Other States)',275,354,100]]},
+    {g:'LIC & Insurance Exams (20–50 KB, 200×230)',items:[['LIC AAO / ADO / Asst',200,230,50],['NIACL / UIIC / OICL',200,230,50]]}
+  ];
+  function populateJobPreset(data){
+    var sel=G('jobPreset');if(!sel)return;
+    data.forEach(function(grp){
+      var og=document.createElement('optgroup');og.label=grp.g;
+      grp.items.forEach(function(it){
+        var o=document.createElement('option');
+        o.value=it[0];o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);o.setAttribute('data-kb',it[3]);
+        o.textContent=it[0]+'  —  '+it[1]+'×'+it[2]+' px, ≤'+it[3]+' KB';
+        og.appendChild(o);
+      });
+      sel.appendChild(og);
+    });
+    sel.addEventListener('change',function(){
+      if(sel.value && G('printPreset'))G('printPreset').value='original';
+      renderPreview();
+    });
+  }
+
+  // Print / Passport-ID / Social Media — pixel sizes (no KB target, unlike
+  // exam presets — those are about dimensions, not a file-size limit).
+  var PRINT_PRESETS=[
+    {g:'🪪 Passport / ID',items:[
+      ['India / UK / Australia / Europe — 35×45mm',413,531],
+      ['USA / Philippines — 2×2 Inch',600,600],
+      ['Canada Passport — 50×70mm',590,826],
+      ['PAN Card / Aadhaar — 25×35mm',295,413],
+      ['SSC / IBPS Form',200,230]
+    ]},
+    {g:'🖨️ Print',items:[
+      ['Postcard 6×4in',1800,1200],
+      ['4×6 Photo',1200,1800],
+      ['5×7 Photo',1500,2100],
+      ['8×10 Photo',2400,3000]
+    ]},
+    {g:'📱 Social Media',items:[
+      ['Instagram Square',1080,1080],
+      ['Instagram Profile',320,320],
+      ['Facebook Profile',170,170],
+      ['LinkedIn Photo',400,400],
+      ['WhatsApp DP',500,500],
+      ['Twitter / X Profile',400,400]
+    ]}
+  ];
+  function populatePrintPreset(data){
+    var sel=G('printPreset');if(!sel)return;
+    data.forEach(function(grp){
+      var og=document.createElement('optgroup');og.label=grp.g;
+      grp.items.forEach(function(it){
+        var o=document.createElement('option');
+        o.value=it[0];o.setAttribute('data-w',it[1]);o.setAttribute('data-h',it[2]);
+        o.textContent=it[0]+'  —  '+it[1]+'×'+it[2]+'px';
+        og.appendChild(o);
+      });
+      sel.appendChild(og);
+    });
+    sel.addEventListener('change',function(){
+      if(sel.value!=='original' && G('jobPreset'))G('jobPreset').value='';
+      renderPreview();
+    });
   }
 
   document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
+    populateJobPreset(JOB_PRESETS_PHOTO);
+    populatePrintPreset(PRINT_PRESETS);
     pcanvas=G('pcanvas');
     var mf=G('main-file');
     if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
@@ -438,6 +593,8 @@
       G('filterSel').value='none';
       G('whiteSpace').checked=false;
       G('nameTxt').value='';G('dateTxt').value='';
+      if(G('jobPreset'))G('jobPreset').value='';
+      if(G('printPreset'))G('printPreset').value='original';
       G('progress-wrap').style.display='none';G('pbar').style.width='0%';
       var rc=G('result-card');if(rc)rc.classList.remove('show');
       if(srcImg)renderPreview();
