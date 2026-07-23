@@ -1,0 +1,16 @@
+/* Shared "Share This Tool" widget — used by tools-share.js across every
+   tools/*.html page. Self-contained (no dependency on the main site's
+   styles.css/styles-detail.css, which tool pages don't load) and uses
+   emoji glyphs instead of an icon font so it renders correctly regardless
+   of whether a given tool page happens to load Font Awesome. */
+.dh-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0}
+.dh-share-lbl{font-size:.72rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:5px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit}
+.dh-share-btns{display:flex;gap:6px;flex-wrap:wrap}
+.dh-sh{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:.92rem;border:none;cursor:pointer;transition:transform .15s;line-height:1}
+.dh-sh:hover{transform:translateY(-2px)}
+.dh-sh.wa{background:#25D366}
+.dh-sh.tg{background:#0088cc}
+.dh-sh.fb{background:#1877F2}
+.dh-sh.tw{background:#000}
+.dh-sh.li{background:#0A66C2}
+.dh-sh.cp{background:#6b7280}

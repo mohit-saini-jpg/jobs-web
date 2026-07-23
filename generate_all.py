@@ -6319,8 +6319,76 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
         f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
     ) if render_cards else ''
+    # Dynamic share-message row — same dh-share component used on job detail
+    # pages (build_detail_page), but with copy tailored per listing type
+    # (Qualification / State / District / Section hub, detected the same way
+    # _seo_listing_content() above already detects it: by URL segment).
+    # entity name = title with the trailing year / "Govt Jobs" suffix / any
+    # trailing "(...)" stripped — same cleanup _seo_listing_content() does,
+    # so e.g. "10th Pass Government Jobs 2026" -> "10th Pass".
+    import re as _re_share
+    import urllib.parse as _uparse_share
+    _share_name = _re_share.sub(r'\s*\d{4}\s*$', '', title).strip()
+    _share_name = _re_share.sub(r'\s*(govt|government)\s+jobs?.*$', '', _share_name, flags=_re_share.I).strip()
+    _share_name = _re_share.sub(r'\s*\(.*\)\s*$', '', _share_name).strip()
+    _share_name = _share_name or title
+    _share_url_l = canon_url.lower()
+    if '/state/' in _share_url_l or '/state-jobs/' in _share_url_l:
+        _share_lines = [
+            '🏛️ Aapke Apne Rajy (State) Me Sarkari Naukri!', f'🚨 {_share_name} Latest Recruitment & Notifications', '',
+            f'📍 Location: {_share_name}', '💼 Vacancies: Bumper Openings', '',
+            f'🎯 Apne hi rajya me job pane ka sunhara moka! {_share_name} ki sabhi latest sarkari bharti ek hi jagah check karein.', '',
+            '⚡ Direct Online Form Links & Official PDF:', f'👉 {canon_url}', '',
+            '🔔 Apne Rajy Ki Sabhi Latest Job Updates Abhi Dekhein!',
+            '#Topsarkarijobs #Topsarkarijob',
+        ]
+    elif '/district/' in _share_url_l:
+        _share_lines = [
+            '📍 Aapke Apne Zile (District) Me Bharti!', f'🚨 {_share_name} Local Govt Jobs & Court/Medical Bharti', '',
+            f'🏠 Job Location: {_share_name}', '💼 Vacancies: Various Local Posts', '',
+            f'🎯 Apne zile me hi job karein! {_share_name} ki sabhi offline/online sarkari bharti ki list out ho gayi hai.', '',
+            '⚡ Complete List & Direct Apply Links:', f'👉 {canon_url}', '',
+            '🔔 Apne Zile Ki Bharti Ka Form Abhi Bharein!',
+            '#Topsarkarijobs #Topsarkarijob',
+        ]
+    elif '/qualification/' in _share_url_l:
+        _share_lines = [
+            '🎓 Aapki Padhai Ke Hisab Se Sarkari Job!', f'🚨 {_share_name} Govt Jobs {YEAR}', '',
+            '💼 Total Vacancies: Bumper Openings (Various Posts)', '',
+            f'🎯 Kya aapne {_share_name} pass kar liya hai? Toh aapke liye sabse best Govt Jobs ki list aa gayi hai!', '',
+            '⚡ Eligibility, Age Limit & Direct Apply Links:', f'👉 {canon_url}', '',
+            '🔔 Bina Der Kiye Apni Qualification Ke According Form Bharein!',
+            '#Topsarkarijobs #Topsarkarijob',
+        ]
+    else:
+        # Section hub / category / education / anything else that funnels
+        # through build_listing_page but isn't one of the three above.
+        _share_lines = [
+            '⚡ Ek Hi Jagah Sabhi Latest Updates!', f'🚨 TopSarkariJobs - {_share_name} Hub', '',
+            '💡 100% Daily Verified Updates & Bumper Recruitment Notices', '',
+            '🎯 Aaj ki sabhi latest jobs, admit cards, aur results bina bhatke ek saath dekhne ke liye click karein!', '',
+            '⚡ All Direct Links & Notifications:', f'👉 {canon_url}', '',
+            '🔔 Aaj Hi Apni Favorite Jobs Ke Liye Form Bharein!',
+            '#Topsarkarijobs #Topsarkarijob',
+        ]
+    _share_msg_l = '\n'.join(_share_lines)
+    _enc_msg_l = _uparse_share.quote(_share_msg_l, safe='')
+    _enc_url_l = _uparse_share.quote(canon_url, safe='')
+    share_row = f'''<div class="dh-share" style="margin:10px 10px 4px">
+    <span class="dh-share-lbl"><i class="fa-solid fa-share-nodes"></i> Share This Page</span>
+    <div class="dh-share-btns">
+      <a href="https://api.whatsapp.com/send?text={_enc_msg_l}" target="_blank" rel="noopener" class="dh-sh wa" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://t.me/share/url?url={_enc_url_l}&text={_enc_msg_l}" target="_blank" rel="noopener" class="dh-sh tg" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={_enc_url_l}" target="_blank" rel="noopener" class="dh-sh fb" aria-label="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?text={_enc_msg_l}" target="_blank" rel="noopener" class="dh-sh tw" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={_enc_url_l}" target="_blank" rel="noopener" class="dh-sh li" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <button type="button" class="dh-sh cp" data-share-text="{e(_share_msg_l)}" data-share-url="{e(canon_url)}" aria-label="Copy details"><i class="fa-solid fa-link"></i></button>
+    </div>
+  </div>'''
+
     body = (f'<div class="cat-wrap">'
             f'<h1 class="cat-h1" style="margin:12px 10px 4px">{e(title)}</h1>'
+            f'{share_row}'
             f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
             f'{top_html}'
             f'{_search_and_cards}'
