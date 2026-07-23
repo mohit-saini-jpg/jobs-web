@@ -60,6 +60,43 @@
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
     .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
     .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
+    /* Photo Adjust Karein panel (ported from passport-photo.html — same
+       Auto Enhance / filter-strip / adjust-slider system, same to same) */
+    .card-title { font-size: .98rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #0d2257; }
+    .btn-choose { margin-top: 13px; display: inline-flex; align-items: center; gap: 7px; padding: 10px 22px; background: var(--brand); color: #fff; border: none; border-radius: 8px; font-size: .88rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .2s; }
+    .btn-choose:hover { filter: brightness(1.06); }
+    .adj-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .adj-label { display: flex; justify-content: space-between; align-items: center; font-size: .76rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+    .adj-label span { color: var(--brand); font-size: .82rem; font-weight: 700; }
+    .adj-presets { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+    .preset-btn { padding: 3px 9px; border: 1px solid var(--line); border-radius: 20px; font-size: .68rem; font-weight: 600; cursor: pointer; background: #fff; color: var(--muted); transition: all .15s; }
+    .preset-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .filter-strip { display: flex; gap: 10px; overflow-x: auto; overflow-y: hidden; padding: 2px 2px 14px; margin-bottom: 4px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+    .filter-strip::-webkit-scrollbar { height: 6px; }
+    .filter-strip::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; }
+    .filter-chip { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; background: none; border: none; padding: 0; scroll-snap-align: start; font-family: inherit; }
+    .filter-chip canvas { width: 62px; height: 62px; border-radius: 10px; border: 2.5px solid var(--line); object-fit: cover; background: var(--mist); transition: border-color .15s, transform .15s; }
+    .filter-chip:hover canvas { transform: translateY(-2px); }
+    .filter-chip.active canvas { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-light); }
+    .filter-chip span { font-size: .66rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .filter-chip.active span { color: var(--brand); }
+    .kb-toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .kb-toggle-row label { font-size: .84rem; font-weight: 700; color: var(--ink); cursor: pointer; display: flex; align-items: center; gap: 7px; }
+    .kb-toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--brand); cursor: pointer; }
+    .kb-controls { display: none; flex-direction: column; gap: 10px; }
+    .kb-controls.show { display: flex; }
+    .kb-input-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .kb-input-row label { font-size: .8rem; font-weight: 700; color: var(--muted); }
+    .kb-input-row input[type=number] { width: 90px; padding: 8px 10px; border: 2px solid var(--brand); border-radius: 8px; font-size: .92rem; font-weight: 700; text-align: center; color: var(--brand); }
+    .kb-input-row span { font-size: .82rem; color: var(--muted); }
+    .kb-slider-row { display: flex; align-items: center; gap: 10px; }
+    .kb-slider-row input[type=range] { flex: 1; }
+    .kb-presets { display: flex; gap: 7px; flex-wrap: wrap; }
+    .kb-preset-btn { padding: 5px 13px; border: 1.5px solid var(--line); border-radius: 20px; font-size: .76rem; font-weight: 700; cursor: pointer; background: #fff; color: var(--muted); transition: all .15s; }
+    .kb-preset-btn:hover, .kb-preset-btn.active { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+    .kb-status { font-size: .8rem; color: var(--muted); padding: 8px 10px; background: var(--mist); border-radius: 6px; margin-top: 8px; display: none; }
+    .kb-status.show { display: block; }
+    @media(max-width:640px){ .adj-grid{grid-template-columns:1fr} }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(52,93,230,0.3); }
@@ -219,27 +256,6 @@
   <div class="card">
     <h3>⚙️ Settings</h3>
     <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
-      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📋 Exam / Job Preset — auto photo size</label>
-      <select id="jobPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
-        <option value="">— Apna exam / job choose karein (size apne aap set) —</option>
-      </select>
-      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi output <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap us exam ke hisaab se set ho jayenge.</p>
-    </div>
-    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
-      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📐 Quick Size Presets — Print, Passport/ID, Social Media</label>
-      <select id="printPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
-        <option value="original" selected>📷 Original (Uploaded Image Size) — default</option>
-      </select>
-      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Default mein hamesha upload ki hui image ka <b>original size</b> hi selected rehta hai — kisi bhi Exam/Passport size ke liye yahan se choose karein.</p>
-    </div>
-    <div class="form-grid">
-      <div class="form-group"><label>Brightness</label><input type="range" id="br" min="-100" max="100" value="0"><div class="range-val" id="br-val">0</div></div>
-      <div class="form-group"><label>Contrast</label><input type="range" id="con" min="-100" max="100" value="0"><div class="range-val" id="con-val">0</div></div>
-      <div class="form-group"><label>Saturation</label><input type="range" id="sat" min="-100" max="100" value="0"><div class="range-val" id="sat-val">0</div></div>
-      <div class="form-group"><label>Filter</label><select id="filterSel"><option value="none">None</option><option value="grayscale">Grayscale</option><option value="sepia">Sepia</option><option value="warm">Warm</option><option value="cool">Cool</option><option value="vintage">Vintage</option></select></div>
-    </div>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:16px;padding-top:14px">
       <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">📝 Add Name &amp; Date in Image</div>
       <div id="textBody" style="margin-top:12px">
         <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;font-weight:600">
@@ -263,6 +279,96 @@
         </div>
       </div>
     </div>
+
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <div class="card-title" style="margin-bottom:0">🌟 Photo Adjust Karein</div>
+      <button type="button" class="btn-choose" style="width:100%;justify-content:center;margin-bottom:16px" id="autoEnhanceBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Enhance — Ek Click Mein Clear &amp; Sharp</button>
+
+      <div class="card-title" style="margin-bottom:10px">🎞️ Filters</div>
+      <div class="filter-strip" id="filterStrip"></div>
+
+      <div class="adj-grid">
+        <div class="adj-group">
+          <div class="adj-label">Brightness <span id="brightVal">100%</span></div>
+          <input type="range" id="brightRange" min="0" max="200" value="100">
+          <div class="adj-presets">
+            <button type="button" class="preset-btn" data-set="brightRange:80:brightVal:%">Dark</button>
+            <button type="button" class="preset-btn" data-set="brightRange:100:brightVal:%">Normal</button>
+            <button type="button" class="preset-btn" data-set="brightRange:120:brightVal:%">Bright</button>
+          </div>
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Contrast <span id="contrastVal">100%</span></div>
+          <input type="range" id="contrastRange" min="0" max="200" value="100">
+          <div class="adj-presets">
+            <button type="button" class="preset-btn" data-set="contrastRange:80:contrastVal:%">Low</button>
+            <button type="button" class="preset-btn" data-set="contrastRange:100:contrastVal:%">Normal</button>
+            <button type="button" class="preset-btn" data-set="contrastRange:130:contrastVal:%">High</button>
+          </div>
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Saturation <span id="saturateVal">100%</span></div>
+          <input type="range" id="saturateRange" min="0" max="200" value="100">
+          <div class="adj-presets">
+            <button type="button" class="preset-btn" data-set="saturateRange:0:saturateVal:%">B&amp;W</button>
+            <button type="button" class="preset-btn" data-set="saturateRange:100:saturateVal:%">Normal</button>
+            <button type="button" class="preset-btn" data-set="saturateRange:150:saturateVal:%">Vivid</button>
+          </div>
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Sharpness <span id="sharpVal">0</span></div>
+          <input type="range" id="sharpRange" min="0" max="5" value="0" step="0.5">
+          <div class="adj-presets">
+            <button type="button" class="preset-btn" data-set="sharpRange:0:sharpVal:">None</button>
+            <button type="button" class="preset-btn" data-set="sharpRange:1:sharpVal:">Light</button>
+            <button type="button" class="preset-btn" data-set="sharpRange:2:sharpVal:">Sharp</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-secondary" id="reset-adj-btn" style="margin-top:14px;width:100%;justify-content:center;display:flex"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
+    </div>
+
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📋 Exam / Job Preset — auto photo size</label>
+      <select id="jobPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="">— Apna exam / job choose karein (size apne aap set) —</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi output <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap us exam ke hisaab se set ho jayenge.</p>
+    </div>
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📐 Quick Size Presets — Print, Passport/ID, Social Media</label>
+      <select id="printPreset" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="original" selected>📷 Original (Uploaded Image Size) — default</option>
+      </select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Default mein hamesha upload ki hui image ka <b>original size</b> hi selected rehta hai — kisi bhi Exam/Passport size ke liye yahan se choose karein.</p>
+    </div>
+
+    <div class="kb-section">
+      <div class="card-title" style="margin-bottom:10px">📦 File Size (KB) — Optional</div>
+      <div class="kb-toggle-row">
+        <label><input type="checkbox" id="kbSizeToggle"> Custom KB size mein download karna hai</label>
+      </div>
+      <div class="kb-controls" id="kbControls">
+        <div class="kb-input-row">
+          <label>Target Size:</label>
+          <input type="number" id="kbInput" value="50" min="5" max="5000">
+          <span>KB</span>
+        </div>
+        <div class="kb-slider-row">
+          <span style="font-size:.74rem;color:var(--muted)">5 KB</span>
+          <input type="range" id="kbSlider" min="5" max="2000" value="50">
+          <span style="font-size:.74rem;color:var(--muted)">2000 KB</span>
+        </div>
+        <div class="kb-presets">
+          <button type="button" class="kb-preset-btn" data-kb="20">20 KB</button>
+          <button type="button" class="kb-preset-btn" data-kb="50">50 KB</button>
+          <button type="button" class="kb-preset-btn" data-kb="100">100 KB</button>
+          <button type="button" class="kb-preset-btn" data-kb="200">200 KB</button>
+          <button type="button" class="kb-preset-btn" data-kb="500">500 KB</button>
+        </div>
+      </div>
+    </div>
+
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>🚀</span> Process Karein</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -336,17 +442,152 @@
   // ══════════════════════════════════════════════════════════
   function G(id){return document.getElementById(id);}
   var srcImg=null,natW=0,natH=0,pcanvas=null,PREVIEW_MAX=560;
+  var curFilterPreset='original', curTemp=0, curTint=0;
 
   function buildFilter(){
-    var b=100+(+G('br').value),c=100+(+G('con').value),s=100+(+G('sat').value);
-    var f='brightness('+b+'%) contrast('+c+'%) saturate('+s+'%)';
-    var p=G('filterSel').value;
-    if(p==='grayscale')f+=' grayscale(100%)';
-    else if(p==='sepia')f+=' sepia(100%)';
-    else if(p==='warm')f+=' sepia(40%) saturate(150%)';
-    else if(p==='cool')f+=' contrast(108%) saturate(80%) brightness(105%)';
-    else if(p==='vintage')f+=' sepia(50%) contrast(85%) brightness(110%) saturate(80%)';
-    return f;
+    var b=+G('brightRange').value, c=+G('contrastRange').value, s=+G('saturateRange').value;
+    return 'brightness('+b+'%) contrast('+c+'%) saturate('+s+'%)';
+  }
+
+  // ── Temperature/Tint + real unsharp-mask Sharpen (ported from
+  // tools/image/passport-photo.html's "Photo Adjust Karein" panel — same
+  // pixel-level pipeline, same to same). CSS filter() has no native
+  // temperature/blur-sharpen equivalent so these run as a getImageData
+  // post-process step after the CSS-filter photo draw. ───────────────────
+  function applyTemperatureTint(canvas,temp,tint){
+    if(!temp&&!tint)return;
+    var w=canvas.width,h=canvas.height;
+    var ctx=canvas.getContext('2d');
+    var imgData=ctx.getImageData(0,0,w,h);
+    var d=imgData.data;
+    var rShift=temp*0.55+tint*0.25;
+    var gShift=-tint*0.55;
+    var bShift=-temp*0.55+tint*0.25;
+    for(var i=0;i<d.length;i+=4){
+      var r=d[i]+rShift,g=d[i+1]+gShift,b=d[i+2]+bShift;
+      d[i]=r<0?0:(r>255?255:r);
+      d[i+1]=g<0?0:(g>255?255:g);
+      d[i+2]=b<0?0:(b>255?255:b);
+    }
+    ctx.putImageData(imgData,0,0);
+  }
+  function applySharpen(canvas,amount){
+    if(!amount)return;
+    var w=canvas.width,h=canvas.height;
+    var ctx=canvas.getContext('2d');
+    var srcData=ctx.getImageData(0,0,w,h);
+    var blurCanvas=document.createElement('canvas');
+    blurCanvas.width=w;blurCanvas.height=h;
+    var bctx=blurCanvas.getContext('2d');
+    bctx.filter='blur(1.1px)';
+    bctx.drawImage(canvas,0,0);
+    bctx.filter='none';
+    var blurData=bctx.getImageData(0,0,w,h).data;
+    var sd=srcData.data;
+    var strength=amount*0.55;
+    for(var i=0;i<sd.length;i+=4){
+      for(var c2=0;c2<3;c2++){
+        var v=sd[i+c2]+(sd[i+c2]-blurData[i+c2])*strength;
+        sd[i+c2]=v<0?0:(v>255?255:v);
+      }
+    }
+    ctx.putImageData(srcData,0,0);
+  }
+
+  // ── Filters (horizontal-scroll strip, live thumbnails on the actual
+  // photo) — same 17-preset list as passport-photo.html, reusing the same
+  // brightness/contrast/saturate/temperature/tint pipeline. ─────────────
+  var FILTER_PRESETS=[
+    {id:'original',name:'Original',brightness:100,contrast:100,saturate:100,temperature:0,tint:0},
+    {id:'vivid',name:'Vivid',brightness:105,contrast:115,saturate:145,temperature:0,tint:0},
+    {id:'bw',name:'B&W',brightness:100,contrast:112,saturate:0,temperature:0,tint:0},
+    {id:'noir',name:'Noir',brightness:95,contrast:150,saturate:0,temperature:0,tint:0},
+    {id:'vintage',name:'Vintage',brightness:100,contrast:90,saturate:80,temperature:25,tint:10},
+    {id:'sepia',name:'Sepia',brightness:100,contrast:95,saturate:50,temperature:45,tint:15},
+    {id:'cool',name:'Cool',brightness:100,contrast:100,saturate:105,temperature:-35,tint:-5},
+    {id:'warm',name:'Warm',brightness:105,contrast:100,saturate:110,temperature:35,tint:5},
+    {id:'fade',name:'Fade',brightness:112,contrast:80,saturate:75,temperature:10,tint:0},
+    {id:'dramatic',name:'Dramatic',brightness:95,contrast:140,saturate:120,temperature:0,tint:0},
+    {id:'softglow',name:'Soft Glow',brightness:110,contrast:88,saturate:105,temperature:5,tint:0},
+    {id:'highkey',name:'High Key',brightness:118,contrast:90,saturate:95,temperature:0,tint:0},
+    {id:'golden',name:'Golden Hour',brightness:108,contrast:95,saturate:112,temperature:45,tint:10},
+    {id:'bluehour',name:'Blue Hour',brightness:92,contrast:105,saturate:90,temperature:-45,tint:-15},
+    {id:'matte',name:'Matte',brightness:105,contrast:80,saturate:85,temperature:5,tint:-5},
+    {id:'studio',name:'Studio Bright',brightness:112,contrast:108,saturate:102,temperature:0,tint:0},
+    {id:'muted',name:'Muted',brightness:98,contrast:90,saturate:70,temperature:0,tint:0}
+  ];
+  function setAdj(rid,val,lid,unit){ G(rid).value=val; G(lid).textContent=val+(unit||''); }
+  function renderFilterThumbnails(){
+    var strip=G('filterStrip');
+    if(!strip||!srcImg)return;
+    var TS=62;
+    strip.innerHTML='';
+    FILTER_PRESETS.forEach(function(f){
+      var btn=document.createElement('button');
+      btn.type='button';
+      btn.className='filter-chip'+(curFilterPreset===f.id?' active':'');
+      btn.setAttribute('data-fid',f.id);
+      var cnv=document.createElement('canvas');
+      cnv.width=TS;cnv.height=TS;
+      var cctx=cnv.getContext('2d');
+      var scale=Math.max(TS/natW,TS/natH);      // cover-fit, cropped to a square thumbnail
+      var dw=natW*scale,dh=natH*scale,dx=(TS-dw)/2,dy=(TS-dh)/2;
+      cctx.filter='brightness('+f.brightness+'%) contrast('+f.contrast+'%) saturate('+f.saturate+'%)';
+      cctx.drawImage(srcImg,dx,dy,dw,dh);
+      cctx.filter='none';
+      if(f.temperature||f.tint)applyTemperatureTint(cnv,f.temperature,f.tint);
+      btn.appendChild(cnv);
+      var lbl=document.createElement('span');lbl.textContent=f.name;btn.appendChild(lbl);
+      btn.addEventListener('click',function(){applyFilterPreset(f.id);});
+      strip.appendChild(btn);
+    });
+  }
+  function applyFilterPreset(id){
+    var f=null;
+    for(var i=0;i<FILTER_PRESETS.length;i++){if(FILTER_PRESETS[i].id===id){f=FILTER_PRESETS[i];break;}}
+    if(!f)return;
+    curFilterPreset=id;
+    setAdj('brightRange',f.brightness,'brightVal','%');
+    setAdj('contrastRange',f.contrast,'contrastVal','%');
+    setAdj('saturateRange',f.saturate,'saturateVal','%');
+    curTemp=f.temperature; curTint=f.tint;
+    document.querySelectorAll('.filter-chip').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-fid')===id);});
+    renderPreview();
+  }
+
+  // ── Auto Enhance — analyzes the ACTUAL photo's brightness histogram
+  // (auto-levels) instead of one fixed preset for every photo, plus a
+  // gray-world auto white-balance correction. Ported from
+  // passport-photo.html's autoEnhance(). ─────────────────────────────────
+  function autoEnhance(){
+    if(!srcImg){alert('Pehle photo upload karein.');return;}
+    var sw=Math.min(200,natW),sh=Math.max(1,Math.round(sw*natH/natW));
+    var sc=document.createElement('canvas');sc.width=sw;sc.height=sh;
+    sc.getContext('2d').drawImage(srcImg,0,0,sw,sh);
+    var data=sc.getContext('2d').getImageData(0,0,sw,sh).data;
+    var hist=new Array(256).fill(0),total=0,rSum=0,gSum=0,bSum=0;
+    for(var i=0;i<data.length;i+=4){
+      var lum=Math.round(0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]);
+      hist[lum]++;total++;
+      rSum+=data[i];gSum+=data[i+1];bSum+=data[i+2];
+    }
+    var lo=0,hi=255,cum=0;
+    for(var v=0;v<256;v++){cum+=hist[v];if(cum>=total*0.01){lo=v;break;}}
+    cum=0;
+    for(var v2=255;v2>=0;v2--){cum+=hist[v2];if(cum>=total*0.01){hi=v2;break;}}
+    var range=Math.max(20,hi-lo);
+    var contrastPct=Math.round(Math.min(150,Math.max(100,(255/range)*100)));
+    var brightnessPct=Math.round(Math.min(125,Math.max(90,100-(lo/255)*35)));
+    var rAvg=rSum/total,gAvg=gSum/total,bAvg=bSum/total,avgAll=(rAvg+gAvg+bAvg)/3;
+    var tempCorrection=Math.round(Math.max(-35,Math.min(35,(bAvg-rAvg)*0.9)));
+    var tintCorrection=Math.round(Math.max(-35,Math.min(35,(avgAll-gAvg)*1.3)));
+    setAdj('brightRange',brightnessPct,'brightVal','%');
+    setAdj('contrastRange',contrastPct,'contrastVal','%');
+    setAdj('saturateRange',112,'saturateVal','%');
+    setAdj('sharpRange',1.5,'sharpVal','');
+    curTemp=tempCorrection; curTint=tintCorrection; curFilterPreset='custom';
+    document.querySelectorAll('.filter-chip').forEach(function(el){el.classList.remove('active');});
+    renderPreview();
   }
 
   function renderTo(canvas,scale){
@@ -399,6 +640,12 @@
     ctx.filter=buildFilter();
     ctx.drawImage(srcImg,photoX,photoY,photoW,photoH);
     ctx.filter='none';
+    // Temperature/Tint (from the selected filter / Auto Enhance) and real
+    // unsharp-mask Sharpening — pixel-level post-process, CSS filter() has
+    // no equivalent for either.
+    if(curTemp||curTint) applyTemperatureTint(canvas,curTemp,curTint);
+    var sharpAmt=+(G('sharpRange')&&G('sharpRange').value||0);
+    if(sharpAmt) applySharpen(canvas,sharpAmt);
 
     if(lines.length){
       var regionTop = ws ? photoH : (ih - sumH - pad);
@@ -424,6 +671,7 @@
       G('nameSize').value=Math.max(14,Math.round(natW*0.05));
       G('dateSize').value=Math.max(12,Math.round(natW*0.04));
       G('preview-card').style.display='';
+      renderFilterThumbnails();
       renderPreview();
     };
     img.src=url;
@@ -445,15 +693,20 @@
 
   function getTargetSize(){
     var jp=G('jobPreset'), pp=G('printPreset');
+    var result={w:0,h:0,kb:0};
     if(jp && jp.value){
       var o=jp.options[jp.selectedIndex];
-      return {w:+o.getAttribute('data-w'), h:+o.getAttribute('data-h'), kb:+o.getAttribute('data-kb')||0};
-    }
-    if(pp && pp.value && pp.value!=='original'){
+      result.w=+o.getAttribute('data-w'); result.h=+o.getAttribute('data-h'); result.kb=+o.getAttribute('data-kb')||0;
+    } else if(pp && pp.value && pp.value!=='original'){
       var o2=pp.options[pp.selectedIndex];
-      if(o2 && o2.getAttribute('data-w')) return {w:+o2.getAttribute('data-w'), h:+o2.getAttribute('data-h'), kb:0};
+      if(o2 && o2.getAttribute('data-w')){ result.w=+o2.getAttribute('data-w'); result.h=+o2.getAttribute('data-h'); }
     }
-    return null;
+    // Manual "Custom KB size" checkbox always overrides whatever KB target
+    // the exam preset (if any) set — lets the user fine-tune KB without
+    // needing an exam preset at all, and without losing a preset's px size.
+    var kbToggle=G('kbSizeToggle');
+    if(kbToggle && kbToggle.checked) result.kb = +G('kbInput').value || 50;
+    return (result.w||result.h||result.kb) ? result : null;
   }
 
   async function runProcess(){   // render at FULL resolution + download
@@ -572,6 +825,26 @@
     });
   }
 
+  function resetAdjustments(){
+    setAdj('brightRange',100,'brightVal','%');
+    setAdj('contrastRange',100,'contrastVal','%');
+    setAdj('saturateRange',100,'saturateVal','%');
+    setAdj('sharpRange',0,'sharpVal','');
+    curTemp=0; curTint=0; curFilterPreset='original';
+    document.querySelectorAll('.filter-chip').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-fid')==='original');});
+    renderPreview();
+  }
+
+  function onKbToggle(){
+    var on=G('kbSizeToggle').checked;
+    G('kbControls').classList.toggle('show',on);
+  }
+  function syncKbUI(v){
+    v=Math.min(2000,Math.max(5,+v||50));
+    G('kbInput').value=v; G('kbSlider').value=Math.min(2000,v);
+    document.querySelectorAll('.kb-preset-btn').forEach(function(b){b.classList.toggle('active',+b.getAttribute('data-kb')===v);});
+  }
+
   document.addEventListener('DOMContentLoaded',function(){
     bindFile('main-file','file-preview');
     populateJobPreset(JOB_PRESETS_PHOTO);
@@ -579,22 +852,45 @@
     pcanvas=G('pcanvas');
     var mf=G('main-file');
     if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
-    ['br','con','sat','filterSel','nameTxt','nameSize','nameColor','dateTxt','dateSize','dateColor','whiteSpace'].forEach(function(id){
+
+    ['nameTxt','nameSize','nameColor','dateTxt','dateSize','dateColor','whiteSpace'].forEach(function(id){
       var el=G(id);if(!el)return;
-      var ev=(el.type==='checkbox'||el.tagName==='SELECT')?'change':'input';
-      el.addEventListener(ev,function(){
-        if(id==='br'||id==='con'||id==='sat')G(id+'-val').textContent=el.value;
+      var ev=(el.type==='checkbox')?'change':'input';
+      el.addEventListener(ev,renderPreview);
+    });
+    // Brightness/Contrast/Saturation/Sharpness sliders (0-200%, manual drag)
+    [['brightRange','brightVal','%'],['contrastRange','contrastVal','%'],['saturateRange','saturateVal','%'],['sharpRange','sharpVal','']].forEach(function(t){
+      var el=G(t[0]);if(!el)return;
+      el.addEventListener('input',function(){G(t[1]).textContent=el.value+t[2];renderPreview();});
+    });
+    // Preset chip buttons (Dark/Normal/Bright, Low/Normal/High, B&W/Normal/Vivid, None/Light/Sharp)
+    document.querySelectorAll('.preset-btn[data-set]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var parts=btn.getAttribute('data-set').split(':'); // rangeId:value:labelId:unit
+        setAdj(parts[0],+parts[1],parts[2],parts[3]||'');
         renderPreview();
       });
     });
+    var aeb=G('autoEnhanceBtn');if(aeb)aeb.addEventListener('click',autoEnhance);
+    var rab=G('reset-adj-btn');if(rab)rab.addEventListener('click',resetAdjustments);
+
+    // File Size (KB) — Optional
+    var kbT=G('kbSizeToggle');if(kbT)kbT.addEventListener('change',function(){onKbToggle();renderPreview();});
+    var kbI=G('kbInput');if(kbI)kbI.addEventListener('input',function(){syncKbUI(kbI.value);renderPreview();});
+    var kbS=G('kbSlider');if(kbS)kbS.addEventListener('input',function(){syncKbUI(kbS.value);renderPreview();});
+    document.querySelectorAll('.kb-preset-btn[data-kb]').forEach(function(btn){
+      btn.addEventListener('click',function(){syncKbUI(btn.getAttribute('data-kb'));renderPreview();});
+    });
+
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
-      ['br','con','sat'].forEach(function(id){G(id).value=0;G(id+'-val').textContent='0';});
-      G('filterSel').value='none';
+      resetAdjustments();
       G('whiteSpace').checked=false;
       G('nameTxt').value='';G('dateTxt').value='';
       if(G('jobPreset'))G('jobPreset').value='';
       if(G('printPreset'))G('printPreset').value='original';
+      if(G('kbSizeToggle')){G('kbSizeToggle').checked=false;onKbToggle();}
+      syncKbUI(50);
       G('progress-wrap').style.display='none';G('pbar').style.width='0%';
       var rc=G('result-card');if(rc)rc.classList.remove('show');
       if(srcImg)renderPreview();
