@@ -9166,38 +9166,83 @@ for cat_key, q_slug in QUAL_SLUG.items():
 print(f"  Qualification pages: {q_count}")
 
 # ─────────────────────────────────────────────────────────────────
-# /vle/<district>/ — District Notice Board public pages (static shell;
-# vle-district.js fetches the live post feed from Supabase client-side).
-# One page per Haryana district, same list VLE dashboard/job-form-widget
-# use — keep these three lists in sync if districts are ever added.
+# /vle/<state>/<district>/ — District Notice Board public pages (static
+# shell; vle-district.js fetches the live post feed from Supabase
+# client-side). One page per district across every supported state.
+# This list is the single source of truth for which states/districts the
+# VLE system supports — vle_profiles.state/district values that don't
+# match one of these won't have a public page to show on.
 # ─────────────────────────────────────────────────────────────────
 print("Generating /vle/ district pages...")
-VLE_DISTRICTS = [
-    'Ambala', 'Bhiwani', 'Charkhi Dadri', 'Faridabad', 'Fatehabad', 'Gurugram',
-    'Hisar', 'Jhajjar', 'Jind', 'Kaithal', 'Karnal', 'Kurukshetra',
-    'Mahendragarh', 'Nuh', 'Palwal', 'Panchkula', 'Panipat', 'Rewari',
-    'Rohtak', 'Sirsa', 'Sonipat', 'Yamunanagar',
-]
+VLE_STATE_DISTRICTS = {
+    'Haryana': [
+        'Ambala', 'Bhiwani', 'Charkhi Dadri', 'Faridabad', 'Fatehabad', 'Gurugram',
+        'Hisar', 'Jhajjar', 'Jind', 'Kaithal', 'Karnal', 'Kurukshetra',
+        'Mahendragarh', 'Nuh', 'Palwal', 'Panchkula', 'Panipat', 'Rewari',
+        'Rohtak', 'Sirsa', 'Sonipat', 'Yamunanagar',
+    ],
+    'Delhi': [
+        'Central Delhi', 'Central North Delhi', 'East Delhi', 'New Delhi',
+        'North Delhi', 'North East Delhi', 'North West Delhi', 'Old Delhi',
+        'Outer North Delhi', 'South Delhi', 'South East Delhi', 'South West Delhi',
+        'West Delhi',
+    ],
+    'Punjab': [
+        'Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib',
+        'Firozpur', 'Fazilka', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar',
+        'Kapurthala', 'Ludhiana', 'Malerkotla', 'Mansa', 'Moga',
+        'Sri Muktsar Sahib', 'Pathankot', 'Patiala', 'Rupnagar',
+        'Sahibzada Ajit Singh Nagar', 'Sangrur', 'Shaheed Bhagat Singh Nagar',
+        'Tarn Taran',
+    ],
+    'Uttar Pradesh': [
+        'Agra', 'Aligarh', 'Ambedkar Nagar', 'Amethi', 'Amroha', 'Auraiya',
+        'Ayodhya', 'Azamgarh', 'Budaun', 'Bagpat', 'Bahraich', 'Ballia',
+        'Balrampur', 'Banda', 'Barabanki', 'Bareilly', 'Basti', 'Bhadohi',
+        'Bijnor', 'Bulandshahr', 'Chandauli', 'Chitrakoot', 'Deoria', 'Etah',
+        'Etawah', 'Farrukhabad', 'Fatehpur', 'Firozabad', 'Gautam Buddha Nagar',
+        'Ghaziabad', 'Ghazipur', 'Gonda', 'Gorakhpur', 'Hamirpur', 'Hapur',
+        'Hardoi', 'Hathras', 'Jalaun', 'Jaunpur', 'Jhansi', 'Kannauj',
+        'Kanpur Dehat', 'Kanpur Nagar', 'Kasganj', 'Kaushambi', 'Kushinagar',
+        'Lakhimpur Kheri', 'Lalitpur', 'Lucknow', 'Maharajganj', 'Mahoba',
+        'Mainpuri', 'Mathura', 'Mau', 'Meerut', 'Mirzapur', 'Moradabad',
+        'Muzaffarnagar', 'Pilibhit', 'Pratapgarh', 'Prayagraj', 'Rae Bareli',
+        'Rampur', 'Saharanpur', 'Sant Kabir Nagar', 'Sambhal', 'Shahjahanpur',
+        'Shamli', 'Shravasti', 'Siddharthnagar', 'Sitapur', 'Sonbhadra',
+        'Sultanpur', 'Unnao', 'Varanasi',
+    ],
+    'Rajasthan': [
+        'Ajmer', 'Alwar', 'Balotra', 'Banswara', 'Baran', 'Barmer', 'Beawar',
+        'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi', 'Chittorgarh', 'Churu',
+        'Dausa', 'Deeg', 'Didwana-Kuchaman', 'Dholpur', 'Dungarpur',
+        'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore', 'Jhalawar', 'Jhunjhunu',
+        'Jodhpur', 'Karauli', 'Khairthal-Tijara', 'Kota', 'Kotputli-Behror',
+        'Nagaur', 'Pali', 'Phalodi', 'Pratapgarh', 'Rajsamand', 'Salumbar',
+        'Sawai Madhopur', 'Sikar', 'Sirohi', 'Sri Ganganagar', 'Tonk', 'Udaipur',
+    ],
+}
 vle_count = 0
-for _vd in VLE_DISTRICTS:
-    _vd_slug = _vd.lower().replace(' ', '-')
-    _vd_canon = f"{BASE_URL}/vle/{_vd_slug}/"
-    _vd_title_tag = f"{_vd} District Notice Board — CSC / VLE Updates {YEAR} | Top Sarkari Jobs"
-    _vd_desc = (f"{_vd} district CSC Notice Board: local government scheme updates, form-filling help "
-                f"and official notices from your nearest CSC/VLE partner center. Updated regularly.")[:160]
-    _vd_og = _dyn_og_image(f"{_vd} District Notice Board", 'vle', 'CSC / VLE Updates')
-    _vd_bc = ('<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span>'
-              f'<span aria-current="page">{e(_vd)} Notice Board</span></nav>')
-    _vd_body = f'''<div class="vle-shell">
+for _vst, _vdistricts in VLE_STATE_DISTRICTS.items():
+    _vst_slug = _vst.lower().replace(' ', '-')
+    for _vd in _vdistricts:
+        _vd_slug = _vd.lower().replace(' ', '-')
+        _vd_canon = f"{BASE_URL}/vle/{_vst_slug}/{_vd_slug}/"
+        _vd_title_tag = f"{_vd}, {_vst} District Notice Board — CSC / VLE Updates {YEAR} | Top Sarkari Jobs"
+        _vd_desc = (f"{_vd} ({_vst}) district CSC Notice Board: local government scheme updates, form-filling help "
+                    f"and official notices from your nearest CSC/VLE partner center. Updated regularly.")[:160]
+        _vd_og = _dyn_og_image(f"{_vd}, {_vst} District Notice Board", 'vle', 'CSC / VLE Updates')
+        _vd_bc = ('<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span>'
+                  f'<span aria-current="page">{e(_vd)}, {e(_vst)} Notice Board</span></nav>')
+        _vd_body = f'''<div class="vle-shell">
 {_vd_bc}
 <div id="vleProfileCard"></div>
 <div id="vleFeed"><div class="vle-feed-empty"><i class="fa-solid fa-spinner fa-spin"></i><div>Loading notices…</div></div></div>
 </div>
-<script>window.__VLE_DISTRICT__={json.dumps(_vd, ensure_ascii=False)};</script>
+<script>window.__VLE_STATE__={json.dumps(_vst, ensure_ascii=False)};window.__VLE_DISTRICT__={json.dumps(_vd, ensure_ascii=False)};</script>
 <link rel="stylesheet" href="/vle/vle.css">
 <script src="/vle/vle-auth.js" defer></script>
 <script src="/vle/vle-district.js" defer></script>'''
-    _vd_html = f'''<!DOCTYPE html>
+        _vd_html = f'''<!DOCTYPE html>
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
@@ -9235,8 +9280,8 @@ for _vd in VLE_DISTRICTS:
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>
 </html>'''
-    write(str(ROOT/'vle'/_vd_slug/'index.html'), _vd_html)
-    vle_count += 1
+        write(str(ROOT/'vle'/_vst_slug/_vd_slug/'index.html'), _vd_html)
+        vle_count += 1
 print(f"  VLE district pages: {vle_count}")
 
 # ─────────────────────────────────────────────────────────────────

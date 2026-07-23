@@ -115,6 +115,116 @@
   ],
   "redirects": [
     {
+      "source": "/vle/ambala/",
+      "destination": "/vle/haryana/ambala/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/bhiwani/",
+      "destination": "/vle/haryana/bhiwani/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/charkhi-dadri/",
+      "destination": "/vle/haryana/charkhi-dadri/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/faridabad/",
+      "destination": "/vle/haryana/faridabad/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/fatehabad/",
+      "destination": "/vle/haryana/fatehabad/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/gurugram/",
+      "destination": "/vle/haryana/gurugram/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/hisar/",
+      "destination": "/vle/haryana/hisar/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/jhajjar/",
+      "destination": "/vle/haryana/jhajjar/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/jind/",
+      "destination": "/vle/haryana/jind/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/kaithal/",
+      "destination": "/vle/haryana/kaithal/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/karnal/",
+      "destination": "/vle/haryana/karnal/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/kurukshetra/",
+      "destination": "/vle/haryana/kurukshetra/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/mahendragarh/",
+      "destination": "/vle/haryana/mahendragarh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/nuh/",
+      "destination": "/vle/haryana/nuh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/palwal/",
+      "destination": "/vle/haryana/palwal/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/panchkula/",
+      "destination": "/vle/haryana/panchkula/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/panipat/",
+      "destination": "/vle/haryana/panipat/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/rewari/",
+      "destination": "/vle/haryana/rewari/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/rohtak/",
+      "destination": "/vle/haryana/rohtak/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/sirsa/",
+      "destination": "/vle/haryana/sirsa/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/sonipat/",
+      "destination": "/vle/haryana/sonipat/",
+      "statusCode": 301
+    },
+    {
+      "source": "/vle/yamunanagar/",
+      "destination": "/vle/haryana/yamunanagar/",
+      "statusCode": 301
+    },
+    {
       "source": "/tools/image-tools.html",
       "destination": "/tools/tools-image.html",
       "statusCode": 301

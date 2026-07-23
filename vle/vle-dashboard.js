@@ -186,6 +186,7 @@
     try {
       var post = {
         vle_id: state.session.user.id,
+        state: state.profile.state,
         district: state.profile.district,
         title: title,
         description: $('vleDesc').value.trim(),
@@ -315,7 +316,7 @@
     $('vleLoadingScreen').style.display = 'none';
     $('vleApp').style.display = '';
     $('vleCenterName').textContent = state.profile.center_name || 'VLE Partner';
-    $('vleDistrictName').textContent = state.profile.district + ' District';
+    $('vleDistrictName').textContent = state.profile.district + ' District, ' + state.profile.state;
     $('vleWhatsapp').value = state.profile.whatsapp_number || '';
 
     setupForm();

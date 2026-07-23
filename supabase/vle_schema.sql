@@ -6,14 +6,23 @@
 --   1. Supabase Dashboard -> Authentication -> Users -> Add User
 --      (set an email + password for the VLE, e.g. sonipat.csc@topsarkarijobs.com)
 --   2. Copy that user's UUID, then:
---        insert into public.vle_profiles (id, district, center_name, owner_name, shop_address, contact_phone, whatsapp_number)
---        values ('<uuid-from-step-1>', 'Sonipat', 'Sonipat CSC Center', 'Owner Name', 'Shop address...', '9876543210', '9876543210');
---   That single row is what maps this login to ONE district — RLS below
---   enforces that this VLE can only ever post/edit/delete posts for that
---   district, even if the client-side JS is bypassed entirely.
+--        insert into public.vle_profiles (id, state, district, center_name, owner_name, shop_address, contact_phone, whatsapp_number)
+--        values ('<uuid-from-step-1>', 'Haryana', 'Sonipat', 'Sonipat CSC Center', 'Owner Name', 'Shop address...', '9876543210', '9876543210');
+--   That single row is what maps this login to ONE state+district — RLS
+--   below enforces that this VLE can only ever post/edit/delete posts for
+--   that state+district, even if the client-side JS is bypassed entirely.
+--   Multiple VLEs CAN share the same state+district (e.g. two CSC centers
+--   both in Sonipat) — the public page shows all of their profiles/posts
+--   together.
+--
+-- Supported states/districts are whatever VLE_STATE_DISTRICTS in
+-- generate_all.py lists (that's what controls which /vle/<state>/<district>/
+-- public pages actually get built) — currently Haryana, Delhi, Punjab,
+-- Uttar Pradesh, Rajasthan.
 
 create table if not exists public.vle_profiles (
   id uuid primary key references auth.users(id) on delete cascade,
+  state text not null,
   district text not null,
   center_name text not null,
   owner_name text,
@@ -26,6 +35,7 @@ create table if not exists public.vle_profiles (
 create table if not exists public.vle_posts (
   id bigint generated always as identity primary key,
   vle_id uuid not null references public.vle_profiles(id) on delete cascade,
+  state text not null,
   district text not null,
   title text not null,
   description text,
@@ -42,7 +52,7 @@ create table if not exists public.vle_posts (
   created_at timestamptz not null default now()
 );
 
-create index if not exists vle_posts_district_idx on public.vle_posts (district);
+create index if not exists vle_posts_state_district_idx on public.vle_posts (state, district);
 create index if not exists vle_posts_vle_id_idx on public.vle_posts (vle_id);
 
 alter table public.vle_profiles enable row level security;
@@ -61,13 +71,15 @@ create policy "vle_posts: public read active + own read all" on public.vle_posts
   for select to anon, authenticated
   using (expiry_date >= current_date or auth.uid() = vle_id);
 
--- Insert: a VLE may only create a post for THEIR OWN mapped district — this
--- is the core "Sonipat_CSC can only post for /vle/sonipat" rule, enforced
--- at the database level (not just trusted from client-side JS).
-create policy "vle_posts: insert own district only" on public.vle_posts
+-- Insert: a VLE may only create a post for THEIR OWN mapped state+district —
+-- this is the core "Sonipat_CSC can only post for /vle/haryana/sonipat"
+-- rule, enforced at the database level (not just trusted from client-side
+-- JS).
+create policy "vle_posts: insert own state+district only" on public.vle_posts
   for insert to authenticated
   with check (
     auth.uid() = vle_id
+    and state = (select state from public.vle_profiles where id = auth.uid())
     and district = (select district from public.vle_profiles where id = auth.uid())
   );
 
@@ -76,6 +88,7 @@ create policy "vle_posts: update own posts only" on public.vle_posts
   using (auth.uid() = vle_id)
   with check (
     auth.uid() = vle_id
+    and state = (select state from public.vle_profiles where id = auth.uid())
     and district = (select district from public.vle_profiles where id = auth.uid())
   );
 

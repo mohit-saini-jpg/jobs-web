@@ -1,5 +1,8 @@
-/* Public /vle/<district>/ page: renders the CSC/VLE profile card + live
-   notice feed for window.__VLE_DISTRICT__. Runs entirely client-side after
+/* Public /vle/<state>/<district>/ page: renders the CSC/VLE profile card(s)
+   + live notice feed for window.__VLE_STATE__/__VLE_DISTRICT__. A district
+   can have MULTIPLE registered VLEs (e.g. two CSC centers both in Sonipat)
+   — every matching profile gets its own card, and the feed below shows
+   every VLE's posts together, newest first. Runs entirely client-side after
    the static shell loads (async, non-blocking — same pattern as the job-page
    lead widget) so it never delays SSR/HTML render or hurts Core Web Vitals. */
 (function () {
@@ -37,16 +40,8 @@
     return '';
   }
 
-  function renderProfile(mount, profile) {
-    if (!profile) {
-      mount.innerHTML =
-        '<div class="vle-profile-card"><span class="badge">CSC NOTICE BOARD</span>' +
-        '<h1>' + escapeHtml(window.__VLE_DISTRICT__) + ' District</h1>' +
-        '<p class="sub">Is district ke liye abhi koi CSC partner register nahi hua hai.</p></div>';
-      return;
-    }
-    mount.innerHTML =
-      '<div class="vle-profile-card">' +
+  function profileCardHtml(profile) {
+    return '<div class="vle-profile-card">' +
       '<span class="badge">CSC NOTICE BOARD</span>' +
       '<h1>' + escapeHtml(profile.center_name || (window.__VLE_DISTRICT__ + ' District')) + '</h1>' +
       '<p class="sub">Official local notices &amp; form-filling help from your nearest CSC partner</p>' +
@@ -54,6 +49,17 @@
       (profile.shop_address ? '<div class="row"><i class="fa-solid fa-location-dot"></i> ' + escapeHtml(profile.shop_address) + '</div>' : '') +
       (profile.contact_phone ? '<div class="row"><i class="fa-solid fa-phone"></i> ' + escapeHtml(profile.contact_phone) + '</div>' : '') +
       '</div>';
+  }
+
+  function renderProfiles(mount, profiles) {
+    if (!profiles || !profiles.length) {
+      mount.innerHTML =
+        '<div class="vle-profile-card"><span class="badge">CSC NOTICE BOARD</span>' +
+        '<h1>' + escapeHtml(window.__VLE_DISTRICT__) + ' District</h1>' +
+        '<p class="sub">Is district ke liye abhi koi CSC partner register nahi hua hai.</p></div>';
+      return;
+    }
+    mount.innerHTML = profiles.map(profileCardHtml).join('');
   }
 
   function postCard(post) {
@@ -97,10 +103,11 @@
   }
 
   async function init() {
+    var st = window.__VLE_STATE__;
     var district = window.__VLE_DISTRICT__;
     var profileMount = document.getElementById('vleProfileCard');
     var feedMount = document.getElementById('vleFeed');
-    if (!district || !profileMount || !feedMount || !window.TsjVleAuth) return;
+    if (!st || !district || !profileMount || !feedMount || !window.TsjVleAuth) return;
 
     var client = await window.TsjVleAuth.ensureClient();
     if (!client) {
@@ -108,13 +115,14 @@
       return;
     }
 
-    var profRes = await client.from('vle_profiles').select('*').eq('district', district).maybeSingle();
-    renderProfile(profileMount, profRes.data || null);
+    var profRes = await client.from('vle_profiles').select('*').eq('state', st).eq('district', district);
+    renderProfiles(profileMount, profRes.data || []);
 
     var todayIso = new Date().toISOString().slice(0, 10);
     var postsRes = await client
       .from('vle_posts')
       .select('*')
+      .eq('state', st)
       .eq('district', district)
       .gte('expiry_date', todayIso)
       .order('created_at', { ascending: false });
