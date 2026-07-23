@@ -53,6 +53,14 @@ def _collect_jobs(data):
     jobs.extend(sark_jobs)
 
     fja_jobs = ((data.get("freejobalert_unified") or {}).get("deduped_jobs") or [])
+    # FJA records keep the real title nested at basic_details.job_title, not a
+    # top-level "title" key — without this, every FJA job silently fails the
+    # title filter below and never becomes postable.
+    for j in fja_jobs:
+        if not str(j.get("title") or "").strip():
+            bd_title = str((j.get("basic_details") or {}).get("job_title") or "").strip()
+            if bd_title:
+                j["title"] = bd_title
     jobs.extend(fja_jobs)
 
     # Basic sanity filter: skip anything with no title at all.
