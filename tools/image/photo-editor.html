@@ -60,6 +60,14 @@
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
     .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
     .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
+    /* Live Preview + Settings side-by-side once a photo is uploaded (ported
+       from passport-photo.html's .adjust-layout) — preview stays visible
+       (sticky) while scrolling the taller Settings column next to it,
+       instead of the preview disappearing above the fold. */
+    .adjust-layout { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+    .adjust-preview-col { flex: 1 1 340px; min-width: 280px; position: sticky; top: 20px; }
+    .adjust-controls-col { flex: 1 1 340px; min-width: 280px; }
+    @media(max-width:760px){ .adjust-preview-col{ position: static; } }
     /* Photo Adjust Karein panel (ported from passport-photo.html — same
        Auto Enhance / filter-strip / adjust-slider system, same to same) */
     .card-title { font-size: .98rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #0d2257; }
@@ -245,7 +253,8 @@
     <input type="file" id="main-file" style="display:none" accept="image/*">
   </div>
 
-  <div class="card" id="preview-card" style="display:none">
+  <div class="adjust-layout">
+  <div class="card adjust-preview-col" id="preview-card" style="display:none">
     <h3>🖼️ Live Preview</h3>
     <div style="text-align:center;background:#f1f5f9;border-radius:12px;padding:12px">
       <canvas id="pcanvas" style="max-width:100%;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.12)"></canvas>
@@ -253,7 +262,7 @@
     <p style="font-size:.78rem;color:#94a3b8;text-align:center;margin:8px 0 0">Slider / text change karte hi yahan turant live dikhega — download se pehle hi.</p>
   </div>
 
-  <div class="card">
+  <div class="card adjust-controls-col">
     <h3>⚙️ Settings</h3>
     <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
       <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">📝 Add Name &amp; Date in Image</div>
@@ -377,6 +386,7 @@
       <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
       <div class="progress-msg" id="pmsg">Processing...</div>
     </div>
+  </div>
   </div>
 
   <div class="card result-card" id="result-card">
