@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VLE Dashboard | Top Sarkari Jobs</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="/image.ico"/>
+<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
+<link rel="stylesheet" href="/vle/vle.css"/>
+</head>
+<body>
+<div class="vle-shell" id="vleApp" style="display:none">
+  <div class="vle-topbar">
+    <div class="who">
+      <b id="vleCenterName">—</b>
+      <span id="vleDistrictName">—</span>
+    </div>
+    <button class="vle-logout" id="vleLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
+
+  <div class="vle-card">
+    <h2 id="vleFormHeading"><i class="fa-solid fa-bullhorn"></i> New Notice Post Karein</h2>
+    <form id="vlePostForm">
+      <input type="hidden" id="vlePostId" value="">
+      <div class="vle-field">
+        <label for="vleTitle">Post Title</label>
+        <input type="text" id="vleTitle" required maxlength="140" placeholder="Jaise: Ayushman Card Camp — 25 July">
+      </div>
+      <div class="vle-field">
+        <label for="vleDesc">Description / Notice Details</label>
+        <textarea id="vleDesc" rows="3" maxlength="1000" placeholder="Notice ki poori details yahan likhein..."></textarea>
+      </div>
+
+      <div class="vle-grid2">
+        <div class="vle-field">
+          <label>Poster / Photo (JPG/PNG/WebP)</label>
+          <div class="vle-upload-box" id="vleImageBox">
+            <i class="fa-solid fa-image"></i> <span id="vleImageBoxText">Tap to select photo</span>
+            <input type="file" id="vleImageInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+          </div>
+          <div class="vle-upload-progress" id="vleImageProgress"><div></div></div>
+          <div class="vle-hint">Auto-compressed to ~150KB WebP before upload</div>
+        </div>
+        <div class="vle-field">
+          <label>Official PDF (optional)</label>
+          <div class="vle-upload-box" id="vlePdfBox">
+            <i class="fa-solid fa-file-pdf"></i> <span id="vlePdfBoxText">Tap to select PDF</span>
+            <input type="file" id="vlePdfInput" accept="application/pdf" style="display:none">
+          </div>
+          <div class="vle-upload-progress" id="vlePdfProgress"><div></div></div>
+        </div>
+      </div>
+
+      <div class="vle-field">
+        <label>Video (optional)</label>
+        <select id="vleVideoMode">
+          <option value="">No video</option>
+          <option value="youtube">YouTube Shorts link</option>
+          <option value="instagram">Instagram Reel link</option>
+          <option value="upload">Upload short video (.mp4)</option>
+        </select>
+      </div>
+      <div class="vle-field" id="vleVideoLinkWrap" style="display:none">
+        <label for="vleVideoLink">Video Link</label>
+        <input type="url" id="vleVideoLink" placeholder="https://youtube.com/shorts/... or https://instagram.com/reel/...">
+      </div>
+      <div class="vle-field" id="vleVideoUploadWrap" style="display:none">
+        <div class="vle-upload-box" id="vleVideoBox">
+          <i class="fa-solid fa-video"></i> <span id="vleVideoBoxText">Tap to select video (max 60MB)</span>
+          <input type="file" id="vleVideoInput" accept="video/mp4" style="display:none">
+        </div>
+        <div class="vle-upload-progress" id="vleVideoProgress"><div></div></div>
+      </div>
+
+      <div class="vle-grid2">
+        <div class="vle-field">
+          <label for="vleCta">Button Text</label>
+          <input type="text" id="vleCta" maxlength="60" value="Ghar Baithe Form Bharwayein">
+        </div>
+        <div class="vle-field">
+          <label for="vleWhatsapp">WhatsApp Number</label>
+          <input type="tel" id="vleWhatsapp" maxlength="10" placeholder="10-digit number">
+        </div>
+      </div>
+
+      <div class="vle-grid2">
+        <div class="vle-field">
+          <label for="vleExpiryPreset">Active Duration</label>
+          <select id="vleExpiryPreset">
+            <option value="7">7 Days</option>
+            <option value="15">15 Days</option>
+            <option value="30" selected>30 Days</option>
+            <option value="custom">Custom Date</option>
+          </select>
+        </div>
+        <div class="vle-field" id="vleExpiryCustomWrap" style="display:none">
+          <label for="vleExpiryCustom">Expiry Date</label>
+          <input type="date" id="vleExpiryCustom">
+        </div>
+      </div>
+
+      <button type="submit" class="vle-btn vle-btn-primary" id="vlePostSubmitBtn">
+        <i class="fa-solid fa-paper-plane"></i> Post Karein
+      </button>
+      <button type="button" class="vle-btn vle-btn-outline" id="vleCancelEditBtn" style="display:none;margin-top:8px">
+        Cancel Edit
+      </button>
+      <div class="vle-msg" id="vlePostMsg"></div>
+    </form>
+  </div>
+
+  <div class="vle-card">
+    <h2><i class="fa-solid fa-list-check"></i> Mere Posts</h2>
+    <div id="vlePostList"><div class="vle-empty">Loading…</div></div>
+  </div>
+</div>
+
+<div class="vle-center" id="vleLoadingScreen">
+  <i class="fa-solid fa-spinner fa-spin" style="font-size:1.6rem;color:#0f766e"></i>
+</div>
+
+<script src="/vle/vle-auth.js"></script>
+<script src="/vle/vle-dashboard.js"></script>
+</body>
+</html>

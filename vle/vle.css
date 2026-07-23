@@ -1,0 +1,82 @@
+/* Shared styling for /vle/login, /vle/dashboard and /vle/<district> pages. */
+:root{
+  --vle-navy:#0b1f4d; --vle-navy2:#1d3fa0; --vle-teal:#0f766e; --vle-teal2:#0d9488;
+  --vle-orange:#f59e0b; --vle-green:#22c55e; --vle-red:#ef4444; --vle-ink:#0f172a;
+  --vle-line:#e2e8f0; --vle-muted:#64748b;
+}
+.vle-shell{max-width:720px;margin:0 auto;padding:14px 12px 60px;font-family:'Noto Sans',system-ui,sans-serif;color:var(--vle-ink)}
+.vle-center{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:20px 12px}
+
+/* ---- Auth card (login) ---- */
+.vle-auth-card{width:100%;max-width:380px;background:#fff;border:1px solid var(--vle-line);border-radius:16px;padding:26px 22px;box-shadow:0 10px 30px rgba(15,23,42,.08)}
+.vle-auth-head{text-align:center;margin-bottom:18px}
+.vle-auth-head .badge{display:inline-block;background:var(--vle-orange);color:#1e1b0a;font-weight:800;font-size:.72rem;padding:4px 12px;border-radius:999px;margin-bottom:10px}
+.vle-auth-head h1{font-size:1.15rem;margin:0 0 4px;color:var(--vle-navy)}
+.vle-auth-head p{font-size:.82rem;color:var(--vle-muted);margin:0}
+.vle-field{margin-bottom:14px}
+.vle-field label{display:block;font-size:.74rem;font-weight:700;color:#334155;margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em}
+.vle-field input,.vle-field select,.vle-field textarea{width:100%;padding:11px 12px;border-radius:9px;border:1.5px solid var(--vle-line);font-size:.92rem;font-family:inherit;background:#fff;color:var(--vle-ink)}
+.vle-field input:focus,.vle-field select:focus,.vle-field textarea:focus{outline:2px solid var(--vle-teal2);outline-offset:1px;border-color:var(--vle-teal2)}
+.vle-btn{width:100%;padding:12px 16px;border:none;border-radius:10px;font-size:.94rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s}
+.vle-btn:hover{filter:brightness(1.06)}
+.vle-btn:disabled{opacity:.6;cursor:not-allowed}
+.vle-btn-primary{background:linear-gradient(135deg,var(--vle-navy),var(--vle-navy2));color:#fff}
+.vle-btn-green{background:var(--vle-green);color:#fff}
+.vle-btn-outline{background:#fff;border:1.5px solid var(--vle-line);color:var(--vle-ink)}
+.vle-btn-danger{background:#fff;border:1.5px solid var(--vle-red);color:var(--vle-red)}
+.vle-msg{font-size:.82rem;font-weight:600;margin-top:12px;padding:9px 10px;border-radius:8px;display:none}
+.vle-msg.show{display:block}
+.vle-msg.ok{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+.vle-msg.err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+
+/* ---- Dashboard ---- */
+.vle-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 4px;border-bottom:1px solid var(--vle-line);margin-bottom:16px}
+.vle-topbar .who{font-size:.9rem}
+.vle-topbar .who b{display:block;font-size:1rem;color:var(--vle-navy)}
+.vle-topbar .who span{color:var(--vle-muted);font-size:.78rem}
+.vle-logout{background:none;border:1px solid var(--vle-line);border-radius:8px;padding:8px 14px;font-size:.8rem;font-weight:700;color:var(--vle-ink);cursor:pointer}
+.vle-card{background:#fff;border:1px solid var(--vle-line);border-radius:14px;padding:18px 16px;margin-bottom:18px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.vle-card h2{font-size:1rem;margin:0 0 14px;color:var(--vle-navy);display:flex;align-items:center;gap:8px}
+.vle-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.vle-grid2{grid-template-columns:1fr}}
+.vle-upload-box{border:1.5px dashed var(--vle-line);border-radius:10px;padding:12px;text-align:center;font-size:.8rem;color:var(--vle-muted);cursor:pointer;background:#f8fafc}
+.vle-upload-box.has-file{border-color:var(--vle-teal2);color:var(--vle-teal);background:#f0fdfa}
+.vle-upload-progress{height:5px;border-radius:3px;background:var(--vle-line);margin-top:8px;overflow:hidden;display:none}
+.vle-upload-progress.show{display:block}
+.vle-upload-progress > div{height:100%;background:var(--vle-teal2);width:0%;transition:width .2s}
+.vle-hint{font-size:.72rem;color:var(--vle-muted);margin-top:4px}
+
+.vle-post-item{border:1px solid var(--vle-line);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+.vle-post-item img{width:56px;height:56px;object-fit:cover;border-radius:8px;flex:none;background:#f1f5f9}
+.vle-post-item .body{flex:1;min-width:0}
+.vle-post-item .body h3{font-size:.9rem;margin:0 0 3px;color:var(--vle-ink)}
+.vle-post-item .body p{font-size:.76rem;color:var(--vle-muted);margin:0 0 6px}
+.vle-post-item .meta{font-size:.7rem;color:var(--vle-muted);display:flex;gap:10px;flex-wrap:wrap}
+.vle-post-item .meta .expired{color:var(--vle-red);font-weight:700}
+.vle-post-actions{display:flex;gap:6px;flex:none}
+.vle-icon-btn{border:1px solid var(--vle-line);background:#fff;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem}
+.vle-icon-btn.danger{color:var(--vle-red);border-color:#fecaca}
+.vle-empty{text-align:center;padding:24px 10px;color:var(--vle-muted);font-size:.85rem}
+
+/* ---- Public district page ---- */
+.vle-profile-card{background:linear-gradient(135deg,var(--vle-navy),var(--vle-navy2));color:#fff;border-radius:16px;padding:20px 18px;margin-bottom:16px}
+.vle-profile-card .badge{display:inline-block;background:var(--vle-orange);color:#1e1b0a;font-weight:800;font-size:.7rem;padding:4px 12px;border-radius:999px;margin-bottom:8px}
+.vle-profile-card h1{font-size:1.2rem;margin:0 0 4px}
+.vle-profile-card .sub{font-size:.82rem;color:rgba(255,255,255,.82);margin:0 0 10px}
+.vle-profile-card .row{font-size:.78rem;color:rgba(255,255,255,.9);display:flex;gap:6px;margin-bottom:4px}
+.vle-profile-card .row i{width:16px;text-align:center;margin-top:2px}
+
+.vle-notice{background:#fff;border:1px solid var(--vle-line);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.vle-notice img{width:100%;display:block;max-height:340px;object-fit:cover;background:#f1f5f9}
+.vle-notice .body{padding:14px 15px}
+.vle-notice h2{font-size:1rem;margin:0 0 6px;color:var(--vle-ink)}
+.vle-notice p{font-size:.86rem;line-height:1.55;color:#334155;margin:0 0 10px;white-space:pre-wrap}
+.vle-notice .time{font-size:.72rem;color:var(--vle-muted);margin-bottom:10px}
+.vle-notice .pdf-link{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--vle-teal);background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;padding:7px 12px;margin-bottom:10px;text-decoration:none}
+.vle-notice video,.vle-notice iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:10px;margin-bottom:10px;display:block}
+.vle-notice .cta-row{display:flex;gap:8px;flex-wrap:wrap}
+.vle-notice .cta-wa{flex:1;min-width:170px;background:var(--vle-green);color:#fff;border:none;border-radius:9px;padding:11px 14px;font-weight:800;font-size:.86rem;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.vle-notice .cta-share{background:#fff;border:1.5px solid var(--vle-line);border-radius:9px;padding:11px 14px;font-weight:700;font-size:.86rem;color:var(--vle-ink);display:flex;align-items:center;gap:7px;text-decoration:none;cursor:pointer}
+
+.vle-feed-empty{text-align:center;padding:40px 16px;color:var(--vle-muted)}
+.vle-feed-empty i{font-size:1.8rem;margin-bottom:10px;display:block;color:var(--vle-line)}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VLE / CSC Partner Login | Top Sarkari Jobs</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="/image.ico"/>
+<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
+<link rel="stylesheet" href="/vle/vle.css"/>
+</head>
+<body>
+<div class="vle-center">
+  <div class="vle-auth-card">
+    <div class="vle-auth-head">
+      <span class="badge">CSC PARTNER</span>
+      <h1>VLE Login</h1>
+      <p>District Notice Board Dashboard</p>
+    </div>
+    <form id="vleLoginForm" autocomplete="on">
+      <div class="vle-field">
+        <label for="vleEmail">Email</label>
+        <input type="email" id="vleEmail" name="email" required autocomplete="username" placeholder="yourcenter@example.com">
+      </div>
+      <div class="vle-field">
+        <label for="vlePassword">Password</label>
+        <input type="password" id="vlePassword" name="password" required autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="vle-btn vle-btn-primary" id="vleLoginBtn">
+        <i class="fa-solid fa-right-to-bracket"></i> Login
+      </button>
+      <div class="vle-msg" id="vleLoginMsg"></div>
+    </form>
+  </div>
+</div>
+<script src="/vle/vle-auth.js"></script>
+<script>
+(function () {
+  var form = document.getElementById('vleLoginForm');
+  var btn = document.getElementById('vleLoginBtn');
+  var msg = document.getElementById('vleLoginMsg');
+
+  function showMsg(text, ok) {
+    msg.textContent = text;
+    msg.className = 'vle-msg show ' + (ok ? 'ok' : 'err');
+  }
+
+  // Already logged in? Skip straight to dashboard.
+  window.TsjVleAuth.getSession().then(function (session) {
+    if (session) location.href = '/vle/dashboard/';
+  });
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var email = document.getElementById('vleEmail').value.trim();
+    var password = document.getElementById('vlePassword').value;
+    if (!email || !password) { showMsg('Email aur password dono zaroori hain.', false); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in…';
+
+    var res = await window.TsjVleAuth.signIn(email, password);
+    if (res.error) {
+      showMsg(res.error.message === 'Invalid login credentials' ? 'Email ya password galat hai.' : res.error.message, false);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Login';
+      return;
+    }
+    showMsg('Login successful, redirecting…', true);
+    location.href = '/vle/dashboard/';
+  });
+})();
+</script>
+</body>
+</html>

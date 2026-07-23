@@ -49,6 +49,7 @@ const TYPE_THEME = {
   scheme:  { grad: ['#062e1f', '#059669'], badge: 'GOVT SCHEME',    tagline: 'Government Scheme — Eligibility & Apply Online' },
   study:   { grad: ['#1e1b4b', '#4338ca'], badge: 'STUDY MATERIAL', tagline: 'Syllabus · Notes · Previous Papers · Mock Tests' },
   tool:    { grad: ['#0f172a', '#0d9488'], badge: 'FREE TOOL',      tagline: '100% Free — No Signup Required' },
+  vle:     { grad: ['#0f172a', '#0d9488'], badge: 'CSC NOTICE BOARD', tagline: 'Local Govt Scheme & Form Updates — CSC Partner Team' },
 };
 
 function trim(s, max) {

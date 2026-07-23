@@ -9166,6 +9166,80 @@ for cat_key, q_slug in QUAL_SLUG.items():
 print(f"  Qualification pages: {q_count}")
 
 # ─────────────────────────────────────────────────────────────────
+# /vle/<district>/ — District Notice Board public pages (static shell;
+# vle-district.js fetches the live post feed from Supabase client-side).
+# One page per Haryana district, same list VLE dashboard/job-form-widget
+# use — keep these three lists in sync if districts are ever added.
+# ─────────────────────────────────────────────────────────────────
+print("Generating /vle/ district pages...")
+VLE_DISTRICTS = [
+    'Ambala', 'Bhiwani', 'Charkhi Dadri', 'Faridabad', 'Fatehabad', 'Gurugram',
+    'Hisar', 'Jhajjar', 'Jind', 'Kaithal', 'Karnal', 'Kurukshetra',
+    'Mahendragarh', 'Nuh', 'Palwal', 'Panchkula', 'Panipat', 'Rewari',
+    'Rohtak', 'Sirsa', 'Sonipat', 'Yamunanagar',
+]
+vle_count = 0
+for _vd in VLE_DISTRICTS:
+    _vd_slug = _vd.lower().replace(' ', '-')
+    _vd_canon = f"{BASE_URL}/vle/{_vd_slug}/"
+    _vd_title_tag = f"{_vd} District Notice Board — CSC / VLE Updates {YEAR} | Top Sarkari Jobs"
+    _vd_desc = (f"{_vd} district CSC Notice Board: local government scheme updates, form-filling help "
+                f"and official notices from your nearest CSC/VLE partner center. Updated regularly.")[:160]
+    _vd_og = _dyn_og_image(f"{_vd} District Notice Board", 'vle', 'CSC / VLE Updates')
+    _vd_bc = ('<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span>'
+              f'<span aria-current="page">{e(_vd)} Notice Board</span></nav>')
+    _vd_body = f'''<div class="vle-shell">
+{_vd_bc}
+<div id="vleProfileCard"></div>
+<div id="vleFeed"><div class="vle-feed-empty"><i class="fa-solid fa-spinner fa-spin"></i><div>Loading notices…</div></div></div>
+</div>
+<script>window.__VLE_DISTRICT__={json.dumps(_vd, ensure_ascii=False)};</script>
+<link rel="stylesheet" href="/vle/vle.css">
+<script src="/vle/vle-auth.js" defer></script>
+<script src="/vle/vle-district.js" defer></script>'''
+    _vd_html = f'''<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
+<title>{e(_vd_title_tag)}</title>
+<meta name="description" content="{e(_vd_desc)}"/>
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
+<link rel="canonical" href="{e(_vd_canon)}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Top Sarkari Jobs"/>
+<meta property="og:title" content="{e(_vd_title_tag)}"/>
+<meta property="og:description" content="{e(_vd_desc)}"/>
+<meta property="og:url" content="{e(_vd_canon)}"/>
+<meta property="og:image" content="{_vd_og}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="{e(_vd_title_tag)}"/>
+<meta name="twitter:description" content="{e(_vd_desc)}"/>
+<meta name="twitter:image" content="{_vd_og}"/>
+<script src="/tsj-config.js"></script>
+<link rel="icon" href="/image.ico"/>
+<link rel="stylesheet" href="/styles.css"/>
+<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0d2257"/>
+</head>
+<body>
+<div id="headerPlaceholder"></div>
+<script src="/tsj-init.js?v={ASSET_VER}"></script>
+<main id="main">{_vd_body}</main>
+<div id="footerPlaceholder"></div>
+<script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
+<script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
+</body>
+</html>'''
+    write(str(ROOT/'vle'/_vd_slug/'index.html'), _vd_html)
+    vle_count += 1
+print(f"  VLE district pages: {vle_count}")
+
+# ─────────────────────────────────────────────────────────────────
 # UPDATE JSON INDEXES
 # ─────────────────────────────────────────────────────────────────
 write(str(ROOT/'jobs-index.json'),   json.dumps(jobs_index, ensure_ascii=False, separators=(',',':')))
