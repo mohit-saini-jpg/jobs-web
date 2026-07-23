@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-23T10:00:39.450567+00:00",
+  "timestamp": "2026-07-23T10:12:58.447461+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 5540,
   "issues_found_by_check": {
-    "ai_marker_integrity": 9,
-    "jobposting_schema": 37,
+    "ai_marker_integrity": 10,
+    "jobposting_schema": 36,
     "sitemap_sync": 186
   },
-  "issues_auto_fixed": 35,
+  "issues_auto_fixed": 34,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -32,7 +32,7 @@
       "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 6 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 7 END)"
     },
     {
       "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
@@ -50,7 +50,7 @@
       "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
     },
     {
       "file": "jobs/ncrtc-assistant-manager-recruitment-2026-apply-online/index.html",
@@ -59,10 +59,16 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
-      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now-ffa638515d/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
     },
     {
       "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
@@ -1199,5 +1205,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     110 urls [ok]"
   ],
-  "duration_sec": 19.1
+  "duration_sec": 19.7
 }
