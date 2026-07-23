@@ -15,6 +15,7 @@ Output  : /jobs/ /state/ /education/ /category/study/
 import json, re, os, html as _html, shutil, hashlib
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import quote as _url_quote
 
 # ── Config ────────────────────────────────────────────────────
 ROOT     = Path('.')
@@ -25,6 +26,31 @@ _data_cj  = ROOT / 'data' / 'Complete_Jobs_Full_Data.json'
 CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
+
+_DEVANAGARI_RE = re.compile('[ऀ-ॿ]')
+
+def _english_headline(text, slug_fallback=''):
+    """OG share-image text must stay English/Latin script only (site owner's
+    call — no Devanagari on the rendered card, even when the job's own title
+    is in Hindi). If `text` has any Devanagari, derive a clean English
+    headline from the URL slug instead (slugs are always ASCII already)."""
+    text = (text or '').strip()
+    if text and not _DEVANAGARI_RE.search(text):
+        return text
+    words = [w for w in re.split(r'[-_]+', slug_fallback or '') if w]
+    return ' '.join(w.upper() if w.isdigit() else w.capitalize() for w in words) or 'Top Sarkari Jobs'
+
+def _dyn_og_image(headline, og_type='jobs', tag=''):
+    """Per-page WhatsApp/Telegram/Facebook share image via api/og.js (Vercel
+    Edge + @vercel/og) — replaces the old scheme of 5 static PNGs shared
+    across every page of a given intent bucket (which meant a Police jobs
+    section page and an unrelated UPPSC PCS job page showed the IDENTICAL
+    generic card). Each URL now gets its own rendered image reflecting its
+    own title, via query params consumed by api/og.js."""
+    q = f"title={_url_quote(headline[:90])}&type={_url_quote(og_type)}"
+    if tag and not _DEVANAGARI_RE.search(tag):
+        q += f"&tag={_url_quote(tag[:70])}"
+    return f"{BASE_URL}/api/og?{q}"
 
 # ── Wide tablet-style viewport for mobile (Mid View 600-899px), zoom enabled ──
 # Forced ~820px logical width on phones so more content shows without hiding,
@@ -5545,15 +5571,21 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     # FIX #9: context-aware OG image (fixes the ['/result','/result'] dup bug)
     _intent_img = page_intent(job_obj)
     if _intent_img == 'result' or '/result' in canon_url:
-        _og_img_job = f"{BASE_URL}/og-results.png"
+        _og_type = 'results'
     elif _intent_img == 'admit_card' or 'admit' in canon_url:
-        _og_img_job = f"{BASE_URL}/og-admit.png"
+        _og_type = 'admit'
     elif _intent_img in ('scheme', 'article'):
-        _og_img_job = f"{BASE_URL}/og-scheme.png"
+        _og_type = 'scheme'
     elif any(x in canon_url for x in ['study', 'pass', 'graduate', 'iti', 'diploma']):
-        _og_img_job = f"{BASE_URL}/og-study.png"
+        _og_type = 'study'
     else:
-        _og_img_job = f"{BASE_URL}/og-jobs.png"
+        _og_type = 'jobs'
+    # Dynamic per-job image: real job title as headline, organization as the
+    # subtitle tag — so THIS job's card looks like THIS job, not a generic
+    # bucket shared with every other page of the same type. Headline is
+    # forced English/Latin (falls back to the URL slug) even when the job's
+    # own title is in Hindi — see _english_headline().
+    _og_img_job = _dyn_og_image(_english_headline(title, slug), _og_type, org if org and org != 'Government of India' else '')
 
     _content_sig = _page_content_hash(job_obj)
     return f'''<!DOCTYPE html>
@@ -5572,9 +5604,12 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <meta property="og:description" content="{e(meta_desc)}"/>
 <meta property="og:url" content="{e(canon_url)}"/>
 <meta property="og:image" content="{_og_img_job}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{e(title_tag)}"/>
 <meta name="twitter:description" content="{e(meta_desc)}"/>
+<meta name="twitter:image" content="{_og_img_job}"/>
 {schemas_html}
 <script>
 window.__TSJ_SLUG = "{slug}";
@@ -6142,15 +6177,22 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 
     # FIX #5: context-aware OG image for section pages
     if any(x in canon_url for x in ['/result', '/results']):
-        _og_img = f"{BASE_URL}/og-results.png"
+        _og_type = 'results'
     elif 'admit' in canon_url:
-        _og_img = f"{BASE_URL}/og-admit.png"
+        _og_type = 'admit'
     elif any(x in canon_url for x in ['/study', 'pass-jobs', 'graduate', 'iti', 'diploma', 'btech']):
-        _og_img = f"{BASE_URL}/og-study.png"
+        _og_type = 'study'
     elif any(x in canon_url for x in ['scheme', 'yojna', 'csc']):
-        _og_img = f"{BASE_URL}/og-scheme.png"
+        _og_type = 'scheme'
     else:
-        _og_img = f"{BASE_URL}/og-jobs.png"
+        _og_type = 'jobs'
+    # Dynamic per-section image: this page's own title as headline (e.g.
+    # "Police / Defence Jobs 2026" instead of the same generic "Latest
+    # Sarkari Jobs 2026" every /section/*, /qualification/*, /state-jobs/*,
+    # /district/* page used to share) plus a live listing count when known.
+    # Headline forced English/Latin (falls back to the URL slug) — see
+    # _english_headline().
+    _og_img = _dyn_og_image(_english_headline(_t, _url_key), _og_type, f"{len(jobs)}+ Live Listings" if jobs else '')
 
     bc_html    = '<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a>'
     for lbl, url in breadcrumbs:
