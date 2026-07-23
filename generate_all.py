@@ -1421,7 +1421,17 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              reaches already-baked posts too — job data itself did not
 #              change, so without this bump the content hash stays identical
 #              and write() would skip every existing page forever.
-TEMPLATE_VERSION = '20260716.3-aishift.jfw1'
+# 20260723.2 — og:image is now a dynamic per-page card (api/og.js) instead of
+#              1 of 5 static PNGs shared across every page of a given intent
+#              bucket (every /category/study/*, /qualification/*, /section/*
+#              page showed the SAME "Study Material Download Free" /
+#              "Latest Sarkari Jobs 2026" card regardless of its own title).
+#              BUMP forces re-render of ALL existing job/listing pages so
+#              already-baked pages also get their own accurate share image —
+#              job/section data itself did not change, so without this bump
+#              the content hash stays identical and write() would keep
+#              serving the old static og:image forever.
+TEMPLATE_VERSION = '20260716.3-aishift.jfw2'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
