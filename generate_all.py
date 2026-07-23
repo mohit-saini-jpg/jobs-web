@@ -9222,27 +9222,35 @@ VLE_STATE_DISTRICTS = {
     ],
 }
 vle_count = 0
+VLE_SLOTS_PER_DISTRICT = 4
 for _vst, _vdistricts in VLE_STATE_DISTRICTS.items():
     _vst_slug = _vst.lower().replace(' ', '-')
     for _vd in _vdistricts:
         _vd_slug = _vd.lower().replace(' ', '-')
-        _vd_canon = f"{BASE_URL}/vle/{_vst_slug}/{_vd_slug}/"
-        _vd_title_tag = f"{_vd}, {_vst} District Notice Board — CSC / VLE Updates {YEAR} | Top Sarkari Jobs"
-        _vd_desc = (f"{_vd} ({_vst}) district CSC Notice Board: local government scheme updates, form-filling help "
-                    f"and official notices from your nearest CSC/VLE partner center. Updated regularly.")[:160]
-        _vd_og = _dyn_og_image(f"{_vd}, {_vst} District Notice Board", 'vle', 'CSC / VLE Updates')
-        _vd_bc = ('<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span>'
-                  f'<span aria-current="page">{e(_vd)}, {e(_vst)} Notice Board</span></nav>')
-        _vd_body = f'''<div class="vle-shell">
+        for _vslot in range(1, VLE_SLOTS_PER_DISTRICT + 1):
+            # Slot 1 keeps the plain /vle/<state>/<district>/ URL (no
+            # existing links break); slots 2-4 add a path segment. Every
+            # slot is its OWN page showing exactly ONE VLE's profile+posts
+            # — no VLE wants a stranger's notices mixed onto their page.
+            _vslot_path = '' if _vslot == 1 else f'{_vslot}/'
+            _vd_canon = f"{BASE_URL}/vle/{_vst_slug}/{_vd_slug}/{_vslot_path}"
+            _vd_suffix = '' if _vslot == 1 else f' — CSC Partner {_vslot}'
+            _vd_title_tag = f"{_vd}, {_vst} District Notice Board{_vd_suffix} — CSC / VLE Updates {YEAR} | Top Sarkari Jobs"
+            _vd_desc = (f"{_vd} ({_vst}) district CSC Notice Board: local government scheme updates, form-filling help "
+                        f"and official notices from your nearest CSC/VLE partner center. Updated regularly.")[:160]
+            _vd_og = _dyn_og_image(f"{_vd}, {_vst} District Notice Board", 'vle', 'CSC / VLE Updates')
+            _vd_bc = ('<nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span>'
+                      f'<span aria-current="page">{e(_vd)}, {e(_vst)} Notice Board</span></nav>')
+            _vd_body = f'''<div class="vle-shell">
 {_vd_bc}
 <div id="vleProfileCard"></div>
 <div id="vleFeed"><div class="vle-feed-empty"><i class="fa-solid fa-spinner fa-spin"></i><div>Loading notices…</div></div></div>
 </div>
-<script>window.__VLE_STATE__={json.dumps(_vst, ensure_ascii=False)};window.__VLE_DISTRICT__={json.dumps(_vd, ensure_ascii=False)};</script>
+<script>window.__VLE_STATE__={json.dumps(_vst, ensure_ascii=False)};window.__VLE_DISTRICT__={json.dumps(_vd, ensure_ascii=False)};window.__VLE_SLOT__={_vslot};</script>
 <link rel="stylesheet" href="/vle/vle.css">
 <script src="/vle/vle-auth.js" defer></script>
 <script src="/vle/vle-district.js" defer></script>'''
-        _vd_html = f'''<!DOCTYPE html>
+            _vd_html = f'''<!DOCTYPE html>
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
@@ -9280,8 +9288,8 @@ for _vst, _vdistricts in VLE_STATE_DISTRICTS.items():
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>
 </html>'''
-        write(str(ROOT/'vle'/_vst_slug/_vd_slug/'index.html'), _vd_html)
-        vle_count += 1
+            write(str(ROOT/'vle'/_vst_slug/_vd_slug/_vslot_path/'index.html'), _vd_html)
+            vle_count += 1
 print(f"  VLE district pages: {vle_count}")
 
 # ─────────────────────────────────────────────────────────────────

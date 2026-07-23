@@ -188,6 +188,7 @@
         vle_id: state.session.user.id,
         state: state.profile.state,
         district: state.profile.district,
+        slot: state.profile.slot,
         title: title,
         description: $('vleDesc').value.trim(),
         cta_text: $('vleCta').value.trim() || 'Ghar Baithe Form Bharwayein',
@@ -316,7 +317,8 @@
     $('vleLoadingScreen').style.display = 'none';
     $('vleApp').style.display = '';
     $('vleCenterName').textContent = state.profile.center_name || 'VLE Partner';
-    $('vleDistrictName').textContent = state.profile.district + ' District, ' + state.profile.state;
+    $('vleDistrictName').textContent = state.profile.district + ' District, ' + state.profile.state +
+      (state.profile.slot > 1 ? ' (CSC Partner ' + state.profile.slot + ')' : '');
     $('vleWhatsapp').value = state.profile.whatsapp_number || '';
 
     setupForm();
