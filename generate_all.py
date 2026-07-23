@@ -1388,7 +1388,14 @@ _HASH_RE = re.compile(r'<!-- TSJ_HASH:([0-9a-f]{16}) -->')
 #              scripts (ai_html_enricher.py, patch_ai_html.py) so both
 #              existing pages and future AI-injected data land in the same
 #              spot.
-TEMPLATE_VERSION = '20260716.3-aishift'
+# 20260723.1 — Added the "Form Filling Request" lead-capture widget
+#              (JOB_FORM_WIDGET_HTML) below the Important Links card on every
+#              job detail page (job-form-widget.css/js + api/submit-lead.js).
+#              BUMP forces re-render of ALL existing job pages so the widget
+#              reaches already-baked posts too — job data itself did not
+#              change, so without this bump the content hash stays identical
+#              and write() would skip every existing page forever.
+TEMPLATE_VERSION = '20260716.3-aishift.jfw1'
 
 def _page_content_hash(job_obj):
     """16-char MD5 of body-feeding job fields (ai_* excluded — those are patched
