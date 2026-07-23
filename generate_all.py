@@ -3396,6 +3396,25 @@ SECTION_ORDER = ['basic_details','important_dates','application_fee','age_limit'
                  'selection_process','exam_pattern','syllabus','physical_eligibility',
                  'tables','data_tables','text_sections',
                  'how_to_apply','important_instructions','important_links','faq']
+
+# "Form Filling Request" lead-capture widget — mounted right below Important
+# Links on every job page (see build_all_sections() below). Deliberately
+# just an empty mount point + async-loaded CSS/JS here: zero HTML payload
+# added server-side, so it can't affect PageSpeed/Core Web Vitals or SSR
+# render time. CSS uses the same preload-then-swap trick already used for
+# Font Awesome elsewhere on the site (non-render-blocking); JS uses defer
+# (parses after the DOM, never blocks initial paint). Both files live at
+# the site root, cached once across every job page. This sits entirely in
+# the body content flow — the JobPosting JSON-LD schema is built separately
+# and injected into <head>, so this can never touch/corrupt that markup.
+JOB_FORM_WIDGET_HTML = (
+    '<div id="tsj-job-form-widget"></div>'
+    '<script>(function(){var l=document.createElement("link");l.rel="preload";l.as="style";'
+    'l.href="/job-form-widget.css";l.onload=function(){this.onload=null;this.rel="stylesheet"};'
+    'document.head.appendChild(l);})();</script>'
+    '<noscript><link rel="stylesheet" href="/job-form-widget.css"></noscript>'
+    '<script src="/job-form-widget.js" defer></script>'
+)
 # NOTE: 'useful_links' & 'all_links' are intentionally NOT in SECTION_ORDER.
 # _prepare_il() already merges those arrays into `important_links`, so rendering
 # them standalone produced (a) a duplicate "Useful Links" box and (b) literal
@@ -3642,6 +3661,7 @@ def render_content_sections_all(sections):
 def build_all_sections(job_obj):
     html = ''
     rendered = set()
+    _job_form_widget_inserted = False
     # ── AI LAYER (Phase 5): AI content sections — same cards/colors as
     # _render_ai_sections() always produced, only the POSITION changed: they
     # used to render FIRST (before facts), now inserted just before FAQ
@@ -4308,6 +4328,9 @@ def build_all_sections(job_obj):
         meta = SECTION_META.get(key)
         if meta and body and body.strip():
             html += sec_card(_dyn_section_heading(key, job_obj), meta[1], meta[2], body)
+            if key == 'important_links':
+                html += JOB_FORM_WIDGET_HTML
+                _job_form_widget_inserted = True
 
     # ── UNIVERSAL FALLBACK: ANY top-level JSON key not rendered above gets
     # auto-rendered via _smart_render in JSON's natural order. New keys added
@@ -4435,6 +4458,11 @@ def build_all_sections(job_obj):
             html = html[:_faq_m.start()] + _ai_block + html[_faq_m.start():]
         else:
             html += _ai_block
+
+    # Guarantee the lead-capture widget appears on EVERY job page even when a
+    # page happens to have no important_links section to attach it below.
+    if not _job_form_widget_inserted:
+        html += JOB_FORM_WIDGET_HTML
 
     # ── Safety net: drop any sec-card whose heading already appeared earlier ──
     # (guards against a field rendering both inside `sections` and as a top-level

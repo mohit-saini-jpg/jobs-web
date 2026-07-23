@@ -1,0 +1,40 @@
+/* "Form Filling Request" lead-capture widget — loaded async (see
+   JOB_FORM_WIDGET_HTML in generate_all.py) so it never blocks rendering. */
+.jfw-box{
+  margin:16px 10px;border-radius:14px;padding:18px 16px;
+  background:linear-gradient(135deg,#0f766e,#0d9488 55%,#059669);
+  color:#fff;box-shadow:0 6px 22px rgba(13,148,136,.28);
+  font-family:'Noto Sans',system-ui,sans-serif;
+}
+.jfw-head{font-size:1.05rem;font-weight:800;margin-bottom:4px;line-height:1.4}
+.jfw-sub{font-size:.82rem;color:rgba(255,255,255,.88);margin-bottom:14px;line-height:1.5}
+.jfw-job{
+  font-size:.78rem;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  border-radius:8px;padding:8px 10px;margin-bottom:12px;line-height:1.4;
+}
+.jfw-job b{display:block;font-size:.86rem;margin-top:2px}
+.jfw-field{margin-bottom:10px}
+.jfw-field label{display:block;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+.jfw-field input,.jfw-field select{
+  width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.96);color:#0f172a;font-size:.9rem;font-family:inherit;
+}
+.jfw-field input:focus,.jfw-field select:focus{outline:none;border-color:#fff}
+.jfw-btn{
+  width:100%;margin-top:6px;padding:13px 16px;border:none;border-radius:10px;
+  background:#22c55e;color:#fff;font-size:.94rem;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;
+  transition:filter .15s,transform .15s;
+}
+.jfw-btn:hover{filter:brightness(1.07)}
+.jfw-btn:active{transform:scale(.98)}
+.jfw-btn:disabled{opacity:.7;cursor:not-allowed}
+.jfw-note{font-size:.68rem;color:rgba(255,255,255,.75);margin-top:8px;text-align:center}
+.jfw-msg{font-size:.82rem;font-weight:700;margin-top:10px;padding:9px 10px;border-radius:8px;display:none}
+.jfw-msg.show{display:block}
+.jfw-msg.ok{background:rgba(255,255,255,.18);color:#fff}
+.jfw-msg.err{background:rgba(239,68,68,.25);color:#fff;border:1px solid rgba(239,68,68,.5)}
+@media(max-width:420px){
+  .jfw-box{padding:15px 13px}
+  .jfw-head{font-size:.98rem}
+}
