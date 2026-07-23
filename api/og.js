@@ -19,6 +19,19 @@
 // Fonts: Noto Sans Devanagari (SIL OFL, free) bundled under fonts/og/ so job
 // titles that are partly/fully in Hindi render correctly — the free Google
 // Fonts variant also covers the Latin glyphs used in the English/brand text.
+//
+// VERSION PIN — package.json deliberately pins @vercel/og to exactly 0.11.1,
+// NOT npm's newer "1.0.0": 1.0.0 drops the sharp/libvips PNG encoder (which
+// has open high-severity CVEs) for a pure-WASM one, but it does so by also
+// downgrading its internal satori (the actual layout engine) from 0.25.0 to
+// a much older 0.0.46 — confirmed live on this project's Vercel deployment
+// to have a real flex "stretch" bug (a full-width child of a column flex
+// container rendered at ~60% width instead of 100%, verified by sampling
+// pixel colors across the output PNG). 0.11.1's sharp CVEs are in image
+// FILE decoders (JPEG/TIFF/etc.) — not reachable here, since sharp only
+// ever encodes our own satori-rendered SVG to PNG, never parses
+// attacker-supplied binary image input. Re-evaluate this pin if @vercel/og
+// ships a version that fixes the layout bug without the old satori.
 
 export const config = { runtime: 'edge' };
 
@@ -75,7 +88,7 @@ export default async function handler(req) {
     { style: { height: '100%', width: '100%', display: 'flex', flexDirection: 'column', background: `linear-gradient(135deg, ${theme.grad[0]}, ${theme.grad[1]})` } },
     h(
       'div',
-      { style: { display: 'flex', flexDirection: 'column', flex: 1, padding: '54px 64px 10px' } },
+      { style: { display: 'flex', flexDirection: 'column', flex: 1, width: '100%', padding: '54px 64px 10px' } },
       h('div', { style: { display: 'flex', alignItems: 'center' } },
         h('div', { style: { display: 'flex', background: '#f59e0b', color: '#1e1b0a', fontWeight: 700, fontSize: 22, padding: '6px 20px', borderRadius: 8 } }, String(year))
       ),
@@ -95,7 +108,7 @@ export default async function handler(req) {
         )
       )
     ),
-    h('div', { style: { display: 'flex', background: '#f59e0b', padding: '18px 64px', alignItems: 'center' } },
+    h('div', { style: { display: 'flex', width: '100%', background: '#f59e0b', padding: '18px 64px', alignItems: 'center' } },
       h('div', { style: { display: 'flex', color: '#1e1b0a', fontWeight: 700, fontSize: 22 } }, "India's No.1 Sarkari Jobs Portal | topsarkarijobs.com")
     )
   );
