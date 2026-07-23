@@ -5364,17 +5364,79 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
         _byline_date = TODAY
     import urllib.parse as _uparse
     _raw_url = canon_url
-    # Build rich share message (WhatsApp / Telegram). Skip empty fields.
-    _msg_lines = [f'📢 {title}']
-    if vacancies and vacancies not in ('—',''): _msg_lines.append(f'📋 Posts: {vacancies}')
-    if _qual: _msg_lines.append(f'🎓 Qualification: {_qual[:120]}')
-    if _age:  _msg_lines.append(f'🎂 Age Limit: {_age[:100]}')
-    if _fee:  _msg_lines.append(f'💰 Application Fee: {_fee[:100]}')
-    if last_d and last_d not in ('—',''): _msg_lines.append(f'📅 Last Date: {last_d}')
-    _msg_lines.append('👉 Apply Online:')
-    _msg_lines.append(_raw_url)
-    _msg_lines.append('🔔 Complete Details Available Here')
-    _msg_lines.append('#SarkariJob #GovernmentJobs #LatestJobs')
+    # Build rich, attractive share message (WhatsApp / Telegram / X) — format
+    # varies by page type since a Result/Admit Card/Scheme page has nothing
+    # in common with a Job post. Fee is deliberately never shown as a single
+    # number here (it differs by SC/ST/OBC/Gen category) and posts always
+    # get a friendly fallback instead of a blank/dash when unknown.
+    _share_intent = page_intent(job_obj)
+    _posts_txt = vacancies if (vacancies and vacancies not in ('—', '')) else 'Various Posts (Bumper Bharti)'
+    _fee_txt = 'Category Wise (Niche Diye Link Par Check Karein)'
+    _last_date_txt = last_d if (last_d and last_d not in ('—', '')) else ''
+    _hashtags = '#Topsarkarijobs #Topsarkarijob'
+
+    if _share_intent == 'admitcard':
+        _msg_lines = [
+            '🎟️ Intezar Khatam!', f'🚨 {title} - Admit Card / Exam City Out!', '',
+            '📍 Exam Date aur Hall Ticket Official Link Active ho gaya hai.', '',
+            '🎯 Aapka Exam Centre Kahan Pada Hai? Direct Link Se Abhi Check Karein:',
+            f'👉 {_raw_url}', '',
+            '🔔 Apna Roll No., Exam City & Hall Ticket Instantly Download Karein!',
+            _hashtags,
+        ]
+    elif _share_intent == 'result':
+        _msg_lines = [
+            '🏆 Bada Update!', f'🚨 {title} - Result / Selection List Declared!', '',
+            '📊 Cut-Off Marks aur Selected Candidates ki list aa gayi hai.', '',
+            '🎯 Kya Aapka Selection Hua? Apna Name & Roll Number Abhi Check Karein:',
+            f'👉 {_raw_url}', '',
+            '🔔 Direct Merit List PDF & Cut-Off Check Karne Ke Liye Click Karein!',
+            _hashtags,
+        ]
+    elif _share_intent == 'answerkey':
+        _msg_lines = [
+            '📝 Kitne Marks Ban Rahe Hain?', f'🚨 {title} - Official Answer Key Out!', '',
+            '⚡ Kya aapne ye exam diya tha? Sahi answers check karein aur apne marks calculate karein!', '',
+            '🎯 Official Answer Key PDF & Objection Link:',
+            f'👉 {_raw_url}', '',
+            '🔔 Response Sheet Download Karein Aur Cut-Off Ki Jankari Dekhein!',
+            _hashtags,
+        ]
+    elif _share_intent == 'admission':
+        _msg_lines = [
+            '🎓 Admission Form Shuru!', f'🚨 {title} - Online Registration Open!', '',
+            f'📅 Last Date: {_last_date_txt or "Bina Der Kiye Abhi Apply Karein"}',
+            f'💰 Application Fee: {_fee_txt}', '',
+            '🎯 Agar aap is course/college me admission lena chahte hain toh ye chance miss mat karein!', '',
+            '⚡ Eligibility, Fees & Direct Apply Link:',
+            f'👉 {_raw_url}', '',
+            '🔔 Official Notification PDF Download Karein Aur Online Form Bharein!',
+            _hashtags,
+        ]
+    elif _share_intent == 'scheme':
+        _msg_lines = [
+            '🎁 Sarkari Yojna Ka Bada Fayda!', f'🚨 {title} - Registration Open!', '',
+            '💡 Kaun-Kaun Eligible Hai? Kise Milega Labh?', '',
+            '🎯 Govt Scheme ka fayda lene ke liye poora process aur zaroori documents ki list abhi dekhein!', '',
+            '⚡ Complete Rules & Direct Apply/Registration Link:',
+            f'👉 {_raw_url}', '',
+            '🔔 Form Kaise Bharna Hai? Poori Jankari Ke Liye Link Par Click Karein!',
+            _hashtags,
+        ]
+    else:
+        # Jobs template — also the default fallback for syllabus/education/
+        # article/mixed-latest-jobs intents that don't have their own format.
+        _msg_lines = ['💥 Badi Khushkhabri!', f'🚨 {title}', '', f'💼 Total Posts: {_posts_txt}']
+        if _age: _msg_lines.append(f'🎂 Age Limit: {_age[:100]}')
+        _msg_lines.append(f'💰 Application Fee: {_fee_txt}')
+        if _last_date_txt: _msg_lines.append(f'📅 Last Date: {_last_date_txt}')
+        _msg_lines += [
+            '', '🎯 Agar aap Government Job ki taiyari kar rahe hain toh ye moka mat chhodiye!', '',
+            '⚡ Complete Details & Direct Apply Link:',
+            f'👉 {_raw_url}', '',
+            '🔔 Official PDF Download Karein Aur Abhi Apply Karein!',
+            _hashtags,
+        ]
     _share_msg = '\n'.join(_msg_lines)
     # URL-encoded versions for share links
     _enc_msg = _uparse.quote(_share_msg, safe='')
