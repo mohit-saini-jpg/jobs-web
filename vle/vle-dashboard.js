@@ -58,20 +58,31 @@
     return best;
   }
 
-  // ── Upload flow: ask api/vle-upload-url for a presigned PUT URL, then PUT
-  // the bytes straight to R2 (never through our own server). ─────────────
-  async function uploadToR2(blob, folder, fileType, fileName) {
+  // ── Upload flow: ask api/vle-upload-signature for a signed Cloudinary
+  // upload slot, then POST the bytes straight to Cloudinary (never through
+  // our own server — same reasoning as the earlier R2 design, just with
+  // Cloudinary's signed-upload mechanism instead of a presigned PUT URL). ──
+  async function uploadToCloudinary(blob, folder, fileName) {
     var token = state.session.access_token;
-    var r = await fetch('/api/vle-upload-url', {
+    var sigRes = await fetch('/api/vle-upload-signature', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ folder: folder, fileType: fileType, fileName: fileName, fileSize: blob.size }),
+      body: JSON.stringify({ folder: folder }),
     });
-    if (!r.ok) throw new Error((await r.json().catch(function () { return {}; })).error || 'upload URL failed');
-    var data = await r.json();
-    var put = await fetch(data.uploadUrl, { method: 'PUT', headers: { 'Content-Type': fileType }, body: blob });
-    if (!put.ok) throw new Error('R2 upload failed');
-    return data.publicUrl;
+    if (!sigRes.ok) throw new Error((await sigRes.json().catch(function () { return {}; })).error || 'upload signature failed');
+    var sig = await sigRes.json();
+
+    var form = new FormData();
+    form.append('file', blob, fileName);
+    form.append('api_key', sig.apiKey);
+    form.append('timestamp', sig.timestamp);
+    form.append('folder', sig.folder);
+    form.append('signature', sig.signature);
+
+    var up = await fetch('https://api.cloudinary.com/v1_1/' + sig.cloudName + '/auto/upload', { method: 'POST', body: form });
+    if (!up.ok) throw new Error('Cloudinary upload failed');
+    var result = await up.json();
+    return { url: result.secure_url, publicId: result.public_id };
   }
 
   // ── File-picker wiring for image / pdf / video-upload boxes ────────────
@@ -184,14 +195,17 @@
       };
 
       if (state.files.image) {
-        post.image_url = await uploadToR2(state.files.image.blob, 'images', state.files.image.type, state.files.image.name);
+        var imgUp = await uploadToCloudinary(state.files.image.blob, 'images', state.files.image.name);
+        post.image_url = imgUp.url; post.image_public_id = imgUp.publicId;
       }
       if (state.files.pdf) {
-        post.pdf_url = await uploadToR2(state.files.pdf.blob, 'pdfs', state.files.pdf.type, state.files.pdf.name);
+        var pdfUp = await uploadToCloudinary(state.files.pdf.blob, 'pdfs', state.files.pdf.name);
+        post.pdf_url = pdfUp.url; post.pdf_public_id = pdfUp.publicId;
       }
       if (videoMode === 'upload' && state.files.video) {
         post.video_type = 'upload';
-        post.video_url = await uploadToR2(state.files.video.blob, 'videos', state.files.video.type, state.files.video.name);
+        var vidUp = await uploadToCloudinary(state.files.video.blob, 'videos', state.files.video.name);
+        post.video_url = vidUp.url; post.video_public_id = vidUp.publicId;
       } else if (videoMode === 'youtube' || videoMode === 'instagram') {
         post.video_type = videoMode;
         post.video_url = videoLink;
@@ -246,12 +260,16 @@
     var del = await state.client.from('vle_posts').delete().eq('id', post.id);
     if (del.error) { alert('Delete nahi ho paya: ' + del.error.message); return; }
 
-    var mediaUrls = [post.image_url, post.pdf_url, post.video_type === 'upload' ? post.video_url : null].filter(Boolean);
-    if (mediaUrls.length) {
+    var mediaItems = [
+      post.image_public_id ? { publicId: post.image_public_id, folder: 'images' } : null,
+      post.pdf_public_id ? { publicId: post.pdf_public_id, folder: 'pdfs' } : null,
+      (post.video_type === 'upload' && post.video_public_id) ? { publicId: post.video_public_id, folder: 'videos' } : null,
+    ].filter(Boolean);
+    if (mediaItems.length) {
       fetch('/api/vle-delete-media', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.session.access_token },
-        body: JSON.stringify({ publicUrls: mediaUrls }),
+        body: JSON.stringify({ items: mediaItems }),
       }).catch(function () {});
     }
     loadPosts();

@@ -1,17 +1,28 @@
-// Deletes a VLE post's media files from Cloudflare R2. Called by the
+// Deletes a VLE post's media files from Cloudinary. Called by the
 // dashboard right after a post row is deleted from Supabase (vle-dashboard.js)
-// — R2 deletion needs the secret R2 credentials, which only ever live here
-// server-side, never in the browser (same reasoning as vle-upload-url.js).
+// — Cloudinary's destroy call needs a signature made with the secret API
+// key, which only ever lives here server-side, never in the browser (same
+// reasoning as vle-upload-signature.js). No Cloudinary SDK needed — destroy
+// is just a signed POST, computable with Node's built-in `crypto` module.
 //
-// Auth: caller must be a logged-in VLE. This route only deletes keys that
-// live under `<folder>/<that VLE's own user id>/...` (see the key layout
-// vle-upload-url.js writes) — so one VLE's session can never be used to
-// delete another VLE's files even if a key were guessed/leaked.
+// Auth: caller must be a logged-in VLE. This route only deletes public_ids
+// that live under `vle/<type>/<that VLE's own user id>/...` (the folder
+// layout vle-upload-signature.js writes) — so one VLE's session can never
+// be used to delete another VLE's files even if a public_id were
+// guessed/leaked.
 
-const { S3Client, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
+const crypto = require('crypto');
 
 const SUPABASE_URL = 'https://cykkclkfimmqbahanidg.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a2tjbGtmaW1tcWJhaGFuaWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzYxODAsImV4cCI6MjA4MTY1MjE4MH0.iZEnetgYn7j0ltJyjhxUGZ3nCT7YMxGP3_Qd-agI1C0';
+
+// Cloudinary needs to be told which resource_type a public_id belongs to
+// in order to destroy it. Deterministic from which field it came from —
+// see vle-dashboard.js: images/videos upload as their own type, PDFs
+// upload through the "auto" endpoint but Cloudinary always stores them
+// under resource_type "image" (PDFs are treated as image-like assets so
+// they can be page-rendered/transformed).
+const RESOURCE_TYPE_BY_FOLDER = { images: 'image', pdfs: 'image', videos: 'video' };
 
 async function verifyVleSession(authHeader) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
@@ -26,6 +37,19 @@ async function verifyVleSession(authHeader) {
   } catch (e) {
     return null;
   }
+}
+
+async function destroyOne(cloudName, apiKey, apiSecret, publicId, resourceType) {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const toSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
+  const signature = crypto.createHash('sha1').update(toSign).digest('hex');
+  const form = new URLSearchParams({ public_id: publicId, api_key: apiKey, timestamp: String(timestamp), signature });
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/destroy`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: form.toString(),
+  });
+  return r.ok;
 }
 
 module.exports = async function handler(req, res) {
@@ -44,52 +68,44 @@ module.exports = async function handler(req, res) {
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
   }
-  const publicUrls = Array.isArray(body && body.publicUrls) ? body.publicUrls : [];
-  if (!publicUrls.length) {
+  // items: [{ publicId, folder }] — folder is 'images'|'pdfs'|'videos', used
+  // to pick the right Cloudinary resource_type.
+  const items = Array.isArray(body && body.items) ? body.items : [];
+  if (!items.length) {
     res.status(200).json({ ok: true, deleted: 0 });
     return;
   }
 
-  const accountId = process.env.R2_ACCOUNT_ID;
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  const bucket = process.env.R2_BUCKET_NAME;
-  const publicBase = process.env.R2_PUBLIC_URL_BASE;
-  if (!accountId || !accessKeyId || !secretAccessKey || !bucket || !publicBase) {
-    res.status(500).json({ error: 'R2 not configured on server' });
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!cloudName || !apiKey || !apiSecret) {
+    res.status(500).json({ error: 'Cloudinary not configured on server' });
     return;
   }
 
-  // Only ever delete keys that belong to THIS VLE (folder/<user.id>/...) —
-  // strips the public base URL back down to the R2 object key and rejects
-  // anything that doesn't match the caller's own uploads.
-  const ownPrefix = new RegExp(`^(images|pdfs|videos)/${user.id}/`);
-  const keys = publicUrls
-    .map((u) => String(u || '').replace(publicBase + '/', ''))
-    .filter((k) => ownPrefix.test(k));
+  // Only ever delete public_ids that belong to THIS VLE
+  // (vle/<folder>/<user.id>/...) — mirrors the R2 version's ownership check.
+  const ownPrefix = new RegExp(`^vle/(images|pdfs|videos)/${user.id}/`);
+  const own = items.filter((it) => it && typeof it.publicId === 'string' && ownPrefix.test(it.publicId) && RESOURCE_TYPE_BY_FOLDER[it.folder]);
 
-  if (!keys.length) {
+  if (!own.length) {
     res.status(200).json({ ok: true, deleted: 0 });
     return;
   }
 
-  const s3 = new S3Client({
-    region: 'auto',
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId, secretAccessKey },
-  });
-
-  try {
-    await s3.send(new DeleteObjectsCommand({
-      Bucket: bucket,
-      Delete: { Objects: keys.map((Key) => ({ Key })) },
-    }));
-    res.status(200).json({ ok: true, deleted: keys.length });
-  } catch (e) {
-    console.error('R2 delete failed:', e);
-    // Best-effort — the Supabase post row is already gone by the time this
-    // is called, so a storage-cleanup failure shouldn't read as a hard error
-    // to the VLE. Orphaned files just sit in R2 (10GB free tier is generous).
-    res.status(200).json({ ok: false, error: 'media cleanup failed, post was still deleted' });
+  let deleted = 0;
+  for (const it of own) {
+    try {
+      const ok = await destroyOne(cloudName, apiKey, apiSecret, it.publicId, RESOURCE_TYPE_BY_FOLDER[it.folder]);
+      if (ok) deleted++;
+    } catch (e) {
+      // Best-effort — the Supabase post row is already gone by the time
+      // this is called, so a storage-cleanup failure shouldn't read as a
+      // hard error to the VLE. Orphaned files just sit in Cloudinary
+      // (25GB free tier is generous).
+      console.error('Cloudinary destroy failed:', e);
+    }
   }
+  res.status(200).json({ ok: true, deleted });
 };

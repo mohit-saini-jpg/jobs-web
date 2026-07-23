@@ -30,9 +30,12 @@ create table if not exists public.vle_posts (
   title text not null,
   description text,
   image_url text,
+  image_public_id text,   -- Cloudinary public_id, needed to delete the asset later
   pdf_url text,
+  pdf_public_id text,
   video_type text,        -- 'youtube' | 'instagram' | 'upload' | null
   video_url text,
+  video_public_id text,   -- only set when video_type = 'upload'
   cta_text text not null default 'Ghar Baithe Form Bharwayein',
   whatsapp_number text not null,
   expiry_date date not null,
