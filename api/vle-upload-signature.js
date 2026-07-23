@@ -1,5 +1,9 @@
 // Cloudinary signed-upload issuer for the VLE Dashboard.
 //
+// (Vercel env vars only take effect on the next deployment after they're
+// added, not for already-running function instances — this comment exists
+// purely to trigger that redeploy once CLOUDINARY_* was added.)
+//
 // Media (compressed images, PDFs, short video files) upload DIRECTLY from
 // the VLE's browser straight to Cloudinary — this route only ISSUES a
 // signature, the actual file bytes never pass through this Vercel function.
