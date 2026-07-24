@@ -644,6 +644,31 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="step-panel" id="panel-4">
   <div class="card">
     <div class="card-title">⬇️ Download Karein</div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Photo Border</div>
+      <div class="print-options">
+        <div class="print-opt active" data-border="none" onclick="selectBorder(this)">None</div>
+        <div class="print-opt" data-border="single" onclick="selectBorder(this)">Single Line</div>
+        <div class="print-opt" data-border="double" onclick="selectBorder(this)">Double Line</div>
+      </div>
+      <div class="adj-group" id="borderThicknessRow" style="display:none;margin-top:8px">
+        <div class="adj-label">Border Thickness <span id="borderThickVal">4px</span></div>
+        <input type="range" id="borderThickRange" min="1" max="30" value="4" oninput="onBorderThicknessChange()">
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Resolution (DPI)</div>
+      <select id="exportDpi" onchange="onDpiChange()" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem;font-family:inherit;background:#fff;color:var(--ink)">
+        <option value="72">72 DPI — Web / Screen</option>
+        <option value="150">150 DPI — Draft Print</option>
+        <option value="200">200 DPI — Standard Print</option>
+        <option value="300" selected>300 DPI — Passport / Photo Print (Recommended)</option>
+        <option value="600">600 DPI — High Quality Print</option>
+      </select>
+    </div>
+
     <div style="margin-bottom:12px">
       <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Print Sheet</div>
       <div class="print-options">
@@ -651,6 +676,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="print-opt" data-sheet="4on4" onclick="selectSheet(this)">4 Photos (2×2)</div>
         <div class="print-opt" data-sheet="8on4" onclick="selectSheet(this)">8 Photos (2×4)</div>
         <div class="print-opt" data-sheet="a4" onclick="selectSheet(this)">A4 Full Sheet</div>
+      </div>
+      <div class="print-options" id="a4ColsRow" style="display:none">
+        <span style="font-size:.76rem;font-weight:700;color:var(--muted);align-self:center;margin-right:2px">Photos per row:</span>
+        <div class="print-opt active" data-cols="5" onclick="selectA4Cols(this)">5 per row</div>
+        <div class="print-opt" data-cols="6" onclick="selectA4Cols(this)">6 per row</div>
       </div>
     </div>
     <div class="print-preview">
@@ -763,7 +793,10 @@ var S = {
   targetKb: 50,
   bgRemoveEnabled: false,
   bgModelLoaded: false,
-  filterPreset: 'original'
+  filterPreset: 'original',
+  border: {type:'none', thickness:4},
+  dpi: 300,
+  a4Cols: 5
 };
 var cropperInst = null;
 
@@ -1789,16 +1822,67 @@ function compressToKb(canvas, targetKb){
 function renderFinal(){
   var c=buildProcessedCanvas(S.targetW,S.targetH);
   if(!c)return;
+  applyPhotoBorder(c,S.border);
   S.finalCanvas=c;
   renderPrintSheet();
 }
 
 // ── PRINT SHEET ──────────────────────────────────────
 function selectSheet(el){
-  document.querySelectorAll('.print-opt').forEach(function(o){o.classList.remove('active');});
+  document.querySelectorAll('[data-sheet]').forEach(function(o){o.classList.remove('active');});
   el.classList.add('active');
   S.sheet=el.dataset.sheet;
+  document.getElementById('a4ColsRow').style.display=(S.sheet==='a4')?'flex':'none';
   renderPrintSheet();
+}
+function selectA4Cols(el){
+  document.querySelectorAll('[data-cols]').forEach(function(o){o.classList.remove('active');});
+  el.classList.add('active');
+  S.a4Cols=parseInt(el.dataset.cols)||5;
+  renderPrintSheet();
+}
+
+// ── BORDER ────────────────────────────────────────────
+function selectBorder(el){
+  document.querySelectorAll('[data-border]').forEach(function(o){o.classList.remove('active');});
+  el.classList.add('active');
+  S.border.type=el.dataset.border;
+  document.getElementById('borderThicknessRow').style.display=(S.border.type==='none')?'none':'block';
+  renderFinal();
+}
+function onBorderThicknessChange(){
+  var v=parseInt(document.getElementById('borderThickRange').value)||4;
+  S.border.thickness=v;
+  document.getElementById('borderThickVal').textContent=v+'px';
+  renderFinal();
+}
+// Draws the border INSIDE the existing canvas (border-box) — never resizes
+// the canvas, so exported photo pixel dimensions never change.
+function applyPhotoBorder(canvas,border){
+  if(!border||border.type==='none'||!border.thickness)return;
+  var ctx=canvas.getContext('2d');
+  var w=canvas.width,h=canvas.height;
+  var t=Math.max(1,Math.round(border.thickness));
+  function ring(inset,thick,color){
+    ctx.fillStyle=color;
+    ctx.fillRect(inset,inset,Math.max(0,w-2*inset),thick);
+    ctx.fillRect(inset,Math.max(inset,h-inset-thick),Math.max(0,w-2*inset),thick);
+    ctx.fillRect(inset,inset,thick,Math.max(0,h-2*inset));
+    ctx.fillRect(Math.max(inset,w-inset-thick),inset,thick,Math.max(0,h-2*inset));
+  }
+  if(border.type==='single'){
+    ring(0,t,'#000000');
+  }else if(border.type==='double'){
+    var gap=Math.max(2,Math.round(t*1.4));
+    ring(0,t,'#000000');       // outer line
+    ring(t,gap,'#FFFFFF');     // white space between the two lines
+    ring(t+gap,t,'#000000');   // inner line
+  }
+}
+
+// ── DPI ───────────────────────────────────────────────
+function onDpiChange(){
+  S.dpi=parseInt(document.getElementById('exportDpi').value)||300;
 }
 
 function renderPrintSheet(){
@@ -1825,18 +1909,103 @@ function renderPrintSheet(){
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,gap+c*(pw+gap),gap+r*(phe+gap),pw,phe);
     info='8 photos (2×4) — A4 print ready';
   }else if(S.sheet==='a4'){
-    var A4W=2480,A4H=3508,margin=80,gap=16;
+    // Tight, print-safe margin + gap so the sheet wastes as little paper as
+    // possible, and the whole grid is CENTERED (equal leftover space on every
+    // side) instead of anchored top-left — an off-center grid with a big
+    // unused strip on the right/bottom is what reads as "crooked/misaligned"
+    // next to a clean reference sheet, even though no rotation is involved.
+    var A4W=2480,A4H=3508,minMargin=20,gap=8;
     pc.width=A4W;pc.height=A4H;
     ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
-    var cols=Math.max(1,Math.floor((A4W-2*margin+gap)/(pw+gap)));
-    var rows=Math.max(1,Math.floor((A4H-2*margin+gap)/(phe+gap)));
-    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,margin+c*(pw+gap),margin+r*(phe+gap),pw,phe);
-    info='A4 sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos';
+    var maxCols=S.a4Cols||5;
+    var cols=Math.max(1,Math.min(maxCols,Math.floor((A4W-2*minMargin+gap)/(pw+gap))));
+    var rows=Math.max(1,Math.floor((A4H-2*minMargin+gap)/(phe+gap)));
+    var usedW=cols*pw+(cols-1)*gap;
+    var usedH=rows*phe+(rows-1)*gap;
+    var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
+    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(pw+gap),marginY+r*(phe+gap),pw,phe);
+    info='A4 sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos ('+maxCols+'/row max)';
   }
   document.getElementById('printInfo').textContent=info;
 }
 
 // ── DOWNLOAD ─────────────────────────────────────────
+// ── DPI METADATA (embedded directly in the exported file's bytes — canvas
+// toDataURL() has no API for this, so the JPEG APP0/JFIF density fields or
+// the PNG pHYs chunk are patched by hand after encoding) ─────────────────
+function dataUrlToBytes(dataUrl){
+  var bin=atob(dataUrl.split(',')[1]);
+  var bytes=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+function bytesToDataUrl(bytes,mime){
+  var bin='',chunk=0x8000;
+  for(var i=0;i<bytes.length;i+=chunk){
+    bin+=String.fromCharCode.apply(null,bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+  }
+  return 'data:'+mime+';base64,'+btoa(bin);
+}
+function setJpegDpi(dataUrl,dpi){
+  var bytes=dataUrlToBytes(dataUrl);
+  if(bytes[0]!==0xFF||bytes[1]!==0xD8)return dataUrl; // not a valid JPEG (SOI)
+  if(bytes[2]===0xFF&&bytes[3]===0xE0&&
+     String.fromCharCode(bytes[6],bytes[7],bytes[8],bytes[9])==='JFIF'){
+    // Existing APP0/JFIF segment — overwrite its density fields in place.
+    var out=new Uint8Array(bytes);
+    out[13]=1;                              // units = dots per inch
+    out[14]=(dpi>>8)&0xFF;out[15]=dpi&0xFF;  // Xdensity
+    out[16]=(dpi>>8)&0xFF;out[17]=dpi&0xFF;  // Ydensity
+    return bytesToDataUrl(out,'image/jpeg');
+  }
+  // No APP0 present (rare) — insert a minimal one right after the SOI marker.
+  var app0=new Uint8Array([0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0x01,
+    0x01,(dpi>>8)&0xFF,dpi&0xFF,(dpi>>8)&0xFF,dpi&0xFF,0x00,0x00]);
+  var out2=new Uint8Array(2+app0.length+(bytes.length-2));
+  out2.set(bytes.subarray(0,2),0);
+  out2.set(app0,2);
+  out2.set(bytes.subarray(2),2+app0.length);
+  return bytesToDataUrl(out2,'image/jpeg');
+}
+var _CRC_TABLE=(function(){
+  var t=[];
+  for(var n=0;n<256;n++){
+    var c=n;
+    for(var k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);
+    t[n]=c>>>0;
+  }
+  return t;
+})();
+function _crc32(bytes){
+  var crc=0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++)crc=_CRC_TABLE[(crc^bytes[i])&0xFF]^(crc>>>8);
+  return (crc^0xFFFFFFFF)>>>0;
+}
+function setPngDpi(dataUrl,dpi){
+  var bytes=dataUrlToBytes(dataUrl);
+  var sig=[0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A];
+  for(var i=0;i<8;i++)if(bytes[i]!==sig[i])return dataUrl; // not a valid PNG
+  var ppu=Math.round(dpi/0.0254); // pixels-per-inch -> pixels-per-meter
+  var chunk=new Uint8Array(4+4+9+4); // length + 'pHYs' + data(9) + crc
+  var dv=new DataView(chunk.buffer);
+  dv.setUint32(0,9);
+  chunk[4]=0x70;chunk[5]=0x48;chunk[6]=0x59;chunk[7]=0x73; // 'pHYs'
+  dv.setUint32(8,ppu);dv.setUint32(12,ppu);chunk[16]=1;    // X,Y ppu + unit=meter
+  dv.setUint32(17,_crc32(chunk.subarray(4,17)));
+  var ihdrLen=(bytes[8]<<24)|(bytes[9]<<16)|(bytes[10]<<8)|bytes[11];
+  var insertAt=8+8+ihdrLen+4; // signature + IHDR(len+type+data+crc)
+  var out=new Uint8Array(bytes.length+chunk.length);
+  out.set(bytes.subarray(0,insertAt),0);
+  out.set(chunk,insertAt);
+  out.set(bytes.subarray(insertAt),insertAt+chunk.length);
+  return bytesToDataUrl(out,'image/png');
+}
+function setImageDpi(dataUrl,ext,dpi){
+  if(!dpi)return dataUrl;
+  return (ext==='png')?setPngDpi(dataUrl,dpi):setJpegDpi(dataUrl,dpi);
+}
+
 function downloadPhoto(type){
   if(!S.finalCanvas){alert('Pehle process karein!');return;}
   var canvas=(type==='sheet')?document.getElementById('printCanvas'):S.finalCanvas;
@@ -1846,16 +2015,16 @@ function downloadPhoto(type){
     compressToKb(canvas,S.targetKb).then(function(result){
       var a=document.createElement('a');
       a.download=fname+'.'+result.ext;
-      a.href=result.dataUrl;
+      a.href=setImageDpi(result.dataUrl,result.ext,S.dpi);
       a.click();
       var note=document.getElementById('dlKbNote');
-      document.getElementById('dlKbText').textContent='Compressed: ~'+result.actualKb+' KB (target: '+S.targetKb+' KB)';
+      document.getElementById('dlKbText').textContent='Compressed: ~'+result.actualKb+' KB (target: '+S.targetKb+' KB) · '+S.dpi+' DPI';
       note.style.display='flex';
     });
   }else{
     var a=document.createElement('a');
     a.download=fname+'.jpg';
-    a.href=canvas.toDataURL('image/jpeg',0.95);
+    a.href=setImageDpi(canvas.toDataURL('image/jpeg',0.95),'jpeg',S.dpi);
     a.click();
     document.getElementById('dlKbNote').style.display='none';
   }
