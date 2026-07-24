@@ -396,6 +396,19 @@
             <button type="button" class="btn" id="btnHslResetAll">Reset All Colors</button>
           </div>
 
+          <hr style="border:none;border-top:1px dashed var(--line);margin:18px 0">
+          <div class="field-row"><label>Effects</label></div>
+          <div class="slider-group"><div class="slider-head"><label>Vignette</label><span class="slider-val" id="v-vignette">0</span></div><input type="range" id="s-vignette" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Grain</label><span class="slider-val" id="v-grain">0</span></div><input type="range" id="s-grain" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Glow</label><span class="slider-val" id="v-glow">0</span></div><input type="range" id="s-glow" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Fade</label><span class="slider-val" id="v-fade">0</span></div><input type="range" id="s-fade" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Gaussian Blur</label><span class="slider-val" id="v-gaussianblur">0</span></div><input type="range" id="s-gaussianblur" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Motion Blur</label><span class="slider-val" id="v-motionblur">0</span></div><input type="range" id="s-motionblur" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Motion Blur Angle</label><span class="slider-val" id="v-motionangle">0°</span></div><input type="range" id="s-motionangle" min="0" max="360" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Tilt-Shift</label><span class="slider-val" id="v-tiltshift">0</span></div><input type="range" id="s-tiltshift" min="0" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Tilt-Shift Sharp Band Position</label><span class="slider-val" id="v-tiltshiftpos">50</span></div><input type="range" id="s-tiltshiftpos" min="0" max="100" value="50"></div>
+          <div class="slider-group" id="bgBlurGroup" style="display:none"><div class="slider-head"><label>Background Blur</label><span class="slider-val" id="v-bgblur">0</span></div><input type="range" id="s-bgblur" min="0" max="100" value="0"></div>
+
           <button class="btn block" id="btnApplyManual" style="margin-top:16px"><i class="fa-solid fa-check"></i> Apply Adjustments</button>
         </div>
 
@@ -780,6 +793,7 @@ async function runAutoAnalysis(){
   renderAnalysisChips(state.lastAnalysis);
   $('faceStrengthGroup').style.display = faceCount>0 ? '' : 'none';
   $('skinProtectGroup').style.display = faceCount>0 ? '' : 'none';
+  $('bgBlurGroup').style.display = faceCount>0 ? '' : 'none';
 }
 
 function landmarksToBox(lm, w, h){
@@ -1562,7 +1576,7 @@ function paResetAdjustments(){
 }
 
 /* ============================== MANUAL SLIDERS ============================== */
-const SLIDER_IDS = ['brightness','contrast','exposure','highlights','shadows','gamma','saturation','vibrance','temperature','tint','sharpen','clarity','texture','denoise','dehaze','hdr','facestrength'];
+const SLIDER_IDS = ['brightness','contrast','exposure','highlights','shadows','gamma','saturation','vibrance','temperature','tint','sharpen','clarity','texture','denoise','dehaze','hdr','facestrength','vignette','grain','glow','fade','gaussianblur','motionblur','motionangle','tiltshift','tiltshiftpos','bgblur'];
 function readSliders(){
   const s = {};
   SLIDER_IDS.forEach(k=>{ const el=$('s-'+k); s[k] = el ? Number(el.value) : 0; });
@@ -1571,8 +1585,8 @@ function readSliders(){
 function resetManualSliders(){
   SLIDER_IDS.forEach(k=>{
     const el = $('s-'+k); if(!el) return;
-    el.value = k==='facestrength' ? 40 : 0;
-    $('v-'+k).textContent = el.value;
+    el.value = k==='facestrength' ? 40 : (k==='tiltshiftpos' ? 50 : 0);
+    $('v-'+k).textContent = el.value + (k==='motionangle' ? '°' : '');
   });
 }
 // Slider dragging must never re-run the full pipeline at full photo resolution
@@ -1912,6 +1926,123 @@ function setEyedropSwatch(hex){
   if(inp) inp.value = hex;
 }
 
+/* ============================== EFFECTS (Vignette/Grain/Glow/Fade/Blur variants) ============================== */
+function applyVignette(imgData, amount){
+  if(amount<=0) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const cx=w/2, cy=h/2, maxDist=Math.sqrt(cx*cx+cy*cy);
+  const strength = amount/100;
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      const dx=x-cx, dy=y-cy;
+      const dist = Math.sqrt(dx*dx+dy*dy)/maxDist;
+      const f = 1 - strength*Math.pow(clamp((dist-0.35)/0.65,0,1), 1.6);
+      const i=(y*w+x)*4;
+      data[i]*=f; data[i+1]*=f; data[i+2]*=f;
+    }
+  }
+  return imgData;
+}
+function applyGrain(imgData, amount){
+  if(amount<=0) return imgData;
+  const data = imgData.data;
+  const strength = amount/100*40;
+  for(let i=0;i<data.length;i+=4){
+    const n = (Math.random()-0.5)*strength;
+    data[i]=clamp(data[i]+n,0,255); data[i+1]=clamp(data[i+1]+n,0,255); data[i+2]=clamp(data[i+2]+n,0,255);
+  }
+  return imgData;
+}
+function applyGlow(imgData, amount){
+  if(amount<=0) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const blurred = gaussianApprox(data,w,h,8);
+  const strength = amount/100*0.6;
+  for(let i=0;i<data.length;i+=4){
+    for(let c=0;c<3;c++){
+      data[i+c] = clamp(data[i+c] + (255-data[i+c])*strength*(blurred[i+c]/255), 0, 255);
+    }
+  }
+  return imgData;
+}
+function applyFade(imgData, amount){
+  if(amount<=0) return imgData;
+  const data = imgData.data;
+  const strength = amount/100;
+  const liftAmt = strength*42, compressAmt = strength*0.22;
+  for(let i=0;i<data.length;i+=4){
+    for(let c=0;c<3;c++){
+      data[i+c] = clamp(liftAmt + data[i+c]*(1-compressAmt), 0, 255);
+    }
+  }
+  return imgData;
+}
+function applyGaussianBlurEffect(imgData, amount){
+  if(amount<=0) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const radius = Math.round(amount/100*12);
+  if(radius<=0) return imgData;
+  const blurred = gaussianApprox(data,w,h,radius);
+  for(let i=0;i<data.length;i+=4){ data[i]=blurred[i]; data[i+1]=blurred[i+1]; data[i+2]=blurred[i+2]; }
+  return imgData;
+}
+function motionBlur1D(src,w,h,angleRad,dist){
+  const out = new Float32Array(src.length);
+  const dx=Math.cos(angleRad), dy=Math.sin(angleRad);
+  const steps = Math.max(1,Math.round(dist));
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let r=0,g=0,b=0,n=0;
+      for(let sIdx=-steps;sIdx<=steps;sIdx++){
+        const sx=clamp(Math.round(x+dx*sIdx),0,w-1), sy=clamp(Math.round(y+dy*sIdx),0,h-1);
+        const idx=(sy*w+sx)*4;
+        r+=src[idx];g+=src[idx+1];b+=src[idx+2];n++;
+      }
+      const oi=(y*w+x)*4;
+      out[oi]=r/n; out[oi+1]=g/n; out[oi+2]=b/n; out[oi+3]=src[oi+3];
+    }
+  }
+  return out;
+}
+function applyMotionBlurEffect(imgData, amount, angleDeg){
+  if(amount<=0) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const dist = amount/100*14;
+  const blurred = motionBlur1D(data,w,h,angleDeg*Math.PI/180,dist);
+  for(let i=0;i<data.length;i+=4){ data[i]=blurred[i]; data[i+1]=blurred[i+1]; data[i+2]=blurred[i+2]; }
+  return imgData;
+}
+function applyTiltShift(imgData, amount, bandPos){
+  if(amount<=0) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const blurred = gaussianApprox(data,w,h,Math.round(amount/100*14));
+  const centerY = h*(bandPos/100);
+  const bandHeight = h*0.22;
+  for(let y=0;y<h;y++){
+    const distFromBand = Math.max(0, Math.abs(y-centerY)-bandHeight/2);
+    const blurAmt = clamp(distFromBand/(h*0.28), 0, 1);
+    if(blurAmt<=0) continue;
+    for(let x=0;x<w;x++){
+      const i=(y*w+x)*4;
+      for(let c=0;c<3;c++){ data[i+c] = data[i+c]*(1-blurAmt) + blurred[i+c]*blurAmt; }
+    }
+  }
+  return imgData;
+}
+function applyBackgroundBlur(imgData, amount, faceBoxes){
+  if(amount<=0 || !faceBoxes || !faceBoxes.length) return imgData;
+  const {data,width:w,height:h} = imgData;
+  const blurred = gaussianApprox(data,w,h,Math.round(amount/100*16));
+  const mask = buildFaceMask(w,h,faceBoxes);
+  for(let p=0;p<w*h;p++){
+    const keepSharp = mask[p];
+    if(keepSharp>=1) continue;
+    const i=p*4;
+    for(let c=0;c<3;c++){ data[i+c] = data[i+c]*keepSharp + blurred[i+c]*(1-keepSharp); }
+  }
+  return imgData;
+}
+
 function runManualPipeline(id, s, faceBoxes){
   const originalCopy = new ImageData(new Uint8ClampedArray(id.data), id.width, id.height);
   id = applyToneColor(id, s);
@@ -1928,6 +2059,16 @@ function runManualPipeline(id, s, faceBoxes){
   if(skinProtectEl && skinProtectEl.checked){
     id = applySkinToneProtection(id, originalCopy, 0.75);
   }
+  // Effects — final stylistic pass, applied after all correction/protection
+  // steps so vignette/grain/blur affect the whole photo as intended.
+  id = applyGaussianBlurEffect(id, s.gaussianblur);
+  id = applyMotionBlurEffect(id, s.motionblur, s.motionangle);
+  id = applyTiltShift(id, s.tiltshift, s.tiltshiftpos);
+  if(faceBoxes && faceBoxes.length) id = applyBackgroundBlur(id, s.bgblur, faceBoxes);
+  id = applyGlow(id, s.glow);
+  id = applyFade(id, s.fade);
+  id = applyVignette(id, s.vignette);
+  id = applyGrain(id, s.grain);
   return id;
 }
 let previewRaf = null;
@@ -2720,7 +2861,7 @@ function wireEvents(){
 
   SLIDER_IDS.forEach(k=>{
     const el = $('s-'+k); if(!el) return;
-    el.addEventListener('input', ()=>{ $('v-'+k).textContent = el.value; schedulePreview(); });
+    el.addEventListener('input', ()=>{ $('v-'+k).textContent = el.value + (k==='motionangle' ? '°' : ''); schedulePreview(); });
   });
   $('btnApplyManual').addEventListener('click', applyManualCommit);
 
