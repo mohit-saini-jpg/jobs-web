@@ -162,8 +162,13 @@ def detect_intent(html: str) -> str:
 # Old job-only headings that should never appear on a non-job page. Any page
 # carrying AI_MARKER + one of these headings was enriched before intent
 # detection existed and needs re-enrichment with type-appropriate content.
+# Anchored to actual <h2> heading tags (not any tag's text) — a generic
+# `>...<` match also caught these two phrases showing up incidentally in
+# ordinary body prose (e.g. article-intent text mentioning "job profile" as
+# a plain word), which would flag an already-correctly-healed page as still
+# needing reheal forever, burning API budget on a page with no real bug.
 _OLD_JOB_ONLY_HEADING_RE = re.compile(
-    r">[^<]*\bSalary Insights\b[^<]*<|>[^<]*\bJob Profile\b[^<]*<", re.I)
+    r"<h2[^>]*>[^<]*\bSalary Insights\b[^<]*</h2>|<h2[^>]*>[^<]*\bJob Profile\b[^<]*</h2>", re.I)
 
 def needs_reheal(html: str, intent: str) -> bool:
     if intent == "job":
