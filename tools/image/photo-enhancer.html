@@ -229,6 +229,7 @@
       <button class="mode-tab" data-mode="passport">🪪 Passport Photo</button>
       <button class="mode-tab" data-mode="document">📄 Document</button>
       <button class="mode-tab" data-mode="oldphoto">🖼️ Old Photo</button>
+      <button class="mode-tab" data-mode="text">🔤 Text / Watermark</button>
     </div>
 
     <div class="workspace">
@@ -238,6 +239,7 @@
           <button class="tbtn" id="btnRedo" disabled><i class="fa-solid fa-rotate-right"></i> Redo</button>
           <button class="tbtn" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
           <button class="tbtn" id="btnCompare"><i class="fa-solid fa-code-compare"></i> Before/After</button>
+          <button class="tbtn" id="btnCompareSide"><i class="fa-solid fa-table-columns"></i> Side by Side</button>
           <button class="tbtn" id="btnZoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
           <button class="tbtn" id="btnZoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
           <button class="tbtn" id="btnFullscreen"><i class="fa-solid fa-expand"></i> Fullscreen</button>
@@ -268,6 +270,12 @@
         <div class="mode-panel" id="panel-auto">
           <div class="slider-head" style="margin-bottom:10px"><label style="font-size:.85rem;text-transform:none;letter-spacing:0;color:var(--ink)"><i class="fa-solid fa-sliders" style="color:var(--brand)"></i> Photo Adjust Karein</label></div>
           <button class="enhance-btn" id="btnPaAuto"><i class="fa-solid fa-wand-magic-sparkles"></i> <span class="txt">Auto Enhance — Ek Click Mein Clear &amp; Sharp</span></button>
+
+          <div class="btn-row" style="margin-top:10px">
+            <button type="button" class="btn" id="btnLowLight" style="flex:1"><i class="fa-solid fa-moon"></i> Low-Light Fix</button>
+            <button type="button" class="btn" id="btnReduceArtifacts" style="flex:1"><i class="fa-solid fa-table-cells"></i> Reduce JPEG Artifacts</button>
+          </div>
+          <div class="info-note">Low-Light Fix brightens shadows &amp; recovers detail for dim/night photos. Reduce JPEG Artifacts smooths blocky compression noise from WhatsApp/Facebook-downloaded images (classical smoothing, not a neural model).</div>
 
           <div style="margin-top:16px">
             <div class="slider-head" style="margin-bottom:8px"><label>Filters</label></div>
@@ -484,6 +492,30 @@
         <div class="mode-panel" id="panel-oldphoto" style="display:none">
           <button class="btn primary block" id="btnOldPhotoApply"><i class="fa-solid fa-clock-rotate-left"></i> Restore Old Photo</button>
           <div class="info-note">Recovers faded colors, lifts contrast, reduces dust/speckle noise and neutralizes yellow/sepia color-cast from old prints.</div>
+        </div>
+
+        <!-- TEXT / WATERMARK MODE -->
+        <div class="mode-panel" id="panel-text" style="display:none">
+          <div class="field-row"><label>Text</label><input type="text" id="txtContent" placeholder="Your text or watermark..." maxlength="120"></div>
+          <div class="slider-group"><div class="slider-head"><label>Font Size</label><span class="slider-val" id="v-txtSize">40</span></div><input type="range" id="txtSize" min="10" max="200" value="40"></div>
+          <div class="field-row"><label>Color</label><input type="color" id="txtColor" value="#ffffff" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer"></div>
+          <div class="slider-group"><div class="slider-head"><label>Opacity</label><span class="slider-val" id="v-txtOpacity">100</span></div><input type="range" id="txtOpacity" min="10" max="100" value="100"></div>
+          <div class="field-row"><label>Position</label>
+            <div class="seg-row" id="txtPosSeg" style="grid-template-columns:repeat(3,1fr);gap:5px">
+              <div class="seg-opt" data-pos="tl"><i class="fa-solid fa-arrow-up-left"></i></div>
+              <div class="seg-opt" data-pos="tc"><i class="fa-solid fa-arrow-up"></i></div>
+              <div class="seg-opt" data-pos="tr"><i class="fa-solid fa-arrow-up-right"></i></div>
+              <div class="seg-opt" data-pos="cl"><i class="fa-solid fa-arrow-left"></i></div>
+              <div class="seg-opt active" data-pos="cc"><i class="fa-solid fa-circle" style="font-size:.5rem"></i></div>
+              <div class="seg-opt" data-pos="cr"><i class="fa-solid fa-arrow-right"></i></div>
+              <div class="seg-opt" data-pos="bl"><i class="fa-solid fa-arrow-down-left"></i></div>
+              <div class="seg-opt" data-pos="bc"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="seg-opt" data-pos="br"><i class="fa-solid fa-arrow-down-right"></i></div>
+            </div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--ink);margin:12px 0"><input type="checkbox" id="txtShadow" checked> Add shadow (visible on any background)</label>
+          <button class="btn primary block" id="btnTxtApply"><i class="fa-solid fa-font"></i> Add Text to Photo</button>
+          <div class="info-note">Quick watermark: Opacity ~40-50%, position Bottom-Right, keep text short.</div>
         </div>
 
         <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
@@ -2528,6 +2560,75 @@ async function applyOldPhotoRestore(){
   toast('Old photo restored');
 }
 
+/* ============================== LOW-LIGHT FIX / JPEG ARTIFACT REDUCTION ============================== */
+// Classical shadow-lift + exposure recovery, tuned more aggressively than
+// the general Auto Enhance for genuinely dim/night photos.
+function applyLowLightFix(){
+  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+  let id = new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height);
+  id = applyToneColor(id, {brightness:22,contrast:10,exposure:22,highlights:-20,shadows:40,gamma:-10,saturation:8,vibrance:16,temperature:0,tint:0});
+  id = applyDenoise(id, 35); // brightened shadows reveal sensor noise — smooth it back down
+  id = applySharpenClarityTexture(id, 20, 8, 4);
+  setCanvasSize(id.width, id.height);
+  putData(id);
+  state.baseImageData = getData();
+  pushHistory();
+  toast('Low-light photo brightened ✓');
+}
+// Classical edge-preserving smoothing tuned for JPEG block-boundary noise
+// (the blocky/mosquito-noise look from repeatedly-recompressed WhatsApp/
+// Facebook images) — NOT a neural deblocking model, just denoise+sharpen
+// tuned for this specific artifact.
+function applyReduceArtifacts(){
+  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+  let id = new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height);
+  id = applyDenoise(id, 45);
+  id = applySharpenClarityTexture(id, 15, 0, 0);
+  setCanvasSize(id.width, id.height);
+  putData(id);
+  state.baseImageData = getData();
+  pushHistory();
+  toast('Compression artifacts reduced ✓');
+}
+
+/* ============================== TEXT / WATERMARK OVERLAY ============================== */
+function applyTextOverlay(){
+  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+  const text = $('txtContent').value.trim();
+  if(!text){ toast('Text daalein', true); return; }
+  const size = Number($('txtSize').value);
+  const color = $('txtColor').value;
+  const opacity = Number($('txtOpacity').value)/100;
+  const posEl = document.querySelector('#txtPosSeg .seg-opt.active');
+  const pos = posEl ? posEl.dataset.pos : 'cc';
+  const shadow = $('txtShadow').checked;
+
+  const w = state.baseImageData.width, h = state.baseImageData.height;
+  setCanvasSize(w,h);
+  putData(state.baseImageData);
+  ctx.font = `700 ${size}px 'Space Grotesk', sans-serif`;
+  ctx.textBaseline = 'alphabetic';
+  const tw = ctx.measureText(text).width;
+  const pad = size*0.4;
+  let x,y;
+  if(pos[0]==='t') y = pad+size*0.8;
+  else if(pos[0]==='c') y = h/2+size*0.3;
+  else y = h-pad;
+  if(pos[1]==='l') x = pad;
+  else if(pos[1]==='c') x = (w-tw)/2;
+  else x = w-tw-pad;
+
+  ctx.globalAlpha = opacity;
+  if(shadow){ ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillText(text, x+2, y+2); }
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.globalAlpha = 1;
+
+  state.baseImageData = getData();
+  pushHistory();
+  toast('Text added ✓');
+}
+
 /* ============================== BEFORE/AFTER SPLIT & ZOOM & FULLSCREEN ============================== */
 function getFullResCanvas(){
   if(!state.baseImageData) return state.canvas;
@@ -2537,6 +2638,7 @@ function getFullResCanvas(){
   return tmp;
 }
 function toggleCompare(){
+  if(state.sideCompareOn) toggleSideCompare(); // mutually exclusive with side-by-side
   state.compareOn = !state.compareOn;
   $('splitWrap').classList.toggle('show', state.compareOn);
   state.canvas.style.display = state.compareOn ? 'none' : '';
@@ -2548,6 +2650,27 @@ function toggleCompare(){
     ac.getContext('2d').drawImage(full,0,0);
     $('splitBefore').style.width = full.width+'px';
     ac.style.width = full.width+'px';
+  }
+}
+function toggleSideCompare(){
+  if(state.compareOn) toggleCompare(); // mutually exclusive with slider-split compare
+  state.sideCompareOn = !state.sideCompareOn;
+  let wrap = $('sideCompareWrap');
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.id = 'sideCompareWrap';
+    wrap.style.cssText = 'display:none;gap:10px;margin-bottom:14px';
+    wrap.innerHTML = '<div style="flex:1;text-align:center;min-width:0"><div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.04em">BEFORE</div><img id="sideBefore" style="max-width:100%;border-radius:8px;display:block;margin:0 auto"></div><div style="flex:1;text-align:center;min-width:0"><div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.04em">AFTER</div><canvas id="sideAfter" style="max-width:100%;border-radius:8px;display:block;margin:0 auto"></canvas></div>';
+    $('canvasWrap').parentNode.insertBefore(wrap, $('canvasWrap'));
+  }
+  wrap.style.display = state.sideCompareOn ? 'flex' : 'none';
+  $('canvasWrap').style.display = state.sideCompareOn ? 'none' : '';
+  if(state.sideCompareOn){
+    const full = getFullResCanvas();
+    $('sideBefore').src = state.originalDataURL;
+    const ac = $('sideAfter');
+    ac.width = full.width; ac.height = full.height;
+    ac.getContext('2d').drawImage(full,0,0);
   }
 }
 function initSplitDrag(){
@@ -2915,11 +3038,33 @@ function wireEvents(){
   $('btnPassportAuto').addEventListener('click', passportAutoMode);
   $('btnDocApply').addEventListener('click', ()=>applyDocumentMode($('docType').value));
   $('btnOldPhotoApply').addEventListener('click', applyOldPhotoRestore);
+  $('btnLowLight').addEventListener('click', applyLowLightFix);
+  $('btnReduceArtifacts').addEventListener('click', applyReduceArtifacts);
+
+  $('txtSize').addEventListener('input', function(){ $('v-txtSize').textContent = this.value; });
+  $('txtOpacity').addEventListener('input', function(){ $('v-txtOpacity').textContent = this.value; });
+  document.querySelectorAll('#txtPosSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
+    document.querySelectorAll('#txtPosSeg .seg-opt').forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+  }));
+  $('btnTxtApply').addEventListener('click', applyTextOverlay);
 
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
   $('btnReset').addEventListener('click', resetToOriginal);
   $('btnCompare').addEventListener('click', toggleCompare);
+  $('btnCompareSide').addEventListener('click', toggleSideCompare);
+
+  // Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y / Ctrl+Shift+Z redo, Ctrl+S download.
+  document.addEventListener('keydown', e=>{
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    if(tag==='INPUT' || tag==='TEXTAREA') return; // don't hijack typing in text fields
+    if(!(e.ctrlKey || e.metaKey)) return;
+    const key = e.key.toLowerCase();
+    if(key==='z' && !e.shiftKey){ e.preventDefault(); undo(); }
+    else if((key==='y') || (key==='z' && e.shiftKey)){ e.preventDefault(); redo(); }
+    else if(key==='s'){ e.preventDefault(); downloadCurrent(); }
+  });
   $('btnZoomIn').addEventListener('click', ()=>applyZoom(0.2));
   $('btnZoomOut').addEventListener('click', ()=>applyZoom(-0.2));
   $('btnFullscreen').addEventListener('click', openFullscreen);
