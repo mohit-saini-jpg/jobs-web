@@ -344,7 +344,59 @@
           <div class="slider-group"><div class="slider-head"><label>Dehaze</label><span class="slider-val" id="v-dehaze">0</span></div><input type="range" id="s-dehaze" min="0" max="100" value="0"></div>
           <div class="slider-group"><div class="slider-head"><label>HDR Effect</label><span class="slider-val" id="v-hdr">0</span></div><input type="range" id="s-hdr" min="0" max="100" value="0"></div>
           <div class="slider-group" id="faceStrengthGroup" style="display:none"><div class="slider-head"><label>Face Enhancement</label><span class="slider-val" id="v-facestrength">40</span></div><input type="range" id="s-facestrength" min="0" max="100" value="40"></div>
-          <button class="btn block" id="btnApplyManual"><i class="fa-solid fa-check"></i> Apply Adjustments</button>
+          <div class="slider-group" id="skinProtectGroup" style="display:none">
+            <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:6px;text-transform:none;letter-spacing:0"><input type="checkbox" id="skinProtect" checked> Skin Tone Protection</label>
+            <div class="info-note">Keeps detected skin tones natural while Saturation/Vibrance/HSL/Curves are applied to the rest of the photo.</div>
+          </div>
+
+          <hr style="border:none;border-top:1px dashed var(--line);margin:18px 0">
+          <div class="field-row">
+            <label>Histogram <span id="histClipInfo" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--warn)"></span></label>
+            <canvas id="histCanvas" width="280" height="80" style="width:100%;height:80px;border:1px solid var(--line);border-radius:8px;background:var(--mist);display:block"></canvas>
+          </div>
+
+          <div class="field-row" style="margin-top:14px">
+            <label>Color Picker (Eyedropper)</label>
+            <div class="btn-row" style="align-items:center">
+              <button type="button" class="btn" id="btnEyedropper" style="flex:1"><i class="fa-solid fa-eye-dropper"></i> Pick Color</button>
+              <div id="eyedropSwatch" style="width:38px;height:38px;border-radius:8px;border:1.5px solid var(--line);background:#fff;flex-shrink:0"></div>
+              <input type="text" id="eyedropHex" value="—" readonly style="width:88px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.8rem;text-align:center;background:var(--mist);font-family:monospace">
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-top:14px">
+            <label>Tone Curve (RGB / Red / Green / Blue)</label>
+            <div class="seg-row" id="curveChannelSeg" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+              <div class="seg-opt active" data-ch="rgb">RGB</div>
+              <div class="seg-opt" data-ch="r">Red</div>
+              <div class="seg-opt" data-ch="g">Green</div>
+              <div class="seg-opt" data-ch="b">Blue</div>
+            </div>
+            <canvas id="curveCanvas" width="280" height="220" style="width:100%;max-height:220px;border:1px solid var(--line);border-radius:8px;background:var(--mist);touch-action:none;cursor:crosshair;display:block"></canvas>
+            <div class="info-note">Curve par click karke point add karein, drag karke shape karein. Double-click se point hataayein.</div>
+          </div>
+          <button type="button" class="btn block" id="btnCurveReset" style="margin-top:8px"><i class="fa-solid fa-rotate-right"></i> Reset Curve</button>
+
+          <div class="field-row" style="margin-top:16px">
+            <label>HSL — Hue / Saturation / Luminance by Color</label>
+            <div class="seg-row" id="hslRangeSeg" style="grid-template-columns:repeat(3,1fr)">
+              <div class="seg-opt active" data-range="reds">Reds</div>
+              <div class="seg-opt" data-range="yellows">Yellows</div>
+              <div class="seg-opt" data-range="greens">Greens</div>
+              <div class="seg-opt" data-range="cyans">Cyans</div>
+              <div class="seg-opt" data-range="blues">Blues</div>
+              <div class="seg-opt" data-range="magentas">Magentas</div>
+            </div>
+          </div>
+          <div class="slider-group"><div class="slider-head"><label>Hue</label><span class="slider-val" id="v-hslH">0</span></div><input type="range" id="s-hslH" min="-100" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Saturation</label><span class="slider-val" id="v-hslS">0</span></div><input type="range" id="s-hslS" min="-100" max="100" value="0"></div>
+          <div class="slider-group"><div class="slider-head"><label>Luminance</label><span class="slider-val" id="v-hslL">0</span></div><input type="range" id="s-hslL" min="-100" max="100" value="0"></div>
+          <div class="btn-row">
+            <button type="button" class="btn" id="btnHslResetCurrent">Reset This Color</button>
+            <button type="button" class="btn" id="btnHslResetAll">Reset All Colors</button>
+          </div>
+
+          <button class="btn block" id="btnApplyManual" style="margin-top:16px"><i class="fa-solid fa-check"></i> Apply Adjustments</button>
         </div>
 
         <!-- CROP MODE -->
@@ -727,6 +779,7 @@ async function runAutoAnalysis(){
   state.lastAnalysis = { w, h, meanLum, blurVar, isBlurry, isDark, isLowRes, faceCount, faceBoxes };
   renderAnalysisChips(state.lastAnalysis);
   $('faceStrengthGroup').style.display = faceCount>0 ? '' : 'none';
+  $('skinProtectGroup').style.display = faceCount>0 ? '' : 'none';
 }
 
 function landmarksToBox(lm, w, h){
@@ -1552,14 +1605,328 @@ function exitManualPreviewMode(){
   previewSmallData = null;
   resetManualSliders();
 }
+/* ============================== TONE CURVE (RGB / R / G / B) ============================== */
+let curveChannel = 'rgb';
+const curvePoints = {
+  rgb: [{x:0,y:0},{x:255,y:255}], r: [{x:0,y:0},{x:255,y:255}],
+  g: [{x:0,y:0},{x:255,y:255}], b: [{x:0,y:0},{x:255,y:255}],
+};
+function curveIsNeutral(ch){
+  const p = curvePoints[ch];
+  return p.length===2 && p[0].x===0 && p[0].y===0 && p[1].x===255 && p[1].y===255;
+}
+function curvesAreNeutral(){ return ['rgb','r','g','b'].every(curveIsNeutral); }
+function buildCurveLUT(points){
+  const pts = points.slice().sort((a,b)=>a.x-b.x);
+  const lut = new Uint8ClampedArray(256);
+  for(let x=0;x<256;x++){
+    let i=0;
+    while(i<pts.length-2 && pts[i+1].x<x) i++;
+    const p0=pts[i], p1=pts[i+1];
+    const t = (p1.x===p0.x) ? 0 : (x-p0.x)/(p1.x-p0.x);
+    lut[x] = clamp(p0.y + (p1.y-p0.y)*t, 0, 255);
+  }
+  return lut;
+}
+function applyCurves(imgData){
+  if(curvesAreNeutral()) return imgData;
+  const lutRGB=buildCurveLUT(curvePoints.rgb), lutR=buildCurveLUT(curvePoints.r), lutG=buildCurveLUT(curvePoints.g), lutB=buildCurveLUT(curvePoints.b);
+  const d = imgData.data;
+  for(let i=0;i<d.length;i+=4){
+    d[i]   = lutR[lutRGB[d[i]]];
+    d[i+1] = lutG[lutRGB[d[i+1]]];
+    d[i+2] = lutB[lutRGB[d[i+2]]];
+  }
+  return imgData;
+}
+function renderCurveCanvas(){
+  const canvas = $('curveCanvas'); if(!canvas) return;
+  const w=canvas.width, h=canvas.height;
+  const cc = canvas.getContext('2d');
+  cc.clearRect(0,0,w,h);
+  cc.strokeStyle='#e2e8f0'; cc.lineWidth=1;
+  for(let i=1;i<4;i++){
+    cc.beginPath(); cc.moveTo(i*w/4,0); cc.lineTo(i*w/4,h); cc.stroke();
+    cc.beginPath(); cc.moveTo(0,i*h/4); cc.lineTo(w,i*h/4); cc.stroke();
+  }
+  cc.strokeStyle='#cbd5e1'; cc.setLineDash([4,4]);
+  cc.beginPath(); cc.moveTo(0,h); cc.lineTo(w,0); cc.stroke();
+  cc.setLineDash([]);
+  const chColor = {rgb:'#345de6',r:'#ef4444',g:'#22c55e',b:'#3b82f6'}[curveChannel];
+  const lut = buildCurveLUT(curvePoints[curveChannel]);
+  cc.strokeStyle = chColor; cc.lineWidth = 2.5;
+  cc.beginPath();
+  for(let x=0;x<256;x++){
+    const px=x/255*w, py=h-(lut[x]/255*h);
+    if(x===0) cc.moveTo(px,py); else cc.lineTo(px,py);
+  }
+  cc.stroke();
+  curvePoints[curveChannel].forEach(p=>{
+    const px=p.x/255*w, py=h-(p.y/255*h);
+    cc.beginPath(); cc.arc(px,py,6,0,Math.PI*2);
+    cc.fillStyle='#fff'; cc.fill();
+    cc.lineWidth=2; cc.strokeStyle=chColor; cc.stroke();
+  });
+}
+let curveDragIdx = -1;
+function curveCanvasToPoint(canvas, clientX, clientY){
+  const r = canvas.getBoundingClientRect();
+  const x = clamp(Math.round((clientX-r.left)/r.width*255), 0, 255);
+  const y = clamp(Math.round(255-(clientY-r.top)/r.height*255), 0, 255);
+  return {x,y};
+}
+function wireCurveEditor(){
+  const canvas = $('curveCanvas'); if(!canvas) return;
+  canvas.addEventListener('pointerdown', e=>{
+    const pt = curveCanvasToPoint(canvas, e.clientX, e.clientY);
+    const pts = curvePoints[curveChannel];
+    let nearest=-1, nearestD=Infinity;
+    pts.forEach((p,i)=>{
+      const r=canvas.getBoundingClientRect();
+      const dx=(p.x-pt.x)/255*r.width, dy=(p.y-pt.y)/255*r.height;
+      const d2=dx*dx+dy*dy;
+      if(d2<nearestD){nearestD=d2;nearest=i;}
+    });
+    if(nearestD < 18*18){ curveDragIdx = nearest; }
+    else{
+      pts.push(pt); pts.sort((a,b)=>a.x-b.x);
+      curveDragIdx = pts.indexOf(pt);
+    }
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+    renderCurveCanvas();
+    schedulePreview();
+  });
+  canvas.addEventListener('pointermove', e=>{
+    if(curveDragIdx<0) return;
+    const pt = curveCanvasToPoint(canvas, e.clientX, e.clientY);
+    const pts = curvePoints[curveChannel];
+    // keep endpoints pinned at x=0 / x=255, only interior points can move in x
+    if(curveDragIdx===0) pt.x=0;
+    if(curveDragIdx===pts.length-1) pt.x=255;
+    pts[curveDragIdx] = pt;
+    renderCurveCanvas();
+    schedulePreview();
+  });
+  function endDrag(){ curveDragIdx=-1; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('dblclick', e=>{
+    const pt = curveCanvasToPoint(canvas, e.clientX, e.clientY);
+    const pts = curvePoints[curveChannel];
+    if(pts.length<=2) return;
+    const r=canvas.getBoundingClientRect();
+    let nearest=-1, nearestD=Infinity;
+    pts.forEach((p,i)=>{
+      if(i===0||i===pts.length-1) return; // never remove endpoints
+      const dx=(p.x-pt.x)/255*r.width, dy=(p.y-pt.y)/255*r.height;
+      const d2=dx*dx+dy*dy;
+      if(d2<nearestD){nearestD=d2;nearest=i;}
+    });
+    if(nearest>=0 && nearestD<20*20){ pts.splice(nearest,1); renderCurveCanvas(); schedulePreview(); }
+  });
+  document.querySelectorAll('#curveChannelSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
+    document.querySelectorAll('#curveChannelSeg .seg-opt').forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+    curveChannel = o.dataset.ch;
+    renderCurveCanvas();
+  }));
+  $('btnCurveReset').addEventListener('click', ()=>{
+    ['rgb','r','g','b'].forEach(ch=>{ curvePoints[ch]=[{x:0,y:0},{x:255,y:255}]; });
+    renderCurveCanvas();
+    schedulePreview();
+  });
+  renderCurveCanvas();
+}
+
+/* ============================== HSL (per-color-range Hue/Saturation/Luminance) ============================== */
+const HSL_RANGES = ['reds','yellows','greens','cyans','blues','magentas'];
+const HSL_HUE_CENTERS = {reds:0, yellows:60, greens:120, cyans:180, blues:240, magentas:300};
+const hslValues = {}; HSL_RANGES.forEach(r=>{ hslValues[r]={h:0,s:0,l:0}; });
+let hslCurrentRange = 'reds';
+function hslAllNeutral(){ return HSL_RANGES.every(r=>!hslValues[r].h && !hslValues[r].s && !hslValues[r].l); }
+function rgbToHslF(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b); let h=0,s=0; const l=(max+min)/2;
+  if(max!==min){
+    const d=max-min;
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    if(max===r) h=(g-b)/d+(g<b?6:0);
+    else if(max===g) h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h*=60;
+  }
+  return [h,s,l];
+}
+function hslToRgbF(h,s,l){
+  h=((h%360)+360)%360; h/=360;
+  if(s===0){ const v=Math.round(l*255); return [v,v,v]; }
+  const q = l<0.5 ? l*(1+s) : l+s-l*s;
+  const p = 2*l-q;
+  function hue2rgb(t){
+    if(t<0)t+=1; if(t>1)t-=1;
+    if(t<1/6) return p+(q-p)*6*t;
+    if(t<1/2) return q;
+    if(t<2/3) return p+(q-p)*(2/3-t)*6;
+    return p;
+  }
+  return [Math.round(hue2rgb(h+1/3)*255), Math.round(hue2rgb(h)*255), Math.round(hue2rgb(h-1/3)*255)];
+}
+function hueWeightPE(hue,center){
+  let d=Math.abs(hue-center); d=Math.min(d,360-d);
+  return Math.max(0,1-d/60);
+}
+function applyHSLRanges(imgData){
+  if(hslAllNeutral()) return imgData;
+  const d = imgData.data;
+  for(let i=0;i<d.length;i+=4){
+    const [h,s,l] = rgbToHslF(d[i],d[i+1],d[i+2]);
+    if(s<0.04) continue; // near-gray pixels don't belong to any hue range
+    let hh=h, ss=s, ll=l;
+    for(const rangeName of HSL_RANGES){
+      const v = hslValues[rangeName];
+      if(!v.h && !v.s && !v.l) continue;
+      const w = hueWeightPE(h, HSL_HUE_CENTERS[rangeName]) * s;
+      if(w<=0) continue;
+      hh = hh + (v.h/100*30)*w;
+      ss = clamp(ss + (v.s/100)*w, 0, 1);
+      ll = clamp(ll + (v.l/100*0.5)*w, 0, 1);
+    }
+    const [r2,g2,b2] = hslToRgbF(hh,ss,ll);
+    d[i]=r2; d[i+1]=g2; d[i+2]=b2;
+  }
+  return imgData;
+}
+function syncHslSlidersUI(){
+  const v = hslValues[hslCurrentRange];
+  $('s-hslH').value=v.h; $('v-hslH').textContent=v.h;
+  $('s-hslS').value=v.s; $('v-hslS').textContent=v.s;
+  $('s-hslL').value=v.l; $('v-hslL').textContent=v.l;
+}
+function wireHslPanel(){
+  document.querySelectorAll('#hslRangeSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
+    document.querySelectorAll('#hslRangeSeg .seg-opt').forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+    hslCurrentRange = o.dataset.range;
+    syncHslSlidersUI();
+  }));
+  ['H','S','L'].forEach(k=>{
+    $('s-hsl'+k).addEventListener('input', function(){
+      hslValues[hslCurrentRange][k.toLowerCase()] = Number(this.value);
+      $('v-hsl'+k).textContent = this.value;
+      schedulePreview();
+    });
+  });
+  $('btnHslResetCurrent').addEventListener('click', ()=>{
+    hslValues[hslCurrentRange] = {h:0,s:0,l:0};
+    syncHslSlidersUI();
+    schedulePreview();
+  });
+  $('btnHslResetAll').addEventListener('click', ()=>{
+    HSL_RANGES.forEach(r=>{ hslValues[r]={h:0,s:0,l:0}; });
+    syncHslSlidersUI();
+    schedulePreview();
+  });
+}
+
+/* ============================== SKIN TONE PROTECTION ============================== */
+// A classic RGB-space skin-tone heuristic (not face-landmark-dependent, so
+// it still helps even when face detection didn't find anything) — used to
+// blend Saturation/Vibrance/Curves/HSL adjustments back toward the
+// ORIGINAL pixel wherever skin is likely, so global adjustments don't push
+// faces orange/red/plastic-looking.
+function skinLikelihood(r,g,b){
+  if(r<=g || r<=b) return 0;
+  const diff = Math.max(r,g,b)-Math.min(r,g,b);
+  let score = 0;
+  score += clamp((r-95)/60,0,1);
+  score += clamp((diff-15)/40,0,1);
+  score += clamp((r-g-15)/40,0,1);
+  return clamp(score/3,0,1);
+}
+function applySkinToneProtection(adjustedData, originalData, strength){
+  if(strength<=0) return adjustedData;
+  const ad=adjustedData.data, od=originalData.data;
+  for(let i=0;i<ad.length;i+=4){
+    const sk = skinLikelihood(od[i],od[i+1],od[i+2]);
+    if(sk<=0) continue;
+    const blend = sk*strength;
+    ad[i]   = od[i]   + (ad[i]  -od[i])  *(1-blend);
+    ad[i+1] = od[i+1] + (ad[i+1]-od[i+1])*(1-blend);
+    ad[i+2] = od[i+2] + (ad[i+2]-od[i+2])*(1-blend);
+  }
+  return adjustedData;
+}
+
+/* ============================== HISTOGRAM ============================== */
+function renderHistogram(){
+  const canvas = $('histCanvas'); if(!canvas) return;
+  const src = state.canvas; if(!src || !src.width) return;
+  const w=canvas.width, h=canvas.height;
+  const hc = canvas.getContext('2d');
+  hc.clearRect(0,0,w,h);
+  const data = ctx.getImageData(0,0,src.width,src.height).data;
+  const rHist=new Array(256).fill(0), gHist=new Array(256).fill(0), bHist=new Array(256).fill(0);
+  const step = Math.max(4, Math.floor(data.length/4/60000)*4);
+  let clippedShadow=0, clippedHighlight=0, total=0;
+  for(let i=0;i<data.length;i+=step){
+    rHist[data[i]]++; gHist[data[i+1]]++; bHist[data[i+2]]++;
+    const lum=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+    if(lum<=2)clippedShadow++; if(lum>=253)clippedHighlight++;
+    total++;
+  }
+  const maxV = Math.max(Math.max(...rHist),Math.max(...gHist),Math.max(...bHist)) || 1;
+  function drawChan(hist,color){
+    hc.beginPath(); hc.moveTo(0,h);
+    for(let x=0;x<256;x++){ hc.lineTo(x/255*w, h-(hist[x]/maxV)*h); }
+    hc.lineTo(w,h); hc.closePath();
+    hc.fillStyle=color; hc.fill();
+  }
+  hc.globalCompositeOperation='lighten';
+  drawChan(rHist,'rgba(255,70,70,.6)');
+  drawChan(gHist,'rgba(60,210,110,.6)');
+  drawChan(bHist,'rgba(70,130,255,.6)');
+  hc.globalCompositeOperation='source-over';
+  const shadowPct=(clippedShadow/total*100), highlightPct=(clippedHighlight/total*100);
+  let warn='';
+  if(shadowPct>1) warn += ` ⚠ ${shadowPct.toFixed(1)}% shadow clipping`;
+  if(highlightPct>1) warn += ` ⚠ ${highlightPct.toFixed(1)}% highlight clipping`;
+  const info=$('histClipInfo'); if(info) info.textContent=warn;
+}
+
+/* ============================== EYEDROPPER ============================== */
+async function pickEyedropperColor(){
+  if(window.EyeDropper){
+    try{
+      const ed = new EyeDropper();
+      const result = await ed.open();
+      setEyedropSwatch(result.sRGBHex);
+    }catch(e){ /* user cancelled the native picker */ }
+    return;
+  }
+  toast('Photo par kahin bhi click karke color pick karein');
+  state.eyedropPending = true;
+}
+function setEyedropSwatch(hex){
+  const sw=$('eyedropSwatch'), inp=$('eyedropHex');
+  if(sw) sw.style.background = hex;
+  if(inp) inp.value = hex;
+}
+
 function runManualPipeline(id, s, faceBoxes){
+  const originalCopy = new ImageData(new Uint8ClampedArray(id.data), id.width, id.height);
   id = applyToneColor(id, s);
+  id = applyCurves(id);
+  id = applyHSLRanges(id);
   id = applyDenoise(id, s.denoise);
   id = applyDehaze(id, s.dehaze);
   id = applyHDR(id, s.hdr);
   id = applySharpenClarityTexture(id, s.sharpen, s.clarity, s.texture);
   if(faceBoxes && faceBoxes.length){
     id = applyFaceAwareEnhance(id, faceBoxes, s.facestrength);
+  }
+  const skinProtectEl = $('skinProtect');
+  if(skinProtectEl && skinProtectEl.checked){
+    id = applySkinToneProtection(id, originalCopy, 0.75);
   }
   return id;
 }
@@ -1579,6 +1946,7 @@ function renderManualPreview(){
   }
   id = runManualPipeline(id, s, faceBoxes);
   putData(id);
+  renderHistogram();
 }
 async function applyManualCommit(){
   if(!state.baseImageData) return;
@@ -1594,7 +1962,12 @@ async function applyManualCommit(){
   state.baseImageData = getData();
   pushHistory();
   resetManualSliders();
+  ['rgb','r','g','b'].forEach(ch=>{ curvePoints[ch]=[{x:0,y:0},{x:255,y:255}]; });
+  HSL_RANGES.forEach(r=>{ hslValues[r]={h:0,s:0,l:0}; });
+  syncHslSlidersUI();
+  renderCurveCanvas();
   enterManualPreviewMode();
+  renderHistogram();
   btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Apply Adjustments';
   toast('Adjustments applied ✓');
 }
@@ -2295,7 +2668,7 @@ function switchMode(mode){
   document.querySelectorAll('.mode-panel').forEach(p=>p.style.display='none');
   const panel = $('panel-'+mode); if(panel) panel.style.display='';
   if(mode==='crop' && state.canvas.width) initCropper();
-  if(mode==='manual' && state.baseImageData) enterManualPreviewMode();
+  if(mode==='manual' && state.baseImageData){ enterManualPreviewMode(); renderHistogram(); renderCurveCanvas(); syncHslSlidersUI(); }
   if(mode==='auto' && state.baseImageData){ paRefreshSource(); paRenderFilterThumbnails(); }
 }
 
@@ -2426,6 +2799,20 @@ function wireEvents(){
   });
 
   initSplitDrag();
+  wireCurveEditor();
+  wireHslPanel();
+  $('btnEyedropper').addEventListener('click', pickEyedropperColor);
+  state.canvas.addEventListener('click', e=>{
+    if(!state.eyedropPending) return;
+    state.eyedropPending = false;
+    const r = state.canvas.getBoundingClientRect();
+    const sx = state.canvas.width/r.width, sy = state.canvas.height/r.height;
+    const x = clamp(Math.round((e.clientX-r.left)*sx), 0, state.canvas.width-1);
+    const y = clamp(Math.round((e.clientY-r.top)*sy), 0, state.canvas.height-1);
+    const px = ctx.getImageData(x,y,1,1).data;
+    const hex = '#'+[px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+    setEyedropSwatch(hex);
+  });
   populateSizePreset();
   if(window.enhancePresetSelect) enhancePresetSelect('sizePreset', {title:'Quick Size Preset Chunein'});
 }
