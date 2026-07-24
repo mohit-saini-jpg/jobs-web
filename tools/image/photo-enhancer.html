@@ -132,6 +132,7 @@
     .stab.done .sn{background:var(--success);color:#fff}
     .step-actions{display:flex;gap:8px;margin-top:18px}
     .step-actions .btn{flex:1}
+    .step-topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 
     .enhance-btn{width:100%;padding:15px;border:none;border-radius:11px;background:linear-gradient(135deg,#345de6,#7c3aed);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 6px 20px rgba(52,93,230,.35);transition:transform .15s}
     .enhance-btn:hover{transform:translateY(-1px)}
@@ -279,6 +280,10 @@
   </div>
 
   <div class="card" id="workCard" style="display:none">
+    <div class="step-topnav">
+      <button type="button" class="btn" id="btnStepBack" disabled><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <button type="button" class="btn primary" id="btnStepNext">Next <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
     <div class="analysis-row" id="analysisRow"></div>
 
     <div class="step-tabs" id="stepTabs">
@@ -349,19 +354,21 @@
             <button class="btn" id="btnFlipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
           </div>
           <button class="btn primary block" id="btnCropApply" style="margin-top:10px"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
-          <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Click Apply Crop when ready.</div>
-          <div class="field-row" style="margin-top:14px"><label>Resize Width (px)</label><input type="number" id="resizeW" placeholder="e.g. 1200"></div>
-          <div class="field-row"><label>Resize Height (px)</label><input type="number" id="resizeH" placeholder="e.g. 1600"></div>
-          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
-          <div class="field-row" style="margin-top:14px"><label>Border</label>
-            <select id="borderStyle"><option value="none">None</option><option value="thin">Thin White</option><option value="thick">Thick White</option><option value="rounded">Rounded Corners</option></select>
+          <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Crop auto-saves when you move to the next step.</div>
+          <div class="field-row" style="margin-top:14px"><label>Resize</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr 74px;gap:6px">
+              <input type="number" id="resizeW" placeholder="Width">
+              <input type="number" id="resizeH" placeholder="Height">
+              <select id="resizeUnit"><option value="px">px</option><option value="in">inch</option><option value="cm">cm</option><option value="mm">mm</option></select>
+            </div>
           </div>
-          <button class="btn block" id="btnBorderApply"><i class="fa-solid fa-border-all"></i> Apply Border</button>
+          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
 
           <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
           <div class="field-row"><label>Quick Size Preset — Print / Passport / Social Media</label>
             <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
           </div>
+          <div class="info-note">Preset select karte hi photo turant usi exact size mein crop ho jaati hai.</div>
           <div class="step-actions"><button type="button" class="btn primary block" data-goto="1">Next: Background Remove <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
 
@@ -648,6 +655,8 @@ const state = {
   lastAnalysis: null,
   step: 0,           // 0=Crop&Size, 1=Background, 2=Adjust, 3=Export
   adjustSub: 'auto',  // which live-preview system owns the canvas inside step 2
+  cropTargetSize: null, // {w,h} exact output px set by a Quick Size Preset pick
+  stepEntrySnapshot: null, // baseImageData as it was when the current step began — what Reset returns to
   zoom: 1,
 };
 const ctx = state.canvas.getContext('2d', { willReadFrequently: true });
@@ -745,15 +754,6 @@ async function redo(){
 function syncUndoRedoButtons(){
   $('btnUndo').disabled = state.historyIndex <= 0;
   $('btnRedo').disabled = state.historyIndex >= state.history.length-1;
-}
-async function resetToOriginal(){
-  if(!state.originalDataURL) return;
-  const im = await dataURLToImage(state.originalDataURL);
-  loadImageToCanvas(im);
-  state.baseImageData = getData();
-  pushHistory();
-  resetManualSliders();
-  toast('Reset to original');
 }
 
 /* ============================== FILE LOADING ============================== */
@@ -2446,19 +2446,31 @@ function destroyCropper(){
   $('cropImgWrap').style.display = 'none';
   if(state.canvas.width) state.canvas.style.display = '';
 }
-function applyCropperCrop(){
+// Applies whatever crop box is currently active (Cropper.js or QuadCropUI),
+// silently (no toast/UI refresh) — shared by the manual "Apply Crop" button,
+// the auto-crop-to-preset-size flow, and the auto-save-on-next-step logic in
+// goStep(). Returns true if a crop was actually applied.
+function commitPendingCrop(){
+  if(!cropperInst && !(quadUI && quadUI.isActive())) return false;
   let cropped;
   if(quadUI && quadUI.isActive()){
     cropped = quadUI.getWarpedCanvas();
   }else if(cropperInst){
-    cropped = cropperInst.getCroppedCanvas({ imageSmoothingQuality:'high' });
+    const opts = { imageSmoothingQuality:'high' };
+    if(state.cropTargetSize){ opts.width = state.cropTargetSize.w; opts.height = state.cropTargetSize.h; }
+    cropped = cropperInst.getCroppedCanvas(opts);
   }
-  if(!cropperInst && !(quadUI && quadUI.isActive())){ toast('Nothing to crop', true); return; }
-  if(!cropped || !cropped.width){ toast('Could not read crop area', true); return; }
+  if(!cropped || !cropped.width) return false;
   setCanvasSize(cropped.width, cropped.height);
   ctx.drawImage(cropped,0,0);
   state.baseImageData = getData();
   pushHistory();
+  state.cropTargetSize = null;
+  return true;
+}
+function applyCropperCrop(){
+  if(!cropperInst && !(quadUI && quadUI.isActive())){ toast('Nothing to crop', true); return; }
+  if(!commitPendingCrop()){ toast('Could not read crop area', true); return; }
   destroyCropper();
   goStep(0); // re-render crop panel/re-init cropper on the newly cropped image
   toast('Crop applied ✓');
@@ -2486,8 +2498,21 @@ function flipCanvas(axis){
   ctx.clearRect(0,0,w,h); ctx.drawImage(tmp,0,0);
   state.baseImageData = getData(); pushHistory();
 }
-function applyResize(w,h){
+// 300 DPI is the standard print-tool convention for converting a physical
+// unit (inch/cm/mm) to pixels when no other DPI context is available yet at
+// this point in the flow (Export's DPI selector is a separate, later choice).
+const RESIZE_DPI = 300;
+function unitToPx(val, unit){
+  if(unit==='in') return Math.round(val*RESIZE_DPI);
+  if(unit==='cm') return Math.round(val*RESIZE_DPI/2.54);
+  if(unit==='mm') return Math.round(val*RESIZE_DPI/25.4);
+  return Math.round(val);
+}
+function applyResize(w,h,unit){
   if(!w && !h) { toast('Enter width or height', true); return; }
+  unit = unit || 'px';
+  if(w) w = unitToPx(w, unit);
+  if(h) h = unitToPx(h, unit);
   const ow=state.canvas.width, oh=state.canvas.height;
   if(!w) w = Math.round(ow*(h/oh));
   if(!h) h = Math.round(oh*(w/ow));
@@ -2496,29 +2521,6 @@ function applyResize(w,h){
   setCanvasSize(w,h); ctx.drawImage(tmp,0,0);
   state.baseImageData = getData(); pushHistory();
   toast(`Resized to ${w}×${h}px`);
-}
-function applyBorder(style){
-  const w=state.canvas.width, h=state.canvas.height;
-  if(style==='none') return;
-  if(style==='rounded'){
-    const tmp = document.createElement('canvas'); tmp.width=w; tmp.height=h;
-    const tctx = tmp.getContext('2d');
-    const r = Math.min(w,h)*0.06;
-    tctx.beginPath();
-    tctx.moveTo(r,0); tctx.arcTo(w,0,w,h,r); tctx.arcTo(w,h,0,h,r); tctx.arcTo(0,h,0,0,r); tctx.arcTo(0,0,w,0,r);
-    tctx.closePath(); tctx.clip();
-    tctx.drawImage(state.canvas,0,0);
-    ctx.clearRect(0,0,w,h); ctx.drawImage(tmp,0,0);
-  } else {
-    const bw = style==='thick' ? Math.round(Math.min(w,h)*0.035) : Math.round(Math.min(w,h)*0.012);
-    const tmp = document.createElement('canvas'); tmp.width=w+bw*2; tmp.height=h+bw*2;
-    const tctx = tmp.getContext('2d');
-    tctx.fillStyle = '#fff'; tctx.fillRect(0,0,tmp.width,tmp.height);
-    tctx.drawImage(state.canvas, bw, bw);
-    setCanvasSize(tmp.width, tmp.height); ctx.drawImage(tmp,0,0);
-  }
-  state.baseImageData = getData(); pushHistory();
-  toast('Border applied');
 }
 
 /* ============================== LOW-LIGHT FIX / JPEG ARTIFACT REDUCTION ============================== */
@@ -2921,8 +2923,20 @@ function populateSizePreset(){
   });
   sel.addEventListener('change', ()=>{
     const o = sel.options[sel.selectedIndex]; if(!o || !o.getAttribute('data-w')) return;
-    $('resizeW').value = o.getAttribute('data-w');
-    $('resizeH').value = o.getAttribute('data-h');
+    const pw = Number(o.getAttribute('data-w')), ph = Number(o.getAttribute('data-h'));
+    if(!cropperInst && !(quadUI && quadUI.isActive())){
+      toast('Pehle photo select karein', true); return;
+    }
+    // Free Select (QuadCropUI) has no fixed-aspect/fixed-output-size concept —
+    // exact-size preset cropping only applies to the standard rectangle cropper.
+    if(quadUI && quadUI.isActive()) toggleFreeSelect();
+    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(x=>x.classList.remove('active'));
+    cropperInst.setAspectRatio(pw/ph);
+    state.cropTargetSize = {w:pw, h:ph};
+    commitPendingCrop();
+    destroyCropper();
+    goStep(0); // re-render crop panel/re-init cropper on the freshly cropped image, same as a manual Apply Crop
+    toast(`Cropped to ${pw}×${ph}px ✓`);
   });
 }
 
@@ -2997,20 +3011,70 @@ async function downloadZip(){
    is a hard-gated wizard) since crop/BG-remove/adjust/export can meaningfully
    happen in any order and BG-remove/upscale/KB-target are explicitly optional. */
 function goStep(n){
-  if(state.step===0) destroyCropper();
-  if(state.step===2){
-    // leaving Adjust: commit/exit whichever of the two preview systems (Auto's
-    // full-res live preview vs Manual's downscaled-while-dragging preview) is
-    // currently showing on the canvas, so nothing is lost or left mid-drag.
-    if(state.adjustSub==='auto') paCommit();
-    else if(state.adjustSub==='manual') exitManualPreviewMode();
+  const leaving = state.step;
+  if(n !== leaving){
+    // Auto-save: leaving Crop & Size with a crop box still active applies it
+    // automatically instead of discarding it — no separate "did you forget to
+    // click Apply Crop?" moment.
+    if(leaving===0 && (cropperInst || (quadUI && quadUI.isActive()))) commitPendingCrop();
+    if(leaving===0) destroyCropper();
+    if(leaving===2){
+      // leaving Adjust: commit/exit whichever of the two preview systems (Auto's
+      // full-res live preview vs Manual's downscaled-while-dragging preview) is
+      // currently showing on the canvas, so nothing is lost or left mid-drag.
+      if(state.adjustSub==='auto') paCommit();
+      else if(state.adjustSub==='manual') exitManualPreviewMode();
+    }
   }
   state.step = n;
   document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('active', i===n));
   for(let i=0;i<4;i++){ const p=$('panel-step'+i); if(p) p.style.display = i===n ? '' : 'none'; }
   if(n===0 && state.canvas.width) initCropper();
   if(n===2 && state.baseImageData){ state.adjustSub='auto'; paRefreshSource(); paRenderFilterThumbnails(); }
+  // Step-scoped Reset target: the photo exactly as it is right now, at the
+  // moment this step begins. The toolbar "Reset" button (contextualReset)
+  // only ever reverts to this — undoing what happened INSIDE this step visit,
+  // never earlier steps' already-committed work.
+  state.stepEntrySnapshot = state.baseImageData
+    ? new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height)
+    : null;
   const cc = $('controlsCol'); if(cc) cc.scrollTop = 0;
+  const backBtn = $('btnStepBack'), nextBtn = $('btnStepNext');
+  if(backBtn) backBtn.disabled = (n===0);
+  if(nextBtn) nextBtn.disabled = (n===3);
+}
+// Toolbar "Reset" — reverts only the CURRENT step's changes (back to
+// stepEntrySnapshot), not a full reset to the original upload.
+function contextualReset(){
+  if(!state.stepEntrySnapshot){ toast('Reset karne ko kuch nahi hai', true); return; }
+  setCanvasSize(state.stepEntrySnapshot.width, state.stepEntrySnapshot.height);
+  putData(state.stepEntrySnapshot);
+  state.baseImageData = getData();
+  pushHistory();
+  if(state.step===0){
+    state.cropTargetSize = null;
+    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
+    destroyCropper();
+    initCropper();
+  } else if(state.step===1){
+    bgCutoutData = null;
+    const row = $('bgColorRow'); if(row) row.style.display = 'none';
+    const loader = $('bgLoader'); if(loader) loader.style.display = 'none';
+  } else if(state.step===2){
+    state.adjustSub = 'auto';
+    paResetAdjustmentsUI();
+    resetManualSliders();
+    ['rgb','r','g','b'].forEach(ch=>{ curvePoints[ch]=[{x:0,y:0},{x:255,y:255}]; });
+    HSL_RANGES.forEach(r=>{ hslValues[r]={h:0,s:0,l:0}; });
+    syncHslSlidersUI();
+    renderCurveCanvas();
+    paRefreshSource();
+    paRenderFilterThumbnails();
+  }
+  // Re-baseline so a second Reset in the same step visit returns here again,
+  // not to a stale point before this revert.
+  state.stepEntrySnapshot = new ImageData(new Uint8ClampedArray(state.baseImageData.data), state.baseImageData.width, state.baseImageData.height);
+  toast('Is step ke changes reset ho gaye ✓');
 }
 // Inside the merged Adjust step, Auto's controls (full-res live preview) and
 // Manual's controls (downscaled-while-dragging preview, for the many more
@@ -3050,6 +3114,8 @@ function wireEvents(){
   // onclick since goStep() lives inside this page's IIFE, not on window.
   document.querySelectorAll('.stab').forEach(t=>t.addEventListener('click', ()=>goStep(Number(t.dataset.step))));
   document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goStep(Number(b.dataset.goto))));
+  $('btnStepBack').addEventListener('click', ()=>goStep(Math.max(0, state.step-1)));
+  $('btnStepNext').addEventListener('click', ()=>goStep(Math.min(3, state.step+1)));
 
   $('btnPaAuto').addEventListener('click', paAutoEnhance);
   $('btnPaReset').addEventListener('click', paResetAdjustments);
@@ -3091,6 +3157,7 @@ function wireEvents(){
   document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
     document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(x=>x.classList.remove('active'));
     o.classList.add('active');
+    state.cropTargetSize = null; // picking a standard ratio overrides any preset-driven exact-size crop
     if(cropperInst) cropperInst.setAspectRatio(Number(o.dataset.ratio));
   }));
   $('btnFreeSel').addEventListener('click', toggleFreeSelect);
@@ -3104,6 +3171,8 @@ function wireEvents(){
   });
   $('btnCropReset').addEventListener('click', ()=>{
     cropRot=0; cropFineRot=0;
+    state.cropTargetSize = null;
+    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
     const fineEl=$('cropFineRot'); if(fineEl) fineEl.value=0;
     const fineVal=$('v-cropFineRot'); if(fineVal) fineVal.textContent='0°';
     if(quadUI && quadUI.isActive()){
@@ -3132,8 +3201,7 @@ function wireEvents(){
   $('btnFlipV').addEventListener('click', ()=>{
     if(cropperInst){ cropFlipY*=-1; cropperInst.scaleY(cropFlipY); } else flipCanvas('v');
   });
-  $('btnResizeApply').addEventListener('click', ()=>applyResize(Number($('resizeW').value)||0, Number($('resizeH').value)||0));
-  $('btnBorderApply').addEventListener('click', ()=>applyBorder($('borderStyle').value));
+  $('btnResizeApply').addEventListener('click', ()=>applyResize(Number($('resizeW').value)||0, Number($('resizeH').value)||0, $('resizeUnit').value));
 
   $('btnLowLight').addEventListener('click', applyLowLightFix);
   $('btnReduceArtifacts').addEventListener('click', applyReduceArtifacts);
@@ -3153,7 +3221,7 @@ function wireEvents(){
 
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
-  $('btnReset').addEventListener('click', resetToOriginal);
+  $('btnReset').addEventListener('click', contextualReset);
   $('btnCompare').addEventListener('click', toggleSideCompare);
 
   // Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y / Ctrl+Shift+Z redo, Ctrl+S download.
