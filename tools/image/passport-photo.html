@@ -2007,9 +2007,8 @@ function renderPrintSheet(){
     var scale=Math.min(1,availW/(cols*pw),availH/(rows*phe));
     var cw=Math.max(1,Math.round(pw*scale)),ch=Math.max(1,Math.round(phe*scale));
     var usedW=cols*cw+(cols-1)*gap;
-    var usedH=rows*ch+(rows-1)*gap;
     var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
-    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
+    var marginY=minMargin;
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(cw+gap),marginY+r*(ch+gap),cw,ch);
     info='Custom — '+cols+'×'+rows+'='+(cols*rows)+' photos'+(scale<1?' (size thoda chota kiya gaya taaki sab fit ho jaayein)':'');
   }
