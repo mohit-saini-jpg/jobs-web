@@ -97,10 +97,26 @@ def render_faq(faq_list):
 # questions (a Result page has no "salary", an Admission page is not "a job").
 _NON_PRIMARY_JSONLD_TYPES = {"WebSite", "Organization", "BreadcrumbList", "FAQPage"}
 
+# Safety-net keyword check for pages with no usable JSON-LD at all (e.g. the
+# generate_all.py _du_page() template — Govt Scheme & Yojna / CSC PDF / CSC
+# link / Today Updates — historically emitted no schema block whatsoever).
+# Mirrors generate_all.py's own _RX_SCHEME so the same "yojana/scheme/aadhar/
+# subsidy/..." keywords are treated as non-job here too. Duplicated rather
+# than imported because generate_all.py runs its full site-build pipeline at
+# module scope and is not safe to import.
+_RX_SCHEME_FALLBACK = re.compile(
+    r'\b(yojana|yojna|scheme|pension|pm\s*kisan|samman\s*nidhi|'
+    r'e\s*shram|umang|ration\s*card|aadhar|loan|subsidy|stipend|'
+    r'pradhan\s*mantri|mukhya\s*mantri|awas|ujjwala|svamitva|'
+    r'scholarship|card\s*download|kyc|status\s*check|govt\s*scheme)\b', re.I)
+
 def detect_intent(html: str) -> str:
     """Returns one of: job, result, admitcard, answerkey, syllabus, admission,
-    scheme, article. Falls back to 'job' (previous default behaviour) only
-    when no recognizable schema is found at all."""
+    scheme, article. IMPORTANT: never defaults to 'job' when no recognizable
+    JSON-LD @type is found — that used to make the AI invent fake salary /
+    job-profile content on non-job pages (e.g. a Farmer ID Govt Scheme page
+    whose template didn't emit any schema block). The safe default for a
+    page we can't positively identify as a real job posting is 'article'."""
     for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL):
         try:
             jd = json.loads(block)
@@ -132,7 +148,16 @@ def detect_intent(html: str) -> str:
                 return "answerkey"
             return "article"
         break   # first primary schema found but an unrecognized @type — stop looking
-    return "job"
+
+    # No usable JSON-LD found. Use the page's own title + breadcrumb text
+    # (always present, template-independent) as a keyword safety net before
+    # giving up — this is exactly the situation the Farmer ID bug happened in.
+    title_m = re.search(r'<title>(.*?)</title>', html, re.I | re.DOTALL)
+    bc_m    = re.search(r'<nav class="bc"[^>]*>(.*?)</nav>', html, re.I | re.DOTALL)
+    signal_text = (title_m.group(1) if title_m else "") + " " + (bc_m.group(1) if bc_m else "")
+    if _RX_SCHEME_FALLBACK.search(signal_text):
+        return "scheme"
+    return "article"
 
 # Old job-only headings that should never appear on a non-job page. Any page
 # carrying AI_MARKER + one of these headings was enriched before intent

@@ -8906,7 +8906,31 @@ def _du_page(name, url, sec_title, other_items):
         )
 
     tl = e(name[:60]) + ' | Top Sarkari Jobs'
-    md = e((name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155])
+    _raw_desc = (name[:130] + ' - ' + sec_title + '. Top Sarkari Jobs.')[:155]
+    md = e(_raw_desc)
+
+    # ── JSON-LD so ai_html_enricher.py's detect_intent() never has to fall
+    # back to 'job' for these pages (that fallback previously caused AI to
+    # write fake salary/job-profile content on Govt Scheme / CSC / Today
+    # Updates pages, none of which are job postings). Section is authoritative
+    # (mirrors page_intent()'s category-prefix-first rule); otherwise fall
+    # back to the shared _RX_SCHEME keyword check on the item name.
+    _du_is_scheme = (sec_title == 'Govt Scheme & Yojna') or bool(_RX_SCHEME.search(name.lower()))
+    if _du_is_scheme:
+        _du_ld = {
+            '@context':'https://schema.org','@type':'GovernmentService',
+            'name':name[:110],'description':_raw_desc,'url':canon,
+            'provider':{'@type':'GovernmentOrganization','name':'Government of India'},
+            'serviceType':'Government Scheme',
+            'areaServed':{'@type':'Country','name':'India'},
+        }
+    else:
+        _du_ld = {
+            '@context':'https://schema.org','@type':'Article',
+            'headline':name[:110],'description':_raw_desc,'url':canon,
+            'publisher':{'@type':'Organization','name':'Top Sarkari Jobs'},
+        }
+    _du_ld_script = '<script type="application/ld+json">' + json.dumps(_du_ld, ensure_ascii=False) + '</script>'
 
     lines = [
         '<!DOCTYPE html>', '<html lang="en-IN">', '<head>',
@@ -8923,6 +8947,7 @@ def _du_page(name, url, sec_title, other_items):
         '<link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media=\'all\'"/>',
         '<noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>',
         '<script src="/tsj-config.js"></script>',
+        _du_ld_script,
         '</head>', '<body>',
         '<div id="headerPlaceholder"></div>',
         '<script src="/tsj-init.js?v=' + ASSET_VER + '"></script>',
