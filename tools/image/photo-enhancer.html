@@ -90,7 +90,7 @@
     .a-chip.warn{background:#fef3c7;color:#92400e}
     .a-chip.ok{background:#dcfce7;color:#166534}
 
-    .workspace{display:grid;grid-template-columns:320px 1fr;gap:18px}
+    .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
     @media (max-width:920px){.workspace{grid-template-columns:1fr}}
     /* Controls column gets its OWN scroll instead of forcing the whole page
        to be as tall as 25+ sliders + effects + curves + HSL — on desktop it
@@ -101,17 +101,15 @@
        the whole layout out; vh then resolves against that zoomed-out
        (effectively much taller) viewport and stops being a reliable "% of
        what the user can actually see" on those devices, whereas a fixed px
-       height stays exactly that many CSS pixels regardless.
-       order:-1 puts it in the LEFT grid column on desktop (it comes after
-       the canvas in the HTML) and, since the grid collapses to a single
-       column on mobile, that same order also puts it ABOVE the photo there
-       instead of below — controls should never require scrolling past the
-       image to find on a phone. */
-    #controlsCol{order:-1;max-height:640px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-right:6px;position:sticky;top:14px}
+       height stays exactly that many CSS pixels regardless. */
+    #controlsCol{max-height:640px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-right:6px;position:sticky;top:14px}
     #controlsCol::-webkit-scrollbar{width:7px}
     #controlsCol::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
     @media (max-width:920px){
-      #controlsCol{max-height:520px;position:static}
+      /* Mobile only: controls stack ABOVE the photo instead of below it —
+         order:-1 is scoped to this media query so desktop keeps its
+         original image-left / controls-right layout untouched. */
+      #controlsCol{max-height:520px;position:static;order:-1}
     }
 
     .canvas-wrap{position:relative;background:repeating-conic-gradient(#e2e8f0 0% 25%,#f8fafc 0% 50%) 50%/16px 16px;border-radius:12px;overflow:auto;display:flex;align-items:center;justify-content:center;min-height:340px;max-height:70vh;border:1px solid var(--line)}
