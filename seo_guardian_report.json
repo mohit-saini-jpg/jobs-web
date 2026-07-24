@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-24T11:24:08.151322+00:00",
+  "timestamp": "2026-07-24T11:56:43.214406+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 5643,
+  "files_scanned": 5653,
   "issues_found_by_check": {
     "ai_marker_integrity": 10,
     "jobposting_schema": 36,
-    "sitemap_sync": 186
+    "sitemap_sync": 196
   },
-  "issues_auto_fixed": 34,
+  "issues_auto_fixed": 44,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -32,7 +32,7 @@
       "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 8 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 9 END)"
     },
     {
       "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
@@ -1205,5 +1205,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     110 urls [ok]"
   ],
-  "duration_sec": 20.1
+  "duration_sec": 18.9
 }
