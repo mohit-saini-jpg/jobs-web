@@ -585,7 +585,9 @@
               <option value="200">200 DPI — Standard Print</option>
               <option value="300" selected>300 DPI — Photo Print (Recommended)</option>
               <option value="600">600 DPI — High Quality Print</option>
+              <option value="custom">Custom…</option>
             </select>
+            <input type="number" id="outDpiCustom" placeholder="e.g. 450" min="1" max="10000" style="display:none;margin-top:8px">
           </div>
           <div class="field-row"><label>File Size (KB) — Optional</label>
             <input type="number" id="outTargetKB" placeholder="e.g. 100 (khali chhodein = best quality)" min="1" max="5000">
@@ -2986,7 +2988,8 @@ function getFullResDataURL(fmt, q){
 async function downloadCurrent(){
   const fmt = $('outFormat').value;
   const q = Number($('s-quality').value);
-  const dpi = Number($('outDpi').value) || 0;
+  const dpiSel = $('outDpi').value;
+  const dpi = dpiSel==='custom' ? (Number($('outDpiCustom').value)||0) : (Number(dpiSel)||0);
   const targetKB = Number($('outTargetKB').value) || 0;
   const name = ($('outName').value || 'enhanced-photo').replace(/[^a-z0-9_\-]+/gi,'-');
   const btn = $('btnDownload');
@@ -3281,6 +3284,10 @@ function wireEvents(){
   document.querySelectorAll('.kb-preset').forEach(btn=>btn.addEventListener('click', ()=>{
     $('outTargetKB').value = btn.dataset.kb;
   }));
+  $('outDpi').addEventListener('change', function(){
+    $('outDpiCustom').style.display = this.value==='custom' ? '' : 'none';
+    if(this.value==='custom') $('outDpiCustom').focus();
+  });
   $('btnDownload').addEventListener('click', downloadCurrent);
   $('btnDownloadZip').addEventListener('click', downloadZip);
 
