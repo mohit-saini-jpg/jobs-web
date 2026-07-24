@@ -329,37 +329,16 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
 <!-- STEP TABS -->
 <div class="step-tabs" id="stepTabs">
-  <div class="stab active"  data-step="0" onclick="goStep(0)"><div class="sn">1</div><span>Size</span></div>
-  <div class="stab locked" data-step="1" onclick="goStep(1)"><div class="sn">2</div><span>Crop</span></div>
-  <div class="stab locked" data-step="2" onclick="goStep(2)"><div class="sn">3</div><span>BG</span></div>
-  <div class="stab locked" data-step="3" onclick="goStep(3)"><div class="sn">4</div><span>Adjust</span></div>
-  <div class="stab locked" data-step="4" onclick="goStep(4)"><div class="sn">5</div><span>Download</span></div>
+  <div class="stab active"  data-step="0" onclick="goStep(0)"><div class="sn">1</div><span>Crop</span></div>
+  <div class="stab locked" data-step="1" onclick="goStep(1)"><div class="sn">2</div><span>Background</span></div>
+  <div class="stab locked" data-step="2" onclick="goStep(2)"><div class="sn">3</div><span>Adjust</span></div>
+  <div class="stab locked" data-step="3" onclick="goStep(3)"><div class="sn">4</div><span>Download</span></div>
 </div>
 
 <div class="main-container">
 
-<!-- ══════════ STEP 0: SIZE + UPLOAD ══════════ -->
+<!-- ══════════ STEP 0: UPLOAD + CROP ══════════ -->
 <div class="step-panel active" id="panel-0">
-  <div class="card">
-    <div class="card-title">📐 Photo Size Chunein</div>
-    <div class="form-group" style="margin-bottom:14px"><label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Size Preset (Passport / Social / Print)</label>
-      <select id="sizePreset" onchange="onSizePresetChange()" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:var(--ink)"></select>
-    </div>
-    <div class="custom-size-row" id="customRow" style="display:none">
-      <label>Width</label>
-      <input type="number" id="customW" value="400" min="50" max="5000">
-      <label>×</label><label>Height</label>
-      <input type="number" id="customH" value="500" min="50" max="5000">
-      <label>Unit</label>
-      <select id="customUnit" onchange="updateCustomPx()">
-        <option value="px">px</option><option value="mm">mm</option>
-        <option value="cm">cm</option><option value="in">inch</option>
-      </select>
-      <label>DPI</label>
-      <input type="number" id="dpiVal" value="300" min="72" max="1200" style="width:68px">
-    </div>
-  </div>
-
   <div class="card">
     <div class="card-title">📤 Photo Upload Karein</div>
     <div class="upload-zone" id="uploadZone">
@@ -376,16 +355,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <span>Aapki photo sirf browser mein process hoti hai. Koi server upload nahi. 100% private.</span>
     </div>
   </div>
-  <div class="nav-btns">
-    <button class="btn-next" id="step0Next" disabled>
-      <i class="fa-solid fa-arrow-right"></i> Next: Crop
-    </button>
-  </div>
-</div>
 
-<!-- ══════════ STEP 1: CROP ══════════ -->
-<div class="step-panel" id="panel-1">
-  <div class="card">
+  <div class="card" id="cropCardWrap" style="display:none">
     <div class="card-title">✂️ Face Crop Karein</div>
     <div class="cropper-wrap" id="cropperWrap">
       <img id="cropperImg" src="" alt="Upload photo">
@@ -404,17 +375,16 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     </div>
     <div class="info-notice" style="margin-top:11px">
       <i class="fa-solid fa-lightbulb"></i>
-      <span>Blue crop box se chehra center mein rakho. Sar ke upar thoda space do. Zoom karke adjust karo.</span>
+      <span>Blue crop box se chehra center mein rakho. Sar ke upar thoda space do. Zoom karke adjust karo. Exact size Background step mein set karein.</span>
     </div>
   </div>
   <div class="nav-btns">
-    <button class="btn-back" onclick="goStep(0)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-    <button class="btn-next" onclick="cropAndNext()"><i class="fa-solid fa-scissors"></i> Crop & Next</button>
+    <button class="btn-next" id="cropNextBtn" onclick="cropAndNext()" disabled><i class="fa-solid fa-scissors"></i> Crop & Next</button>
   </div>
 </div>
 
-<!-- ══════════ STEP 2: BACKGROUND ══════════ -->
-<div class="step-panel" id="panel-2">
+<!-- ══════════ STEP 1: BACKGROUND + SIZE ══════════ -->
+<div class="step-panel" id="panel-1">
   <div class="card">
     <div class="card-title">🎨 Background</div>
 
@@ -477,14 +447,38 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <span>India/UK Passport: White background. USA Visa: White. Background remove karke koi bhi color lagao.</span>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">📐 Photo Size Chunein</div>
+    <div class="form-group" style="margin-bottom:14px"><label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Size Preset (Passport / Social / Print)</label>
+      <select id="sizePreset" onchange="onSizePresetChange()" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:var(--ink)"></select>
+    </div>
+    <div class="custom-size-row" id="customRow" style="display:none">
+      <label>Width</label>
+      <input type="number" id="customW" value="400" min="50" max="5000">
+      <label>×</label><label>Height</label>
+      <input type="number" id="customH" value="500" min="50" max="5000">
+      <label>Unit</label>
+      <select id="customUnit" onchange="updateCustomPx()">
+        <option value="px">px</option><option value="mm">mm</option>
+        <option value="cm">cm</option><option value="in">inch</option>
+      </select>
+      <label>DPI</label>
+      <input type="number" id="dpiVal" value="300" min="72" max="1200" style="width:68px">
+    </div>
+    <div class="info-notice">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Size badalte hi photo turant usi exact size mein center-crop ho jaati hai — crop se lauta nahi jaana padega.</span>
+    </div>
+  </div>
   <div class="nav-btns">
-    <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-    <button class="btn-next" onclick="goStep(3)"><i class="fa-solid fa-sliders"></i> Next: Adjust</button>
+    <button class="btn-back" onclick="goStep(0)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="goStep(2)"><i class="fa-solid fa-sliders"></i> Next: Adjust</button>
   </div>
 </div>
 
-<!-- ══════════ STEP 3: ADJUST + KB SIZE ══════════ -->
-<div class="step-panel" id="panel-3">
+<!-- ══════════ STEP 2: ADJUST + KB SIZE ══════════ -->
+<div class="step-panel" id="panel-2">
   <div class="adjust-layout">
     <div class="adjust-preview-col">
       <div class="live-preview-wrap">
@@ -635,13 +629,13 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     </div>
   </div>
   <div class="nav-btns">
-    <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-    <button class="btn-next" onclick="renderFinal();goStep(4)"><i class="fa-solid fa-download"></i> Next: Download</button>
+    <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-next" onclick="renderFinal();goStep(3)"><i class="fa-solid fa-download"></i> Next: Download</button>
   </div>
 </div>
 
-<!-- ══════════ STEP 4: DOWNLOAD ══════════ -->
-<div class="step-panel" id="panel-4">
+<!-- ══════════ STEP 3: DOWNLOAD ══════════ -->
+<div class="step-panel" id="panel-3">
   <div class="card">
     <div class="card-title">⬇️ Download Karein</div>
 
@@ -666,7 +660,9 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <option value="200">200 DPI — Standard Print</option>
         <option value="300" selected>300 DPI — Passport / Photo Print (Recommended)</option>
         <option value="600">600 DPI — High Quality Print</option>
+        <option value="custom">Custom…</option>
       </select>
+      <input type="number" id="exportDpiCustom" placeholder="e.g. 450" min="1" max="10000" style="display:none;margin-top:8px;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem;font-family:inherit">
     </div>
 
     <div style="margin-bottom:12px">
@@ -676,12 +672,26 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="print-opt" data-sheet="4on4" onclick="selectSheet(this)">4 Photos (2×2)</div>
         <div class="print-opt" data-sheet="8on4" onclick="selectSheet(this)">8 Photos (2×4)</div>
         <div class="print-opt" data-sheet="a4" onclick="selectSheet(this)">A4 Full Sheet</div>
+        <div class="print-opt" data-sheet="custom" onclick="selectSheet(this)">Custom Rows/Cols</div>
       </div>
       <div class="print-options" id="a4ColsRow" style="display:none">
         <span style="font-size:.76rem;font-weight:700;color:var(--muted);align-self:center;margin-right:2px">Photos per row:</span>
         <div class="print-opt active" data-cols="5" onclick="selectA4Cols(this)">5 per row</div>
         <div class="print-opt" data-cols="6" onclick="selectA4Cols(this)">6 per row</div>
       </div>
+      <div class="print-options" id="customGridRow" style="display:none;align-items:center;gap:8px">
+        <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Rows:</span>
+        <input type="number" id="customRows" value="5" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+        <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Columns:</span>
+        <input type="number" id="customCols" value="2" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+      </div>
+      <div class="print-options" id="customGridPresets" style="display:none;margin-top:6px">
+        <div class="print-opt" onclick="setCustomGrid(1,5)">5 photo — 1 row</div>
+        <div class="print-opt" onclick="setCustomGrid(1,6)">6 photo — 1 row</div>
+        <div class="print-opt" onclick="setCustomGrid(2,5)">10 photo — 2 row</div>
+        <div class="print-opt" onclick="setCustomGrid(2,6)">12 photo — 2 row</div>
+      </div>
+      <p id="customGridInfo" style="display:none;font-size:.74rem;color:var(--muted);margin-top:6px">Photo size A4 sheet mein sabhi fit karne ke liye chota ho sakta hai.</p>
     </div>
     <div class="print-preview">
       <canvas id="printCanvas"></canvas>
@@ -704,7 +714,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     </div>
   </div>
   <div class="nav-btns">
-    <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
     <button class="btn-next" onclick="location.reload()" style="background:var(--success)">
       <i class="fa-solid fa-plus"></i> Naya Photo
     </button>
@@ -715,9 +725,9 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="card" style="margin-top:26px">
   <div class="card-title">📖 Kaise Use Karein</div>
   <div class="how-steps">
-    <div class="step"><div class="step-n">1</div><h4>Size Chunein</h4><p>India, USA, Canada ya custom</p></div>
-    <div class="step"><div class="step-n">2</div><h4>Upload Karein</h4><p>Koi bhi photo drag/browse</p></div>
-    <div class="step"><div class="step-n">3</div><h4>Crop Karein</h4><p>Chehra center mein karo</p></div>
+    <div class="step"><div class="step-n">1</div><h4>Upload Karein</h4><p>Koi bhi photo drag/browse</p></div>
+    <div class="step"><div class="step-n">2</div><h4>Crop Karein</h4><p>Chehra center mein karo</p></div>
+    <div class="step"><div class="step-n">3</div><h4>Size Chunein</h4><p>India, USA, Canada ya custom</p></div>
     <div class="step"><div class="step-n">4</div><h4>BG Remove</h4><p>AI se background hatao</p></div>
     <div class="step"><div class="step-n">5</div><h4>Color Lagao</h4><p>White, blue ya koi bhi color</p></div>
     <div class="step"><div class="step-n">6</div><h4>KB Set Karo</h4><p>Exact KB mein compress karo</p></div>
@@ -796,7 +806,9 @@ var S = {
   filterPreset: 'original',
   border: {type:'none', thickness:4},
   dpi: 300,
-  a4Cols: 5
+  a4Cols: 5,
+  customRows: 5,
+  customCols: 2
 };
 var cropperInst = null;
 
@@ -812,9 +824,9 @@ function goStep(n){
     else if(i>S.maxUnlocked)t.classList.add('locked');
   });
   window.scrollTo({top:0,behavior:'smooth'});
-  if(n===2){renderOrigPreview();renderBgFinalPreview();}
-  if(n===3){onScColorChange();renderAdjPreview();renderFilterThumbnails();}
-  if(n===4){renderFinal();renderPrintSheet();}
+  if(n===1){renderOrigPreview();renderBgFinalPreview();}
+  if(n===2){onScColorChange();renderAdjPreview();renderFilterThumbnails();}
+  if(n===3){renderFinal();renderPrintSheet();}
 }
 function unlock(n){if(n>S.maxUnlocked)S.maxUnlocked=n;}
 
@@ -872,6 +884,7 @@ function onSizePresetChange(){
   } else updateCustomPx();
   document.getElementById('ratioHint').textContent=S.label;
   if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(S.targetW/S.targetH);
+  applySizeToCropped();
 }
 populateSizePresets();
 function updateCustomPx(){
@@ -885,6 +898,32 @@ function updateCustomPx(){
   else{S.targetW=Math.round(w);S.targetH=Math.round(h);}
   S.label='Custom '+S.targetW+'×'+S.targetH+'px';
   if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(S.targetW/S.targetH);
+  applySizeToCropped();
+}
+// Size selection now happens AFTER cropping (Background step), so it can no
+// longer drive the (by-then-inactive) interactive cropper. Instead it
+// re-derives the final photo directly from the already-cropped canvas —
+// same center-crop-then-scale approach as photo-enhancer.html's Quick Size
+// Preset — so changing size never requires going back to re-crop. Runs on
+// S.removedBgCanvas too (preserving transparency) if background removal was
+// already done, so that work isn't lost either.
+function centerCropScale(src,targetW,targetH){
+  var sw=src.width,sh=src.height;
+  var targetRatio=targetW/targetH,srcRatio=sw/sh;
+  var cropW,cropH,cropX,cropY;
+  if(srcRatio>targetRatio){cropH=sh;cropW=Math.round(sh*targetRatio);cropX=Math.round((sw-cropW)/2);cropY=0;}
+  else{cropW=sw;cropH=Math.round(sw/targetRatio);cropX=0;cropY=Math.round((sh-cropH)/2);}
+  var out=document.createElement('canvas');out.width=targetW;out.height=targetH;
+  out.getContext('2d').drawImage(src,cropX,cropY,cropW,cropH,0,0,targetW,targetH);
+  return out;
+}
+function applySizeToCropped(){
+  if(!S.croppedCanvas)return; // nothing cropped yet (still on Upload+Crop step)
+  if(S.croppedCanvas.width===S.targetW&&S.croppedCanvas.height===S.targetH)return; // already this size
+  S.croppedCanvas=centerCropScale(S.croppedCanvas,S.targetW,S.targetH);
+  if(S.removedBgCanvas)S.removedBgCanvas=centerCropScale(S.removedBgCanvas,S.targetW,S.targetH);
+  renderOrigPreview();
+  renderBgFinalPreview();
 }
 
 // ── UPLOAD ────────────────────────────────────────────
@@ -911,11 +950,10 @@ function handleFile(f){
     S.bgRemoveEnabled=false;
     document.getElementById('bgRemoveToggle').checked=false;
     initCropper(ev.target.result);
-    unlock(1);
-    var btn=document.getElementById('step0Next');
-    btn.disabled=false;
-    btn.onclick=function(){goStep(1);};
-    goStep(1);
+    // Upload + Crop are the same step now — reveal the crop card in place
+    // instead of navigating to a separate step.
+    document.getElementById('cropCardWrap').style.display='';
+    document.getElementById('cropNextBtn').disabled=false;
   };
   reader.readAsDataURL(f);
 }
@@ -1170,8 +1208,8 @@ function cropAndNext(){
   document.getElementById('removedCanvas').style.display='none';
   document.getElementById('bgPlaceholder').style.display='';
   document.getElementById('bgLoader').classList.remove('show');
-  unlock(2);unlock(3);unlock(4);
-  goStep(2);
+  unlock(1);unlock(2);unlock(3);
+  goStep(1);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1845,7 +1883,22 @@ function selectSheet(el){
   el.classList.add('active');
   S.sheet=el.dataset.sheet;
   document.getElementById('a4ColsRow').style.display=(S.sheet==='a4')?'flex':'none';
+  document.getElementById('customGridRow').style.display=(S.sheet==='custom')?'flex':'none';
+  document.getElementById('customGridPresets').style.display=(S.sheet==='custom')?'flex':'none';
+  document.getElementById('customGridInfo').style.display=(S.sheet==='custom')?'block':'none';
   renderPrintSheet();
+}
+function onCustomGridChange(){
+  S.customRows=Math.max(1,parseInt(document.getElementById('customRows').value)||1);
+  S.customCols=Math.max(1,parseInt(document.getElementById('customCols').value)||1);
+  renderPrintSheet();
+}
+// Quick presets for common counts (1 photo up to 36 on the sheet — the free
+// Rows/Columns inputs above cover anything beyond these too).
+function setCustomGrid(rows,cols){
+  document.getElementById('customRows').value=rows;
+  document.getElementById('customCols').value=cols;
+  onCustomGridChange();
 }
 function selectA4Cols(el){
   document.querySelectorAll('[data-cols]').forEach(function(o){o.classList.remove('active');});
@@ -1894,7 +1947,10 @@ function applyPhotoBorder(canvas,border){
 
 // ── DPI ───────────────────────────────────────────────
 function onDpiChange(){
-  S.dpi=parseInt(document.getElementById('exportDpi').value)||300;
+  var sel=document.getElementById('exportDpi');
+  var isC=(sel.value==='custom');
+  document.getElementById('exportDpiCustom').style.display=isC?'':'none';
+  S.dpi=isC?(parseInt(document.getElementById('exportDpiCustom').value)||300):(parseInt(sel.value)||300);
 }
 
 function renderPrintSheet(){
@@ -1938,6 +1994,24 @@ function renderPrintSheet(){
     var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(pw+gap),marginY+r*(phe+gap),pw,phe);
     info='A4 sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos ('+maxCols+'/row max)';
+  }else if(S.sheet==='custom'){
+    // Exact rows×cols the user asked for (e.g. 5 photos, or 6×6=36) always
+    // fits on the A4 page — the photo is scaled DOWN (never up) as much as
+    // needed so every requested copy fits, instead of overflowing the sheet.
+    var A4W=2480,A4H=3508,minMargin=20,gap=8;
+    pc.width=A4W;pc.height=A4H;
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
+    var cols=Math.max(1,S.customCols||2),rows=Math.max(1,S.customRows||5);
+    var availW=A4W-2*minMargin-(cols-1)*gap;
+    var availH=A4H-2*minMargin-(rows-1)*gap;
+    var scale=Math.min(1,availW/(cols*pw),availH/(rows*phe));
+    var cw=Math.max(1,Math.round(pw*scale)),ch=Math.max(1,Math.round(phe*scale));
+    var usedW=cols*cw+(cols-1)*gap;
+    var usedH=rows*ch+(rows-1)*gap;
+    var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
+    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(cw+gap),marginY+r*(ch+gap),cw,ch);
+    info='Custom — '+cols+'×'+rows+'='+(cols*rows)+' photos'+(scale<1?' (size thoda chota kiya gaya taaki sab fit ho jaayein)':'');
   }
   document.getElementById('printInfo').textContent=info;
 }
@@ -2048,10 +2122,12 @@ document.querySelectorAll('.faq-q').forEach(function(b){
 });
 
 // ── Custom input listeners ─────────────────────────
-['customW','customH'].forEach(function(id){
+['customW','customH','dpiVal'].forEach(function(id){
   var el=document.getElementById(id);
   if(el)el.addEventListener('input',updateCustomPx);
 });
+var exportDpiCustomEl=document.getElementById('exportDpiCustom');
+if(exportDpiCustomEl)exportDpiCustomEl.addEventListener('input',onDpiChange);
 </script>
 <script src="/tsj-chat.js" defer></script>
 </body>
