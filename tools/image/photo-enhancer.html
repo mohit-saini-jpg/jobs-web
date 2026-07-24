@@ -90,26 +90,30 @@
     .a-chip.warn{background:#fef3c7;color:#92400e}
     .a-chip.ok{background:#dcfce7;color:#166534}
 
+    /* Side-by-side image+controls is used on MOBILE too, not just desktop —
+       this page's TSJ-WIDE-VIEWPORT script forces the CSS layout viewport to
+       a minimum 820px on narrow phones (the browser then zooms the whole
+       page out to fit the real screen), so a 320px controls column already
+       renders at the SAME 320 CSS-px width on a phone as on desktop — it's
+       only visually smaller, not more cramped in layout terms. The
+       max-width:700px fallback below only exists for a genuinely narrow
+       DESKTOP browser window (screen.width is the monitor's real resolution,
+       not the resized window, so the viewport script never kicks in there). */
     .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
-    @media (max-width:920px){.workspace{grid-template-columns:1fr}}
+    @media (max-width:700px){.workspace{grid-template-columns:1fr}}
     /* Controls column gets its OWN scroll instead of forcing the whole page
-       to be as tall as 25+ sliders + effects + curves + HSL — on desktop it
-       stays pinned alongside the canvas while scrolling; on mobile it's a
-       bounded, scrollable card instead of an endless page-scroll.
-       Fixed px (not vh) deliberately — this page's TSJ-WIDE-VIEWPORT script
-       forces a minimum 820px logical viewport on narrow phones, which zooms
-       the whole layout out; vh then resolves against that zoomed-out
-       (effectively much taller) viewport and stops being a reliable "% of
-       what the user can actually see" on those devices, whereas a fixed px
-       height stays exactly that many CSS pixels regardless. */
+       to be as tall as 25+ sliders + effects + curves + HSL — it stays
+       pinned alongside the canvas while scrolling. Fixed px (not vh)
+       deliberately — see the wide-viewport note above; vh would resolve
+       against the zoomed-out (effectively much taller) viewport on phones
+       and stop being a reliable "% of what the user can actually see",
+       whereas a fixed px height stays exactly that many CSS pixels
+       regardless of device. */
     #controlsCol{max-height:640px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-right:6px;position:sticky;top:14px}
     #controlsCol::-webkit-scrollbar{width:7px}
     #controlsCol::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
-    @media (max-width:920px){
-      /* Mobile only: controls stack ABOVE the photo instead of below it —
-         order:-1 is scoped to this media query so desktop keeps its
-         original image-left / controls-right layout untouched. */
-      #controlsCol{max-height:520px;position:static;order:-1}
+    @media (max-width:700px){
+      #controlsCol{max-height:520px;position:static}
     }
 
     .canvas-wrap{position:relative;background:repeating-conic-gradient(#e2e8f0 0% 25%,#f8fafc 0% 50%) 50%/16px 16px;border-radius:12px;overflow:auto;display:flex;align-items:center;justify-content:center;min-height:340px;max-height:70vh;border:1px solid var(--line)}
@@ -322,16 +326,6 @@
       <div id="controlsCol">
         <!-- STEP 1: CROP & SIZE -->
         <div class="mode-panel" id="panel-step0">
-          <div class="field-row"><label>Aspect Ratio</label>
-            <div class="seg-row" id="cropAspectSeg" style="grid-template-columns:repeat(3,1fr)">
-              <div class="seg-opt active" data-ratio="NaN">Free</div>
-              <div class="seg-opt" data-ratio="1">Square</div>
-              <div class="seg-opt" data-ratio="1.333333">4:3</div>
-              <div class="seg-opt" data-ratio="1.777778">16:9</div>
-              <div class="seg-opt" data-ratio="0.75">3:4</div>
-              <div class="seg-opt" data-ratio="0.777778">Passport</div>
-            </div>
-          </div>
           <div class="btn-row">
             <button class="btn" id="btnFreeSel" title="Angle-free 4-corner select — for tilted/perspective photos"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
           </div>
@@ -346,7 +340,10 @@
           </div>
           <div class="slider-group" id="fineRotRow">
             <div class="slider-head"><label>Straighten (fine rotate)</label><span class="slider-val" id="v-cropFineRot">0°</span></div>
-            <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1">
+              <button type="button" class="btn" id="btnCropFineRotReset" title="Reset Straighten to 0°" style="flex:0 0 auto;padding:9px 11px"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
           </div>
           <div class="info-note" id="quadRotNote" style="display:none">Free Select mode: drag any of the 4 corners independently — no fixed rotation needed, this handles tilted/perspective photos directly.</div>
           <div class="btn-row">
@@ -364,11 +361,6 @@
           </div>
           <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
 
-          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
-          <div class="field-row"><label>Quick Size Preset — Print / Passport / Social Media</label>
-            <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
-          </div>
-          <div class="info-note">Preset select karte hi photo turant usi exact size mein crop ho jaati hai.</div>
           <div class="step-actions"><button type="button" class="btn primary block" data-goto="1">Next: Background Remove <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
 
@@ -389,6 +381,13 @@
             </div>
           </div>
           <div class="info-note">AI hair aur edge ke around precise cutout karta hai — 100% browser mein chalta hai, koi upload nahi. Ye step optional hai, chahe to skip kar sakte hain.</div>
+
+          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+          <div class="field-row"><label>Quick Size Preset — Print / Passport / Social Media</label>
+            <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
+          </div>
+          <div class="info-note">Preset select karte hi photo turant usi exact size mein crop ho jaati hai.</div>
+
           <div class="step-actions">
             <button type="button" class="btn block" data-goto="0"><i class="fa-solid fa-arrow-left"></i> Back</button>
             <button type="button" class="btn primary block" data-goto="2">Next: Adjust <i class="fa-solid fa-arrow-right"></i></button>
@@ -655,7 +654,6 @@ const state = {
   lastAnalysis: null,
   step: 0,           // 0=Crop&Size, 1=Background, 2=Adjust, 3=Export
   adjustSub: 'auto',  // which live-preview system owns the canvas inside step 2
-  cropTargetSize: null, // {w,h} exact output px set by a Quick Size Preset pick
   stepEntrySnapshot: null, // baseImageData as it was when the current step began — what Reset returns to
   zoom: 1,
 };
@@ -2409,12 +2407,12 @@ function toggleFreeSelect(){
   }
 }
 function makeCropperOptions(){
-  const active = document.querySelector('#cropAspectSeg .seg-opt.active');
+  // Free-form by default (no Aspect Ratio picker anymore) — Quick Size
   return {
     viewMode: 1, autoCropArea: 1, guides: true, center: true, highlight: true,
     background: true, responsive: true, movable: true, zoomable: true, rotatable: true,
     scalable: true, cropBoxMovable: true, cropBoxResizable: true,
-    aspectRatio: active ? Number(active.dataset.ratio) : NaN, minCropBoxWidth: 40, minCropBoxHeight: 40,
+    aspectRatio: NaN, minCropBoxWidth: 40, minCropBoxHeight: 40,
   };
 }
 function initCropper(){
@@ -2438,7 +2436,6 @@ function initCropper(){
   img.src = state.canvas.toDataURL('image/png');
   $('cropImgWrap').style.display = '';
   state.canvas.style.display = 'none';
-  document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
 }
 function destroyCropper(){
   if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
@@ -2447,25 +2444,49 @@ function destroyCropper(){
   if(state.canvas.width) state.canvas.style.display = '';
 }
 // Applies whatever crop box is currently active (Cropper.js or QuadCropUI),
-// silently (no toast/UI refresh) — shared by the manual "Apply Crop" button,
-// the auto-crop-to-preset-size flow, and the auto-save-on-next-step logic in
-// goStep(). Returns true if a crop was actually applied.
+// silently (no toast/UI refresh) — shared by the manual "Apply Crop" button
+// and the auto-save-on-next-step logic in goStep(). Returns true if a crop
+// was actually applied.
 function commitPendingCrop(){
   if(!cropperInst && !(quadUI && quadUI.isActive())) return false;
   let cropped;
   if(quadUI && quadUI.isActive()){
     cropped = quadUI.getWarpedCanvas();
   }else if(cropperInst){
-    const opts = { imageSmoothingQuality:'high' };
-    if(state.cropTargetSize){ opts.width = state.cropTargetSize.w; opts.height = state.cropTargetSize.h; }
-    cropped = cropperInst.getCroppedCanvas(opts);
+    cropped = cropperInst.getCroppedCanvas({ imageSmoothingQuality:'high' });
   }
   if(!cropped || !cropped.width) return false;
   setCanvasSize(cropped.width, cropped.height);
   ctx.drawImage(cropped,0,0);
   state.baseImageData = getData();
   pushHistory();
-  state.cropTargetSize = null;
+  return true;
+}
+// Center-crop state.baseImageData directly to an exact target size (used by
+// Quick Size Preset in the Background step) — deliberately independent of
+// the interactive Cropper.js instance, which only exists while the user is
+// actually on the Crop & Size step.
+function autoCropToSize(targetW, targetH){
+  if(!state.baseImageData) return false;
+  const sw = state.baseImageData.width, sh = state.baseImageData.height;
+  const targetRatio = targetW/targetH, srcRatio = sw/sh;
+  let cropW, cropH, cropX, cropY;
+  if(srcRatio > targetRatio){
+    cropH = sh; cropW = Math.round(sh*targetRatio);
+    cropX = Math.round((sw-cropW)/2); cropY = 0;
+  } else {
+    cropW = sw; cropH = Math.round(sw/targetRatio);
+    cropX = 0; cropY = Math.round((sh-cropH)/2);
+  }
+  const src = document.createElement('canvas'); src.width=sw; src.height=sh;
+  src.getContext('2d').putImageData(state.baseImageData,0,0);
+  const out = document.createElement('canvas'); out.width=targetW; out.height=targetH;
+  out.getContext('2d').drawImage(src, cropX,cropY,cropW,cropH, 0,0,targetW,targetH);
+  setCanvasSize(targetW,targetH);
+  ctx.clearRect(0,0,targetW,targetH);
+  ctx.drawImage(out,0,0);
+  state.baseImageData = getData();
+  pushHistory();
   return true;
 }
 function applyCropperCrop(){
@@ -2924,19 +2945,11 @@ function populateSizePreset(){
   sel.addEventListener('change', ()=>{
     const o = sel.options[sel.selectedIndex]; if(!o || !o.getAttribute('data-w')) return;
     const pw = Number(o.getAttribute('data-w')), ph = Number(o.getAttribute('data-h'));
-    if(!cropperInst && !(quadUI && quadUI.isActive())){
-      toast('Pehle photo select karein', true); return;
-    }
-    // Free Select (QuadCropUI) has no fixed-aspect/fixed-output-size concept —
-    // exact-size preset cropping only applies to the standard rectangle cropper.
-    if(quadUI && quadUI.isActive()) toggleFreeSelect();
-    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(x=>x.classList.remove('active'));
-    cropperInst.setAspectRatio(pw/ph);
-    state.cropTargetSize = {w:pw, h:ph};
-    commitPendingCrop();
-    destroyCropper();
-    goStep(0); // re-render crop panel/re-init cropper on the freshly cropped image, same as a manual Apply Crop
-    toast(`Cropped to ${pw}×${ph}px ✓`);
+    if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+    // Lives in the Background step now, so this can't depend on the
+    // interactive Cropper.js instance (only exists on the Crop & Size step) —
+    // center-crops the committed photo directly instead.
+    if(autoCropToSize(pw, ph)) toast(`Cropped to ${pw}×${ph}px ✓`);
   });
 }
 
@@ -3052,8 +3065,6 @@ function contextualReset(){
   state.baseImageData = getData();
   pushHistory();
   if(state.step===0){
-    state.cropTargetSize = null;
-    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
     destroyCropper();
     initCropper();
   } else if(state.step===1){
@@ -3154,12 +3165,6 @@ function wireEvents(){
   });
   $('btnApplyManual').addEventListener('click', applyManualCommit);
 
-  document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
-    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach(x=>x.classList.remove('active'));
-    o.classList.add('active');
-    state.cropTargetSize = null; // picking a standard ratio overrides any preset-driven exact-size crop
-    if(cropperInst) cropperInst.setAspectRatio(Number(o.dataset.ratio));
-  }));
   $('btnFreeSel').addEventListener('click', toggleFreeSelect);
   $('btnCropZoomIn').addEventListener('click', ()=>{
     if(quadUI && quadUI.isActive()) quadUI.zoom(1.15);
@@ -3171,8 +3176,6 @@ function wireEvents(){
   });
   $('btnCropReset').addEventListener('click', ()=>{
     cropRot=0; cropFineRot=0;
-    state.cropTargetSize = null;
-    document.querySelectorAll('#cropAspectSeg .seg-opt').forEach((o,i)=>o.classList.toggle('active', i===0));
     const fineEl=$('cropFineRot'); if(fineEl) fineEl.value=0;
     const fineVal=$('v-cropFineRot'); if(fineVal) fineVal.textContent='0°';
     if(quadUI && quadUI.isActive()){
@@ -3182,6 +3185,12 @@ function wireEvents(){
       setFreeSelBtnState(false);
       syncCropUIForMode(false);
     }else if(cropperInst) cropperInst.reset();
+  });
+  $('btnCropFineRotReset').addEventListener('click', ()=>{
+    cropFineRot = 0;
+    $('cropFineRot').value = 0;
+    $('v-cropFineRot').textContent = '0°';
+    applyCropRotation();
   });
   $('cropFineRot').addEventListener('input', function(){
     cropFineRot = parseFloat(this.value);
