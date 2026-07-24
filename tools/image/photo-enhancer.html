@@ -217,6 +217,14 @@
     .seg-opt{padding:9px 6px;text-align:center;border:1.5px solid var(--line);border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:var(--white)}
     .seg-opt.active{border-color:var(--brand);background:var(--brand-light);color:var(--brand)}
 
+    /* Transparent swatch gets the checkerboard via this class default; every
+       other swatch sets its own inline background:#hex, which — as a full
+       shorthand — naturally resets background-image to none and overrides it. */
+    .bg-swatch{width:30px;height:30px;padding:0;border-radius:8px;border:1.5px solid var(--line);cursor:pointer;flex-shrink:0;position:relative;background-image:repeating-conic-gradient(#e2e8f0 0% 25%,#fff 0% 50%);background-size:9px 9px}
+    .bg-swatch i{display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:#fff;font-size:.72rem;text-shadow:0 0 2px rgba(0,0,0,.85),0 0 4px rgba(0,0,0,.6)}
+    .bg-swatch.active i{display:flex}
+    .bg-swatch.active{box-shadow:0 0 0 2px var(--white),0 0 0 3.5px var(--brand)}
+
     .field-row{margin-bottom:12px}
     .field-row label{display:block;font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
     .field-row select,.field-row input[type=text],.field-row input[type=number]{width:100%;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;font-size:.85rem;font-family:inherit;background:var(--white);color:var(--ink)}
@@ -352,14 +360,6 @@
           </div>
           <button class="btn primary block" id="btnCropApply" style="margin-top:10px"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
           <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Crop auto-saves when you move to the next step.</div>
-          <div class="field-row" style="margin-top:14px"><label>Resize</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr 74px;gap:6px">
-              <input type="number" id="resizeW" placeholder="Width">
-              <input type="number" id="resizeH" placeholder="Height">
-              <select id="resizeUnit"><option value="px">px</option><option value="in">inch</option><option value="cm">cm</option><option value="mm">mm</option></select>
-            </div>
-          </div>
-          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
 
           <div class="step-actions"><button type="button" class="btn primary block" data-goto="1">Next: Background Remove <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
@@ -371,12 +371,22 @@
           <div id="bgLoader" style="display:none;text-align:center;padding:16px;font-size:.82rem;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin"></i> <span id="bgLoaderMsg">Processing…</span></div>
           <div id="bgColorRow" style="display:none;margin-top:16px">
             <div class="field-row"><label>Background Color</label>
-              <div class="btn-row" id="bgColorSwatches" style="align-items:center">
-                <button type="button" class="bg-swatch active" data-bg="transparent" title="Transparent" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background-image:repeating-conic-gradient(#e2e8f0 0% 25%,#fff 0% 50%);background-size:9px 9px"></button>
-                <button type="button" class="bg-swatch" data-bg="#ffffff" title="White" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#fff"></button>
-                <button type="button" class="bg-swatch" data-bg="#3b82f6" title="Blue" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#3b82f6"></button>
-                <button type="button" class="bg-swatch" data-bg="#ef4444" title="Red" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#ef4444"></button>
-                <input type="color" id="bgCustomColor" value="#22c55e" title="Custom color" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer">
+              <div id="bgColorSwatches" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="bg-swatch active" data-bg="transparent" title="Transparent"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#ffffff" title="White" style="background:#ffffff"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#93c5fd" title="Light Blue" style="background:#93c5fd"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#3b82f6" title="Blue" style="background:#3b82f6"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#86efac" title="Light Green" style="background:#86efac"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#c4b5fd" title="Light Purple" style="background:#c4b5fd"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#fdba74" title="Light Peach" style="background:#fdba74"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#fde68a" title="Light Yellow" style="background:#fde68a"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#99f6e4" title="Mint" style="background:#99f6e4"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#d1d5db" title="Grey" style="background:#d1d5db"><i class="fa-solid fa-check"></i></button>
+                <button type="button" class="bg-swatch" data-bg="#111827" title="Black" style="background:#111827"><i class="fa-solid fa-check"></i></button>
+                <label id="bgCustomSwatch" title="Custom color" style="width:30px;height:30px;border-radius:8px;border:1.5px dashed var(--brand);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0;position:relative">
+                  <i class="fa-solid fa-plus" style="font-size:.7rem"></i>
+                  <input type="color" id="bgCustomColor" value="#22c55e" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer">
+                </label>
               </div>
             </div>
           </div>
@@ -387,6 +397,14 @@
             <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
           </div>
           <div class="info-note">Preset select karte hi photo turant usi exact size mein crop ho jaati hai.</div>
+          <div class="field-row" style="margin-top:14px"><label>Resize</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr 74px;gap:6px">
+              <input type="number" id="resizeW" placeholder="Width">
+              <input type="number" id="resizeH" placeholder="Height">
+              <select id="resizeUnit"><option value="px">px</option><option value="in">inch</option><option value="cm">cm</option><option value="mm">mm</option></select>
+            </div>
+          </div>
+          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
 
           <div class="step-actions">
             <button type="button" class="btn block" data-goto="0"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -3054,7 +3072,15 @@ function goStep(n){
   const cc = $('controlsCol'); if(cc) cc.scrollTop = 0;
   const backBtn = $('btnStepBack'), nextBtn = $('btnStepNext');
   if(backBtn) backBtn.disabled = (n===0);
-  if(nextBtn) nextBtn.disabled = (n===3);
+  // On the last step (Export) there's no further step to advance to, so the
+  // top-right button becomes a direct Download instead of just disabling —
+  // it stays useful instead of turning into dead space.
+  if(nextBtn){
+    nextBtn.disabled = false;
+    nextBtn.innerHTML = (n===3)
+      ? '<i class="fa-solid fa-download"></i> Download'
+      : 'Next <i class="fa-solid fa-arrow-right"></i>';
+  }
 }
 // Toolbar "Reset" — reverts only the CURRENT step's changes (back to
 // stepEntrySnapshot), not a full reset to the original upload.
@@ -3126,7 +3152,10 @@ function wireEvents(){
   document.querySelectorAll('.stab').forEach(t=>t.addEventListener('click', ()=>goStep(Number(t.dataset.step))));
   document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goStep(Number(b.dataset.goto))));
   $('btnStepBack').addEventListener('click', ()=>goStep(Math.max(0, state.step-1)));
-  $('btnStepNext').addEventListener('click', ()=>goStep(Math.min(3, state.step+1)));
+  $('btnStepNext').addEventListener('click', ()=>{
+    if(state.step===3) downloadCurrent();
+    else goStep(Math.min(3, state.step+1));
+  });
 
   $('btnPaAuto').addEventListener('click', paAutoEnhance);
   $('btnPaReset').addEventListener('click', paResetAdjustments);
