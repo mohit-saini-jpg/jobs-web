@@ -101,10 +101,23 @@
     });
   }
 
+  // A district page is only ever physically built once (slot 1's URL) —
+  // vercel.json rewrites /vle/<state>/<district>/<N>/ for ANY N to that
+  // same file, so the real slot has to come from the URL itself, not from
+  // window.__VLE_SLOT__ (which is always baked in as 1 at build time).
+  // This is what lets a district hold unlimited VLEs without ever needing
+  // a new generate_all.py run.
+  function slotFromUrl() {
+    var parts = location.pathname.split('/').filter(Boolean); // ['vle','haryana','hisar','7']
+    var last = parts[parts.length - 1];
+    var n = parseInt(last, 10);
+    return (last && String(n) === last && n >= 1) ? n : (window.__VLE_SLOT__ || 1);
+  }
+
   async function init() {
     var st = window.__VLE_STATE__;
     var district = window.__VLE_DISTRICT__;
-    var slot = window.__VLE_SLOT__ || 1;
+    var slot = slotFromUrl();
     var profileMount = document.getElementById('vleProfileCard');
     var feedMount = document.getElementById('vleFeed');
     if (!st || !district || !profileMount || !feedMount || !window.TsjVleAuth) return;

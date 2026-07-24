@@ -1,5 +1,11 @@
 {
   "version": 2,
+  "rewrites": [
+    {
+      "source": "/vle/:state/:district/:slot(\\d+)/",
+      "destination": "/vle/:state/:district/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/version.json",

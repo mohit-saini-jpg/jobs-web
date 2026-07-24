@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VLE / CSC Partner Signup | Top Sarkari Jobs</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="/image.ico"/>
+<link rel="preload" href="/fonts/fa/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="/fonts/fa/all.min.css"/></noscript>
+<link rel="stylesheet" href="/vle/vle.css"/>
+</head>
+<body>
+<div class="vle-center">
+  <div class="vle-auth-card" style="max-width:460px">
+    <div class="vle-auth-head">
+      <span class="badge">CSC PARTNER</span>
+      <h1>VLE / CSC Partner Signup</h1>
+      <p>Register karein — admin approval ke baad aap apne district page par notices post kar sakenge</p>
+    </div>
+    <form id="vleSignupForm" autocomplete="on">
+      <div class="vle-field">
+        <label for="vleSuEmail">Email</label>
+        <input type="email" id="vleSuEmail" required autocomplete="username" placeholder="yourcenter@example.com">
+      </div>
+      <div class="vle-field">
+        <label for="vleSuPassword">Password</label>
+        <input type="password" id="vleSuPassword" required minlength="6" autocomplete="new-password" placeholder="Kam se kam 6 characters">
+      </div>
+      <div id="vleSuProfileFields"></div>
+      <button type="submit" class="vle-btn vle-btn-primary" id="vleSignupBtn">
+        <i class="fa-solid fa-user-plus"></i> Register Karein
+      </button>
+      <div class="vle-msg" id="vleSignupMsg"></div>
+    </form>
+    <p style="text-align:center;font-size:.8rem;color:var(--vle-muted);margin-top:14px">
+      Pehle se account hai? <a href="/vle/login/" style="color:var(--vle-teal);font-weight:700">Login karein</a>
+    </p>
+  </div>
+</div>
+<script src="/vle/vle-auth.js"></script>
+<script src="/vle/vle-signup.js"></script>
+<script>
+(function () {
+  var form = document.getElementById('vleSignupForm');
+  var btn = document.getElementById('vleSignupBtn');
+  var msg = document.getElementById('vleSignupMsg');
+  var fieldsMount = document.getElementById('vleSuProfileFields');
+
+  fieldsMount.innerHTML = window.TsjVleSignup.fieldsHtml();
+  window.TsjVleSignup.wireDropdowns(fieldsMount);
+
+  function showMsg(text, ok) {
+    msg.textContent = text;
+    msg.className = 'vle-msg show ' + (ok ? 'ok' : 'err');
+  }
+
+  function setBusy(busy, label) {
+    btn.disabled = busy;
+    btn.innerHTML = busy
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> ' + label
+      : '<i class="fa-solid fa-user-plus"></i> Register Karein';
+  }
+
+  // Already logged in (e.g. came back after confirming email via another
+  // tab)? Skip account creation, just finish the profile.
+  window.TsjVleAuth.getSession().then(function (session) {
+    if (session) {
+      document.getElementById('vleSuEmail').closest('.vle-field').style.display = 'none';
+      document.getElementById('vleSuPassword').closest('.vle-field').style.display = 'none';
+    }
+  });
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var email = document.getElementById('vleSuEmail').value.trim();
+    var password = document.getElementById('vleSuPassword').value;
+    var fields = window.TsjVleSignup.readFields(fieldsMount);
+
+    setBusy(true, 'Registering…');
+
+    var session = await window.TsjVleAuth.getSession();
+    var client = await window.TsjVleAuth.ensureClient();
+
+    if (!session) {
+      if (!email || !password) { showMsg('Email aur password dono zaroori hain.', false); setBusy(false); return; }
+      var suRes = await window.TsjVleAuth.signUp(email, password);
+      if (suRes.error) {
+        showMsg(suRes.error.message, false);
+        setBusy(false);
+        return;
+      }
+      if (!suRes.data || !suRes.data.session) {
+        // Email confirmation required by this project's Supabase Auth
+        // settings — no active session yet, so we can't create the
+        // profile row (RLS needs auth.uid()). Guide them to come back.
+        showMsg('Signup ho gaya! Apna email check karke confirmation link par click karein, phir /vle/login/ se login karke apni profile complete karein.', true);
+        setBusy(false);
+        form.reset();
+        return;
+      }
+      session = suRes.data.session;
+    }
+
+    var profRes = await window.TsjVleSignup.createVleProfile(client, session.user.id, fields);
+    if (profRes.error) {
+      showMsg(profRes.error.message, false);
+      setBusy(false);
+      return;
+    }
+    showMsg('Registration successful! Aapka account admin approval ke wait mein hai — approve hote hi aap post kar sakenge.', true);
+    setTimeout(function () { location.href = '/vle/dashboard/'; }, 2200);
+  });
+})();
+</script>
+</body>
+</html>

@@ -117,11 +117,40 @@
   </div>
 </div>
 
+<div class="vle-center" id="vlePendingScreen" style="display:none">
+  <div class="vle-auth-card">
+    <div class="vle-auth-head">
+      <span class="badge">PENDING</span>
+      <h1>Approval ka Wait</h1>
+      <p>Aapki registration mil gayi hai. Admin approve karega tabhi aap apne district page par notice post kar payenge — usually kuch hi ghanton mein ho jaata hai.</p>
+    </div>
+    <button class="vle-btn vle-btn-outline" id="vlePendingLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
+</div>
+
+<div class="vle-center" id="vleNeedsProfileScreen" style="display:none">
+  <div class="vle-auth-card" style="max-width:460px">
+    <div class="vle-auth-head">
+      <span class="badge">1 STEP BAKI</span>
+      <h1>Apni Profile Complete Karein</h1>
+      <p>Aapka login ban gaya hai — bas apne CSC/center ki details bhar dein</p>
+    </div>
+    <form id="vleCompleteProfileForm">
+      <div id="vleCpProfileFields"></div>
+      <button type="submit" class="vle-btn vle-btn-primary" id="vleCpSubmitBtn">
+        <i class="fa-solid fa-floppy-disk"></i> Profile Save Karein
+      </button>
+      <div class="vle-msg" id="vleCpMsg"></div>
+    </form>
+  </div>
+</div>
+
 <div class="vle-center" id="vleLoadingScreen">
   <i class="fa-solid fa-spinner fa-spin" style="font-size:1.6rem;color:#0f766e"></i>
 </div>
 
 <script src="/vle/vle-auth.js"></script>
+<script src="/vle/vle-signup.js"></script>
 <script src="/vle/vle-dashboard.js"></script>
 </body>
 </html>

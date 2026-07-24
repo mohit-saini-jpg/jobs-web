@@ -43,15 +43,27 @@
     return c.auth.signInWithPassword({ email: email, password: password });
   }
 
+  async function signUp(email, password) {
+    var c = await ensureClient();
+    if (!c) return { error: { message: 'Auth service unavailable' } };
+    return c.auth.signUp({ email: email, password: password });
+  }
+
   async function signOut() {
     var c = await ensureClient();
     if (c) await c.auth.signOut();
     location.href = '/vle/login/';
   }
 
-  // Call at the top of /vle/dashboard/ — redirects to login if no session,
-  // otherwise resolves with { session, profile } (profile = this VLE's
-  // district/center row from vle_profiles).
+  // Call at the top of /vle/dashboard/ — redirects to login if no session.
+  // Otherwise resolves with { session, client, profile, needsProfile, pending }:
+  //   - no vle_profiles row yet (e.g. confirmed email, never finished the
+  //     signup form's profile step) -> profile: null, needsProfile: true
+  //   - row exists but is_approved === false -> profile set, pending: true
+  //   - row exists and approved -> profile set, both flags false/undefined
+  // The old behavior (silently signing out anyone without a profile row)
+  // was wrong for self-signup: that's a normal, expected state now, not
+  // an error.
   async function requireVleAuth() {
     var c = await ensureClient();
     if (!c) { location.href = '/vle/login/'; return null; }
@@ -63,10 +75,10 @@
       .eq('id', session.user.id)
       .maybeSingle();
     if (prof.error || !prof.data) {
-      // Logged in but no matching vle_profiles row — admin hasn't finished
-      // setting this account up yet.
-      await signOut();
-      return null;
+      return { session: session, client: c, profile: null, needsProfile: true };
+    }
+    if (prof.data.is_approved === false) {
+      return { session: session, client: c, profile: prof.data, pending: true };
     }
     return { session: session, profile: prof.data, client: c };
   }
@@ -75,6 +87,7 @@
     ensureClient: ensureClient,
     getSession: getSession,
     signIn: signIn,
+    signUp: signUp,
     signOut: signOut,
     requireVleAuth: requireVleAuth,
   };

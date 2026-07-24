@@ -307,14 +307,50 @@
     });
   }
 
+  function setupProfileCompletionForm(client, userId) {
+    var mount = $('vleCpProfileFields');
+    mount.innerHTML = window.TsjVleSignup.fieldsHtml();
+    window.TsjVleSignup.wireDropdowns(mount);
+    var form = $('vleCompleteProfileForm');
+    var msg = $('vleCpMsg');
+    var btn = $('vleCpSubmitBtn');
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Save ho raha hai…';
+      var fields = window.TsjVleSignup.readFields(mount);
+      var res = await window.TsjVleSignup.createVleProfile(client, userId, fields);
+      if (res.error) {
+        showMsg(msg, res.error.message, false);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Profile Save Karein';
+        return;
+      }
+      showMsg(msg, 'Profile save ho gayi! Admin approval ka wait karein…', true);
+      setTimeout(function () { location.reload(); }, 1500);
+    });
+  }
+
   async function init() {
     var auth = await window.TsjVleAuth.requireVleAuth();
     if (!auth) return;
     state.client = auth.client;
     state.session = auth.session;
-    state.profile = auth.profile;
 
     $('vleLoadingScreen').style.display = 'none';
+
+    if (auth.needsProfile) {
+      $('vleNeedsProfileScreen').style.display = '';
+      setupProfileCompletionForm(auth.client, auth.session.user.id);
+      return;
+    }
+    if (auth.pending) {
+      $('vlePendingScreen').style.display = '';
+      $('vlePendingLogoutBtn').addEventListener('click', function () { window.TsjVleAuth.signOut(); });
+      return;
+    }
+
+    state.profile = auth.profile;
     $('vleApp').style.display = '';
     $('vleCenterName').textContent = state.profile.center_name || 'VLE Partner';
     $('vleDistrictName').textContent = state.profile.district + ' District, ' + state.profile.state +
