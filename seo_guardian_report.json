@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T14:13:26.973040+00:00",
+  "timestamp": "2026-07-24T02:01:28.033234+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 5540,
@@ -1205,5 +1205,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     110 urls [ok]"
   ],
-  "duration_sec": 19.9
+  "duration_sec": 16.9
 }
