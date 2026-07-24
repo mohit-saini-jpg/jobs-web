@@ -428,6 +428,7 @@
 <div id="tsj-tool-share" style="margin:16px 15px"></div>
 <link rel="stylesheet" href="/tools-share.css">
 <script src="/tools-share.js" defer></script>
+<script src="/tools/image/preset-picker.js"></script>
 <footer class="tool-footer">
   <div>© 2026 <strong style="color:white">TopSarkariJobs.com</strong> — Sabhi Tools Bilkul Free</div>
   <div style="margin-top:6px"><a href="/tools/">All Tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div>
@@ -859,6 +860,10 @@
     bindFile('main-file','file-preview');
     populateJobPreset(JOB_PRESETS_PHOTO);
     populatePrintPreset(PRINT_PRESETS);
+    if(window.enhancePresetSelect){
+      enhancePresetSelect('jobPreset',{title:'Exam / Job Preset Chunein'});
+      enhancePresetSelect('printPreset',{title:'Quick Size Preset Chunein'});
+    }
     pcanvas=G('pcanvas');
     var mf=G('main-file');
     if(mf)mf.addEventListener('change',function(){if(mf.files[0])loadImageFromFile(mf.files[0]);});
