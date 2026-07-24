@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
-  <title>AI Photo Enhancer Free Online – Upscale, Sharpen &amp; Fix Photos | Top Sarkari Jobs</title>
-  <meta name="description" content="Free AI photo enhancer — upscale 2x/4x/8x with real on-device AI, auto color fix, denoise, sharpen, face enhancement, old photo restore, passport photo mode. 100% browser-based, no upload, no signup, no watermark.">
-  <meta name="keywords" content="AI photo enhancer, photo upscaler online, increase image resolution, enhance photo quality free, AI image upscale, passport photo maker, old photo restoration online">
+  <title>AI Photo Enhancer Free Online – Crop, Remove BG, Adjust &amp; Upscale | Top Sarkari Jobs</title>
+  <meta name="description" content="Free AI photo enhancer — simple 4-step workflow: Crop &amp; Size, Background Remove, Adjust (auto + manual), Export. Real on-device AI upscale, auto color fix, denoise, sharpen. 100% browser-based, no upload, no signup, no watermark.">
+  <meta name="keywords" content="AI photo enhancer, photo upscaler online, background remover, increase image resolution, enhance photo quality free, AI image upscale, remove photo background free">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://www.topsarkarijobs.com/tools/image/photo-enhancer.html">
-  <meta property="og:title" content="AI Photo Enhancer Free Online – Upscale &amp; Fix Photos | Top Sarkari Jobs">
-  <meta property="og:description" content="Free AI photo enhancer with real on-device super-resolution, auto color fix, face enhancement &amp; passport photo mode. 100% browser-based, no upload, no watermark.">
+  <meta property="og:title" content="AI Photo Enhancer Free Online – Crop, Remove BG, Adjust &amp; Upscale | Top Sarkari Jobs">
+  <meta property="og:description" content="Free AI photo enhancer — Crop &amp; Size, Background Remove, Adjust, Export in 4 simple steps. Real on-device super-resolution &amp; auto color fix. 100% browser-based, no upload, no watermark.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://www.topsarkarijobs.com/api/og?title=AI%20Photo%20Enhancer&type=tool&tag=Blurry/purani%20photo%20ko%20AI%20se%20sharp%20aur%20clear%20banayein"/>
   <meta property="og:image:width" content="1200"/>
@@ -26,7 +26,7 @@
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Photo Enhancer","applicationCategory":"PhotographyApplication","operatingSystem":"Any (Web Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Free browser-based AI photo enhancer with super-resolution, auto color correction, face enhancement and passport photo mode."}
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Photo Enhancer","applicationCategory":"PhotographyApplication","operatingSystem":"Any (Web Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Free browser-based AI photo enhancer — Crop & Size, Background Remove, Adjust and Export in 4 simple steps, with real on-device super-resolution and auto color correction."}
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -124,9 +124,14 @@
     .tbtn:disabled{opacity:.4;cursor:not-allowed}
     .tbtn.active{background:var(--brand);border-color:var(--brand);color:#fff}
 
-    .mode-tabs{display:flex;gap:6px;flex-wrap:wrap;background:var(--mist);padding:5px;border-radius:10px;margin-bottom:16px}
-    .mode-tab{flex:1;min-width:88px;text-align:center;padding:9px 8px;border-radius:8px;font-size:.76rem;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent}
-    .mode-tab.active{background:var(--white);color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+    .step-tabs{display:flex;gap:4px;background:var(--mist);padding:5px;border-radius:10px;margin-bottom:16px;overflow-x:auto}
+    .stab{flex:1;min-width:64px;text-align:center;padding:9px 6px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;user-select:none;background:transparent;border:none;font-family:inherit}
+    .stab .sn{width:20px;height:20px;border-radius:50%;background:var(--line);color:var(--muted);font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .stab.active{background:var(--white);color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+    .stab.active .sn{background:var(--brand);color:#fff}
+    .stab.done .sn{background:var(--success);color:#fff}
+    .step-actions{display:flex;gap:8px;margin-top:18px}
+    .step-actions .btn{flex:1}
 
     .enhance-btn{width:100%;padding:15px;border:none;border-radius:11px;background:linear-gradient(135deg,#345de6,#7c3aed);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 6px 20px rgba(52,93,230,.35);transition:transform .15s}
     .enhance-btn:hover{transform:translateY(-1px)}
@@ -251,7 +256,7 @@
 <section class="tool-hero">
   <div class="hero-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
   <h1>AI Photo Enhancer</h1>
-  <p>One-click AI upscaling, auto color fix, face enhancement, old photo restore &amp; passport photo mode — everything runs on your device, nothing is ever uploaded.</p>
+  <p>4 simple steps — Crop &amp; Size, Background Remove, Adjust, Export — with real on-device AI upscaling, auto color fix &amp; face enhancement. Everything runs on your device, nothing is ever uploaded.</p>
   <div class="badges">
     <span class="badge"><i class="fa-solid fa-shield-halved"></i> No Upload — 100% Browser</span>
     <span class="badge"><i class="fa-solid fa-bolt"></i> Real On-Device AI</span>
@@ -276,14 +281,11 @@
   <div class="card" id="workCard" style="display:none">
     <div class="analysis-row" id="analysisRow"></div>
 
-    <div class="mode-tabs" id="modeTabs">
-      <button class="mode-tab active" data-mode="auto">✨ Auto Enhance</button>
-      <button class="mode-tab" data-mode="manual">🎚️ Manual</button>
-      <button class="mode-tab" data-mode="crop">✂️ Crop / Rotate</button>
-      <button class="mode-tab" data-mode="passport">🪪 Passport Photo</button>
-      <button class="mode-tab" data-mode="document">📄 Document</button>
-      <button class="mode-tab" data-mode="oldphoto">🖼️ Old Photo</button>
-      <button class="mode-tab" data-mode="text">🔤 Text / Watermark</button>
+    <div class="step-tabs" id="stepTabs">
+      <button class="stab active" data-step="0"><div class="sn">1</div><span>Crop &amp; Size</span></button>
+      <button class="stab" data-step="1"><div class="sn">2</div><span>Background</span></button>
+      <button class="stab" data-step="2"><div class="sn">3</div><span>Adjust</span></button>
+      <button class="stab" data-step="3"><div class="sn">4</div><span>Export</span></button>
     </div>
 
     <div class="workspace">
@@ -313,8 +315,82 @@
       </div>
 
       <div id="controlsCol">
-        <!-- AUTO MODE -->
-        <div class="mode-panel" id="panel-auto">
+        <!-- STEP 1: CROP & SIZE -->
+        <div class="mode-panel" id="panel-step0">
+          <div class="field-row"><label>Aspect Ratio</label>
+            <div class="seg-row" id="cropAspectSeg" style="grid-template-columns:repeat(3,1fr)">
+              <div class="seg-opt active" data-ratio="NaN">Free</div>
+              <div class="seg-opt" data-ratio="1">Square</div>
+              <div class="seg-opt" data-ratio="1.333333">4:3</div>
+              <div class="seg-opt" data-ratio="1.777778">16:9</div>
+              <div class="seg-opt" data-ratio="0.75">3:4</div>
+              <div class="seg-opt" data-ratio="0.777778">Passport</div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btnFreeSel" title="Angle-free 4-corner select — for tilted/perspective photos"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btnCropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button class="btn" id="btnCropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button class="btn" id="btnCropReset" title="Reset Crop Box"><i class="fa-solid fa-arrows-rotate"></i></button>
+          </div>
+          <div class="btn-row" id="cropRotRow">
+            <button class="btn" id="btnRotateL"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
+            <button class="btn" id="btnRotateR"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
+          </div>
+          <div class="slider-group" id="fineRotRow">
+            <div class="slider-head"><label>Straighten (fine rotate)</label><span class="slider-val" id="v-cropFineRot">0°</span></div>
+            <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5">
+          </div>
+          <div class="info-note" id="quadRotNote" style="display:none">Free Select mode: drag any of the 4 corners independently — no fixed rotation needed, this handles tilted/perspective photos directly.</div>
+          <div class="btn-row">
+            <button class="btn" id="btnFlipH"><i class="fa-solid fa-left-right"></i> Flip H</button>
+            <button class="btn" id="btnFlipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
+          </div>
+          <button class="btn primary block" id="btnCropApply" style="margin-top:10px"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
+          <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Click Apply Crop when ready.</div>
+          <div class="field-row" style="margin-top:14px"><label>Resize Width (px)</label><input type="number" id="resizeW" placeholder="e.g. 1200"></div>
+          <div class="field-row"><label>Resize Height (px)</label><input type="number" id="resizeH" placeholder="e.g. 1600"></div>
+          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
+          <div class="field-row" style="margin-top:14px"><label>Border</label>
+            <select id="borderStyle"><option value="none">None</option><option value="thin">Thin White</option><option value="thick">Thick White</option><option value="rounded">Rounded Corners</option></select>
+          </div>
+          <button class="btn block" id="btnBorderApply"><i class="fa-solid fa-border-all"></i> Apply Border</button>
+
+          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+          <div class="field-row"><label>Quick Size Preset — Print / Passport / Social Media</label>
+            <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
+          </div>
+          <div class="step-actions"><button type="button" class="btn primary block" data-goto="1">Next: Background Remove <i class="fa-solid fa-arrow-right"></i></button></div>
+        </div>
+
+        <!-- STEP 2: BACKGROUND REMOVE -->
+        <div class="mode-panel" id="panel-step1" style="display:none">
+          <div class="slider-head" style="margin-bottom:10px"><label style="font-size:.85rem;text-transform:none;letter-spacing:0;color:var(--ink)"><i class="fa-solid fa-eraser" style="color:var(--brand)"></i> Background Remove Karein (Optional)</label></div>
+          <button class="enhance-btn" id="btnBgRemove"><i class="fa-solid fa-wand-magic-sparkles"></i> <span class="txt">Remove Background — AI</span></button>
+          <div id="bgLoader" style="display:none;text-align:center;padding:16px;font-size:.82rem;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin"></i> <span id="bgLoaderMsg">Processing…</span></div>
+          <div id="bgColorRow" style="display:none;margin-top:16px">
+            <div class="field-row"><label>Background Color</label>
+              <div class="btn-row" id="bgColorSwatches" style="align-items:center">
+                <button type="button" class="bg-swatch active" data-bg="transparent" title="Transparent" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background-image:repeating-conic-gradient(#e2e8f0 0% 25%,#fff 0% 50%);background-size:9px 9px"></button>
+                <button type="button" class="bg-swatch" data-bg="#ffffff" title="White" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#fff"></button>
+                <button type="button" class="bg-swatch" data-bg="#3b82f6" title="Blue" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#3b82f6"></button>
+                <button type="button" class="bg-swatch" data-bg="#ef4444" title="Red" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;background:#ef4444"></button>
+                <input type="color" id="bgCustomColor" value="#22c55e" title="Custom color" style="width:36px;height:36px;padding:0;border-radius:9px;border:1.5px solid var(--line);cursor:pointer">
+              </div>
+            </div>
+          </div>
+          <div class="info-note">AI hair aur edge ke around precise cutout karta hai — 100% browser mein chalta hai, koi upload nahi. Ye step optional hai, chahe to skip kar sakte hain.</div>
+          <div class="step-actions">
+            <button type="button" class="btn block" data-goto="0"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button type="button" class="btn primary block" data-goto="2">Next: Adjust <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: ADJUST (Auto Enhance + Manual, merged) -->
+        <div class="mode-panel" id="panel-step2" style="display:none">
+        <div id="paAutoSection">
           <div class="slider-head" style="margin-bottom:10px"><label style="font-size:.85rem;text-transform:none;letter-spacing:0;color:var(--ink)"><i class="fa-solid fa-sliders" style="color:var(--brand)"></i> Photo Adjust Karein</label></div>
           <button class="enhance-btn" id="btnPaAuto"><i class="fa-solid fa-wand-magic-sparkles"></i> <span class="txt">Auto Enhance — Ek Click Mein Clear &amp; Sharp</span></button>
 
@@ -366,22 +442,12 @@
             </div>
           </div>
           <button class="btn block" id="btnPaReset"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
-
-          <div class="field-row" style="margin-top:16px">
-            <label>AI Super Resolution (optional, adds sharpness at a larger size)</label>
-            <div class="seg-row" id="upscaleSeg">
-              <div class="seg-opt" data-x="1">Off</div>
-              <div class="seg-opt active" data-x="2">2×</div>
-              <div class="seg-opt" data-x="4">4×</div>
-              <div class="seg-opt" data-x="8">8×</div>
-            </div>
-          </div>
-          <button class="btn primary block" id="btnUpscale"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Run AI Upscale</button>
-          <div class="info-note" style="margin-top:8px">This only increases resolution/detail — it does NOT fix color, brightness or blur (use "Enhance Photo" above for that). Its effect is subtle when viewed shrunk to fit your screen — use Zoom (+) or Before/After after running it to see the real difference at full size. Real neural-network super-resolution (TensorFlow.js) — uses your GPU (WebGL) when available; without GPU support this can take several minutes, so 4×/8× auto-fall back to 2× on such devices.</div>
         </div>
 
-        <!-- MANUAL MODE -->
-        <div class="mode-panel" id="panel-manual" style="display:none">
+        <hr style="border:none;border-top:1px dashed var(--line);margin:18px 0">
+        <div id="paManualSection">
+          <div class="slider-head" style="margin-bottom:6px"><label style="font-size:.85rem;text-transform:none;letter-spacing:0;color:var(--ink)"><i class="fa-solid fa-sliders-h" style="color:var(--brand)"></i> Manual Adjust — Advanced</label></div>
+          <div class="info-note" style="margin-bottom:12px">Neeche scroll karke saare fine-control options dekhein — exposure, highlights/shadows, curves, HSL, effects aur bahut kuch.</div>
           <div class="slider-group"><div class="slider-head"><label>Brightness</label><span class="slider-val" id="v-brightness">0</span></div><input type="range" id="s-brightness" min="-100" max="100" value="0"></div>
           <div class="slider-group"><div class="slider-head"><label>Contrast</label><span class="slider-val" id="v-contrast">0</span></div><input type="range" id="s-contrast" min="-100" max="100" value="0"></div>
           <div class="slider-group"><div class="slider-head"><label>Exposure</label><span class="slider-val" id="v-exposure">0</span></div><input type="range" id="s-exposure" min="-100" max="100" value="0"></div>
@@ -467,134 +533,77 @@
           <button class="btn block" id="btnApplyManual" style="margin-top:16px"><i class="fa-solid fa-check"></i> Apply Adjustments</button>
         </div>
 
-        <!-- CROP MODE -->
-        <div class="mode-panel" id="panel-crop" style="display:none">
-          <div class="field-row"><label>Aspect Ratio</label>
-            <div class="seg-row" id="cropAspectSeg" style="grid-template-columns:repeat(3,1fr)">
-              <div class="seg-opt active" data-ratio="NaN">Free</div>
-              <div class="seg-opt" data-ratio="1">Square</div>
-              <div class="seg-opt" data-ratio="1.333333">4:3</div>
-              <div class="seg-opt" data-ratio="1.777778">16:9</div>
-              <div class="seg-opt" data-ratio="0.75">3:4</div>
-              <div class="seg-opt" data-ratio="0.777778">Passport</div>
+          <div class="step-actions">
+            <button type="button" class="btn block" data-goto="1"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button type="button" class="btn primary block" data-goto="3">Next: Export <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 4: EXPORT -->
+        <div class="mode-panel" id="panel-step3" style="display:none">
+          <div class="field-row"><label>Download Format</label>
+            <select id="outFormat">
+              <option value="jpg">JPG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WEBP</option>
+              <option value="avif">AVIF</option>
+              <option value="tiff">TIFF</option>
+              <option value="pdf">PDF</option>
+              <option value="gif">GIF</option>
+              <option value="ico">ICO</option>
+              <option value="bmp">BMP</option>
+            </select>
+          </div>
+          <div class="field-row"><label>Resolution (DPI)</label>
+            <select id="outDpi">
+              <option value="72">72 DPI — Web / Screen</option>
+              <option value="150">150 DPI — Draft Print</option>
+              <option value="200">200 DPI — Standard Print</option>
+              <option value="300" selected>300 DPI — Photo Print (Recommended)</option>
+              <option value="600">600 DPI — High Quality Print</option>
+            </select>
+          </div>
+          <div class="field-row"><label>File Size (KB) — Optional</label>
+            <input type="number" id="outTargetKB" placeholder="e.g. 100 (khali chhodein = best quality)" min="1" max="5000">
+            <div class="btn-row" style="margin-top:6px">
+              <button type="button" class="btn kb-preset" data-kb="20">20 KB</button>
+              <button type="button" class="btn kb-preset" data-kb="50">50 KB</button>
+              <button type="button" class="btn kb-preset" data-kb="100">100 KB</button>
+              <button type="button" class="btn kb-preset" data-kb="200">200 KB</button>
+              <button type="button" class="btn kb-preset" data-kb="">Off</button>
             </div>
           </div>
-          <div class="btn-row">
-            <button class="btn" id="btnFreeSel" title="Angle-free 4-corner select — for tilted/perspective photos"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
-          </div>
-          <div class="btn-row">
-            <button class="btn" id="btnCropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-            <button class="btn" id="btnCropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-            <button class="btn" id="btnCropReset" title="Reset Crop Box"><i class="fa-solid fa-arrows-rotate"></i></button>
-          </div>
-          <div class="btn-row" id="cropRotRow">
-            <button class="btn" id="btnRotateL"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
-            <button class="btn" id="btnRotateR"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
-          </div>
-          <div class="slider-group" id="fineRotRow">
-            <div class="slider-head"><label>Straighten (fine rotate)</label><span class="slider-val" id="v-cropFineRot">0°</span></div>
-            <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5">
-          </div>
-          <div class="info-note" id="quadRotNote" style="display:none">Free Select mode: drag any of the 4 corners independently — no fixed rotation needed, this handles tilted/perspective photos directly.</div>
-          <div class="btn-row">
-            <button class="btn" id="btnFlipH"><i class="fa-solid fa-left-right"></i> Flip H</button>
-            <button class="btn" id="btnFlipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
-          </div>
-          <button class="btn primary block" id="btnCropApply" style="margin-top:10px"><i class="fa-solid fa-crop-simple"></i> Apply Crop</button>
-          <div class="info-note">Drag the box edges/corners to select the area, drag inside to move it, scroll or pinch to zoom. Click Apply Crop when ready.</div>
-          <div class="field-row" style="margin-top:14px"><label>Resize Width (px)</label><input type="number" id="resizeW" placeholder="e.g. 1200"></div>
-          <div class="field-row"><label>Resize Height (px)</label><input type="number" id="resizeH" placeholder="e.g. 1600"></div>
-          <button class="btn block" id="btnResizeApply"><i class="fa-solid fa-maximize"></i> Apply Resize</button>
-          <div class="field-row" style="margin-top:14px"><label>Border</label>
-            <select id="borderStyle"><option value="none">None</option><option value="thin">Thin White</option><option value="thick">Thick White</option><option value="rounded">Rounded Corners</option></select>
-          </div>
-          <button class="btn block" id="btnBorderApply"><i class="fa-solid fa-border-all"></i> Apply Border</button>
-        </div>
+          <div class="slider-group"><div class="slider-head"><label>Quality <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(File Size (KB) set ho to ye ignore hoga)</span></label><span class="slider-val" id="v-quality">92</span></div><input type="range" id="s-quality" min="10" max="100" value="92"></div>
 
-        <!-- PASSPORT MODE -->
-        <div class="mode-panel" id="panel-passport" style="display:none">
-          <button class="btn primary block" id="btnPassportAuto"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Center Face &amp; Crop</button>
-          <div id="passportWarnings"></div>
-          <div class="info-note">Uses real AI face detection to center your face correctly and checks if your background looks white/plain — required by most government job forms. Pick your exact size from <b>Quick Size Preset</b> below (🪪 Passport / ID group) before clicking — defaults to standard 35×45mm if none is selected.</div>
-        </div>
-
-        <!-- DOCUMENT MODE -->
-        <div class="mode-panel" id="panel-document" style="display:none">
-          <div class="field-row"><label>Document Type</label>
-            <select id="docType"><option value="bw">Black &amp; White Text Scan</option><option value="color">Color Document</option></select>
-          </div>
-          <button class="btn primary block" id="btnDocApply"><i class="fa-solid fa-file-lines"></i> Enhance for Readability</button>
-          <div class="info-note">Boosts text/background contrast, removes scan noise and sharpens edges — ideal for certificates, marksheets &amp; ID proofs before uploading to forms.</div>
-        </div>
-
-        <!-- OLD PHOTO MODE -->
-        <div class="mode-panel" id="panel-oldphoto" style="display:none">
-          <button class="btn primary block" id="btnOldPhotoApply"><i class="fa-solid fa-clock-rotate-left"></i> Restore Old Photo</button>
-          <div class="info-note">Recovers faded colors, lifts contrast, reduces dust/speckle noise and neutralizes yellow/sepia color-cast from old prints.</div>
-        </div>
-
-        <!-- TEXT / WATERMARK MODE -->
-        <div class="mode-panel" id="panel-text" style="display:none">
-          <div class="field-row"><label>Text</label><input type="text" id="txtContent" placeholder="Your text or watermark..." maxlength="120"></div>
-          <div class="slider-group"><div class="slider-head"><label>Font Size</label><span class="slider-val" id="v-txtSize">40</span></div><input type="range" id="txtSize" min="10" max="200" value="40"></div>
-          <div class="field-row"><label>Color</label><input type="color" id="txtColor" value="#ffffff" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer"></div>
-          <div class="slider-group"><div class="slider-head"><label>Opacity</label><span class="slider-val" id="v-txtOpacity">100</span></div><input type="range" id="txtOpacity" min="10" max="100" value="100"></div>
-          <div class="field-row"><label>Position</label>
-            <div class="seg-row" id="txtPosSeg" style="grid-template-columns:repeat(3,1fr);gap:5px">
-              <div class="seg-opt" data-pos="tl"><i class="fa-solid fa-arrow-up-left"></i></div>
-              <div class="seg-opt" data-pos="tc"><i class="fa-solid fa-arrow-up"></i></div>
-              <div class="seg-opt" data-pos="tr"><i class="fa-solid fa-arrow-up-right"></i></div>
-              <div class="seg-opt" data-pos="cl"><i class="fa-solid fa-arrow-left"></i></div>
-              <div class="seg-opt active" data-pos="cc"><i class="fa-solid fa-circle" style="font-size:.5rem"></i></div>
-              <div class="seg-opt" data-pos="cr"><i class="fa-solid fa-arrow-right"></i></div>
-              <div class="seg-opt" data-pos="bl"><i class="fa-solid fa-arrow-down-left"></i></div>
-              <div class="seg-opt" data-pos="bc"><i class="fa-solid fa-arrow-down"></i></div>
-              <div class="seg-opt" data-pos="br"><i class="fa-solid fa-arrow-down-right"></i></div>
+          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+          <div class="field-row">
+            <label>AI Super Resolution (optional, adds sharpness at a larger size)</label>
+            <div class="seg-row" id="upscaleSeg">
+              <div class="seg-opt" data-x="1">Off</div>
+              <div class="seg-opt active" data-x="2">2×</div>
+              <div class="seg-opt" data-x="4">4×</div>
+              <div class="seg-opt" data-x="8">8×</div>
             </div>
           </div>
-          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--ink);margin:12px 0"><input type="checkbox" id="txtShadow" checked> Add shadow (visible on any background)</label>
-          <button class="btn primary block" id="btnTxtApply"><i class="fa-solid fa-font"></i> Add Text to Photo</button>
-          <div class="info-note">Quick watermark: Opacity ~40-50%, position Bottom-Right, keep text short.</div>
-        </div>
+          <button class="btn primary block" id="btnUpscale"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Run AI Upscale</button>
+          <div class="info-note" style="margin-top:8px">This only increases resolution/detail — it does NOT fix color, brightness or blur (use Adjust step for that). Its effect is subtle when viewed shrunk to fit your screen — use Zoom (+) or Before/After after running it to see the real difference at full size. Real neural-network super-resolution (TensorFlow.js) — uses your GPU (WebGL) when available; without GPU support this can take several minutes, so 4×/8× auto-fall back to 2× on such devices.</div>
 
-        <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
-        <div class="field-row"><label>Quick Size Preset — Print / Passport / Social Media</label>
-          <select id="sizePreset"><option value="">— Keep Current Size —</option></select>
+          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+          <div class="field-row"><label>File Name</label><input type="text" id="outName" value="enhanced-photo"></div>
+          <button class="btn primary block" id="btnDownload"><i class="fa-solid fa-download"></i> Download</button>
+          <button class="btn block" id="btnDownloadZip" style="display:none;margin-top:8px"><i class="fa-solid fa-file-zipper"></i> Download All (ZIP)</button>
+
+          <div class="step-actions"><button type="button" class="btn block" data-goto="2"><i class="fa-solid fa-arrow-left"></i> Back</button></div>
         </div>
-        <div class="field-row"><label>Download Format</label>
-          <select id="outFormat">
-            <option value="jpg">JPG</option>
-            <option value="png">PNG</option>
-            <option value="webp">WEBP</option>
-            <option value="avif">AVIF</option>
-            <option value="tiff">TIFF</option>
-            <option value="pdf">PDF</option>
-            <option value="gif">GIF</option>
-            <option value="ico">ICO</option>
-            <option value="bmp">BMP</option>
-          </select>
-        </div>
-        <div class="field-row"><label>Resolution (DPI)</label>
-          <select id="outDpi">
-            <option value="72">72 DPI — Web / Screen</option>
-            <option value="150">150 DPI — Draft Print</option>
-            <option value="200">200 DPI — Standard Print</option>
-            <option value="300" selected>300 DPI — Photo Print (Recommended)</option>
-            <option value="600">600 DPI — High Quality Print</option>
-          </select>
-        </div>
-        <div class="slider-group"><div class="slider-head"><label>Quality</label><span class="slider-val" id="v-quality">92</span></div><input type="range" id="s-quality" min="10" max="100" value="92"></div>
-        <div class="field-row"><label>File Name</label><input type="text" id="outName" value="enhanced-photo"></div>
-        <button class="btn primary block" id="btnDownload"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn block" id="btnDownloadZip" style="display:none;margin-top:8px"><i class="fa-solid fa-file-zipper"></i> Download All (ZIP)</button>
       </div>
     </div>
   </div>
 
   <div class="card">
     <h3><i class="fa-solid fa-circle-info"></i> How It Works</h3>
-    <div class="faq-item open"><div class="faq-q">Is my photo uploaded anywhere? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">No. Every operation — AI upscaling, color correction, face detection, sharpening — runs entirely inside your browser using TensorFlow.js and WebGL/WebAssembly. Your photo never leaves your device.</div></div>
-    <div class="faq-item"><div class="faq-q">What powers the "AI" in this tool? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">Real on-device neural networks: an ESRGAN-style TensorFlow.js super-resolution model for upscaling, and Google's MediaPipe Face Landmarker for face detection — both run locally, no API keys, no cloud calls. Color/tone/sharpening tools use classical image-processing algorithms (histogram auto-levels, unsharp masking, dark-channel dehaze) rather than generative AI, so results stay natural and don't invent fake detail.</div></div>
+    <div class="faq-item open"><div class="faq-q">Do I have to follow all 4 steps? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">No — only Crop &amp; Size is needed to get started. Background Remove, the AI Super Resolution upscale, and File Size (KB) targeting in Export are all optional. You can jump to any step directly using the step bar at the top.</div></div>
+    <div class="faq-item"><div class="faq-q">Is my photo uploaded anywhere? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">No. Every operation — background removal, AI upscaling, color correction, face detection, sharpening — runs entirely inside your browser using TensorFlow.js, MediaPipe and WebGL/WebAssembly. Your photo never leaves your device.</div></div>
+    <div class="faq-item"><div class="faq-q">What powers the "AI" in this tool? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">Real on-device neural networks: an ESRGAN-style TensorFlow.js super-resolution model for upscaling, Google's MediaPipe Face Landmarker for face detection, and MediaPipe's selfie segmentation model for background removal — all run locally, no API keys, no cloud calls. Color/tone/sharpening tools use classical image-processing algorithms (histogram auto-levels, unsharp masking, dark-channel dehaze) rather than generative AI, so results stay natural and don't invent fake detail.</div></div>
     <div class="faq-item"><div class="faq-q">Why is 4× / 8× upscaling slow on my device? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">4× and 8× run the real AI model 2 or 3 times in sequence for genuine detail recovery at each stage. Devices with a good GPU (WebGL) finish in seconds; older devices without WebGL fall back to CPU and can take longer on large photos.</div></div>
     <div class="faq-item"><div class="faq-q">Is this free with no watermark? <i class="fa-solid fa-chevron-down"></i></div><div class="faq-a">Yes, completely free, unlimited use, no login and no watermark on downloads.</div></div>
   </div>
@@ -637,7 +646,8 @@ const state = {
   upscaler: null,
   upscalerLoading: null,
   lastAnalysis: null,
-  mode: 'auto',
+  step: 0,           // 0=Crop&Size, 1=Background, 2=Adjust, 3=Export
+  adjustSub: 'auto',  // which live-preview system owns the canvas inside step 2
   zoom: 1,
 };
 const ctx = state.canvas.getContext('2d', { willReadFrequently: true });
@@ -808,7 +818,10 @@ async function selectQueueItem(i){
   resetManualSliders();
   paResetAdjustmentsUI();
   paRefreshSource();
-  if(state.mode==='auto') paRenderFilterThumbnails(); // independent of face analysis below — must not wait on it
+  paRenderFilterThumbnails(); // independent of face analysis below — must not wait on it
+  bgCutoutData = null; // new photo — any previous background-removal cutout no longer applies
+  const bgColorRow = $('bgColorRow'); if(bgColorRow) bgColorRow.style.display = 'none';
+  goStep(0); // always start a fresh photo at Crop & Size
   renderQueue();
   await runAutoAnalysis();
 }
@@ -2447,7 +2460,7 @@ function applyCropperCrop(){
   state.baseImageData = getData();
   pushHistory();
   destroyCropper();
-  switchMode('crop'); // re-render panel state, keep user in crop tab for further edits
+  goStep(0); // re-render crop panel/re-init cropper on the newly cropped image
   toast('Crop applied ✓');
 }
 
@@ -2508,103 +2521,6 @@ function applyBorder(style){
   toast('Border applied');
 }
 
-/* ============================== PASSPORT PHOTO MODE ============================== */
-function checkWhiteBackground(id){
-  const {data,width:w,height:h} = id;
-  const samples = [[2,2],[w-3,2],[2,h-3],[w-3,h-3]];
-  let whiteish=0;
-  for(const [x,y] of samples){
-    const i=(y*w+x)*4;
-    const lum=(data[i]+data[i+1]+data[i+2])/3;
-    const sat = Math.max(data[i],data[i+1],data[i+2]) - Math.min(data[i],data[i+1],data[i+2]);
-    if(lum>200 && sat<25) whiteish++;
-  }
-  return whiteish>=3;
-}
-async function passportAutoMode(){
-  if(!state.lastAnalysis) await runAutoAnalysis();
-  const a = state.lastAnalysis;
-  const warn = $('passportWarnings'); warn.innerHTML='';
-  if(!a.faceCount){
-    warn.innerHTML = `<div class="a-chip warn" style="margin-top:10px"><i class="fa-solid fa-triangle-exclamation"></i> No face detected — cannot auto-center. Crop manually instead.</div>`;
-    return;
-  }
-  const box = a.faceBoxes[0];
-  // Size comes from the shared Quick Size Preset dropdown's Passport/ID group
-  // (data-w/data-h, in px) instead of a separate duplicate "Photo Size"
-  // control — one size-selection UI for the whole tool. Falls back to the
-  // standard 35x45mm passport ratio/size if nothing is selected there.
-  const sizeOpt = $('sizePreset') && $('sizePreset').selectedOptions[0];
-  const presetW = sizeOpt && Number(sizeOpt.dataset.w), presetH = sizeOpt && Number(sizeOpt.dataset.h);
-  const hasPreset = !!(presetW && presetH);
-  const targetRatio = hasPreset ? presetW/presetH : 413/531;
-  const cx = box.x+box.w/2, cy = box.y+box.h*0.42;
-  // face height should occupy ~65% of frame height, per common passport-photo guidance
-  const frameH = box.h/0.65;
-  const frameW = frameH*targetRatio;
-  let x0 = cx-frameW/2, y0 = cy-frameH*0.42;
-  x0 = clamp(x0,0,state.canvas.width-frameW); y0 = clamp(y0,0,state.canvas.height-frameH);
-  const fw = Math.min(frameW, state.canvas.width), fh = Math.min(frameH, state.canvas.height);
-
-  const outSize = hasPreset ? presetW : 600;
-  const tmp = document.createElement('canvas'); tmp.width=outSize; tmp.height=Math.round(outSize/targetRatio);
-  tmp.getContext('2d').drawImage(state.canvas, x0,y0,fw,fh, 0,0,tmp.width,tmp.height);
-  setCanvasSize(tmp.width,tmp.height); ctx.drawImage(tmp,0,0);
-  state.baseImageData = getData(); pushHistory();
-
-  const isWhite = checkWhiteBackground(getData());
-  if(!isWhite){
-    warn.innerHTML = `<div class="a-chip warn" style="margin-top:10px"><i class="fa-solid fa-triangle-exclamation"></i> Background may not be plain white — many govt forms require a white/light background.</div>`;
-  } else {
-    warn.innerHTML = `<div class="a-chip ok" style="margin-top:10px"><i class="fa-solid fa-circle-check"></i> Background looks good</div>`;
-  }
-  toast('Passport photo cropped & centered');
-}
-
-/* ============================== DOCUMENT MODE ============================== */
-async function applyDocumentMode(type){
-  const btn = $('btnDocApply'); btn.disabled = true;
-  await yieldToUI();
-  let id = getData();
-  const {data} = id;
-  if(type==='bw'){
-    for(let i=0;i<data.length;i+=4){
-      const g = 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
-      const v = clamp((g-128)*1.55+128, 0, 255); // contrast stretch
-      data[i]=data[i+1]=data[i+2]=v;
-    }
-  } else {
-    id = applyToneColor(id, {brightness:6,contrast:26,exposure:0,highlights:0,shadows:10,gamma:0,saturation:4,vibrance:0,temperature:0,tint:0});
-  }
-  id = applyDenoise(id, 30);
-  id = applySharpenClarityTexture(id, 60, 0, 0);
-  putData(id);
-  state.baseImageData = getData(); pushHistory();
-  btn.disabled = false;
-  toast('Document enhanced for readability');
-}
-
-/* ============================== OLD PHOTO RESTORE ============================== */
-async function applyOldPhotoRestore(){
-  const btn = $('btnOldPhotoApply'); btn.disabled = true;
-  await yieldToUI();
-  let id = getData();
-  // detect + neutralize sepia/yellow cast: if avg R notably > avg B, cool it down
-  const {data} = id;
-  let sr=0,sg=0,sb=0,n=data.length/4;
-  for(let i=0;i<data.length;i+=4){ sr+=data[i]; sg+=data[i+1]; sb+=data[i+2]; }
-  sr/=n; sg/=n; sb/=n;
-  const castTemp = clamp(-(sr-sb)*0.9, -60, 0); // negative = cool down toward blue
-
-  id = applyToneColor(id, {brightness:8,contrast:22,exposure:4,highlights:-8,shadows:22,gamma:-6,saturation:22,vibrance:14,temperature:castTemp,tint:0});
-  id = applyDenoise(id, 45); // dust/speckle reduction
-  id = applySharpenClarityTexture(id, 24, 10, 0);
-  putData(id);
-  state.baseImageData = getData(); pushHistory();
-  btn.disabled = false;
-  toast('Old photo restored');
-}
-
 /* ============================== LOW-LIGHT FIX / JPEG ARTIFACT REDUCTION ============================== */
 // Classical shadow-lift + exposure recovery, tuned more aggressively than
 // the general Auto Enhance for genuinely dim/night photos.
@@ -2636,110 +2552,158 @@ function applyReduceArtifacts(){
   toast('Compression artifacts reduced ✓');
 }
 
-/* ============================== TEXT / WATERMARK OVERLAY ==============================
-   Non-destructive live preview (matches the paSourceImageData pattern used elsewhere on
-   this page): state.baseImageData is only ever mutated by applyTextOverlay() on an
-   explicit "Add Text to Photo" click. Every slider/color/position change just re-draws
-   the preview on top of a fresh copy of baseImageData, so nothing stacks. The text is
-   also freely draggable — dragging sets textCustomPos, which overrides the preset
-   9-point position until the user picks a preset again or commits. */
-let textCustomPos = null;   // {x,y} baseline anchor set by dragging, or null = use preset position
-let textDragOffset = null;  // {x,y} pointer offset from the anchor while actively dragging
+/* ============================== BACKGROUND REMOVE (Step 2) ==============================
+   MediaPipe multiclass selfie segmentation — same model/approach already proven in
+   passport-photo.html / image-resizer.html / background-remove.html, adapted to work
+   directly on state.baseImageData/state.canvas instead of a separate cropped-canvas state. */
+let bgMpVision = null, bgMpSegmenter = null;
+let bgCutoutData = null;   // the clean transparent cutout, kept separately so re-picking a
+                           // background color recomposites from this instead of double-compositing
+const BG_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
 
-function getTextLayout(){
-  if(!state.baseImageData) return null;
-  const text = $('txtContent').value.trim();
-  if(!text) return null;
-  const size = Number($('txtSize').value);
-  const w = state.baseImageData.width, h = state.baseImageData.height;
-  ctx.font = `700 ${size}px 'Space Grotesk', sans-serif`;
-  const tw = ctx.measureText(text).width;
-  let x, y;
-  if(textCustomPos){
-    x = textCustomPos.x; y = textCustomPos.y;
-  } else {
-    const posEl = document.querySelector('#txtPosSeg .seg-opt.active');
-    const pos = posEl ? posEl.dataset.pos : 'cc';
-    const pad = size*0.4;
-    if(pos[0]==='t') y = pad+size*0.8;
-    else if(pos[0]==='c') y = h/2+size*0.3;
-    else y = h-pad;
-    if(pos[1]==='l') x = pad;
-    else if(pos[1]==='c') x = (w-tw)/2;
-    else x = w-tw-pad;
-  }
-  return {text, size, tw, x, y};
+// Installed Android app shell (TWA/WebView) can silently return corrupted mask data on
+// the GPU delegate instead of throwing (garbled streak/noise artifacts across the photo),
+// so a plain catch-and-fallback never triggers. Skip GPU there entirely.
+function isAndroidAppShell(){
+  try{
+    return /Android/i.test(navigator.userAgent) &&
+      ['standalone','fullscreen','minimal-ui'].some(m=>window.matchMedia('(display-mode: '+m+')').matches);
+  }catch(_){ return false; }
 }
-function drawTextLayer(withHandle){
-  const layout = getTextLayout();
-  if(!layout) return;
-  const {text, size, tw, x, y} = layout;
-  const color = $('txtColor').value;
-  const opacity = Number($('txtOpacity').value)/100;
-  const shadow = $('txtShadow').checked;
-  ctx.font = `700 ${size}px 'Space Grotesk', sans-serif`;
-  ctx.textBaseline = 'alphabetic';
-  ctx.globalAlpha = opacity;
-  if(shadow){ ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillText(text, x+2, y+2); }
-  ctx.fillStyle = color;
-  ctx.fillText(text, x, y);
-  ctx.globalAlpha = 1;
-  if(withHandle){
-    ctx.save();
-    ctx.strokeStyle = 'rgba(52,93,230,.9)';
-    ctx.setLineDash([6,4]);
-    ctx.lineWidth = Math.max(1.5, size*0.025);
-    ctx.strokeRect(x-8, y-size*0.85, tw+16, size*1.05);
-    ctx.restore();
-  }
+function loadBgLib(cb){
+  if(bgMpSegmenter){ cb(null, bgMpSegmenter); return; }
+  (async function(delegate){
+    try{
+      const mod = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+      if(!bgMpVision) bgMpVision = await mod.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+      try{
+        bgMpSegmenter = await mod.ImageSegmenter.createFromOptions(bgMpVision,{baseOptions:{modelAssetPath:BG_MODEL_URL,delegate:delegate},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+      }catch(gpuErr){
+        if(delegate==='GPU'){
+          bgMpSegmenter = await mod.ImageSegmenter.createFromOptions(bgMpVision,{baseOptions:{modelAssetPath:BG_MODEL_URL,delegate:'CPU'},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+        } else { throw gpuErr; }
+      }
+      cb(null, bgMpSegmenter);
+    }catch(err){ cb(err, null); }
+  })(isAndroidAppShell() ? 'CPU' : 'GPU');
 }
-function renderTextPreview(){
-  if(!state.baseImageData) return;
-  setCanvasSize(state.baseImageData.width, state.baseImageData.height);
-  putData(state.baseImageData);
-  if($('txtContent').value.trim()) drawTextLayer(true);
+function bgSmoothstep(e0,e1,x){ const t=Math.min(1,Math.max(0,(x-e0)/(e1-e0))); return t*t*(3-2*t); }
+// Same matting cleanup as passport-photo.html: steepens the alpha so faint background
+// ghosting disappears while hair/edge soft-alpha is kept, then de-fringes leftover
+// old-background colour tint on the remaining semi-transparent edge pixels.
+function refineBgCutout(canvas){
+  try{
+    const c = canvas.getContext('2d'), w=canvas.width, h=canvas.height, n=w*h;
+    if(!w||!h) return canvas;
+    const img = c.getImageData(0,0,w,h), d = img.data;
+    const HI = 0.55*255;
+    const conf = new Uint8Array(n);
+    for(let i=0;i<n;i++) conf[i] = d[i*4+3]>=HI ? 1 : 0;
+    const belongs = new Uint8Array(n), stack = new Int32Array(n); let sp=0;
+    for(let i=0;i<n;i++) if(conf[i]){ belongs[i]=1; stack[sp++]=i; }
+    while(sp>0){
+      const p=stack[--sp], py=(p/w)|0, px=p-py*w;
+      if(px>0){ const q=p-1; if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;} }
+      if(px<w-1){ const q=p+1; if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;} }
+      if(py>0){ const q=p-w; if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;} }
+      if(py<h-1){ const q=p+w; if(!belongs[q]&&d[q*4+3]>0){belongs[q]=1;stack[sp++]=q;} }
+    }
+    const reach = new Uint8Array(n); sp=0;
+    for(let x=0;x<w;x++){
+      let e=x; if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}
+      e=(h-1)*w+x; if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}
+    }
+    for(let y=0;y<h;y++){
+      let e=y*w; if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}
+      e=y*w+w-1; if(!belongs[e]&&!reach[e]){reach[e]=1;stack[sp++]=e;}
+    }
+    while(sp>0){
+      const p=stack[--sp], py=(p/w)|0, px=p-py*w;
+      if(px>0){ const q=p-1; if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;} }
+      if(px<w-1){ const q=p+1; if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;} }
+      if(py>0){ const q=p-w; if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;} }
+      if(py<h-1){ const q=p+w; if(!belongs[q]&&!reach[q]){reach[q]=1;stack[sp++]=q;} }
+    }
+    for(let i=0;i<n;i++) if(!belongs[i]&&!reach[i]) belongs[i]=1;
+    for(let i=0;i<n;i++) if(!belongs[i]) d[i*4+3]=0;
+    const src = new Uint8ClampedArray(d);
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+      const idx=(y*w+x)*4, av=src[idx+3];
+      if(av>0 && av<235){
+        let r=0,g=0,b=0,cnt=0;
+        for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+          const ny=y+dy, nx=x+dx; if(ny<0||nx<0||ny>=h||nx>=w) continue;
+          const nidx=(ny*w+nx)*4;
+          if(src[nidx+3]>=235){ r+=src[nidx]; g+=src[nidx+1]; b+=src[nidx+2]; cnt++; }
+        }
+        if(cnt>0){ d[idx]=(d[idx]+r/cnt)/2; d[idx+1]=(d[idx+1]+g/cnt)/2; d[idx+2]=(d[idx+2]+b/cnt)/2; }
+      }
+    }
+    c.putImageData(img,0,0);
+  }catch(e){}
+  return canvas;
 }
-function textCanvasCoords(e){
-  const rect = state.canvas.getBoundingClientRect();
-  const scaleX = state.canvas.width / rect.width, scaleY = state.canvas.height / rect.height;
-  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
-}
-function textPointerDown(e){
-  if(state.mode!=='text') return;
-  const layout = getTextLayout();
-  if(!layout) return;
-  const p = textCanvasCoords(e);
-  const {x, y, tw, size} = layout;
-  const top = y - size*0.85, bottom = y + size*0.25;
-  if(p.x>=x-14 && p.x<=x+tw+14 && p.y>=top-14 && p.y<=bottom+14){
-    textDragOffset = { x: p.x-x, y: p.y-y };
-    state.canvas.style.cursor = 'grabbing';
-    try{ e.target.setPointerCapture(e.pointerId); }catch(_){}
-    e.preventDefault();
-  }
-}
-function textPointerMove(e){
-  if(!textDragOffset) return;
-  const p = textCanvasCoords(e);
-  textCustomPos = { x: p.x-textDragOffset.x, y: p.y-textDragOffset.y };
-  renderTextPreview();
-  e.preventDefault();
-}
-function textPointerUp(){
-  if(textDragOffset){ textDragOffset = null; state.canvas.style.cursor = ''; }
-}
-function applyTextOverlay(){
-  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
-  if(!$('txtContent').value.trim()){ toast('Text daalein', true); return; }
-  setCanvasSize(state.baseImageData.width, state.baseImageData.height);
-  putData(state.baseImageData);
-  drawTextLayer(false);   // bake the text without the draggable selection outline
+function renderBgCutoutOnColor(bgChoice){
+  if(!bgCutoutData) return;
+  const w = bgCutoutData.width, h = bgCutoutData.height;
+  setCanvasSize(w,h);
+  ctx.clearRect(0,0,w,h);
+  if(bgChoice !== 'transparent'){ ctx.fillStyle = bgChoice; ctx.fillRect(0,0,w,h); }
+  const tmp = document.createElement('canvas'); tmp.width=w; tmp.height=h;
+  tmp.getContext('2d').putImageData(bgCutoutData,0,0);
+  ctx.drawImage(tmp,0,0);
   state.baseImageData = getData();
-  pushHistory();
-  $('txtContent').value = '';
-  textCustomPos = null;
-  renderTextPreview();
-  toast('Text photo mein add ho gaya ✓ — agla watermark ke liye naya text likhein');
+}
+function doBgRemove(){
+  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+  const loader = $('bgLoader'); loader.style.display = '';
+  $('bgLoaderMsg').textContent = 'AI model load ho raha hai (first time ~5-10 sec)...';
+  loadBgLib((err, segmenter)=>{
+    if(err){
+      loader.style.display = 'none';
+      toast('Background removal load nahi hua. Internet check karein.', true);
+      return;
+    }
+    $('bgLoaderMsg').textContent = 'Background remove ho raha hai...';
+    try{
+      const iw = state.baseImageData.width, ih = state.baseImageData.height;
+      const srcCanvas = document.createElement('canvas'); srcCanvas.width=iw; srcCanvas.height=ih;
+      srcCanvas.getContext('2d').putImageData(state.baseImageData,0,0);
+      const result = segmenter.segment(srcCanvas);
+      const confidenceMasks = result.confidenceMasks;
+      if(!confidenceMasks || !confidenceMasks.length) throw new Error('AI mask nahi mila');
+      const bgMask = confidenceMasks[0], mw = bgMask.width, mh = bgMask.height, bgArr = bgMask.getAsFloat32Array();
+      const maskCanvas = document.createElement('canvas'); maskCanvas.width=mw; maskCanvas.height=mh;
+      const mctx = maskCanvas.getContext('2d'), mdata = mctx.createImageData(mw,mh);
+      for(let i=0;i<bgArr.length;i++){ const v=Math.round((1-bgArr[i])*255); mdata.data[i*4]=v; mdata.data[i*4+1]=v; mdata.data[i*4+2]=v; mdata.data[i*4+3]=255; }
+      mctx.putImageData(mdata,0,0);
+      const upCanvas = document.createElement('canvas'); upCanvas.width=iw; upCanvas.height=ih;
+      const uctx = upCanvas.getContext('2d'); uctx.imageSmoothingEnabled=true; uctx.imageSmoothingQuality='high';
+      uctx.drawImage(maskCanvas,0,0,iw,ih);
+      const maskFull = uctx.getImageData(0,0,iw,ih);
+      confidenceMasks.forEach(m=>m.close());
+      const srcData = new ImageData(new Uint8ClampedArray(state.baseImageData.data), iw, ih);
+      const srcPix = srcData.data, maskPix = maskFull.data;
+      const lo=0.35, hi=0.65;
+      for(let p=0;p<iw*ih;p++){
+        const idx=p*4;
+        srcPix[idx+3] = Math.round(bgSmoothstep(lo,hi,maskPix[idx]/255)*255);
+      }
+      const outCanvas = document.createElement('canvas'); outCanvas.width=iw; outCanvas.height=ih;
+      outCanvas.getContext('2d').putImageData(srcData,0,0);
+      refineBgCutout(outCanvas);
+      bgCutoutData = outCanvas.getContext('2d').getImageData(0,0,iw,ih);
+      const active = document.querySelector('#bgColorSwatches .bg-swatch.active');
+      renderBgCutoutOnColor(active ? active.dataset.bg : 'transparent');
+      pushHistory();
+      loader.style.display = 'none';
+      $('bgColorRow').style.display = '';
+      toast('Background removed ✓');
+    }catch(e){
+      loader.style.display = 'none';
+      toast('Background remove mein error: ' + e.message, true);
+    }
+  });
 }
 
 /* ============================== BEFORE/AFTER SPLIT & ZOOM & FULLSCREEN ============================== */
@@ -2844,6 +2808,34 @@ async function encode(cv,fmt,quality){
   return {blob:await canvasToBlobP(cv,'image/png'), ext:'png'};
 }
 function fillBG(c2,fmt,w,h){ if(['jpg','jpeg','bmp','pdf'].indexOf(fmt)>=0){ c2.fillStyle='#ffffff'; c2.fillRect(0,0,w,h); } }
+
+// Encode to a target FILE SIZE (KB) by binary-searching the quality — same approach
+// already proven in image-resizer.html. Picks the highest quality whose output is
+// <= target; if even max compression can't reach it (photo naturally smaller than the
+// target), pads the file with trailing bytes (ignored by viewers) to hit the exact size.
+async function encodeToTargetKB(cv, fmt, targetKB){
+  const lossy = ['jpg','jpeg','webp','avif'].indexOf(fmt) >= 0;
+  const useFmt = lossy ? fmt : 'jpg';
+  const mime = useFmt==='webp' ? 'image/webp' : (useFmt==='avif' ? 'image/avif' : 'image/jpeg');
+  const ext = useFmt==='webp' ? 'webp' : (useFmt==='avif' ? 'avif' : 'jpg');
+  const target = Math.max(1,targetKB)*1024;
+  let lo=0.05, hi=0.98, best=null;
+  for(let i=0;i<9;i++){
+    const q=(lo+hi)/2;
+    let b;
+    try{ b = await canvasToBlobP(cv,mime,q); }
+    catch(e){ throw new Error(useFmt.toUpperCase()+' is browser mein support nahi — JPG ya WebP choose karein.'); }
+    if(b.size<=target){ best=b; lo=q; } else { hi=q; }
+  }
+  if(!best){
+    try{ best = await canvasToBlobP(cv,mime,0.05); }
+    catch(e){ throw new Error('Encode fail — chhota target ya doosra format try karein.'); }
+  }
+  if(best.size < target){
+    best = new Blob([best, new Uint8Array(Math.round(target-best.size))], {type:mime});
+  }
+  return {blob:best, ext:ext};
+}
 
 /* ============================== DPI METADATA ==============================
    Embeds real DPI metadata into the exported file's bytes (JPEG APP0/JFIF
@@ -2950,6 +2942,7 @@ async function downloadCurrent(){
   const fmt = $('outFormat').value;
   const q = Number($('s-quality').value);
   const dpi = Number($('outDpi').value) || 0;
+  const targetKB = Number($('outTargetKB').value) || 0;
   const name = ($('outName').value || 'enhanced-photo').replace(/[^a-z0-9_\-]+/gi,'-');
   const btn = $('btnDownload');
   btn.disabled = true;
@@ -2959,7 +2952,7 @@ async function downloadCurrent(){
     const c2 = cv.getContext('2d');
     fillBG(c2, fmt, cv.width, cv.height);
     c2.drawImage(src,0,0);
-    let {blob, ext} = await encode(cv, fmt, q);
+    let {blob, ext} = targetKB>0 ? await encodeToTargetKB(cv, fmt, targetKB) : await encode(cv, fmt, q);
     blob = await setDpiBlob(blob, ext, dpi);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2998,25 +2991,40 @@ async function downloadZip(){
   toast('Batch ZIP downloaded ✓');
 }
 
-/* ============================== MODE TABS ============================== */
-function switchMode(mode){
-  if(state.mode==='crop' && mode!=='crop') destroyCropper();
-  if(state.mode==='manual' && mode!=='manual') exitManualPreviewMode();
-  if(state.mode==='auto' && mode!=='auto') paCommit(); // safety: commit any pending drag before leaving
-  if(state.mode==='text' && mode!=='text' && state.baseImageData){
-    // discard any un-committed live text preview, don't bake it in on tab switch
-    textCustomPos = null;
-    setCanvasSize(state.baseImageData.width, state.baseImageData.height);
-    putData(state.baseImageData);
+/* ============================== STEP NAVIGATION ==============================
+   4 steps: 0=Crop & Size, 1=Background Remove, 2=Adjust (merged Auto+Manual),
+   3=Export. All steps are always freely reachable via the stepper (none of this
+   is a hard-gated wizard) since crop/BG-remove/adjust/export can meaningfully
+   happen in any order and BG-remove/upscale/KB-target are explicitly optional. */
+function goStep(n){
+  if(state.step===0) destroyCropper();
+  if(state.step===2){
+    // leaving Adjust: commit/exit whichever of the two preview systems (Auto's
+    // full-res live preview vs Manual's downscaled-while-dragging preview) is
+    // currently showing on the canvas, so nothing is lost or left mid-drag.
+    if(state.adjustSub==='auto') paCommit();
+    else if(state.adjustSub==='manual') exitManualPreviewMode();
   }
-  state.mode = mode;
-  document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
-  document.querySelectorAll('.mode-panel').forEach(p=>p.style.display='none');
-  const panel = $('panel-'+mode); if(panel) panel.style.display='';
-  if(mode==='crop' && state.canvas.width) initCropper();
-  if(mode==='manual' && state.baseImageData){ enterManualPreviewMode(); renderHistogram(); renderCurveCanvas(); syncHslSlidersUI(); }
-  if(mode==='auto' && state.baseImageData){ paRefreshSource(); paRenderFilterThumbnails(); }
-  if(mode==='text' && state.baseImageData) renderTextPreview();
+  state.step = n;
+  document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('active', i===n));
+  for(let i=0;i<4;i++){ const p=$('panel-step'+i); if(p) p.style.display = i===n ? '' : 'none'; }
+  if(n===0 && state.canvas.width) initCropper();
+  if(n===2 && state.baseImageData){ state.adjustSub='auto'; paRefreshSource(); paRenderFilterThumbnails(); }
+  const cc = $('controlsCol'); if(cc) cc.scrollTop = 0;
+}
+// Inside the merged Adjust step, Auto's controls (full-res live preview) and
+// Manual's controls (downscaled-while-dragging preview, for the many more
+// expensive effects) both share ONE canvas — these are called the first time
+// the user touches a control from the OTHER family, mirroring the exact same
+// safety transition goStep() used to do when Auto/Manual were separate tabs.
+function ensureAutoActive(){
+  if(state.adjustSub==='manual') exitManualPreviewMode();
+  state.adjustSub = 'auto';
+}
+function ensureManualActive(){
+  if(state.adjustSub==='auto') paCommit();
+  if(state.adjustSub!=='manual'){ enterManualPreviewMode(); renderHistogram(); renderCurveCanvas(); syncHslSlidersUI(); }
+  state.adjustSub = 'manual';
 }
 
 /* ============================== EVENT WIRING ============================== */
@@ -3032,7 +3040,16 @@ function wireEvents(){
     for(const it of items){ if(it.type.startsWith('image/')){ addFiles([it.getAsFile()]); } }
   });
 
-  document.querySelectorAll('.mode-tab').forEach(b=>b.addEventListener('click', ()=>switchMode(b.dataset.mode)));
+  // Merged Adjust step: whichever half (Auto vs Manual) the user touches first
+  // takes over the canvas, cleanly committing/exiting the other side first —
+  // capture phase so this runs BEFORE the control's own input/click handler.
+  $('paAutoSection').addEventListener('pointerdown', ensureAutoActive, true);
+  $('paManualSection').addEventListener('pointerdown', ensureManualActive, true);
+
+  // Step tabs + all Next/Back buttons — data-step/data-goto instead of inline
+  // onclick since goStep() lives inside this page's IIFE, not on window.
+  document.querySelectorAll('.stab').forEach(t=>t.addEventListener('click', ()=>goStep(Number(t.dataset.step))));
+  document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goStep(Number(b.dataset.goto))));
 
   $('btnPaAuto').addEventListener('click', paAutoEnhance);
   $('btnPaReset').addEventListener('click', paResetAdjustments);
@@ -3118,27 +3135,21 @@ function wireEvents(){
   $('btnResizeApply').addEventListener('click', ()=>applyResize(Number($('resizeW').value)||0, Number($('resizeH').value)||0));
   $('btnBorderApply').addEventListener('click', ()=>applyBorder($('borderStyle').value));
 
-  $('btnPassportAuto').addEventListener('click', passportAutoMode);
-  $('btnDocApply').addEventListener('click', ()=>applyDocumentMode($('docType').value));
-  $('btnOldPhotoApply').addEventListener('click', applyOldPhotoRestore);
   $('btnLowLight').addEventListener('click', applyLowLightFix);
   $('btnReduceArtifacts').addEventListener('click', applyReduceArtifacts);
 
-  $('txtContent').addEventListener('input', renderTextPreview);
-  $('txtSize').addEventListener('input', function(){ $('v-txtSize').textContent = this.value; renderTextPreview(); });
-  $('txtColor').addEventListener('input', renderTextPreview);
-  $('txtOpacity').addEventListener('input', function(){ $('v-txtOpacity').textContent = this.value; renderTextPreview(); });
-  $('txtShadow').addEventListener('change', renderTextPreview);
-  document.querySelectorAll('#txtPosSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
-    document.querySelectorAll('#txtPosSeg .seg-opt').forEach(x=>x.classList.remove('active'));
-    o.classList.add('active');
-    textCustomPos = null;   // picking a preset overrides any dragged position
-    renderTextPreview();
+  $('btnBgRemove').addEventListener('click', doBgRemove);
+  document.querySelectorAll('.bg-swatch').forEach(sw=>sw.addEventListener('click', ()=>{
+    document.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('active'));
+    sw.classList.add('active');
+    renderBgCutoutOnColor(sw.dataset.bg);
+    pushHistory();
   }));
-  $('btnTxtApply').addEventListener('click', applyTextOverlay);
-  state.canvas.addEventListener('pointerdown', textPointerDown);
-  window.addEventListener('pointermove', textPointerMove);
-  window.addEventListener('pointerup', textPointerUp);
+  $('bgCustomColor').addEventListener('input', function(){
+    document.querySelectorAll('.bg-swatch').forEach(x=>x.classList.remove('active'));
+    renderBgCutoutOnColor(this.value);
+  });
+  $('bgCustomColor').addEventListener('change', pushHistory);
 
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
@@ -3161,6 +3172,9 @@ function wireEvents(){
   $('fsClose').addEventListener('click', ()=>$('fsOverlay').classList.remove('show'));
 
   $('s-quality').addEventListener('input', ()=>{ $('v-quality').textContent = $('s-quality').value; });
+  document.querySelectorAll('.kb-preset').forEach(btn=>btn.addEventListener('click', ()=>{
+    $('outTargetKB').value = btn.dataset.kb;
+  }));
   $('btnDownload').addEventListener('click', downloadCurrent);
   $('btnDownloadZip').addEventListener('click', downloadZip);
 
