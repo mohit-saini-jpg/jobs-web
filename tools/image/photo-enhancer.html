@@ -145,6 +145,7 @@
     .btn:hover{border-color:var(--brand);color:var(--brand)}
     .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
     .btn.primary:hover{background:var(--brand-dark);color:#fff}
+    .btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
     .btn.block{width:100%;justify-content:center;display:flex;align-items:center;gap:7px}
     .btn:disabled{opacity:.45;cursor:not-allowed}
 
@@ -359,14 +360,22 @@
             </div>
           </div>
           <div class="btn-row">
+            <button class="btn" id="btnFreeSel" title="Angle-free 4-corner select — for tilted/perspective photos"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
+          </div>
+          <div class="btn-row">
             <button class="btn" id="btnCropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
             <button class="btn" id="btnCropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
             <button class="btn" id="btnCropReset" title="Reset Crop Box"><i class="fa-solid fa-arrows-rotate"></i></button>
           </div>
-          <div class="btn-row">
+          <div class="btn-row" id="cropRotRow">
             <button class="btn" id="btnRotateL"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
             <button class="btn" id="btnRotateR"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
           </div>
+          <div class="slider-group" id="fineRotRow">
+            <div class="slider-head"><label>Straighten (fine rotate)</label><span class="slider-val" id="v-cropFineRot">0°</span></div>
+            <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5">
+          </div>
+          <div class="info-note" id="quadRotNote" style="display:none">Free Select mode: drag any of the 4 corners independently — no fixed rotation needed, this handles tilted/perspective photos directly.</div>
           <div class="btn-row">
             <button class="btn" id="btnFlipH"><i class="fa-solid fa-left-right"></i> Flip H</button>
             <button class="btn" id="btnFlipV"><i class="fa-solid fa-up-down"></i> Flip V</button>
@@ -1568,18 +1577,241 @@ async function applyManualCommit(){
 }
 
 /* ============================== INTERACTIVE CROP (Cropper.js — same lib as image-resizer.html) ============================== */
-let cropperInst = null;
-let cropRot = 0, cropFlipX = 1, cropFlipY = 1;
+// ── Freeform Quad Crop (angle-free 4-corner independent select) — ported
+// verbatim from image-resizer.html, which uses the exact same technique for
+// tilted/perspective photos (e.g. a document or ID photographed at an
+// angle) where a simple rectangular crop + 90°-only rotate can't fix it. ──
+function _triXform(s,d){
+  const x0=s[0].x,y0=s[0].y,x1=s[1].x,y1=s[1].y,x2=s[2].x,y2=s[2].y;
+  const u0=d[0].x,v0=d[0].y,u1=d[1].x,v1=d[1].y,u2=d[2].x,v2=d[2].y;
+  let D=x0*(y1-y2)-y0*(x1-x2)+(x1*y2-x2*y1);
+  if(!D)D=1e-6;
+  const a=(u0*(y1-y2)-y0*(u1-u2)+(u1*y2-u2*y1))/D;
+  const c=(x0*(u1-u2)-u0*(x1-x2)+(x1*u2-x2*u1))/D;
+  const e=(x0*(y1*u2-y2*u1)-y0*(x1*u2-x2*u1)+u0*(x1*y2-x2*y1))/D;
+  const b=(v0*(y1-y2)-y0*(v1-v2)+(v1*y2-v2*y1))/D;
+  const dd=(x0*(v1-v2)-v0*(x1-x2)+(x1*v2-x2*v1))/D;
+  const f=(x0*(y1*v2-y2*v1)-y0*(x1*v2-x2*v1)+v0*(x1*y2-x2*y1))/D;
+  return [a,b,c,dd,e,f];
+}
+function _qdist(p,q){return Math.sqrt((p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y));}
+function warpQuadToCanvas(imgEl,pts,outW,outH){
+  const cnv=document.createElement('canvas');cnv.width=outW;cnv.height=outH;
+  const c2=cnv.getContext('2d');c2.imageSmoothingEnabled=true;c2.imageSmoothingQuality='high';
+  const dst=[{x:0,y:0},{x:outW,y:0},{x:outW,y:outH},{x:0,y:outH}];
+  function drawTri(si,di){
+    const s=[pts[si[0]],pts[si[1]],pts[si[2]]];
+    const d=[dst[di[0]],dst[di[1]],dst[di[2]]];
+    const m=_triXform(s,d);
+    c2.save();
+    c2.beginPath();c2.moveTo(d[0].x,d[0].y);c2.lineTo(d[1].x,d[1].y);c2.lineTo(d[2].x,d[2].y);c2.closePath();c2.clip();
+    c2.transform(m[0],m[1],m[2],m[3],m[4],m[5]);
+    c2.drawImage(imgEl,0,0);
+    c2.restore();
+  }
+  drawTri([0,1,2],[0,1,2]);
+  drawTri([0,2,3],[0,2,3]);
+  return cnv;
+}
+function QuadCropUI(containerEl,imgEl,onChange){
+  const svgNS='http://www.w3.org/2000/svg';
+  let svg=null,poly=null,mask=null,handles=[],pts=[],active=false,dragIdx=-1,rafId=null;
+  let origImgStyle=imgEl.getAttribute('style')||'';
+  let origContainerOverflow=containerEl.style.overflow||'';
+  function fitImageToBox(){
+    const cs=getComputedStyle(containerEl);
+    const maxW=containerEl.clientWidth||parseInt(cs.width)||300;
+    const maxH=parseInt(cs.maxHeight)||containerEl.clientHeight||400;
+    const natW=imgEl.naturalWidth||maxW, natH=imgEl.naturalHeight||maxH;
+    const ar=natW/natH;
+    let w=maxW,h=w/ar;
+    if(h>maxH){h=maxH;w=h*ar;}
+    imgEl.style.width=Math.round(w)+'px';
+    imgEl.style.height=Math.round(h)+'px';
+    imgEl.style.maxWidth='none';
+    imgEl.style.display='block';
+    imgEl.style.margin='0 auto';
+    imgEl.style.touchAction='none';
+    imgEl.style.webkitUserSelect='none';
+    imgEl.style.userSelect='none';
+    imgEl.style.webkitUserDrag='none';
+    imgEl.style.webkitTouchCallout='none';
+    imgEl.setAttribute('draggable','false');
+  }
+  function frameSvg(){
+    if(!svg)return;
+    svg.style.left=imgEl.offsetLeft+'px';
+    svg.style.top=imgEl.offsetTop+'px';
+    svg.style.width=imgEl.clientWidth+'px';
+    svg.style.height=imgEl.clientHeight+'px';
+  }
+  function render(){
+    const w=imgEl.clientWidth,h=imgEl.clientHeight;
+    const d='M0,0 H'+w+' V'+h+' H0 Z M'+pts[0].x+','+pts[0].y+' L'+pts[1].x+','+pts[1].y+' L'+pts[2].x+','+pts[2].y+' L'+pts[3].x+','+pts[3].y+' Z';
+    mask.setAttribute('d',d);
+    poly.setAttribute('points',pts.map(p=>p.x+','+p.y).join(' '));
+    handles.forEach((hd,i)=>{hd.setAttribute('cx',pts[i].x);hd.setAttribute('cy',pts[i].y);});
+    if(onChange)onChange();
+  }
+  function scheduleRender(){
+    if(rafId)return;
+    rafId=requestAnimationFrame(()=>{rafId=null;render();});
+  }
+  this.activate=function(){
+    if(active)return;
+    active=true;
+    containerEl.style.position='relative';
+    origContainerOverflow=containerEl.style.overflow||'';
+    containerEl.style.overflow='auto';
+    containerEl.style.touchAction='pan-x pan-y';
+    fitImageToBox();
+    const w=imgEl.clientWidth,h=imgEl.clientHeight;
+    const mx=w*0.12,my=h*0.12;
+    pts=[{x:mx,y:my},{x:w-mx,y:my},{x:w-mx,y:h-my},{x:mx,y:h-my}];
+    svg=document.createElementNS(svgNS,'svg');
+    svg.style.cssText='position:absolute;left:'+imgEl.offsetLeft+'px;top:'+imgEl.offsetTop+'px;width:'+w+'px;height:'+h+'px;touch-action:none;z-index:5;';
+    mask=document.createElementNS(svgNS,'path');
+    mask.setAttribute('fill','rgba(0,0,0,.5)');mask.setAttribute('fill-rule','evenodd');
+    svg.appendChild(mask);
+    poly=document.createElementNS(svgNS,'polygon');
+    poly.setAttribute('fill','rgba(52,93,230,.12)');
+    poly.setAttribute('stroke','#345de6');poly.setAttribute('stroke-width','2');
+    svg.appendChild(poly);
+    handles=[];
+    for(let i=0;i<4;i++){
+      const c2=document.createElementNS(svgNS,'circle');
+      c2.setAttribute('r','22');c2.setAttribute('fill','#345de6');c2.setAttribute('stroke','#fff');c2.setAttribute('stroke-width','3');
+      c2.style.cursor='grab';c2.style.touchAction='none';c2.style.webkitUserSelect='none';c2.style.userSelect='none';
+      ((idx,circle)=>{
+        circle.addEventListener('pointerdown',ev=>{
+          ev.preventDefault();ev.stopPropagation();
+          dragIdx=idx;circle.style.cursor='grabbing';
+          try{circle.setPointerCapture(ev.pointerId);}catch(e){}
+        });
+        circle.addEventListener('pointermove',ev=>{
+          if(dragIdx!==idx)return;
+          ev.preventDefault();
+          const r=imgEl.getBoundingClientRect();
+          const x=Math.max(0,Math.min(r.width,ev.clientX-r.left));
+          const y=Math.max(0,Math.min(r.height,ev.clientY-r.top));
+          pts[idx]={x,y};
+          scheduleRender();
+        });
+        function endDrag(ev){if(dragIdx===idx){dragIdx=-1;circle.style.cursor='grab';try{circle.releasePointerCapture(ev.pointerId);}catch(e){}render();}}
+        circle.addEventListener('pointerup',endDrag);
+        circle.addEventListener('pointercancel',endDrag);
+      })(i,c2);
+      svg.appendChild(c2);
+      handles.push(c2);
+    }
+    containerEl.appendChild(svg);
+    render();
+  };
+  this.deactivate=function(){
+    if(!active)return;
+    active=false;
+    if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+    if(svg&&svg.parentNode)svg.parentNode.removeChild(svg);
+    svg=null;
+    containerEl.style.overflow=origContainerOverflow;
+    containerEl.style.touchAction='';
+    imgEl.setAttribute('style',origImgStyle);
+  };
+  this.isActive=function(){return active;};
+  this.zoom=function(factor){
+    if(!active)return;
+    const cw=imgEl.clientWidth,ch=imgEl.clientHeight;
+    const maxW=(imgEl.naturalWidth||cw*4)*3;
+    const nw=Math.max(80,Math.min(cw*factor,maxW));
+    const nh=nw*(ch/cw);
+    const sx=nw/cw,sy=nh/ch;
+    imgEl.style.width=nw+'px';
+    imgEl.style.height=nh+'px';
+    pts=pts.map(p=>({x:p.x*sx,y:p.y*sy}));
+    frameSvg();
+    render();
+  };
+  this.getSize=function(){
+    if(!active)return null;
+    const scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+    const scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+    const natPts=pts.map(p=>({x:p.x*scaleX,y:p.y*scaleY}));
+    const topW=_qdist(natPts[0],natPts[1]),botW=_qdist(natPts[3],natPts[2]);
+    const leftH=_qdist(natPts[0],natPts[3]),rightH=_qdist(natPts[1],natPts[2]);
+    return {w:Math.round(Math.max(topW,botW))||1, h:Math.round(Math.max(leftH,rightH))||1};
+  };
+  this.getWarpedCanvas=function(outW,outH){
+    if(!active)return null;
+    const scaleX=imgEl.naturalWidth/imgEl.clientWidth;
+    const scaleY=imgEl.naturalHeight/imgEl.clientHeight;
+    const natPts=pts.map(p=>({x:p.x*scaleX,y:p.y*scaleY}));
+    if(!outW||!outH){
+      const sz=this.getSize();
+      outW=sz.w;outH=sz.h;
+    }
+    return warpQuadToCanvas(imgEl,natPts,outW,outH);
+  };
+}
+
+let cropperInst = null, quadUI = null;
+let cropRot = 0, cropFineRot = 0, cropFlipX = 1, cropFlipY = 1;
+function applyCropRotation(){
+  if(cropperInst) cropperInst.rotateTo(cropRot + cropFineRot);
+}
+function syncCropUIForMode(freeSelectActive){
+  const row = $('cropRotRow'), note = $('quadRotNote'), fineRow = $('fineRotRow');
+  if(row) row.style.display = freeSelectActive ? 'none' : 'flex';
+  if(fineRow) fineRow.style.display = freeSelectActive ? 'none' : '';
+  if(note) note.style.display = freeSelectActive ? 'block' : 'none';
+}
+function setFreeSelBtnState(on){
+  const b = $('btnFreeSel'); if(!b) return;
+  if(on){ b.classList.add('active'); b.innerHTML = '<i class="fa-solid fa-draw-polygon"></i> Rectangle Crop'; }
+  else{ b.classList.remove('active'); b.innerHTML = '<i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)'; }
+}
+function toggleFreeSelect(){
+  const img = $('cropImg');
+  if(!cropperInst && !quadUI) return;
+  if(!quadUI) quadUI = new QuadCropUI($('cropImgWrap'), img);
+  if(quadUI.isActive()){
+    quadUI.deactivate();
+    if(cropperInst) cropperInst.destroy();
+    cropRot = 0; cropFineRot = 0;
+    cropperInst = new Cropper(img, makeCropperOptions());
+    setFreeSelBtnState(false);
+    syncCropUIForMode(false);
+  }else{
+    if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
+    quadUI.activate();
+    setFreeSelBtnState(true);
+    syncCropUIForMode(true);
+  }
+}
+function makeCropperOptions(){
+  const active = document.querySelector('#cropAspectSeg .seg-opt.active');
+  return {
+    viewMode: 1, autoCropArea: 1, guides: true, center: true, highlight: true,
+    background: true, responsive: true, movable: true, zoomable: true, rotatable: true,
+    scalable: true, cropBoxMovable: true, cropBoxResizable: true,
+    aspectRatio: active ? Number(active.dataset.ratio) : NaN, minCropBoxWidth: 40, minCropBoxHeight: 40,
+  };
+}
 function initCropper(){
   const img = $('cropImg');
   if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
-  cropRot = 0; cropFlipX = 1; cropFlipY = 1;
+  if(quadUI) quadUI.deactivate();
+  cropRot = 0; cropFineRot = 0; cropFlipX = 1; cropFlipY = 1;
+  setFreeSelBtnState(false);
+  syncCropUIForMode(false);
+  const fineEl = $('cropFineRot'); if(fineEl) fineEl.value = 0;
+  const fineVal = $('v-cropFineRot'); if(fineVal) fineVal.textContent = '0°';
   img.onload = ()=>{
-    cropperInst = new Cropper(img, {
-      viewMode: 1, autoCropArea: 1, guides: true, center: true, highlight: true,
-      background: true, responsive: true, movable: true, zoomable: true, rotatable: true,
-      scalable: true, cropBoxMovable: true, cropBoxResizable: true,
-      aspectRatio: NaN, minCropBoxWidth: 40, minCropBoxHeight: 40,
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        if(cropperInst) cropperInst.destroy();
+        if(!quadUI) quadUI = new QuadCropUI($('cropImgWrap'), img);
+        cropperInst = new Cropper(img, makeCropperOptions());
+      });
     });
   };
   img.src = state.canvas.toDataURL('image/png');
@@ -1589,12 +1821,18 @@ function initCropper(){
 }
 function destroyCropper(){
   if(cropperInst){ cropperInst.destroy(); cropperInst = null; }
+  if(quadUI) quadUI.deactivate();
   $('cropImgWrap').style.display = 'none';
   if(state.canvas.width) state.canvas.style.display = '';
 }
 function applyCropperCrop(){
-  if(!cropperInst){ toast('Nothing to crop', true); return; }
-  const cropped = cropperInst.getCroppedCanvas({ imageSmoothingQuality:'high' });
+  let cropped;
+  if(quadUI && quadUI.isActive()){
+    cropped = quadUI.getWarpedCanvas();
+  }else if(cropperInst){
+    cropped = cropperInst.getCroppedCanvas({ imageSmoothingQuality:'high' });
+  }
+  if(!cropperInst && !(quadUI && quadUI.isActive())){ toast('Nothing to crop', true); return; }
   if(!cropped || !cropped.width){ toast('Could not read crop area', true); return; }
   setCanvasSize(cropped.width, cropped.height);
   ctx.drawImage(cropped,0,0);
@@ -1930,15 +2168,38 @@ function wireEvents(){
     o.classList.add('active');
     if(cropperInst) cropperInst.setAspectRatio(Number(o.dataset.ratio));
   }));
-  $('btnCropZoomIn').addEventListener('click', ()=>{ if(cropperInst) cropperInst.zoom(0.1); });
-  $('btnCropZoomOut').addEventListener('click', ()=>{ if(cropperInst) cropperInst.zoom(-0.1); });
-  $('btnCropReset').addEventListener('click', ()=>{ if(cropperInst) cropperInst.reset(); });
+  $('btnFreeSel').addEventListener('click', toggleFreeSelect);
+  $('btnCropZoomIn').addEventListener('click', ()=>{
+    if(quadUI && quadUI.isActive()) quadUI.zoom(1.15);
+    else if(cropperInst) cropperInst.zoom(0.1);
+  });
+  $('btnCropZoomOut').addEventListener('click', ()=>{
+    if(quadUI && quadUI.isActive()) quadUI.zoom(1/1.15);
+    else if(cropperInst) cropperInst.zoom(-0.1);
+  });
+  $('btnCropReset').addEventListener('click', ()=>{
+    cropRot=0; cropFineRot=0;
+    const fineEl=$('cropFineRot'); if(fineEl) fineEl.value=0;
+    const fineVal=$('v-cropFineRot'); if(fineVal) fineVal.textContent='0°';
+    if(quadUI && quadUI.isActive()){
+      quadUI.deactivate();
+      const img=$('cropImg');
+      cropperInst = new Cropper(img, makeCropperOptions());
+      setFreeSelBtnState(false);
+      syncCropUIForMode(false);
+    }else if(cropperInst) cropperInst.reset();
+  });
+  $('cropFineRot').addEventListener('input', function(){
+    cropFineRot = parseFloat(this.value);
+    $('v-cropFineRot').textContent = cropFineRot+'°';
+    applyCropRotation();
+  });
   $('btnCropApply').addEventListener('click', applyCropperCrop);
   $('btnRotateL').addEventListener('click', ()=>{
-    if(cropperInst){ cropRot-=90; cropperInst.rotateTo(cropRot); } else rotateCanvas(-90);
+    if(cropperInst){ cropRot=((cropRot-90)%360+360)%360; applyCropRotation(); } else rotateCanvas(-90);
   });
   $('btnRotateR').addEventListener('click', ()=>{
-    if(cropperInst){ cropRot+=90; cropperInst.rotateTo(cropRot); } else rotateCanvas(90);
+    if(cropperInst){ cropRot=(cropRot+90)%360; applyCropRotation(); } else rotateCanvas(90);
   });
   $('btnFlipH').addEventListener('click', ()=>{
     if(cropperInst){ cropFlipX*=-1; cropperInst.scaleX(cropFlipX); } else flipCanvas('h');
