@@ -1,20 +1,32 @@
 {
-  "timestamp": "2026-07-24T09:47:21.413262+00:00",
-  "mode": "full-scan",
+  "timestamp": "2026-07-24T11:24:08.151322+00:00",
+  "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 7290,
+  "files_scanned": 5643,
   "issues_found_by_check": {
-    "jobposting_schema": 2,
     "ai_marker_integrity": 10,
-    "sitemap_sync": 200
+    "jobposting_schema": 36,
+    "sitemap_sync": 186
   },
-  "issues_auto_fixed": 0,
+  "issues_auto_fixed": 34,
   "unfixable": [
     {
-      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
+      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
+    },
+    {
+      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
     },
     {
       "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
@@ -23,16 +35,10 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 8 END)"
     },
     {
-      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
-    },
-    {
-      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
       "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
@@ -47,13 +53,7 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
     },
     {
-      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
+      "file": "jobs/ncrtc-assistant-manager-recruitment-2026-apply-online/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
@@ -65,70 +65,58 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
-      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
+      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
+    },
+    {
+      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
-      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
+      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
+      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
     },
     {
-      "file": "jobs/ncrtc-assistant-manager-recruitment-2026-apply-online/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/urban-housing-ews-yojana/index.html",
+      "file": "jobs/20000-form-family-support/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/urban-housing-ews-yojana/"
+      "reason": "page on disk not in any sitemap: /jobs/20000-form-family-support/"
     },
     {
-      "file": "jobs/police-verification-haryana/index.html",
+      "file": "jobs/2002/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/police-verification-haryana/"
+      "reason": "page on disk not in any sitemap: /jobs/2002/"
     },
     {
-      "file": "jobs/char-dham-yatra-2026-registration-badrinath-kedarnath-yamunotri-gangotri/index.html",
+      "file": "jobs/2021-2025-re-appear-last-date-15-july-2026-apply-now/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/char-dham-yatra-2026-registration-badrinath-kedarnath-yamunotri-gangotri/"
+      "reason": "page on disk not in any sitemap: /jobs/2021-2025-re-appear-last-date-15-july-2026-apply-now/"
     },
     {
-      "file": "jobs/form-16/index.html",
+      "file": "jobs/3000-pension-pension-yojana-apply/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/form-16/"
+      "reason": "page on disk not in any sitemap: /jobs/3000-pension-pension-yojana-apply/"
     },
     {
-      "file": "jobs/police-verification-offline-form/index.html",
+      "file": "jobs/5000-form/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/police-verification-offline-form/"
+      "reason": "page on disk not in any sitemap: /jobs/5000-form/"
     },
     {
-      "file": "jobs/haryana-labour-cycle-fund-yojana-online-form/index.html",
+      "file": "jobs/aadhar-card-address-change-mc-sarpanch-wala-form/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-cycle-fund-yojana-online-form/"
-    },
-    {
-      "file": "jobs/apaar-id-student/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/apaar-id-student/"
-    },
-    {
-      "file": "jobs/final-list-solar-form-012026-haryana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/final-list-solar-form-012026-haryana/"
+      "reason": "page on disk not in any sitemap: /jobs/aadhar-card-address-change-mc-sarpanch-wala-form/"
     },
     {
       "file": "jobs/aadhar-id/index.html",
@@ -137,58 +125,106 @@
       "reason": "page on disk not in any sitemap: /jobs/aadhar-id/"
     },
     {
-      "file": "jobs/covid-certificate-download/index.html",
+      "file": "jobs/abha-women-important-pregnancy-health-checkup/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/covid-certificate-download/"
+      "reason": "page on disk not in any sitemap: /jobs/abha-women-important-pregnancy-health-checkup/"
     },
     {
-      "file": "jobs/girl-government-yojana/index.html",
+      "file": "jobs/additional-shortlist-of-5-times-more-candidates-for-the-police-constable-pmt-has/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/girl-government-yojana/"
+      "reason": "page on disk not in any sitemap: /jobs/additional-shortlist-of-5-times-more-candidates-for-the-police-constable-pmt-has/"
     },
     {
-      "file": "jobs/national-school-games-haryana-sgfi/index.html",
+      "file": "jobs/affidavit-birth-and-death/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/national-school-games-haryana-sgfi/"
+      "reason": "page on disk not in any sitemap: /jobs/affidavit-birth-and-death/"
     },
     {
-      "file": "jobs/mdu-ug-integrated-course-admission-form-2026-rohtak/index.html",
+      "file": "jobs/agriculture-yojana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/mdu-ug-integrated-course-admission-form-2026-rohtak/"
+      "reason": "page on disk not in any sitemap: /jobs/agriculture-yojana/"
     },
     {
-      "file": "jobs/crop-form-shatipurti-portal/index.html",
+      "file": "jobs/agrishakti-namo-drone-didi-yojana-last-date-01032026/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/crop-form-shatipurti-portal/"
+      "reason": "page on disk not in any sitemap: /jobs/agrishakti-namo-drone-didi-yojana-last-date-01032026/"
     },
     {
-      "file": "jobs/dhbvn-new-connection-form-haryana/index.html",
+      "file": "jobs/all-bank-statement-download-by-csc-id/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/dhbvn-new-connection-form-haryana/"
+      "reason": "page on disk not in any sitemap: /jobs/all-bank-statement-download-by-csc-id/"
     },
     {
-      "file": "jobs/yojana-haryana-e-bhoomi-portal-2026-69-167/index.html",
+      "file": "jobs/all-type-pension-status-check-link-haryana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-haryana-e-bhoomi-portal-2026-69-167/"
+      "reason": "page on disk not in any sitemap: /jobs/all-type-pension-status-check-link-haryana/"
     },
     {
-      "file": "jobs/land-holding-certificate-agriculture-50/index.html",
+      "file": "jobs/apaar-id-card-download/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/land-holding-certificate-agriculture-50/"
+      "reason": "page on disk not in any sitemap: /jobs/apaar-id-card-download/"
     },
     {
-      "file": "jobs/ration-ration-bpl-download-bpl-card-download/index.html",
+      "file": "jobs/apaar-id-student/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ration-ration-bpl-download-bpl-card-download/"
+      "reason": "page on disk not in any sitemap: /jobs/apaar-id-student/"
+    },
+    {
+      "file": "jobs/apki-beti-hameri-deti/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/apki-beti-hameri-deti/"
+    },
+    {
+      "file": "jobs/apply-for-unemployment-saksham-yojana-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/apply-for-unemployment-saksham-yojana-haryana/"
+    },
+    {
+      "file": "jobs/apprentice-shipindiat-all-india/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/apprentice-shipindiat-all-india/"
+    },
+    {
+      "file": "jobs/atal-pension-yojana-online-application-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/atal-pension-yojana-online-application-form/"
+    },
+    {
+      "file": "jobs/ayushman-card-1500-payment-link-prime-minister-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ayushman-card-1500-payment-link-prime-minister-yojana/"
+    },
+    {
+      "file": "jobs/ayushman-card-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ayushman-card-download/"
+    },
+    {
+      "file": "jobs/bijli-meter-file-sarpanchmc/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bijli-meter-file-sarpanchmc/"
+    },
+    {
+      "file": "jobs/birth-and-death-management-information-system-bdmis/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/birth-and-death-management-information-system-bdmis/"
     },
     {
       "file": "jobs/birth-birth-haryana/index.html",
@@ -203,22 +239,34 @@
       "reason": "page on disk not in any sitemap: /jobs/cbse-launches-photocopy-verification-and-re-evaluation-forms-last-date-22052026/"
     },
     {
-      "file": "jobs/driving-license-all-pdf-forms/index.html",
+      "file": "jobs/cbse-marksheet-migration-and-pass-certificate/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/driving-license-all-pdf-forms/"
+      "reason": "page on disk not in any sitemap: /jobs/cbse-marksheet-migration-and-pass-certificate/"
     },
     {
-      "file": "jobs/unemploy-self-declaration-for-12thgraduationpost-graduation/index.html",
+      "file": "jobs/char-dham-yatra-2026-registration-badrinath-kedarnath-yamunotri-gangotri/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/unemploy-self-declaration-for-12thgraduationpost-graduation/"
+      "reason": "page on disk not in any sitemap: /jobs/char-dham-yatra-2026-registration-badrinath-kedarnath-yamunotri-gangotri/"
     },
     {
-      "file": "jobs/dhaincha-seed-distribution-registration-2025-registration-2025/index.html",
+      "file": "jobs/covid-certificate-download/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/dhaincha-seed-distribution-registration-2025-registration-2025/"
+      "reason": "page on disk not in any sitemap: /jobs/covid-certificate-download/"
+    },
+    {
+      "file": "jobs/crop-form-shatipurti-portal/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/crop-form-shatipurti-portal/"
+    },
+    {
+      "file": "jobs/dairy-loan-10-loan/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dairy-loan-10-loan/"
     },
     {
       "file": "jobs/ddhbvn-consumer-complaint-form-haryana/index.html",
@@ -227,190 +275,28 @@
       "reason": "page on disk not in any sitemap: /jobs/ddhbvn-consumer-complaint-form-haryana/"
     },
     {
-      "file": "jobs/youth-hostel-yojana-online-application-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/youth-hostel-yojana-online-application-form/"
-    },
-    {
-      "file": "jobs/haryana-polytechnic-admission-start-10th-or-12th-pass/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-polytechnic-admission-start-10th-or-12th-pass/"
-    },
-    {
-      "file": "jobs/page/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/page/"
-    },
-    {
-      "file": "jobs/nsdl-pan-apply-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/nsdl-pan-apply-link/"
-    },
-    {
-      "file": "jobs/ex-sainik-children-widow-education-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ex-sainik-children-widow-education-yojana-form/"
-    },
-    {
-      "file": "jobs/stand-up-india-loan-yojana-apply-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/stand-up-india-loan-yojana-apply-online-form/"
-    },
-    {
-      "file": "jobs/medical-certificate/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/medical-certificate/"
-    },
-    {
-      "file": "jobs/solar-self-declaration-pdf-form-haryana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/solar-self-declaration-pdf-form-haryana/"
-    },
-    {
-      "file": "jobs/haryana-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-apply/"
-    },
-    {
-      "file": "jobs/haryana-labour-tour-fund-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-tour-fund-yojana-online-form/"
-    },
-    {
-      "file": "jobs/haryana-mahila-samridhi-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-mahila-samridhi-yojana-online-form/"
-    },
-    {
-      "file": "jobs/all-type-pension-status-check-link-haryana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/all-type-pension-status-check-link-haryana/"
-    },
-    {
-      "file": "jobs/pradhan-mantri-kisan-samman-nidhi-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-kisan-samman-nidhi-online/"
-    },
-    {
-      "file": "jobs/haryana-antyodaya-parivar-utthan-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-antyodaya-parivar-utthan-yojana-form/"
-    },
-    {
-      "file": "jobs/land-form-registry-form-for-occupying-panchayat-land/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/land-form-registry-form-for-occupying-panchayat-land/"
-    },
-    {
-      "file": "jobs/scheme-for-conservation-and-development-of-indigenous-cows-and-murrah-developmen/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/scheme-for-conservation-and-development-of-indigenous-cows-and-murrah-developmen/"
-    },
-    {
-      "file": "jobs/instant-e-pan-apply-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/instant-e-pan-apply-link/"
-    },
-    {
-      "file": "jobs/sc-tractor-scheme-m-patwari-report-wala-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/sc-tractor-scheme-m-patwari-report-wala-form/"
-    },
-    {
-      "file": "jobs/edisha-eforms-status-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/edisha-eforms-status-check/"
-    },
-    {
-      "file": "jobs/yojana-78000-300-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-78000-300-apply/"
-    },
-    {
-      "file": "jobs/patwari-report-krishi-yantra-subsidy-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/patwari-report-krishi-yantra-subsidy-yojana/"
-    },
-    {
-      "file": "jobs/haryana-saksham-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-saksham-yojana-online-form/"
-    },
-    {
       "file": "jobs/deen-dayal-upadhyaya-antyodaya-parivar-suraksha-yojana-yojana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/deen-dayal-upadhyaya-antyodaya-parivar-suraksha-yojana-yojana/"
     },
     {
-      "file": "jobs/haryana-labour-widow-pension-yojana-online-form/index.html",
+      "file": "jobs/dhaincha-seed-distribution-registration-2025-registration-2025/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-widow-pension-yojana-online-form/"
+      "reason": "page on disk not in any sitemap: /jobs/dhaincha-seed-distribution-registration-2025-registration-2025/"
     },
     {
-      "file": "jobs/haryana-ug-college-admission-2026-27-last-date-31-may-2026/index.html",
+      "file": "jobs/dhbvn-new-connection-form-haryana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-ug-college-admission-2026-27-last-date-31-may-2026/"
+      "reason": "page on disk not in any sitemap: /jobs/dhbvn-new-connection-form-haryana/"
     },
     {
-      "file": "jobs/haryana-labour-family-pension-yojana-online-form/index.html",
+      "file": "jobs/disabled-card-kyc/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-family-pension-yojana-online-form/"
-    },
-    {
-      "file": "jobs/student-government-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/student-government-yojana/"
-    },
-    {
-      "file": "jobs/housing-yojana-urban-25-urban-family-yojana-2026/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/housing-yojana-urban-25-urban-family-yojana-2026/"
-    },
-    {
-      "file": "jobs/pradhan-mantri-kisan-samman-nidhi-pm-kisan/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-kisan-samman-nidhi-pm-kisan/"
-    },
-    {
-      "file": "jobs/haryana-domicile-certificate-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-domicile-certificate-download/"
-    },
-    {
-      "file": "jobs/affidavit-birth-and-death/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/affidavit-birth-and-death/"
+      "reason": "page on disk not in any sitemap: /jobs/disabled-card-kyc/"
     },
     {
       "file": "jobs/download-saral-haryana-certificate/index.html",
@@ -419,22 +305,394 @@
       "reason": "page on disk not in any sitemap: /jobs/download-saral-haryana-certificate/"
     },
     {
-      "file": "jobs/land-maps-online-land/index.html",
+      "file": "jobs/dr-ambedkar-all-yojna-status-check/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/land-maps-online-land/"
+      "reason": "page on disk not in any sitemap: /jobs/dr-ambedkar-all-yojna-status-check/"
     },
     {
-      "file": "jobs/ration-card-check-ration-card-download/index.html",
+      "file": "jobs/dr-br-ambedkar-awas-navinikaran-yojana-pdf-form/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ration-card-check-ration-card-download/"
+      "reason": "page on disk not in any sitemap: /jobs/dr-br-ambedkar-awas-navinikaran-yojana-pdf-form/"
     },
     {
-      "file": "jobs/subsidy-on-moong-seeds-in-haryana-75-subsidy-2025/index.html",
+      "file": "jobs/driving-license-all-pdf-forms/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/subsidy-on-moong-seeds-in-haryana-75-subsidy-2025/"
+      "reason": "page on disk not in any sitemap: /jobs/driving-license-all-pdf-forms/"
+    },
+    {
+      "file": "jobs/echallan-digital-traffictransport-pay/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/echallan-digital-traffictransport-pay/"
+    },
+    {
+      "file": "jobs/edisha-eforms-status-check/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/edisha-eforms-status-check/"
+    },
+    {
+      "file": "jobs/ex-sainik-children-widow-education-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ex-sainik-children-widow-education-yojana-form/"
+    },
+    {
+      "file": "jobs/family-id-exclusion-check-ration-card-ayushman-card-hr/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/family-id-exclusion-check-ration-card-ayushman-card-hr/"
+    },
+    {
+      "file": "jobs/family-in-state-migrate/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/family-in-state-migrate/"
+    },
+    {
+      "file": "jobs/farmer-farmer-id-agriculture/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/farmer-farmer-id-agriculture/"
+    },
+    {
+      "file": "jobs/farmer-farmer/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/farmer-farmer/"
+    },
+    {
+      "file": "jobs/farmer-registration/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/farmer-registration/"
+    },
+    {
+      "file": "jobs/final-list-solar-form-012026-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/final-list-solar-form-012026-haryana/"
+    },
+    {
+      "file": "jobs/find-out-how-many-mobile-numbers-are-running-in-your-name-mobile-number-fraud-fr/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/find-out-how-many-mobile-numbers-are-running-in-your-name-mobile-number-fraud-fr/"
+    },
+    {
+      "file": "jobs/form-16/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/form-16/"
+    },
+    {
+      "file": "jobs/free-online-course-portala/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/free-online-course-portala/"
+    },
+    {
+      "file": "jobs/girl-government-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/girl-government-yojana/"
+    },
+    {
+      "file": "jobs/government-loan-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/government-loan-yojana/"
+    },
+    {
+      "file": "jobs/government-yojana-money-dbt-active/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/government-yojana-money-dbt-active/"
+    },
+    {
+      "file": "jobs/government-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/government-yojana/"
+    },
+    {
+      "file": "jobs/happly-card-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/happly-card-haryana/"
+    },
+    {
+      "file": "jobs/hariyaanaa-aanganavaada-bhartee-2026-ophalaaina-aavedana-phorma-pdf-jaaree/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hariyaanaa-aanganavaada-bhartee-2026-ophalaaina-aavedana-phorma-pdf-jaaree/"
+    },
+    {
+      "file": "jobs/haryana-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-2026/"
+    },
+    {
+      "file": "jobs/haryana-all-pension-beneficiary-list/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-all-pension-beneficiary-list/"
+    },
+    {
+      "file": "jobs/haryana-antyodaya-parivar-utthan-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-antyodaya-parivar-utthan-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-apply/"
+    },
+    {
+      "file": "jobs/haryana-crop-crop-registration/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-crop-crop-registration/"
+    },
+    {
+      "file": "jobs/haryana-deen-dayal-lado-lakshmi-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-deen-dayal-lado-lakshmi-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-dhaincha-seed-subsidy-scheme-2026-apply-80-subsidy-free-seeds/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-dhaincha-seed-subsidy-scheme-2026-apply-80-subsidy-free-seeds/"
+    },
+    {
+      "file": "jobs/haryana-dmc-student-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-dmc-student-apply/"
+    },
+    {
+      "file": "jobs/haryana-domicile-certificate-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-domicile-certificate-download/"
+    },
+    {
+      "file": "jobs/haryana-family-id-citizen-login/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-family-id-citizen-login/"
+    },
+    {
+      "file": "jobs/haryana-gst-kar-hiteshi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-gst-kar-hiteshi/"
+    },
+    {
+      "file": "jobs/haryana-happy-card-balance-check/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-happy-card-balance-check/"
+    },
+    {
+      "file": "jobs/haryana-labour-accidental-treatment-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-accidental-treatment-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-bimari-treatment-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-bimari-treatment-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-bus-and-train-kiraya-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-bus-and-train-kiraya-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-copy-apply-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-copy-apply-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-cycle-fund-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-cycle-fund-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-death-fund-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-death-fund-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-divyang-help-fund-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-divyang-help-fund-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-divyang-pension-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-divyang-pension-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-family-pension-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-family-pension-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-home-loan-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-home-loan-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-kanyadan-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-kanyadan-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-mahila-samman-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-mahila-samman-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-old-age-pension-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-old-age-pension-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-ph-children-pension-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-ph-children-pension-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-samajik-surksha-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-samajik-surksha-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-self-marriage-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-self-marriage-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-silai-machine-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-silai-machine-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-son-marriage-fund-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-son-marriage-fund-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-tour-fund-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-tour-fund-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-labour-unregistered-death-fund-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-unregistered-death-fund-yojana/"
+    },
+    {
+      "file": "jobs/haryana-labour-widow-pension-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-widow-pension-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-mahila-samridhi-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-mahila-samridhi-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-matrushakti-udyamita-yojana-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-matrushakti-udyamita-yojana-form/"
+    },
+    {
+      "file": "jobs/haryana-polytechnic-admission-start-10th-or-12th-pass/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-polytechnic-admission-start-10th-or-12th-pass/"
+    },
+    {
+      "file": "jobs/haryana-ration-card-download-link/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-ration-card-download-link/"
+    },
+    {
+      "file": "jobs/haryana-roadways-bus-pass-fee-pay/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-roadways-bus-pass-fee-pay/"
+    },
+    {
+      "file": "jobs/haryana-roadways-senior-citizen-bus-pass-apply-60-senior-citizens-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-roadways-senior-citizen-bus-pass-apply-60-senior-citizens-online/"
+    },
+    {
+      "file": "jobs/haryana-saksham-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-saksham-yojana-online-form/"
+    },
+    {
+      "file": "jobs/haryana-solar-form-payment-refund-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-solar-form-payment-refund-form/"
+    },
+    {
+      "file": "jobs/haryana-ug-college-admission-2026-27-last-date-31-may-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-ug-college-admission-2026-27-last-date-31-may-2026/"
+    },
+    {
+      "file": "jobs/haryana-voter-card-2002-list-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-voter-card-2002-list-download/"
+    },
+    {
+      "file": "jobs/haryana-voter-list-download-here/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-voter-list-download-here/"
     },
     {
       "file": "jobs/haryana-yojana-farmer-3000-last-date-15012026/index.html",
@@ -449,634 +707,10 @@
       "reason": "page on disk not in any sitemap: /jobs/haryana-yojana-list-01012026/"
     },
     {
-      "file": "jobs/haryana-2026/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-2026/"
-    },
-    {
-      "file": "jobs/2021-2025-re-appear-last-date-15-july-2026-apply-now/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/2021-2025-re-appear-last-date-15-july-2026-apply-now/"
-    },
-    {
-      "file": "jobs/apaar-id-card-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/apaar-id-card-download/"
-    },
-    {
-      "file": "jobs/old-age-pension-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/old-age-pension-check/"
-    },
-    {
-      "file": "jobs/2002/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/2002/"
-    },
-    {
-      "file": "jobs/dr-br-ambedkar-awas-navinikaran-yojana-pdf-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/dr-br-ambedkar-awas-navinikaran-yojana-pdf-form/"
-    },
-    {
-      "file": "jobs/hbse-10th-12th-rechecking-result-2026-rechecking-re-evaluation/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/hbse-10th-12th-rechecking-result-2026-rechecking-re-evaluation/"
-    },
-    {
-      "file": "jobs/yojana-list-all-india/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-list-all-india/"
-    },
-    {
-      "file": "jobs/self-declaration-from-the-head-of-family-hof-for-sharing-address-with-a-relative/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/self-declaration-from-the-head-of-family-hof-for-sharing-address-with-a-relative/"
-    },
-    {
-      "file": "jobs/3000-pension-pension-yojana-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/3000-pension-pension-yojana-apply/"
-    },
-    {
-      "file": "jobs/haryana-labour-bimari-treatment-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-bimari-treatment-yojana-form/"
-    },
-    {
-      "file": "jobs/vyapari-kshatipoorti-yojana-2026-5-20-haryana-trader-insurance-scheme/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/vyapari-kshatipoorti-yojana-2026-5-20-haryana-trader-insurance-scheme/"
-    },
-    {
-      "file": "jobs/haryana-happy-card-balance-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-happy-card-balance-check/"
-    },
-    {
-      "file": "jobs/haryana-labour-samajik-surksha-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-samajik-surksha-yojana-form/"
-    },
-    {
-      "file": "jobs/haryana-labour-silai-machine-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-silai-machine-yojana-online-form/"
-    },
-    {
-      "file": "jobs/haryana-matrushakti-udyamita-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-matrushakti-udyamita-yojana-form/"
-    },
-    {
-      "file": "jobs/haryana-labour-ph-children-pension-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-ph-children-pension-yojana-form/"
-    },
-    {
-      "file": "jobs/update-birth-certificate-haryana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/update-birth-certificate-haryana/"
-    },
-    {
-      "file": "jobs/pension-support-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pension-support-apply/"
-    },
-    {
-      "file": "jobs/haryana-dhaincha-seed-subsidy-scheme-2026-apply-80-subsidy-free-seeds/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-dhaincha-seed-subsidy-scheme-2026-apply-80-subsidy-free-seeds/"
-    },
-    {
-      "file": "jobs/yojana-2026-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-2026-yojana/"
-    },
-    {
-      "file": "jobs/stolen-mobile-block-check-full-details-fraud-how-to-block-a-stolen-mobile-see-fu/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/stolen-mobile-block-check-full-details-fraud-how-to-block-a-stolen-mobile-see-fu/"
-    },
-    {
-      "file": "jobs/pm-farmer-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-yojana/"
-    },
-    {
-      "file": "jobs/hariyaanaa-aanganavaada-bhartee-2026-ophalaaina-aavedana-phorma-pdf-jaaree/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/hariyaanaa-aanganavaada-bhartee-2026-ophalaaina-aavedana-phorma-pdf-jaaree/"
-    },
-    {
-      "file": "jobs/pm-kisan-yojana-installment-update-farmer-crop-crop/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-kisan-yojana-installment-update-farmer-crop-crop/"
-    },
-    {
-      "file": "jobs/nsp-scholarship-2026-payment-status-check-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/nsp-scholarship-2026-payment-status-check-link/"
-    },
-    {
-      "file": "jobs/yojana-apply-apply-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-apply-apply-link/"
-    },
-    {
-      "file": "jobs/ayushman-card-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ayushman-card-download/"
-    },
-    {
-      "file": "jobs/haryana-dmc-student-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-dmc-student-apply/"
-    },
-    {
-      "file": "jobs/haryana-voter-list-download-here/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-voter-list-download-here/"
-    },
-    {
-      "file": "jobs/hbse-online-registration-for-secondarysr-secondary-compartmentadditional-exam-ju/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/hbse-online-registration-for-secondarysr-secondary-compartmentadditional-exam-ju/"
-    },
-    {
-      "file": "jobs/micada-haryana-diggi-online-registration-water-tank-subsidy-apply/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/micada-haryana-diggi-online-registration-water-tank-subsidy-apply/"
-    },
-    {
-      "file": "jobs/pan-card-correction/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pan-card-correction/"
-    },
-    {
-      "file": "jobs/farmer-registration/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/farmer-registration/"
-    },
-    {
-      "file": "jobs/indira-gandhi-national-disability-pension-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/indira-gandhi-national-disability-pension-form/"
-    },
-    {
-      "file": "jobs/haryana-voter-card-2002-list-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-voter-card-2002-list-download/"
-    },
-    {
-      "file": "jobs/haryana-labour-unregistered-death-fund-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-unregistered-death-fund-yojana/"
-    },
-    {
-      "file": "jobs/sc-farmer-sc-farmers-tractor-draw-list-2026-pdf/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/sc-farmer-sc-farmers-tractor-draw-list-2026-pdf/"
-    },
-    {
-      "file": "jobs/yojana-2026-private-school-free-admission-class-2-12-laste-date-31-2026/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-2026-private-school-free-admission-class-2-12-laste-date-31-2026/"
-    },
-    {
-      "file": "jobs/yojana-money-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-money-check/"
-    },
-    {
-      "file": "jobs/dairy-loan-10-loan/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/dairy-loan-10-loan/"
-    },
-    {
-      "file": "jobs/haryana-labour-son-marriage-fund-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-son-marriage-fund-online-form/"
-    },
-    {
-      "file": "jobs/haryana-all-pension-beneficiary-list/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-all-pension-beneficiary-list/"
-    },
-    {
-      "file": "jobs/pm-farmer-6000/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-6000/"
-    },
-    {
-      "file": "jobs/udid-card-disability-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/udid-card-disability-download/"
-    },
-    {
-      "file": "jobs/free-online-course-portala/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/free-online-course-portala/"
-    },
-    {
-      "file": "jobs/passport-apply-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/passport-apply-link/"
-    },
-    {
-      "file": "jobs/haryana-labour-old-age-pension-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-old-age-pension-yojana-online-form/"
-    },
-    {
-      "file": "jobs/haryana-labour-accidental-treatment-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-accidental-treatment-yojana-form/"
-    },
-    {
-      "file": "jobs/pmjjby/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pmjjby/"
-    },
-    {
-      "file": "jobs/agriculture-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/agriculture-yojana/"
-    },
-    {
-      "file": "jobs/scholarship-haryana-ambedkar-scholarship-online-form-31012026/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/scholarship-haryana-ambedkar-scholarship-online-form-31012026/"
-    },
-    {
-      "file": "jobs/haryana-roadways-bus-pass-fee-pay/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-roadways-bus-pass-fee-pay/"
-    },
-    {
       "file": "jobs/haryana-yojana-update/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/haryana-yojana-update/"
-    },
-    {
-      "file": "jobs/pm-svanidhi-loan-yojana-80-loan-9/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-svanidhi-loan-yojana-80-loan-9/"
-    },
-    {
-      "file": "jobs/farmer-farmer/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/farmer-farmer/"
-    },
-    {
-      "file": "jobs/tenant-farmer-declration-format/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/tenant-farmer-declration-format/"
-    },
-    {
-      "file": "jobs/online-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/online-check/"
-    },
-    {
-      "file": "jobs/find-out-how-many-mobile-numbers-are-running-in-your-name-mobile-number-fraud-fr/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/find-out-how-many-mobile-numbers-are-running-in-your-name-mobile-number-fraud-fr/"
-    },
-    {
-      "file": "jobs/abha-women-important-pregnancy-health-checkup/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/abha-women-important-pregnancy-health-checkup/"
-    },
-    {
-      "file": "jobs/women-government-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/women-government-yojana/"
-    },
-    {
-      "file": "jobs/haryana-labour-copy-apply-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-copy-apply-online-form/"
-    },
-    {
-      "file": "jobs/government-loan-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/government-loan-yojana/"
-    },
-    {
-      "file": "jobs/haryana-labour-home-loan-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-home-loan-yojana-online-form/"
-    },
-    {
-      "file": "jobs/ration-card-e-kyc-application-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ration-card-e-kyc-application-download/"
-    },
-    {
-      "file": "jobs/cbse-marksheet-migration-and-pass-certificate/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/cbse-marksheet-migration-and-pass-certificate/"
-    },
-    {
-      "file": "jobs/20000-form-family-support/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/20000-form-family-support/"
-    },
-    {
-      "file": "jobs/roadways-buses-live-time-table/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/roadways-buses-live-time-table/"
-    },
-    {
-      "file": "jobs/family-id-exclusion-check-ration-card-ayushman-card-hr/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/family-id-exclusion-check-ration-card-ayushman-card-hr/"
-    },
-    {
-      "file": "jobs/haryana-labour-kanyadan-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-kanyadan-yojana-online-form/"
-    },
-    {
-      "file": "jobs/yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana/"
-    },
-    {
-      "file": "jobs/haryana-family-id-citizen-login/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-family-id-citizen-login/"
-    },
-    {
-      "file": "jobs/haryana-labour-bus-and-train-kiraya-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-bus-and-train-kiraya-online-form/"
-    },
-    {
-      "file": "jobs/haryana-labour-divyang-help-fund-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-divyang-help-fund-yojana-form/"
-    },
-    {
-      "file": "jobs/pm-yojana-55-3000-pension-best-pension-government-scheme-for-e-shram-card/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-yojana-55-3000-pension-best-pension-government-scheme-for-e-shram-card/"
-    },
-    {
-      "file": "jobs/farmer-farmer-id-agriculture/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/farmer-farmer-id-agriculture/"
-    },
-    {
-      "file": "jobs/haryana-roadways-senior-citizen-bus-pass-apply-60-senior-citizens-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-roadways-senior-citizen-bus-pass-apply-60-senior-citizens-online/"
-    },
-    {
-      "file": "jobs/ignou-june-exam-admit-card-hall-ticket-2026-download-last-date-2026/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ignou-june-exam-admit-card-hall-ticket-2026-download-last-date-2026/"
-    },
-    {
-      "file": "jobs/5000-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/5000-form/"
-    },
-    {
-      "file": "jobs/haryana-labour-mahila-samman-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-mahila-samman-yojana-form/"
-    },
-    {
-      "file": "jobs/pm-rashtriya-bal-puraskar-yojana-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-rashtriya-bal-puraskar-yojana-online-form/"
-    },
-    {
-      "file": "jobs/birth-and-death-management-information-system-bdmis/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/birth-and-death-management-information-system-bdmis/"
-    },
-    {
-      "file": "jobs/uti-pan-apply-link/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/uti-pan-apply-link/"
-    },
-    {
-      "file": "jobs/bijli-meter-file-sarpanchmc/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/bijli-meter-file-sarpanchmc/"
-    },
-    {
-      "file": "jobs/pm-kisan-samman-nidhi-yojana-status/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-kisan-samman-nidhi-yojana-status/"
-    },
-    {
-      "file": "jobs/yojana-jsy/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/yojana-jsy/"
-    },
-    {
-      "file": "jobs/hbse-10-12-re-appear-compartment-additional-subject-exam-july-2026-admit-card/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/hbse-10-12-re-appear-compartment-additional-subject-exam-july-2026-admit-card/"
-    },
-    {
-      "file": "jobs/haryana-deen-dayal-lado-lakshmi-yojana-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-deen-dayal-lado-lakshmi-yojana-form/"
-    },
-    {
-      "file": "jobs/family-in-state-migrate/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/family-in-state-migrate/"
-    },
-    {
-      "file": "jobs/saksham-yojana-haryana-apply-online-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/saksham-yojana-haryana-apply-online-form/"
-    },
-    {
-      "file": "jobs/government-yojana-money-dbt-active/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/government-yojana-money-dbt-active/"
-    },
-    {
-      "file": "jobs/ration/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ration/"
-    },
-    {
-      "file": "jobs/voter-card/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/voter-card/"
-    },
-    {
-      "file": "jobs/dr-ambedkar-all-yojna-status-check/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/dr-ambedkar-all-yojna-status-check/"
-    },
-    {
-      "file": "jobs/pm-farmer-yojana-farmer-registration-registration/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-yojana-farmer-registration-registration/"
-    },
-    {
-      "file": "jobs/all-bank-statement-download-by-csc-id/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/all-bank-statement-download-by-csc-id/"
-    },
-    {
-      "file": "jobs/haryana-crop-crop-registration/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-crop-crop-registration/"
-    },
-    {
-      "file": "jobs/aadhar-card-address-change-mc-sarpanch-wala-form/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aadhar-card-address-change-mc-sarpanch-wala-form/"
-    },
-    {
-      "file": "jobs/apprentice-shipindiat-all-india/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/apprentice-shipindiat-all-india/"
-    },
-    {
-      "file": "jobs/pradhan-mantri-ujjwala-yojana-prime-minister-yojana-free-gas-connection/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-ujjwala-yojana-prime-minister-yojana-free-gas-connection/"
-    },
-    {
-      "file": "jobs/additional-shortlist-of-5-times-more-candidates-for-the-police-constable-pmt-has/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/additional-shortlist-of-5-times-more-candidates-for-the-police-constable-pmt-has/"
-    },
-    {
-      "file": "jobs/government-yojana/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/government-yojana/"
-    },
-    {
-      "file": "jobs/mantra-l1-payment-device-renew-rd-service/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/mantra-l1-payment-device-renew-rd-service/"
-    },
-    {
-      "file": "jobs/ration-card-aadhaar-face-rd-application-download/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ration-card-aadhaar-face-rd-application-download/"
-    },
-    {
-      "file": "jobs/disabled-card-kyc/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/disabled-card-kyc/"
     },
     {
       "file": "jobs/haryana/index.html",
@@ -1085,34 +719,46 @@
       "reason": "page on disk not in any sitemap: /jobs/haryana/"
     },
     {
-      "file": "jobs/haryana-solar-form-payment-refund-form/index.html",
+      "file": "jobs/hbse-10-12-re-appear-compartment-additional-subject-exam-july-2026-admit-card/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-solar-form-payment-refund-form/"
+      "reason": "page on disk not in any sitemap: /jobs/hbse-10-12-re-appear-compartment-additional-subject-exam-july-2026-admit-card/"
     },
     {
-      "file": "jobs/haryana-labour-divyang-pension-yojana-online-form/index.html",
+      "file": "jobs/hbse-10th-12th-rechecking-result-2026-rechecking-re-evaluation/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-divyang-pension-yojana-online-form/"
+      "reason": "page on disk not in any sitemap: /jobs/hbse-10th-12th-rechecking-result-2026-rechecking-re-evaluation/"
     },
     {
-      "file": "jobs/apply-for-unemployment-saksham-yojana-haryana/index.html",
+      "file": "jobs/hbse-online-registration-for-secondarysr-secondary-compartmentadditional-exam-ju/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/apply-for-unemployment-saksham-yojana-haryana/"
+      "reason": "page on disk not in any sitemap: /jobs/hbse-online-registration-for-secondarysr-secondary-compartmentadditional-exam-ju/"
     },
     {
-      "file": "jobs/atal-pension-yojana-online-application-form/index.html",
+      "file": "jobs/housing-yojana-urban-25-urban-family-yojana-2026/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/atal-pension-yojana-online-application-form/"
+      "reason": "page on disk not in any sitemap: /jobs/housing-yojana-urban-25-urban-family-yojana-2026/"
     },
     {
-      "file": "jobs/haryana-labour-death-fund-yojana-online-form/index.html",
+      "file": "jobs/ignou-june-exam-admit-card-hall-ticket-2026-download-last-date-2026/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-death-fund-yojana-online-form/"
+      "reason": "page on disk not in any sitemap: /jobs/ignou-june-exam-admit-card-hall-ticket-2026-download-last-date-2026/"
+    },
+    {
+      "file": "jobs/indira-gandhi-national-disability-pension-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/indira-gandhi-national-disability-pension-form/"
+    },
+    {
+      "file": "jobs/instant-e-pan-apply-link/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/instant-e-pan-apply-link/"
     },
     {
       "file": "jobs/kishan-yojna-all-india/index.html",
@@ -1121,10 +767,28 @@
       "reason": "page on disk not in any sitemap: /jobs/kishan-yojna-all-india/"
     },
     {
-      "file": "jobs/happly-card-haryana/index.html",
+      "file": "jobs/lado-lakshmi-yojana-ki-list-me-naam-check-khud-ka-naam-check-kare/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/happly-card-haryana/"
+      "reason": "page on disk not in any sitemap: /jobs/lado-lakshmi-yojana-ki-list-me-naam-check-khud-ka-naam-check-kare/"
+    },
+    {
+      "file": "jobs/land-form-registry-form-for-occupying-panchayat-land/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/land-form-registry-form-for-occupying-panchayat-land/"
+    },
+    {
+      "file": "jobs/land-holding-certificate-agriculture-50/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/land-holding-certificate-agriculture-50/"
+    },
+    {
+      "file": "jobs/land-maps-online-land/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/land-maps-online-land/"
     },
     {
       "file": "jobs/luvas-2026/index.html",
@@ -1133,16 +797,190 @@
       "reason": "page on disk not in any sitemap: /jobs/luvas-2026/"
     },
     {
-      "file": "jobs/vakalatnama-blank/index.html",
+      "file": "jobs/mantra-l1-payment-device-renew-rd-service/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/vakalatnama-blank/"
+      "reason": "page on disk not in any sitemap: /jobs/mantra-l1-payment-device-renew-rd-service/"
     },
     {
-      "file": "jobs/lado-lakshmi-yojana-ki-list-me-naam-check-khud-ka-naam-check-kare/index.html",
+      "file": "jobs/mdu-ug-integrated-course-admission-form-2026-rohtak/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/lado-lakshmi-yojana-ki-list-me-naam-check-khud-ka-naam-check-kare/"
+      "reason": "page on disk not in any sitemap: /jobs/mdu-ug-integrated-course-admission-form-2026-rohtak/"
+    },
+    {
+      "file": "jobs/medical-certificate/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/medical-certificate/"
+    },
+    {
+      "file": "jobs/micada-haryana-diggi-online-registration-water-tank-subsidy-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/micada-haryana-diggi-online-registration-water-tank-subsidy-apply/"
+    },
+    {
+      "file": "jobs/national-school-games-haryana-sgfi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/national-school-games-haryana-sgfi/"
+    },
+    {
+      "file": "jobs/nsdl-pan-apply-link/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nsdl-pan-apply-link/"
+    },
+    {
+      "file": "jobs/nsp-scholarship-2026-payment-status-check-link/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nsp-scholarship-2026-payment-status-check-link/"
+    },
+    {
+      "file": "jobs/old-age-pension-check/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/old-age-pension-check/"
+    },
+    {
+      "file": "jobs/online-check/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/online-check/"
+    },
+    {
+      "file": "jobs/page/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/page/"
+    },
+    {
+      "file": "jobs/pan-card-correction/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pan-card-correction/"
+    },
+    {
+      "file": "jobs/passport-apply-link/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/passport-apply-link/"
+    },
+    {
+      "file": "jobs/patwari-report-krishi-yantra-subsidy-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/patwari-report-krishi-yantra-subsidy-yojana/"
+    },
+    {
+      "file": "jobs/pension-support-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pension-support-apply/"
+    },
+    {
+      "file": "jobs/pm-farmer-6000/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-6000/"
+    },
+    {
+      "file": "jobs/pm-farmer-yojana-farmer-registration-registration/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-yojana-farmer-registration-registration/"
+    },
+    {
+      "file": "jobs/pm-farmer-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-farmer-yojana/"
+    },
+    {
+      "file": "jobs/pm-kisan-samman-nidhi-yojana-status/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-kisan-samman-nidhi-yojana-status/"
+    },
+    {
+      "file": "jobs/pm-kisan-yojana-installment-update-farmer-crop-crop/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-kisan-yojana-installment-update-farmer-crop-crop/"
+    },
+    {
+      "file": "jobs/pm-rashtriya-bal-puraskar-yojana-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-rashtriya-bal-puraskar-yojana-online-form/"
+    },
+    {
+      "file": "jobs/pm-svanidhi-loan-yojana-80-loan-9/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-svanidhi-loan-yojana-80-loan-9/"
+    },
+    {
+      "file": "jobs/pm-yojana-55-3000-pension-best-pension-government-scheme-for-e-shram-card/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pm-yojana-55-3000-pension-best-pension-government-scheme-for-e-shram-card/"
+    },
+    {
+      "file": "jobs/pmjjby/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pmjjby/"
+    },
+    {
+      "file": "jobs/police-verification-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/police-verification-haryana/"
+    },
+    {
+      "file": "jobs/police-verification-offline-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/police-verification-offline-form/"
+    },
+    {
+      "file": "jobs/pradhan-mantri-kisan-samman-nidhi-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-kisan-samman-nidhi-online/"
+    },
+    {
+      "file": "jobs/pradhan-mantri-kisan-samman-nidhi-pm-kisan/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-kisan-samman-nidhi-pm-kisan/"
+    },
+    {
+      "file": "jobs/pradhan-mantri-ujjwala-yojana-prime-minister-yojana-free-gas-connection/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pradhan-mantri-ujjwala-yojana-prime-minister-yojana-free-gas-connection/"
+    },
+    {
+      "file": "jobs/ration-card-aadhaar-face-rd-application-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ration-card-aadhaar-face-rd-application-download/"
+    },
+    {
+      "file": "jobs/ration-card-check-ration-card-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ration-card-check-ration-card-download/"
+    },
+    {
+      "file": "jobs/ration-card-e-kyc-application-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ration-card-e-kyc-application-download/"
     },
     {
       "file": "jobs/ration-card/index.html",
@@ -1151,16 +989,118 @@
       "reason": "page on disk not in any sitemap: /jobs/ration-card/"
     },
     {
-      "file": "jobs/apki-beti-hameri-deti/index.html",
+      "file": "jobs/ration-ration-bpl-download-bpl-card-download/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/apki-beti-hameri-deti/"
+      "reason": "page on disk not in any sitemap: /jobs/ration-ration-bpl-download-bpl-card-download/"
     },
     {
-      "file": "jobs/echallan-digital-traffictransport-pay/index.html",
+      "file": "jobs/ration/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/echallan-digital-traffictransport-pay/"
+      "reason": "page on disk not in any sitemap: /jobs/ration/"
+    },
+    {
+      "file": "jobs/roadways-buses-live-time-table/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/roadways-buses-live-time-table/"
+    },
+    {
+      "file": "jobs/saksham-yojana-haryana-apply-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/saksham-yojana-haryana-apply-online-form/"
+    },
+    {
+      "file": "jobs/sc-farmer-sc-farmers-tractor-draw-list-2026-pdf/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sc-farmer-sc-farmers-tractor-draw-list-2026-pdf/"
+    },
+    {
+      "file": "jobs/sc-tractor-scheme-m-patwari-report-wala-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sc-tractor-scheme-m-patwari-report-wala-form/"
+    },
+    {
+      "file": "jobs/scheme-for-conservation-and-development-of-indigenous-cows-and-murrah-developmen/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/scheme-for-conservation-and-development-of-indigenous-cows-and-murrah-developmen/"
+    },
+    {
+      "file": "jobs/scholarship-haryana-ambedkar-scholarship-online-form-31012026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/scholarship-haryana-ambedkar-scholarship-online-form-31012026/"
+    },
+    {
+      "file": "jobs/self-declaration-from-the-head-of-family-hof-for-sharing-address-with-a-relative/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/self-declaration-from-the-head-of-family-hof-for-sharing-address-with-a-relative/"
+    },
+    {
+      "file": "jobs/solar-self-declaration-pdf-form-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/solar-self-declaration-pdf-form-haryana/"
+    },
+    {
+      "file": "jobs/stand-up-india-loan-yojana-apply-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/stand-up-india-loan-yojana-apply-online-form/"
+    },
+    {
+      "file": "jobs/stolen-mobile-block-check-full-details-fraud-how-to-block-a-stolen-mobile-see-fu/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/stolen-mobile-block-check-full-details-fraud-how-to-block-a-stolen-mobile-see-fu/"
+    },
+    {
+      "file": "jobs/student-government-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/student-government-yojana/"
+    },
+    {
+      "file": "jobs/subsidy-on-moong-seeds-in-haryana-75-subsidy-2025/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/subsidy-on-moong-seeds-in-haryana-75-subsidy-2025/"
+    },
+    {
+      "file": "jobs/tenant-farmer-declration-format/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tenant-farmer-declration-format/"
+    },
+    {
+      "file": "jobs/udid-card-disability-download/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/udid-card-disability-download/"
+    },
+    {
+      "file": "jobs/unemploy-self-declaration-for-12thgraduationpost-graduation/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/unemploy-self-declaration-for-12thgraduationpost-graduation/"
+    },
+    {
+      "file": "jobs/update-birth-certificate-haryana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/update-birth-certificate-haryana/"
+    },
+    {
+      "file": "jobs/urban-housing-ews-yojana/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/urban-housing-ews-yojana/"
     },
     {
       "file": "jobs/urban-housing-yojana-2026-ews/index.html",
@@ -1169,118 +1109,94 @@
       "reason": "page on disk not in any sitemap: /jobs/urban-housing-yojana-2026-ews/"
     },
     {
-      "file": "jobs/haryana-ration-card-download-link/index.html",
+      "file": "jobs/uti-pan-apply-link/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-ration-card-download-link/"
+      "reason": "page on disk not in any sitemap: /jobs/uti-pan-apply-link/"
     },
     {
-      "file": "jobs/agrishakti-namo-drone-didi-yojana-last-date-01032026/index.html",
+      "file": "jobs/vakalatnama-blank/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/agrishakti-namo-drone-didi-yojana-last-date-01032026/"
+      "reason": "page on disk not in any sitemap: /jobs/vakalatnama-blank/"
     },
     {
-      "file": "jobs/haryana-gst-kar-hiteshi/index.html",
+      "file": "jobs/voter-card/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-gst-kar-hiteshi/"
+      "reason": "page on disk not in any sitemap: /jobs/voter-card/"
     },
     {
-      "file": "jobs/ayushman-card-1500-payment-link-prime-minister-yojana/index.html",
+      "file": "jobs/vyapari-kshatipoorti-yojana-2026-5-20-haryana-trader-insurance-scheme/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/ayushman-card-1500-payment-link-prime-minister-yojana/"
+      "reason": "page on disk not in any sitemap: /jobs/vyapari-kshatipoorti-yojana-2026-5-20-haryana-trader-insurance-scheme/"
     },
     {
-      "file": "jobs/haryana-labour-self-marriage-yojana-online-form/index.html",
+      "file": "jobs/women-government-yojana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/haryana-labour-self-marriage-yojana-online-form/"
+      "reason": "page on disk not in any sitemap: /jobs/women-government-yojana/"
     },
     {
-      "file": "state/punjab/punjab-and-haryana-high-court-safai-sewak-mali-167-posts/index.html",
+      "file": "jobs/yojana-2026-private-school-free-admission-class-2-12-laste-date-31-2026/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/punjab-and-haryana-high-court-safai-sewak-mali-167-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-2026-private-school-free-admission-class-2-12-laste-date-31-2026/"
     },
     {
-      "file": "state/punjab/bfuhs-lecturer-assistant-professor-4-posts/index.html",
+      "file": "jobs/yojana-2026-yojana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/bfuhs-lecturer-assistant-professor-4-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-2026-yojana/"
     },
     {
-      "file": "state/punjab/ssc-group-b-group-c-12256-posts/index.html",
+      "file": "jobs/yojana-78000-300-apply/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/ssc-group-b-group-c-12256-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-78000-300-apply/"
     },
     {
-      "file": "state/punjab/ppsc-punjab-civil-services-26-posts/index.html",
+      "file": "jobs/yojana-apply-apply-link/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/ppsc-punjab-civil-services-26-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-apply-apply-link/"
     },
     {
-      "file": "state/punjab/bfuhs-sub-divisional-engineer-6-posts/index.html",
+      "file": "jobs/yojana-haryana-e-bhoomi-portal-2026-69-167/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/bfuhs-sub-divisional-engineer-6-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-haryana-e-bhoomi-portal-2026-69-167/"
     },
     {
-      "file": "state/punjab/iim-amritsar-faculty/index.html",
+      "file": "jobs/yojana-jsy/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/iim-amritsar-faculty/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-jsy/"
     },
     {
-      "file": "state/punjab/bfuhs-ombudsperson-1-posts/index.html",
+      "file": "jobs/yojana-list-all-india/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/bfuhs-ombudsperson-1-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-list-all-india/"
     },
     {
-      "file": "state/punjab/aiims-bathinda-project-technical-support-iii-1-posts/index.html",
+      "file": "jobs/yojana-money-check/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/aiims-bathinda-project-technical-support-iii-1-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana-money-check/"
     },
     {
-      "file": "state/punjab/pspcl-fireman-electrician-and-more-116-posts/index.html",
+      "file": "jobs/yojana/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/pspcl-fireman-electrician-and-more-116-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/yojana/"
     },
     {
-      "file": "state/punjab/iit-ropar-project-research-scientist-i-1-posts/index.html",
+      "file": "jobs/youth-hostel-yojana-online-application-form/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/iit-ropar-project-research-scientist-i-1-posts/"
-    },
-    {
-      "file": "state/punjab/pau-young-professional-ii-1-posts/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/pau-young-professional-ii-1-posts/"
-    },
-    {
-      "file": "state/punjab/pau-research-associate/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/pau-research-associate/"
-    },
-    {
-      "file": "state/punjab/echs-officer-in-charge-1-posts/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/echs-officer-in-charge-1-posts/"
-    },
-    {
-      "file": "state/punjab/psssb-line-superintendent-06-posts/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /state/punjab/psssb-line-superintendent-06-posts/"
+      "reason": "page on disk not in any sitemap: /jobs/youth-hostel-yojana-online-application-form/"
     }
   ],
   "critical_unfixable": 0,
@@ -1289,5 +1205,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     110 urls [ok]"
   ],
-  "duration_sec": 21.2
+  "duration_sec": 20.1
 }
