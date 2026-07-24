@@ -307,7 +307,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 </head>
 <body>
 
-<nav class="navbar"><div class="nav-inner">
+<nav class="navbar"><div class="nav-inner"><button class="nav-back" onclick="history.length>1?history.back():location.href=(document.querySelector('.nav-tools-link')||{}).href||'/tools/'" title="Back" aria-label="Go back" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--mist);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;flex-shrink:0;margin-right:2px"><i class="fa-solid fa-arrow-left"></i></button>
   <a class="nav-brand" href="/">TopSarkariJobs</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-image.html">Image</a>
@@ -1182,6 +1182,18 @@ var mpVision=null;
 var mpSegmenter=null;
 var MP_MODEL_URL='https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
 
+// Installed Android app shell (TWA/WebView, not regular mobile Chrome) reports
+// standalone display-mode. Its bundled WebView's WebGL/GPU driver stack can
+// silently return CORRUPTED mask data on the GPU delegate (garbled streak/noise
+// artifacts across the whole photo) instead of throwing — so the existing
+// catch-and-fallback-to-CPU below never triggers. Skip GPU there entirely and
+// go straight to the CPU delegate, which is slower but reliably correct.
+function isAndroidAppShell(){
+  try{
+    return /Android/i.test(navigator.userAgent) &&
+      ['standalone','fullscreen','minimal-ui'].some(m=>window.matchMedia('(display-mode: '+m+')').matches);
+  }catch(_){ return false; }
+}
 function loadBgLib(cb){
   if(mpSegmenter){cb(null,mpSegmenter);return;}
   (async function(delegate){
@@ -1199,7 +1211,7 @@ function loadBgLib(cb){
     }catch(err){
       cb(err,null);
     }
-  })('GPU');
+  })(isAndroidAppShell() ? 'CPU' : 'GPU');
 }
 
 function smoothstep(e0,e1,x){var t=Math.min(1,Math.max(0,(x-e0)/(e1-e0)));return t*t*(3-2*t);}

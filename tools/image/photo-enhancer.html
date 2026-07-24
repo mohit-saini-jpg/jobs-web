@@ -90,7 +90,7 @@
     .a-chip.warn{background:#fef3c7;color:#92400e}
     .a-chip.ok{background:#dcfce7;color:#166534}
 
-    .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .workspace{display:grid;grid-template-columns:320px 1fr;gap:18px}
     @media (max-width:920px){.workspace{grid-template-columns:1fr}}
     /* Controls column gets its OWN scroll instead of forcing the whole page
        to be as tall as 25+ sliders + effects + curves + HSL — on desktop it
@@ -101,8 +101,13 @@
        the whole layout out; vh then resolves against that zoomed-out
        (effectively much taller) viewport and stops being a reliable "% of
        what the user can actually see" on those devices, whereas a fixed px
-       height stays exactly that many CSS pixels regardless. */
-    #controlsCol{max-height:640px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-right:6px;position:sticky;top:14px}
+       height stays exactly that many CSS pixels regardless.
+       order:-1 puts it in the LEFT grid column on desktop (it comes after
+       the canvas in the HTML) and, since the grid collapses to a single
+       column on mobile, that same order also puts it ABOVE the photo there
+       instead of below — controls should never require scrolling past the
+       image to find on a phone. */
+    #controlsCol{order:-1;max-height:640px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-right:6px;position:sticky;top:14px}
     #controlsCol::-webkit-scrollbar{width:7px}
     #controlsCol::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
     @media (max-width:920px){
@@ -114,14 +119,6 @@
     #mainCanvas{max-width:100%;max-height:70vh;display:block;touch-action:none}
     .canvas-empty{padding:60px 20px;text-align:center;color:var(--muted)}
     .canvas-empty i{font-size:2.4rem;margin-bottom:10px;display:block;opacity:.4}
-
-    .split-wrap{position:relative;display:none}
-    .split-wrap.show{display:block}
-    .split-wrap img,.split-wrap canvas{display:block;max-width:100%;user-select:none;-webkit-user-drag:none}
-    .split-after{position:absolute;top:0;left:0;height:100%;overflow:hidden;width:50%;border-right:2px solid #fff}
-    .split-handle{position:absolute;top:50%;left:50%;width:38px;height:38px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);cursor:ew-resize;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.3);color:var(--brand);font-size:.85rem;z-index:5}
-    .split-label{position:absolute;top:10px;padding:3px 10px;background:rgba(0,0,0,.6);color:#fff;font-size:.7rem;font-weight:700;border-radius:6px;letter-spacing:.04em}
-    .split-label.before{left:10px}.split-label.after{right:10px}
 
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
     .tbtn{padding:7px 13px;border-radius:8px;border:1.5px solid var(--line);background:var(--white);color:var(--ink);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
@@ -245,7 +242,7 @@
 </head>
 <body>
 
-<nav class="navbar"><div class="nav-inner">
+<nav class="navbar"><div class="nav-inner"><button class="nav-back" onclick="history.length>1?history.back():location.href=(document.querySelector('.nav-tools-link')||{}).href||'/tools/'" title="Back" aria-label="Go back" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--mist);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;flex-shrink:0;margin-right:2px"><i class="fa-solid fa-arrow-left"></i></button>
   <a class="nav-brand" href="/">TopSarkariJobs</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-image.html">Image Tools</a>
@@ -297,8 +294,7 @@
           <button class="tbtn" id="btnUndo" disabled><i class="fa-solid fa-rotate-left"></i> Undo</button>
           <button class="tbtn" id="btnRedo" disabled><i class="fa-solid fa-rotate-right"></i> Redo</button>
           <button class="tbtn" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
-          <button class="tbtn" id="btnCompare"><i class="fa-solid fa-code-compare"></i> Before/After</button>
-          <button class="tbtn" id="btnCompareSide"><i class="fa-solid fa-table-columns"></i> Side by Side</button>
+          <button class="tbtn" id="btnCompare"><i class="fa-solid fa-table-columns"></i> Before/After</button>
           <button class="tbtn" id="btnZoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
           <button class="tbtn" id="btnZoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
           <button class="tbtn" id="btnFullscreen"><i class="fa-solid fa-expand"></i> Fullscreen</button>
@@ -309,12 +305,6 @@
           <canvas id="mainCanvas" style="display:none"></canvas>
           <div id="cropImgWrap" style="display:none;width:100%;max-height:70vh;overflow:hidden">
             <img id="cropImg" style="max-width:100%;display:block">
-          </div>
-          <div class="split-wrap" id="splitWrap">
-            <img id="splitBefore" alt="Before">
-            <div class="split-after" id="splitAfter"><canvas id="splitAfterCanvas"></canvas></div>
-            <div class="split-handle" id="splitHandle"><i class="fa-solid fa-arrows-left-right"></i></div>
-            <span class="split-label before">BEFORE</span><span class="split-label after">AFTER</span>
           </div>
         </div>
 
@@ -525,17 +515,9 @@
 
         <!-- PASSPORT MODE -->
         <div class="mode-panel" id="panel-passport" style="display:none">
-          <div class="field-row"><label>Photo Size</label>
-            <select id="passportSize">
-              <option value="35x45">35×45mm (Standard Passport / SSC / Railway)</option>
-              <option value="51x51">51×51mm (2×2 inch — US/Visa)</option>
-              <option value="30x40">30×40mm (Common Form Upload)</option>
-              <option value="20x25">20×25mm (Small ID)</option>
-            </select>
-          </div>
           <button class="btn primary block" id="btnPassportAuto"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Center Face &amp; Crop</button>
           <div id="passportWarnings"></div>
-          <div class="info-note">Uses real AI face detection to center your face correctly and checks if your background looks white/plain — required by most government job forms.</div>
+          <div class="info-note">Uses real AI face detection to center your face correctly and checks if your background looks white/plain — required by most government job forms. Pick your exact size from <b>Quick Size Preset</b> below (🪪 Passport / ID group) before clicking — defaults to standard 35×45mm if none is selected.</div>
         </div>
 
         <!-- DOCUMENT MODE -->
@@ -659,7 +641,6 @@ const state = {
   lastAnalysis: null,
   mode: 'auto',
   zoom: 1,
-  compareOn: false,
 };
 const ctx = state.canvas.getContext('2d', { willReadFrequently: true });
 
@@ -2551,8 +2532,14 @@ async function passportAutoMode(){
     return;
   }
   const box = a.faceBoxes[0];
-  const [mm_w, mm_h] = $('passportSize').value.split('x').map(Number);
-  const targetRatio = mm_w/mm_h;
+  // Size comes from the shared Quick Size Preset dropdown's Passport/ID group
+  // (data-w/data-h, in px) instead of a separate duplicate "Photo Size"
+  // control — one size-selection UI for the whole tool. Falls back to the
+  // standard 35x45mm passport ratio/size if nothing is selected there.
+  const sizeOpt = $('sizePreset') && $('sizePreset').selectedOptions[0];
+  const presetW = sizeOpt && Number(sizeOpt.dataset.w), presetH = sizeOpt && Number(sizeOpt.dataset.h);
+  const hasPreset = !!(presetW && presetH);
+  const targetRatio = hasPreset ? presetW/presetH : 413/531;
   const cx = box.x+box.w/2, cy = box.y+box.h*0.42;
   // face height should occupy ~65% of frame height, per common passport-photo guidance
   const frameH = box.h/0.65;
@@ -2561,7 +2548,7 @@ async function passportAutoMode(){
   x0 = clamp(x0,0,state.canvas.width-frameW); y0 = clamp(y0,0,state.canvas.height-frameH);
   const fw = Math.min(frameW, state.canvas.width), fh = Math.min(frameH, state.canvas.height);
 
-  const outSize = 600;
+  const outSize = hasPreset ? presetW : 600;
   const tmp = document.createElement('canvas'); tmp.width=outSize; tmp.height=Math.round(outSize/targetRatio);
   tmp.getContext('2d').drawImage(state.canvas, x0,y0,fw,fh, 0,0,tmp.width,tmp.height);
   setCanvasSize(tmp.width,tmp.height); ctx.drawImage(tmp,0,0);
@@ -2651,42 +2638,110 @@ function applyReduceArtifacts(){
   toast('Compression artifacts reduced ✓');
 }
 
-/* ============================== TEXT / WATERMARK OVERLAY ============================== */
-function applyTextOverlay(){
-  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+/* ============================== TEXT / WATERMARK OVERLAY ==============================
+   Non-destructive live preview (matches the paSourceImageData pattern used elsewhere on
+   this page): state.baseImageData is only ever mutated by applyTextOverlay() on an
+   explicit "Add Text to Photo" click. Every slider/color/position change just re-draws
+   the preview on top of a fresh copy of baseImageData, so nothing stacks. The text is
+   also freely draggable — dragging sets textCustomPos, which overrides the preset
+   9-point position until the user picks a preset again or commits. */
+let textCustomPos = null;   // {x,y} baseline anchor set by dragging, or null = use preset position
+let textDragOffset = null;  // {x,y} pointer offset from the anchor while actively dragging
+
+function getTextLayout(){
+  if(!state.baseImageData) return null;
   const text = $('txtContent').value.trim();
-  if(!text){ toast('Text daalein', true); return; }
+  if(!text) return null;
   const size = Number($('txtSize').value);
+  const w = state.baseImageData.width, h = state.baseImageData.height;
+  ctx.font = `700 ${size}px 'Space Grotesk', sans-serif`;
+  const tw = ctx.measureText(text).width;
+  let x, y;
+  if(textCustomPos){
+    x = textCustomPos.x; y = textCustomPos.y;
+  } else {
+    const posEl = document.querySelector('#txtPosSeg .seg-opt.active');
+    const pos = posEl ? posEl.dataset.pos : 'cc';
+    const pad = size*0.4;
+    if(pos[0]==='t') y = pad+size*0.8;
+    else if(pos[0]==='c') y = h/2+size*0.3;
+    else y = h-pad;
+    if(pos[1]==='l') x = pad;
+    else if(pos[1]==='c') x = (w-tw)/2;
+    else x = w-tw-pad;
+  }
+  return {text, size, tw, x, y};
+}
+function drawTextLayer(withHandle){
+  const layout = getTextLayout();
+  if(!layout) return;
+  const {text, size, tw, x, y} = layout;
   const color = $('txtColor').value;
   const opacity = Number($('txtOpacity').value)/100;
-  const posEl = document.querySelector('#txtPosSeg .seg-opt.active');
-  const pos = posEl ? posEl.dataset.pos : 'cc';
   const shadow = $('txtShadow').checked;
-
-  const w = state.baseImageData.width, h = state.baseImageData.height;
-  setCanvasSize(w,h);
-  putData(state.baseImageData);
   ctx.font = `700 ${size}px 'Space Grotesk', sans-serif`;
   ctx.textBaseline = 'alphabetic';
-  const tw = ctx.measureText(text).width;
-  const pad = size*0.4;
-  let x,y;
-  if(pos[0]==='t') y = pad+size*0.8;
-  else if(pos[0]==='c') y = h/2+size*0.3;
-  else y = h-pad;
-  if(pos[1]==='l') x = pad;
-  else if(pos[1]==='c') x = (w-tw)/2;
-  else x = w-tw-pad;
-
   ctx.globalAlpha = opacity;
   if(shadow){ ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillText(text, x+2, y+2); }
   ctx.fillStyle = color;
   ctx.fillText(text, x, y);
   ctx.globalAlpha = 1;
-
+  if(withHandle){
+    ctx.save();
+    ctx.strokeStyle = 'rgba(52,93,230,.9)';
+    ctx.setLineDash([6,4]);
+    ctx.lineWidth = Math.max(1.5, size*0.025);
+    ctx.strokeRect(x-8, y-size*0.85, tw+16, size*1.05);
+    ctx.restore();
+  }
+}
+function renderTextPreview(){
+  if(!state.baseImageData) return;
+  setCanvasSize(state.baseImageData.width, state.baseImageData.height);
+  putData(state.baseImageData);
+  if($('txtContent').value.trim()) drawTextLayer(true);
+}
+function textCanvasCoords(e){
+  const rect = state.canvas.getBoundingClientRect();
+  const scaleX = state.canvas.width / rect.width, scaleY = state.canvas.height / rect.height;
+  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+}
+function textPointerDown(e){
+  if(state.mode!=='text') return;
+  const layout = getTextLayout();
+  if(!layout) return;
+  const p = textCanvasCoords(e);
+  const {x, y, tw, size} = layout;
+  const top = y - size*0.85, bottom = y + size*0.25;
+  if(p.x>=x-14 && p.x<=x+tw+14 && p.y>=top-14 && p.y<=bottom+14){
+    textDragOffset = { x: p.x-x, y: p.y-y };
+    state.canvas.style.cursor = 'grabbing';
+    try{ e.target.setPointerCapture(e.pointerId); }catch(_){}
+    e.preventDefault();
+  }
+}
+function textPointerMove(e){
+  if(!textDragOffset) return;
+  const p = textCanvasCoords(e);
+  textCustomPos = { x: p.x-textDragOffset.x, y: p.y-textDragOffset.y };
+  renderTextPreview();
+  e.preventDefault();
+}
+function textPointerUp(){
+  if(textDragOffset){ textDragOffset = null; state.canvas.style.cursor = ''; }
+}
+function applyTextOverlay(){
+  if(!state.baseImageData){ toast('Pehle photo select karein', true); return; }
+  if(!$('txtContent').value.trim()){ toast('Text daalein', true); return; }
+  setCanvasSize(state.baseImageData.width, state.baseImageData.height);
+  putData(state.baseImageData);
+  drawTextLayer(false);   // bake the text without the draggable selection outline
   state.baseImageData = getData();
   pushHistory();
-  toast('Text added ✓');
+  $('txtContent').value = '';
+  textCustomPos = null;
+  renderTextPreview();
+  toast('Text photo mein add ho gaya ✓ — agla watermark ke liye naya text likhein');
 }
 
 /* ============================== BEFORE/AFTER SPLIT & ZOOM & FULLSCREEN ============================== */
@@ -2697,23 +2752,7 @@ function getFullResCanvas(){
   tmp.getContext('2d').putImageData(state.baseImageData, 0, 0);
   return tmp;
 }
-function toggleCompare(){
-  if(state.sideCompareOn) toggleSideCompare(); // mutually exclusive with side-by-side
-  state.compareOn = !state.compareOn;
-  $('splitWrap').classList.toggle('show', state.compareOn);
-  state.canvas.style.display = state.compareOn ? 'none' : '';
-  if(state.compareOn){
-    const full = getFullResCanvas();
-    $('splitBefore').src = state.originalDataURL;
-    const ac = $('splitAfterCanvas');
-    ac.width = full.width; ac.height = full.height;
-    ac.getContext('2d').drawImage(full,0,0);
-    $('splitBefore').style.width = full.width+'px';
-    ac.style.width = full.width+'px';
-  }
-}
 function toggleSideCompare(){
-  if(state.compareOn) toggleCompare(); // mutually exclusive with slider-split compare
   state.sideCompareOn = !state.sideCompareOn;
   let wrap = $('sideCompareWrap');
   if(!wrap){
@@ -2733,37 +2772,16 @@ function toggleSideCompare(){
     ac.getContext('2d').drawImage(full,0,0);
   }
 }
-function initSplitDrag(){
-  const handle = $('splitHandle'), wrap = $('splitWrap'), after = $('splitAfter');
-  let dragging=false;
-  function setPos(clientX){
-    const rect = wrap.getBoundingClientRect();
-    const pct = clamp((clientX-rect.left)/rect.width,0,1);
-    after.style.width = (pct*100)+'%';
-    handle.style.left = (pct*100)+'%';
-  }
-  handle.addEventListener('pointerdown', e=>{ dragging=true; e.preventDefault(); });
-  window.addEventListener('pointermove', e=>{ if(dragging) setPos(e.clientX); });
-  window.addEventListener('pointerup', ()=>dragging=false);
-  wrap.addEventListener('click', e=>{ if(e.target===handle) return; setPos(e.clientX); });
-}
 function applyZoom(delta){
   // Whole-photo before/after previews get shrunk to fit the screen, which
   // silently erases the very fine-detail improvement AI upscale adds — a
   // 2x/4x resolution gain is invisible once both images are scaled back
   // down to a few hundred CSS pixels wide. Zoom must actually let the user
-  // inspect at (or beyond) native pixel scale, so it now also scales the
-  // before/after compare view, not just the plain canvas — and
-  // canvas-wrap's overflow is scrollable so a zoomed-in image can be panned
-  // instead of just clipped.
+  // inspect at (or beyond) native pixel scale, so canvas-wrap's overflow is
+  // scrollable so a zoomed-in image can be panned instead of just clipped.
   state.zoom = clamp(state.zoom+delta, 0.3, 5);
   state.canvas.style.transform = `scale(${state.zoom})`;
   state.canvas.style.transformOrigin = 'center';
-  const split = $('splitWrap');
-  if(split){
-    split.style.transform = `scale(${state.zoom})`;
-    split.style.transformOrigin = 'center';
-  }
 }
 function openFullscreen(){
   $('fsImg').src = getFullResDataURL('image/png');
@@ -2987,6 +3005,12 @@ function switchMode(mode){
   if(state.mode==='crop' && mode!=='crop') destroyCropper();
   if(state.mode==='manual' && mode!=='manual') exitManualPreviewMode();
   if(state.mode==='auto' && mode!=='auto') paCommit(); // safety: commit any pending drag before leaving
+  if(state.mode==='text' && mode!=='text' && state.baseImageData){
+    // discard any un-committed live text preview, don't bake it in on tab switch
+    textCustomPos = null;
+    setCanvasSize(state.baseImageData.width, state.baseImageData.height);
+    putData(state.baseImageData);
+  }
   state.mode = mode;
   document.querySelectorAll('.mode-tab').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
   document.querySelectorAll('.mode-panel').forEach(p=>p.style.display='none');
@@ -2994,6 +3018,7 @@ function switchMode(mode){
   if(mode==='crop' && state.canvas.width) initCropper();
   if(mode==='manual' && state.baseImageData){ enterManualPreviewMode(); renderHistogram(); renderCurveCanvas(); syncHslSlidersUI(); }
   if(mode==='auto' && state.baseImageData){ paRefreshSource(); paRenderFilterThumbnails(); }
+  if(mode==='text' && state.baseImageData) renderTextPreview();
 }
 
 /* ============================== EVENT WIRING ============================== */
@@ -3101,19 +3126,26 @@ function wireEvents(){
   $('btnLowLight').addEventListener('click', applyLowLightFix);
   $('btnReduceArtifacts').addEventListener('click', applyReduceArtifacts);
 
-  $('txtSize').addEventListener('input', function(){ $('v-txtSize').textContent = this.value; });
-  $('txtOpacity').addEventListener('input', function(){ $('v-txtOpacity').textContent = this.value; });
+  $('txtContent').addEventListener('input', renderTextPreview);
+  $('txtSize').addEventListener('input', function(){ $('v-txtSize').textContent = this.value; renderTextPreview(); });
+  $('txtColor').addEventListener('input', renderTextPreview);
+  $('txtOpacity').addEventListener('input', function(){ $('v-txtOpacity').textContent = this.value; renderTextPreview(); });
+  $('txtShadow').addEventListener('change', renderTextPreview);
   document.querySelectorAll('#txtPosSeg .seg-opt').forEach(o=>o.addEventListener('click', ()=>{
     document.querySelectorAll('#txtPosSeg .seg-opt').forEach(x=>x.classList.remove('active'));
     o.classList.add('active');
+    textCustomPos = null;   // picking a preset overrides any dragged position
+    renderTextPreview();
   }));
   $('btnTxtApply').addEventListener('click', applyTextOverlay);
+  state.canvas.addEventListener('pointerdown', textPointerDown);
+  window.addEventListener('pointermove', textPointerMove);
+  window.addEventListener('pointerup', textPointerUp);
 
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
   $('btnReset').addEventListener('click', resetToOriginal);
-  $('btnCompare').addEventListener('click', toggleCompare);
-  $('btnCompareSide').addEventListener('click', toggleSideCompare);
+  $('btnCompare').addEventListener('click', toggleSideCompare);
 
   // Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y / Ctrl+Shift+Z redo, Ctrl+S download.
   document.addEventListener('keydown', e=>{
@@ -3144,7 +3176,6 @@ function wireEvents(){
     q.addEventListener('click', ()=>q.closest('.faq-item').classList.toggle('open'));
   });
 
-  initSplitDrag();
   wireCurveEditor();
   wireHslPanel();
   $('btnEyedropper').addEventListener('click', pickEyedropperColor);

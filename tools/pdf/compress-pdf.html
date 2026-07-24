@@ -195,7 +195,7 @@
   </script>
 </head>
 <body>
-<nav class="navbar"><div class="nav-inner">
+<nav class="navbar"><div class="nav-inner"><button class="nav-back" onclick="history.length>1?history.back():location.href=(document.querySelector('.nav-tools-link')||{}).href||'/tools/'" title="Back" aria-label="Go back" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--mist);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;flex-shrink:0;margin-right:2px"><i class="fa-solid fa-arrow-left"></i></button>
   <a class="nav-brand" href="/">TopSarkariJobs</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/">Tools</a>
   <span class="nav-sep">›</span><a class="nav-crumb" href="/tools/tools-pdf.html">PDF Tools</a>
