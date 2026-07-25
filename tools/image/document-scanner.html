@@ -265,6 +265,19 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
    that when the canvas itself is larger. */
 .scan-livewrap{width:100%;height:100%;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
 .scan-livewrap canvas{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+/* #livePreview's buffer is deliberately capped at 520px wide (perf), so
+   on a much larger viewport max-width/max-height alone left it tiny and
+   centered instead of filling the space — width/height:100% +
+   object-fit:contain scale it UP to fill too, not just cap it from
+   overflowing. Kept OFF markupCanvas/eraserCanvas: those need
+   getBoundingClientRect() to map 1:1 to their drawing coordinate math,
+   and object-fit's letterboxing would throw that off. */
+#livePreview{width:100%;height:100%;object-fit:contain}
+#livePreview.view-zoomed{width:auto;height:auto;object-fit:unset}
+.view-zoom-controls{position:absolute;bottom:14px;right:14px;display:none;flex-direction:column;gap:8px;z-index:20}
+.view-zoom-controls button{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:1.05rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.view-zoom-controls button:hover{background:rgba(0,0,0,.75)}
+.scan-viewport.zoomed-scroll{overflow:auto}
 
 .scan-controls{grid-area:controls;background:#161618;flex-shrink:0}
 .scan-shell .page-nav-strip{padding:8px 12px 0}
@@ -430,6 +443,10 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     <div class="scan-livewrap" id="eraserWrap" style="display:none"><canvas id="eraserCanvas"></canvas></div>
     <button type="button" class="viewport-nav-btn viewport-nav-prev" id="viewportPrevBtn" style="display:none" onclick="goToPage(curPageIdx-1)" aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>
     <button type="button" class="viewport-nav-btn viewport-nav-next" id="viewportNextBtn" style="display:none" onclick="goToPage(curPageIdx+1)" aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="view-zoom-controls" id="viewZoomControls">
+      <button type="button" onclick="viewZoomIn()" aria-label="Zoom in"><i class="fa-solid fa-plus"></i></button>
+      <button type="button" onclick="viewZoomOut()" aria-label="Zoom out"><i class="fa-solid fa-minus"></i></button>
+    </div>
   </main>
 
   <!-- MODE: CROP -->
@@ -1130,6 +1147,45 @@ function updateTopbarTitle(){
   G('tbTitleMain').textContent='Scan '+formatTodayLabel()+' ('+pages.length+')';
   G('tbTitleSub').textContent='Page '+(curPageIdx+1)+' / '+pages.length+(modeLabel?' • '+modeLabel:'');
 }
+/* ================= View Zoom (for View/Filters/Adjust/Resize/OCR — a
+   plain read-only preview canvas, separate from Crop's own Cropper.js/
+   QuadCropUI zoom) — fixes the preview rendering tiny+centered in a much
+   bigger viewport by letting it grow past its own capped buffer size,
+   and gives an explicit Zoom+/Zoom- so text/detail can be checked after
+   applying a filter or adjustment. ================= */
+var viewZoom=1;
+function applyViewZoom(){
+  var cnv=G('livePreview'),vp=G('scanViewport');
+  if(!cnv||!vp)return;
+  if(viewZoom<=1){
+    cnv.classList.remove('view-zoomed');
+    cnv.style.width='';cnv.style.height='';cnv.style.maxWidth='';cnv.style.maxHeight='';
+    vp.classList.remove('zoomed-scroll');
+  }else{
+    var containerW=vp.clientWidth-28,containerH=vp.clientHeight-28;
+    var natRatio=(cnv.width||1)/(cnv.height||1);
+    var fitW,fitH;
+    if(containerW/containerH>natRatio){fitH=containerH;fitW=containerH*natRatio;}
+    else{fitW=containerW;fitH=containerW/natRatio;}
+    cnv.classList.add('view-zoomed');
+    // .scan-livewrap canvas{max-width:100%;max-height:100%} still applies
+    // otherwise and clamps the zoomed size right back down to the fit size.
+    cnv.style.maxWidth='none';cnv.style.maxHeight='none';
+    cnv.style.width=Math.round(fitW*viewZoom)+'px';
+    cnv.style.height=Math.round(fitH*viewZoom)+'px';
+    vp.classList.add('zoomed-scroll');
+  }
+}
+function viewZoomIn(){viewZoom=Math.min(4,viewZoom+0.5);applyViewZoom();}
+function viewZoomOut(){viewZoom=Math.max(1,viewZoom-0.5);applyViewZoom();}
+function resetViewZoom(){viewZoom=1;applyViewZoom();}
+function updateViewZoomControls(mode){
+  var el=G('viewZoomControls');
+  if(!el)return;
+  var show=['view','filters','adjust','resize','ocr'].indexOf(mode)!==-1;
+  el.style.display=show?'flex':'none';
+  resetViewZoom();
+}
 function loadPageIntoEditors(idx){
   if(!pages[idx])return;
   var p=pages[idx];
@@ -1158,6 +1214,7 @@ function setMode(mode){
     currentMode='upload';
     updateTopbarTitle();
     updateViewportArrows();
+    updateViewZoomControls(mode);
     return;
   }
   currentMode=mode;
@@ -1173,6 +1230,7 @@ function setMode(mode){
     else{G('modeView').style.display='block';loadPageIntoEditors(curPageIdx);}
     updateTopbarTitle();
     updateViewportArrows();
+    updateViewZoomControls(mode);
   });
 }
 function quickRotate(){
@@ -1563,6 +1621,7 @@ function handleFiles(fileList){
 function goToPage(i){
   if(i<0||i>=pages.length||i===curPageIdx)return;
   curPageIdx=i;
+  resetViewZoom();
   if(currentMode==='crop')initPageCropEditor(curPageIdx);
   else if(currentMode==='filters')initFilterStep();
   else if(currentMode==='ocr'){loadPageIntoEditors(curPageIdx);initOcrStep();}
