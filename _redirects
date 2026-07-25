@@ -7305,5 +7305,9 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/isro-assistant-udc-jpa-stenographer-recruitment-2026-apply-online/  /jobs/isro-recruitment-2026-242-assistant-udc-jpa-and-stenographer-vacancies/  301
-/jobs/aiims-nursing-officer-norcet-11-online-form/  /jobs/aiims-norcet-11-2026-notification-out-2218-nursing-officer-recruitment-apply-onl/  301
 /jobs/upsc-828-principal-vice-principal-online-form/  /jobs/upsc-principal-and-vice-principal-recruitment-2026-notification-out-828-posts/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/pau-junior-field-lab-helper-vacancy-2026-8th-pass-apply-now/  /jobs/pau-junior-lab-field-helper-recruitment-2026-apply-offline/  301
+/jobs/pau-junior-field-lab-helper-vacancy-2026-8th-pass-apply-now-ffa638515d/  /jobs/pau-junior-lab-field-helper-recruitment-2026-apply-offline/  301
+/jobs/upsssc-scientific-lab-assistant-online-form/  /jobs/upsssc-fsl-recruitment-2026-notification-out-apply-online-for-208-scientific-a/  301
