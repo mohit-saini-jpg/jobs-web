@@ -253,7 +253,17 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .scan-viewport .upload-title{color:#fff}
 .scan-viewport .upload-sub{color:#9aa0a6}
 .scan-viewport .crop-editor-imgwrap{width:100%;height:100%;max-height:none}
-.scan-livewrap{max-width:100%;max-height:100%;display:flex;align-items:center;justify-content:center}
+/* BUG FIX: max-width/max-height:100% alone gave .scan-livewrap no
+   EXPLICIT size, so a child canvas's own max-height:100% had nothing
+   definite to resolve against per the CSS spec (percentage heights only
+   resolve against a parent with a *specified* height) — the canvas
+   rendered at its full native buffer size instead, overflowing the
+   wrapper and getting clipped by .scan-viewport, which read as "the
+   image is zoomed in / cropped" after finishing a crop. width/height:100%
+   gives it a real size for descendants to size against; min-width/
+   min-height:0 stop it (as a flex item) from refusing to shrink below
+   that when the canvas itself is larger. */
+.scan-livewrap{width:100%;height:100%;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
 .scan-livewrap canvas{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 
 .scan-controls{grid-area:controls;background:#161618;flex-shrink:0}
@@ -320,6 +330,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
 .scan-actionbar{grid-area:actionbar;display:none;gap:10px;padding:12px 16px 16px;background:#161618;flex-shrink:0}
 .ab-btn{flex:1;padding:13px;border-radius:26px;font-size:.85rem;font-weight:700;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.ab-icon-only{flex:0 0 auto;width:48px;padding:13px 0}
 .ab-outline{background:transparent;border:1.5px solid #444;color:#eee}
 .ab-outline:hover{border-color:#666}
 .ab-primary{background:#2f7dff;color:#fff}
@@ -484,6 +495,18 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="adj-label">Saturation <span id="satVal">100%</span></div>
         <input type="range" id="satRange" min="0" max="200" value="100" oninput="updateAdjust()">
       </div>
+      <div class="adj-group">
+        <div class="adj-label">Sharpen <span id="sharpVal">0%</span></div>
+        <input type="range" id="sharpRange" min="0" max="100" value="0" oninput="updateAdjust()">
+      </div>
+      <div class="adj-group">
+        <div class="adj-label">Text Highlight <span id="textBoostVal">0%</span></div>
+        <input type="range" id="textBoostRange" min="0" max="100" value="0" oninput="updateAdjust()">
+      </div>
+      <div class="adj-group">
+        <div class="adj-label">Shadow Remove <span id="shadowVal">0%</span></div>
+        <input type="range" id="shadowRange" min="0" max="100" value="0" oninput="updateAdjust()">
+      </div>
     </div>
     <div class="scan-toolbar-row">
       <button class="tb-btn" onclick="setMode('view')"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
@@ -611,7 +634,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
   <!-- BOTTOM ACTION BAR -->
   <div class="scan-actionbar" id="scanActionbar">
-    <button class="ab-btn ab-outline" onclick="G('cameraInput').click()"><i class="fa-solid fa-plus"></i> Keep scanning</button>
+    <button class="ab-btn ab-icon-only ab-outline" onclick="G('cameraInput').click()" title="Camera se ek photo lein" aria-label="Camera se scan karein"><i class="fa-solid fa-camera"></i></button>
+    <button class="ab-btn ab-outline" onclick="G('galleryInput').click()"><i class="fa-solid fa-images"></i> Keep scanning</button>
     <button class="ab-btn ab-primary" onclick="openExportSheet()">Save PDF <i class="fa-solid fa-chevron-up"></i></button>
   </div>
 </div>
@@ -1112,6 +1136,9 @@ function loadPageIntoEditors(idx){
   G('brRange').value=p.brightness||100;
   G('conRange').value=p.contrast||100;
   G('satRange').value=p.saturation||100;
+  G('sharpRange').value=p.sharpen||0;
+  G('textBoostRange').value=p.textBoost||0;
+  G('shadowRange').value=p.shadowRemove||0;
   previewImg.onload=function(){updateAdjust();};
   previewImg.src=p.warpedDataURL;
   if(previewImg.complete&&previewImg.naturalWidth>0)previewImg.onload();
@@ -1195,7 +1222,9 @@ function resetAdjustSliders(){
   var p=pages[curPageIdx];
   if(!p)return;
   p.brightness=100;p.contrast=100;p.saturation=100;
+  p.sharpen=0;p.textBoost=0;p.shadowRemove=0;
   G('brRange').value=100;G('conRange').value=100;G('satRange').value=100;
+  G('sharpRange').value=0;G('textBoostRange').value=0;G('shadowRange').value=0;
   updateAdjust();
 }
 
@@ -1989,9 +2018,92 @@ function applyAutoClean(canvas){
   }
   ctx.putImageData(srcData,0,0);
 }
+/* ---- Shadow Remove — the same background-flattening technique as the
+   Auto Clean filter (applyAutoClean), but as an independently adjustable
+   Adjust-panel slider (0-100%) instead of an all-or-nothing filter, so
+   it can be blended in on top of whichever filter is active. ---- */
+function applyShadowRemove(canvas,strength){
+  var amt=Math.min(1,Math.max(0,strength/100));
+  if(!amt)return;
+  var w=canvas.width,h=canvas.height;
+  var ctx=canvas.getContext('2d');
+  var srcData=ctx.getImageData(0,0,w,h);
+  var sw=Math.max(1,Math.round(w/24)),sh=Math.max(1,Math.round(h/24));
+  var small=document.createElement('canvas');
+  small.width=sw;small.height=sh;
+  small.getContext('2d').drawImage(canvas,0,0,sw,sh);
+  var bgCanvas=document.createElement('canvas');
+  bgCanvas.width=w;bgCanvas.height=h;
+  var bgCtx=bgCanvas.getContext('2d');
+  bgCtx.imageSmoothingEnabled=true;bgCtx.imageSmoothingQuality='high';
+  bgCtx.drawImage(small,0,0,w,h);
+  var bgData=bgCtx.getImageData(0,0,w,h);
+  var sd=srcData.data,bd=bgData.data;
+  var CONTRAST=1.22;
+  for(var i=0;i<sd.length;i+=4){
+    for(var c=0;c<3;c++){
+      var bgVal=bd[i+c]<15?15:bd[i+c];
+      var norm=(sd[i+c]/bgVal)*255;
+      norm=(norm-255)*CONTRAST+255;
+      norm=sd[i+c]*(1-amt)+norm*amt;
+      sd[i+c]=norm<0?0:(norm>255?255:norm);
+    }
+  }
+  ctx.putImageData(srcData,0,0);
+}
+/* ---- Sharpen — a real unsharp mask (blur a copy via the canvas 2D
+   filter, then push the original AWAY from that blur), not just a CSS
+   contrast trick — this is what actually crisps up text edges. ---- */
+function applySharpen(canvas,strength){
+  var amt=Math.min(1,Math.max(0,strength/100))*1.6;
+  if(!amt)return;
+  var w=canvas.width,h=canvas.height;
+  var ctx=canvas.getContext('2d');
+  var blurPx=Math.max(1,Math.round(Math.min(w,h)*0.004));
+  var blurCanvas=document.createElement('canvas');
+  blurCanvas.width=w;blurCanvas.height=h;
+  var bctx=blurCanvas.getContext('2d');
+  bctx.filter='blur('+blurPx+'px)';
+  bctx.drawImage(canvas,0,0);
+  bctx.filter='none';
+  var orig=ctx.getImageData(0,0,w,h);
+  var blur=bctx.getImageData(0,0,w,h);
+  var od=orig.data,bd=blur.data;
+  for(var i=0;i<od.length;i+=4){
+    for(var c=0;c<3;c++){
+      var v=od[i+c]+(od[i+c]-bd[i+c])*amt;
+      od[i+c]=v<0?0:(v>255?255:v);
+    }
+  }
+  ctx.putImageData(orig,0,0);
+}
+/* ---- Text Highlight — pushes DARK (ink-like) pixels darker while
+   leaving the light page background alone, so text stands out more
+   without just flattening contrast everywhere like the plain Contrast
+   slider does. ---- */
+function applyTextBoost(canvas,strength){
+  var amt=Math.min(1,Math.max(0,strength/100));
+  if(!amt)return;
+  var w=canvas.width,h=canvas.height;
+  var ctx=canvas.getContext('2d');
+  var data=ctx.getImageData(0,0,w,h);
+  var d=data.data;
+  var THRESH=170;
+  for(var i=0;i<d.length;i+=4){
+    var lum=d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
+    if(lum<THRESH){
+      var factor=1-amt*0.55*(1-lum/THRESH);
+      d[i]=d[i]*factor;
+      d[i+1]=d[i+1]*factor;
+      d[i+2]=d[i+2]*factor;
+    }
+  }
+  ctx.putImageData(data,0,0);
+}
 /* Unified renderer for every filter (CSS-based or pixel-algorithm-based like
    Auto Clean) at any target size — brightness/contrast/saturation sliders
-   always apply on top regardless of which filter is active. */
+   always apply on top regardless of which filter is active, and so do the
+   Sharpen/Text Highlight/Shadow Remove pixel adjustments. */
 function drawFilteredToCanvas(img,destCanvas,p,w,h){
   destCanvas.width=w;destCanvas.height=h;
   var f=FILTERS.find(function(x){return x.id===p.filter;})||FILTERS[0];
@@ -2010,15 +2122,24 @@ function drawFilteredToCanvas(img,destCanvas,p,w,h){
     dctx.drawImage(img,0,0,w,h);
     dctx.filter='none';
   }
+  if(p.shadowRemove)applyShadowRemove(destCanvas,p.shadowRemove);
+  if(p.sharpen)applySharpen(destCanvas,p.sharpen);
+  if(p.textBoost)applyTextBoost(destCanvas,p.textBoost);
 }
 function updateAdjust(){
   var p=pages[curPageIdx];
   p.brightness=parseInt(G('brRange').value);
   p.contrast=parseInt(G('conRange').value);
   p.saturation=parseInt(G('satRange').value);
+  p.sharpen=parseInt(G('sharpRange').value);
+  p.textBoost=parseInt(G('textBoostRange').value);
+  p.shadowRemove=parseInt(G('shadowRange').value);
   G('brVal').textContent=p.brightness+'%';
   G('conVal').textContent=p.contrast+'%';
   G('satVal').textContent=p.saturation+'%';
+  G('sharpVal').textContent=p.sharpen+'%';
+  G('textBoostVal').textContent=p.textBoost+'%';
+  G('shadowVal').textContent=p.shadowRemove+'%';
   var cnv=G('livePreview');
   var maxW=520;
   var scale=Math.min(1,maxW/previewImg.naturalWidth);
