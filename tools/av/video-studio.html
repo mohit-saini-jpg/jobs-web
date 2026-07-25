@@ -32,6 +32,8 @@ a{color:inherit}
 .nav-sep{color:var(--muted);margin:0 2px}
 .nav-crumb{font-size:0.8rem;color:var(--muted);text-decoration:none}
 .nav-tools-link{margin-left:auto;padding:6px 14px;border-radius:8px;background:var(--brand);color:#fff;font-size:0.78rem;font-weight:600;text-decoration:none}
+@media(max-width:480px){.nav-inner{gap:6px;padding:0 10px}.nav-crumb,.nav-sep{display:none}.nav-brand{font-size:.95rem}.nav-tools-link{padding:6px 9px;font-size:.7rem}} /* TSJ-MOBILE-NAV-FIX */
+
 
 .app{display:flex;min-height:calc(100vh - 52px)}
 .sidebar{width:64px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:4px;flex-shrink:0}

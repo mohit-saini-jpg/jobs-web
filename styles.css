@@ -1020,19 +1020,19 @@ table td {
 }
 .info-table th, .info-table td {
   padding: .55rem .8rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #111;
   text-align: left;
   vertical-align: top;
   line-height: 1.5;
 }
 .info-table th {
   background: #f0f4ff;
-  font-weight: 600;
+  font-weight: 700;
   color: #0d2257;
   white-space: nowrap;
   width: 40%;
 }
-.info-table td { color: #333; }
+.info-table td { color: #333; font-weight: 600; }
 .info-table tr:nth-child(even) td { background: #fafbff; }
 
 /* Job list */
@@ -1137,7 +1137,8 @@ table td {
   word-break: normal !important;
   overflow-wrap: normal !important;
   padding: 9px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #111;
+  font-weight: 600;
   vertical-align: middle;
 }
 
@@ -1351,18 +1352,17 @@ table td {
 .job-card-head h2{margin:0;font-size:.86rem;font-weight:700}
 
 /* ── KV table (jd-table) ── */
-.jd-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word}
-.jd-table td{padding:8px 12px;color:#1e293b;border-bottom:1px solid #e9eef4;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
-.jd-table tr:last-child th,.jd-table tr:last-child td{border-bottom:none}
+.jd-table{width:100%;border-collapse:collapse;font-size:.82rem;border:1px solid #111}
+.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border:1px solid #111;vertical-align:top;word-break:break-word}
+.jd-table td{padding:8px 12px;color:#1e293b;font-weight:600;border:1px solid #111;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
 .jd-table a{color:#1d4ed8;word-break:break-all}
 
 /* ── Vacancy table ── */
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-.vacancy-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:400px}
-.vacancy-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;white-space:nowrap;text-align:left}
-.vacancy-table td{padding:8px 12px;border-bottom:1px solid #e9eef4;color:#1e293b;word-break:break-word;vertical-align:top}
-.vacancy-table .vac-total td{border-bottom:none;font-weight:700;background:#f0f9ff}
+.vacancy-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:400px;border:1px solid #111}
+.vacancy-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;white-space:nowrap;text-align:left;border:1px solid #111}
+.vacancy-table td{padding:8px 12px;border:1px solid #111;color:#1e293b;font-weight:600;word-break:break-word;vertical-align:top}
+.vacancy-table .vac-total td{font-weight:700;background:#f0f9ff}
 
 /* ── Link buttons (new palette) ── */
 .links-grid{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
