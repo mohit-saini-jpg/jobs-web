@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-25T02:39:40.600669+00:00",
+  "timestamp": "2026-07-25T03:46:56.573567+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 5755,
+  "files_scanned": 5756,
   "issues_found_by_check": {
     "ai_marker_integrity": 10,
     "jobposting_schema": 37,
-    "sitemap_sync": 200
+    "sitemap_sync": 187
   },
-  "issues_auto_fixed": 49,
+  "issues_auto_fixed": 35,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -671,6 +671,12 @@
       "reason": "page on disk not in any sitemap: /jobs/haryana-saksham-yojana-online-form/"
     },
     {
+      "file": "jobs/haryana-sarkar-ki-samadhan-yojna-gramin-makanon-ko-milega-malikana-hak/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-sarkar-ki-samadhan-yojna-gramin-makanon-ko-milega-malikana-hak/"
+    },
+    {
       "file": "jobs/haryana-solar-form-payment-refund-form/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1205,5 +1211,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     111 urls [ok]"
   ],
-  "duration_sec": 18.5
+  "duration_sec": 20.4
 }
