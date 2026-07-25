@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=820,m=document.querySelector('meta[name="viewport"]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}var sw=(window.screen&&screen.width)||window.innerWidth||W;if(sw<W){m.setAttribute('content','width='+W+', user-scalable=yes, maximum-scale=5.0');}else{m.setAttribute('content','width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');}})();</script>
+
   <title>AI Photo Enhancer Free Online – Crop, Remove BG, Adjust &amp; Upscale | Top Sarkari Jobs</title>
   <meta name="description" content="Free AI photo enhancer — simple 4-step workflow: Crop &amp; Size, Background Remove, Adjust (auto + manual), Export. Real on-device AI upscale, auto color fix, denoise, sharpen. 100% browser-based, no upload, no signup, no watermark.">
   <meta name="keywords" content="AI photo enhancer, photo upscaler online, background remover, increase image resolution, enhance photo quality free, AI image upscale, remove photo background free">
@@ -90,15 +90,14 @@
     .a-chip.warn{background:#fef3c7;color:#92400e}
     .a-chip.ok{background:#dcfce7;color:#166534}
 
-    /* Side-by-side image+controls is used on MOBILE too, not just desktop —
-       this page's TSJ-WIDE-VIEWPORT script forces the CSS layout viewport to
-       a minimum 820px on narrow phones (the browser then zooms the whole
-       page out to fit the real screen), so a 320px controls column already
-       renders at the SAME 320 CSS-px width on a phone as on desktop — it's
-       only visually smaller, not more cramped in layout terms. The
-       max-width:700px fallback below only exists for a genuinely narrow
-       DESKTOP browser window (screen.width is the monitor's real resolution,
-       not the resized window, so the viewport script never kicks in there). */
+    /* UPDATED (2026-07-25): the site-wide TSJ-WIDE-VIEWPORT script this
+       comment used to reference has been removed (it was forcing a
+       ~640-820px CSS viewport on every phone, which shrank ALL text
+       site-wide to fit — the actual bug users were reporting). Real phones
+       now report their true (narrower) width, so max-width:700px below
+       correctly falls back to single-column stacking on typical
+       360-430px-wide phones — a 320px fixed controls column genuinely
+       cannot sit side-by-side with a usable canvas at that width. */
     .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
     @media (max-width:700px){.workspace{grid-template-columns:1fr}}
     /* Controls column gets its OWN scroll instead of forcing the whole page

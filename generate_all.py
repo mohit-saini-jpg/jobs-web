@@ -52,18 +52,21 @@ def _dyn_og_image(headline, og_type='jobs', tag=''):
         q += f"&tag={_url_quote(tag[:70])}"
     return f"{BASE_URL}/api/og?{q}"
 
-# ── Wide tablet-style viewport for mobile (Mid View 600-899px), zoom enabled ──
-# Forced ~820px logical width on phones so more content shows without hiding,
-# and pinch zoom stays available. Stored as a plain string (NOT inside any
-# f-string) so its JS braces don't clash with f-string formatting.
-VP_SNIPPET = ('<script>/*TSJ-WIDE-VIEWPORT*/(function(){var W=640,'
-    'm=document.querySelector(\'meta[name="viewport"]\');'
-    'if(!m){m=document.createElement(\'meta\');m.name=\'viewport\';'
-    '(document.head||document.documentElement).appendChild(m);}'
-    'var sw=(window.screen&&screen.width)||window.innerWidth||W;'
-    'if(sw<W){m.setAttribute(\'content\',\'width=\'+W+\', user-scalable=yes, maximum-scale=5.0\');}'
-    'else{m.setAttribute(\'content\',\'width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0\');}'
-    '})();</script>')
+# ── REMOVED (2026-07-25): this used to force a ~640-820px logical viewport on
+# every phone, which the real device just squeezed into its actual (much
+# narrower) screen -- e.g. a 393px-wide phone was told the page was 640px
+# wide, so the browser rendered the whole page at ~61% zoom to fit. That
+# shrank ALL text site-wide, forcing users to pinch-zoom to read anything
+# (reported directly by users). Verified via real mobile-device-emulation
+# testing (Playwright + Pixel 5 profile) that document.documentElement.
+# scrollWidth matches the native viewport width with this removed on every
+# page type checked (job, education, district, section, homepage) -- i.e.
+# nothing actually needed the extra width, it was pure legacy cruft. The
+# plain `width=device-width,initial-scale=1.0` <meta viewport> tag already
+# emitted right before this snippet (see the 4 call sites below) is now the
+# only viewport directive; kept VP_SNIPPET defined as '' rather than
+# touching every call site.
+VP_SNIPPET = ''
 
 # ── Garbage title filter (scraper navigation links) ──────────────────────────
 GARBAGE_PATTERNS = [
@@ -5603,7 +5606,7 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
 <head>
 <!-- TSJ_HASH:{_content_sig} -->
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes,maximum-scale=5.0"/>{VP_SNIPPET}
 <title>{e(title_tag)}</title>
 <meta name="description" content="{e(meta_desc)}"/>
 <meta name="robots" content="{'noindex,follow' if noindex_dup else 'index,follow,max-snippet:-1,max-image-preview:large'}"/>
@@ -6488,7 +6491,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes,maximum-scale=5.0"/>{VP_SNIPPET}
 <title>{e(title_tag)}</title>
 <meta name="description" content="{e(meta_desc)}"/>
 <meta name="author" content="Top Sarkari Jobs"/>
@@ -8935,7 +8938,7 @@ def _du_page(name, url, sec_title, other_items):
     lines = [
         '<!DOCTYPE html>', '<html lang="en-IN">', '<head>',
         '<meta charset="UTF-8"/>',
-        '<meta name="viewport" content="width=device-width,initial-scale=1.0"/>' + VP_SNIPPET,
+        '<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes,maximum-scale=5.0"/>' + VP_SNIPPET,
         '<title>' + tl + '</title>',
         '<meta name="description" content="' + md + '"/>',
         '<meta name="robots" content="noindex,follow"/>',
@@ -9279,7 +9282,7 @@ for _vst, _vdistricts in VLE_STATE_DISTRICTS.items():
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>{VP_SNIPPET}
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes,maximum-scale=5.0"/>{VP_SNIPPET}
 <title>{e(_vd_title_tag)}</title>
 <meta name="description" content="{e(_vd_desc)}"/>
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large"/>
