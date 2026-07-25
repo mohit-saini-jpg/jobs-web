@@ -84,11 +84,6 @@
             "@type": "Question",
             "name": "Request bhejne ke baad kitne samay mein sampark hoga?",
             "acceptedAnswer": { "@type": "Answer", "text": "Aam taur par hamari team 24 ghante ke andar diye gaye WhatsApp number par sampark kar leti hai. Zyada demand wale samay (jaise result ya admit card ke dauraan) mein thoda samay lag sakta hai." }
-          },
-          {
-            "@type": "Question",
-            "name": "Kya District field bharna zaroori hai?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Nahi, District/City field optional hai. Lekin ise bharne se hamari team aapke area ke hisaab se sahi jaankari aur nearest CSC center suggest kar paati hai." }
           }
         ]
       }
@@ -311,8 +306,8 @@
             </div>
 
             <div class="grid gap-2">
-              <label for="arDistrict" class="text-sm font-semibold text-slate-800">District / City <span class="font-normal text-slate-400">(optional)</span></label>
-              <input id="arDistrict" name="district" type="text" maxlength="60" autocomplete="address-level2" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Aapka district ya city">
+              <label for="arDistrict" class="text-sm font-semibold text-slate-800">District / City <span class="text-rose-500">*</span></label>
+              <input id="arDistrict" name="district" type="text" required maxlength="60" autocomplete="address-level2" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Aapka district ya city">
             </div>
 
             <div class="grid gap-2">
@@ -413,7 +408,6 @@
           <div class="ar-faq-item"><button class="ar-faq-q" onclick="arToggleFaq(this)">Mujhe documents kaise bhejne honge? <i class="fa-solid fa-plus"></i></button><div class="ar-faq-a">Aapko apne documents kahin jama karane ki zaroorat nahi hai. Aap WhatsApp par unki saaf photo/PDF bhej sakte hain.</div></div>
           <div class="ar-faq-item"><button class="ar-faq-q" onclick="arToggleFaq(this)">Form bharne ke baad slip (receipt) kaise milegi? <i class="fa-solid fa-plus"></i></button><div class="ar-faq-a">Form safaltapurvak submit hone ke baad uski Final Application Printout/Receipt aapke WhatsApp par bhej di jaayegi.</div></div>
           <div class="ar-faq-item"><button class="ar-faq-q" onclick="arToggleFaq(this)">Request bhejne ke baad kitne samay mein sampark hoga? <i class="fa-solid fa-plus"></i></button><div class="ar-faq-a">Aam taur par hamari team 24 ghante ke andar diye gaye WhatsApp number par sampark kar leti hai. Zyada demand wale samay (jaise result ya admit card ke dauraan) mein thoda samay lag sakta hai.</div></div>
-          <div class="ar-faq-item"><button class="ar-faq-q" onclick="arToggleFaq(this)">Kya District field bharna zaroori hai? <i class="fa-solid fa-plus"></i></button><div class="ar-faq-a">Nahi, District/City field optional hai. Lekin ise bharne se hamari team aapke area ke hisaab se sahi jaankari aur nearest CSC center suggest kar paati hai.</div></div>
         </div>
       </section>
 
@@ -482,6 +476,7 @@
         if (!jobTitle) { status.textContent = '❌ Kripya job/scheme/service ka naam likhein.'; status.style.color = '#ef4444'; return; }
         if (!name) { status.textContent = '❌ Kripya apna naam likhein.'; status.style.color = '#ef4444'; return; }
         if (!/^[6-9][0-9]{9}$/.test(whatsapp)) { status.textContent = '❌ Kripya sahi 10 digit ka mobile number daalein.'; status.style.color = '#ef4444'; return; }
+        if (!district) { status.textContent = '❌ Kripya apna district ya city likhein.'; status.style.color = '#ef4444'; return; }
 
         var btn = form.querySelector('button[type=submit]');
         if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bheja ja raha hai...'; }

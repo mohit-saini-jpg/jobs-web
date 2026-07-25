@@ -27,7 +27,7 @@
 //     job_title text not null,
 //     name text not null,
 //     whatsapp text not null,
-//     district text,
+//     district text not null,
 //     notes text,
 //     page_url text
 //   );
@@ -96,6 +96,7 @@ module.exports = async function handler(req, res) {
   if (!job_title) { res.status(400).json({ error: 'job_title is required' }); return; }
   if (!name) { res.status(400).json({ error: 'name is required' }); return; }
   if (!isValidPhone(whatsapp)) { res.status(400).json({ error: 'valid 10-digit WhatsApp number is required' }); return; }
+  if (!district) { res.status(400).json({ error: 'district is required' }); return; }
 
   const lead = { job_title, name, whatsapp, district, notes, page_url };
 
