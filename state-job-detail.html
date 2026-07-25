@@ -382,7 +382,7 @@
 
           <!-- Short Info -->
           <div class="sjd-card" id="shortInfoCard" style="display:none;">
-            <div class="sjd-head" style="background:linear-gradient(135deg,#0f766e,#0891b2);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
+            <div class="sjd-head" style="background:linear-gradient(135deg,#0f766e,#0d9488);"><i class="fa-solid fa-circle-info"></i> About This Recruitment</div>
             <div class="sjd-detail" id="shortInfoText" style="background:#f0f9ff;border-left:4px solid #0891b2;"></div>
           </div>
 
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="sjd-fee-label">${esc(l)}</div>
           <div class="sjd-fee-val ${isFree(v)?'free':'paid'}">${esc(v)}</div>
         </div>`).join('');
-      return makeCard('linear-gradient(135deg,#c2410c,#ea580c)','fa-solid fa-indian-rupee-sign','Application Fee',
+      return makeCard('linear-gradient(135deg,#b45309,#d97706)','fa-solid fa-indian-rupee-sign','Application Fee',
         `<div class="sjd-fee-grid">${html}</div>`);
     }
 
@@ -714,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Age details string fallback
       if (!rows.length && safe(age.age_details)) add('Age Details', age.age_details);
       if (!rows.length) return null;
-      return makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-solid fa-user-clock','Age Limit',
+      return makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-solid fa-user-clock','Age Limit',
         `<table class="sjd-table"><tbody>${rows.join('')}</tbody></table>`);
     }
 
@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (eq) html += `<div class="sjd-detail"><strong>Education Qualification:</strong> ${esc(eq)}</div>`;
       if (ex) html += `<div class="sjd-detail"><strong>Experience Required:</strong> ${esc(ex)}</div>`;
       if (!html) return null;
-      return makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-solid fa-graduation-cap','Educational Qualification', html);
+      return makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-solid fa-graduation-cap','Educational Qualification', html);
     }
 
     /* Vacancy Details */
@@ -747,14 +747,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const colKeys = Object.keys(vdArr[0]);
         const thead = colKeys.map(k=>`<th>${esc(keyToLabel(k))}</th>`).join('');
         const rows  = vdArr.map(r=>`<tr>${colKeys.map(k=>`<td>${esc(r[k]??'')}</td>`).join('')}</tr>`).join('');
-        return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-solid fa-chart-pie','Vacancy Details',
+        return makeCard('linear-gradient(135deg,#047857,#059669)','fa-solid fa-chart-pie','Vacancy Details',
           `<div style="overflow-x:auto;"><table class="sjd-vac-table"><thead><tr>${thead}</tr></thead><tbody>${rows}</tbody></table></div>`);
       }
       if (cwv && typeof cwv === 'object') {
         const pairs = Object.entries(cwv).filter(([,v])=>safe(v));
         if (pairs.length) {
           const rows = pairs.map(([k,v])=>`<tr><td>${esc(keyToLabel(k))}</td><td>${esc(v)}</td></tr>`).join('');
-          return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-solid fa-chart-pie','Vacancy Details',
+          return makeCard('linear-gradient(135deg,#047857,#059669)','fa-solid fa-chart-pie','Vacancy Details',
             `<div style="overflow-x:auto;"><table class="sjd-vac-table"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${rows}</tbody></table></div>`);
         }
       }
@@ -767,7 +767,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const pairs = Object.entries(pe).filter(([,v])=>safe(v));
       if (!pairs.length) return null;
       const html = pairs.map(([k,v])=>`<div class="dyn-kv-item"><div class="dyn-kv-label">${esc(keyToLabel(k))}</div><div class="dyn-kv-val">${esc(v)}</div></div>`).join('');
-      return makeCard('linear-gradient(135deg,#be123c,#e11d48)','fa-solid fa-dumbbell','Physical Eligibility / Standards',
+      return makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-solid fa-dumbbell','Physical Eligibility / Standards',
         `<div class="dyn-kv-grid">${html}</div>`);
     }
 
@@ -788,7 +788,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bodyHtml = `<div class="sjd-detail">${esc(ep)}</div>`;
       }
       if (!bodyHtml) return null;
-      return makeCard('linear-gradient(135deg,#0369a1,#0284c7)','fa-solid fa-file-lines','Exam Pattern', bodyHtml);
+      return makeCard('linear-gradient(135deg,#1e40af,#1a56db)','fa-solid fa-file-lines','Exam Pattern', bodyHtml);
     }
 
     /* Syllabus */
@@ -806,7 +806,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bodyHtml = `<div class="sjd-detail">${esc(syl)}</div>`;
       }
       if (!bodyHtml) return null;
-      return makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-solid fa-book','Syllabus / Exam Topics', bodyHtml);
+      return makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-solid fa-book','Syllabus / Exam Topics', bodyHtml);
     }
 
     /* Salary Details */
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const pairs = Object.entries(sd).filter(([,v])=>safe(v));
       if (!pairs.length) return null;
       const html = pairs.map(([k,v])=>`<div class="dyn-kv-item"><div class="dyn-kv-label">${esc(keyToLabel(k))}</div><div class="dyn-kv-val green">${esc(v)}</div></div>`).join('');
-      return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-solid fa-indian-rupee-sign','Salary & Pay Scale Details',
+      return makeCard('linear-gradient(135deg,#047857,#059669)','fa-solid fa-indian-rupee-sign','Salary & Pay Scale Details',
         `<div class="dyn-kv-grid">${html}</div>`);
     }
 
@@ -827,7 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
       else if (typeof sp === 'string') steps = sp.split(/[,\n;\/]/).map(s=>s.trim()).filter(Boolean);
       if (!steps.length) return null;
       const html = steps.map(s=>`<div class="sjd-sel-badge"><i class="fa-solid fa-check-circle"></i>${esc(s.slice(0,80))}</div>`).join('');
-      return makeCard('linear-gradient(135deg,#5b21b6,#7c3aed)','fa-solid fa-list-check','Selection Process',
+      return makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-solid fa-list-check','Selection Process',
         `<div style="display:flex;flex-wrap:wrap;gap:8px;padding:14px;">${html}</div>`);
     }
 
@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const filtered = steps.map(s=>safe(s)).filter(Boolean);
       if (!filtered.length) return null;
       const items = filtered.map((s,i)=>`<li class="dyn-hta-item"><span class="dyn-hta-num">${i+1}</span><span>${esc(s)}</span></li>`).join('');
-      return makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-solid fa-clipboard-list','How To Apply',
+      return makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-solid fa-clipboard-list','How To Apply',
         `<ul class="dyn-hta-list">${items}</ul>`);
     }
 
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const filtered = insts.map(s=>safe(s)).filter(Boolean);
       if (!filtered.length) return null;
       const items = filtered.map(s=>`<li class="dyn-inst-item"><i class="fa-solid fa-triangle-exclamation"></i><span>${esc(s)}</span></li>`).join('');
-      return makeCard('linear-gradient(135deg,#b45309,#ca8a04)','fa-solid fa-circle-exclamation','Important Instructions',
+      return makeCard('linear-gradient(135deg,#b45309,#d97706)','fa-solid fa-circle-exclamation','Important Instructions',
         `<ul class="dyn-inst-list">${items}</ul>`);
     }
 

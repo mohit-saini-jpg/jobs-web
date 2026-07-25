@@ -257,14 +257,14 @@ function renderFee(obj){
   // _raw_list: extracted from job.sections
   if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
     var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-indian-rupee-sign"></i><span>${esc(s)}</span></li>`).join('');
-    return card('linear-gradient(135deg,#c2410c,#ea580c)','fa-indian-rupee-sign','Application Fee',`<ul class="val-list">${lis}</ul>`);
+    return card('linear-gradient(135deg,#b45309,#d97706)','fa-indian-rupee-sign','Application Fee',`<ul class="val-list">${lis}</ul>`);
   }
   var FIELDS=[['General / UR','general'],['General / UR','general_fee'],['OBC','obc'],['OBC','obc_fee'],['SC','sc'],['SC','sc_fee'],['ST','st'],['EWS','ews'],['Female','female'],['PH / Divyang','ph'],['PH / Divyang','pwd'],['Ex-Serviceman','ex_serviceman_fee'],['All Categories','all'],['All Categories','all_category']];
   var seen=new Set(),items='';
   for(var [lbl,key] of FIELDS){var v=safe(obj[key]);if(!v||seen.has(lbl))continue;seen.add(lbl);var free=/nil|^0$|free|no fee/i.test(v);items+=`<div class="fee-item"><div class="fee-label">${esc(lbl)}</div><div class="fee-val ${free?'free':'paid'}">${esc(v)}</div></div>`;}
   var note=safe(obj.details||obj.fee_mode||obj.payment_mode||'');
   if(!items&&!note) return '';
-  return card('linear-gradient(135deg,#c2410c,#ea580c)','fa-indian-rupee-sign','Application Fee',(items?`<div class="fee-grid">${items}</div>`:'')+( note?`<div class="fee-note"><i class="fa-solid fa-circle-info"></i> ${esc(note)}</div>`:''));
+  return card('linear-gradient(135deg,#b45309,#d97706)','fa-indian-rupee-sign','Application Fee',(items?`<div class="fee-grid">${items}</div>`:'')+( note?`<div class="fee-note"><i class="fa-solid fa-circle-info"></i> ${esc(note)}</div>`:''));
 }
 
 function renderAge(obj){
@@ -272,7 +272,7 @@ function renderAge(obj){
   // _raw_list: extracted from job.sections
   if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
     var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-user-clock"></i><span>${esc(s)}</span></li>`).join('');
-    return card('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock','Age Limit',`<ul class="val-list">${lis}</ul>`);
+    return card('linear-gradient(135deg,#0f766e,#0d9488)','fa-user-clock','Age Limit',`<ul class="val-list">${lis}</ul>`);
   }
   var asOn=safe(obj.as_on_date||obj.as_on||'');
   var heading='Age Limit'+(asOn?' (as on '+asOn+')':'');
@@ -283,16 +283,16 @@ function renderAge(obj){
     ['Age Details',obj.age_details]
   ];
   var rows=pairs.filter(([,v])=>safe(v)).map(([l,v])=>`<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
-  return rows?card('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock',heading,`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+  return rows?card('linear-gradient(135deg,#0f766e,#0d9488)','fa-user-clock',heading,`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
 }
 
 function renderQual(obj){
   if(!obj) return '';
-  if(typeof obj==='string'&&obj.trim()) return card('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification / Eligibility',`<div style="padding:10px 14px;font-size:.83rem">${esc(obj)}</div>`);
+  if(typeof obj==='string'&&obj.trim()) return card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-graduation-cap','Qualification / Eligibility',`<div style="padding:10px 14px;font-size:.83rem">${esc(obj)}</div>`);
   if(typeof obj==='object'){
     var pairs=[['Education Qualification',obj.education_qualification||obj.qualification||obj.eligibility],['Required Degree',obj.required_degree],['Experience',obj.experience_required],['Details',obj.details]];
     var rows=pairs.filter(([,v])=>safe(v)).map(([l,v])=>`<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
-    return rows?card('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification / Eligibility',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+    return rows?card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-graduation-cap','Qualification / Eligibility',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
   }
   return '';
 }
@@ -335,7 +335,7 @@ function renderVacancy(arr){
     var tc='<td><strong>Total</strong></td>'+cols.map(c=>`<td>${c in tots?'<strong>'+tots[c]+'</strong>':''}</td>`).join('');
     rows+=`<tr class="vac-tot">${tc}</tr>`;
   }
-  return card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-pie','Vacancy Details Total',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+  return card('linear-gradient(135deg,#047857,#059669)','fa-chart-pie','Vacancy Details Total',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
 }
 
 function renderCatVacancy(cwv){
@@ -353,29 +353,29 @@ function renderCatVacancy(cwv){
       var tbody=cwv.map(function(r,i){
         return '<tr>'+activeCols.map(function(c){return '<td>'+esc(safe(r[c]||''))+'</td>';}).join('')+'</tr>';
       }).join('');
-      if(tbody) return card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`);
+      if(tbody) return card('linear-gradient(135deg,#047857,#059669)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`);
     }
     return renderVacancy(cwv);
   }
   // Object format {General:198, EWS:39, ...}
   if(typeof cwv==='object'&&Object.keys(cwv).length){
     var rows=Object.entries(cwv).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</td><td>${esc(safe(v))}</td></tr>`).join('');
-    return rows?card('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${rows}</tbody></table></div>`):'';
+    return rows?card('linear-gradient(135deg,#047857,#059669)','fa-chart-bar','Category Wise Vacancy Details',`<div class="tbl-scroll"><table class="vac-table"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${rows}</tbody></table></div>`):'';
   }
   return '';
 }
 
 function renderSalary(obj){
   if(!obj) return '';
-  if(typeof obj==='string'&&obj.trim()) return card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<div style="padding:10px 14px;font-size:.83rem">${esc(obj)}</div>`);
+  if(typeof obj==='string'&&obj.trim()) return card('linear-gradient(135deg,#047857,#059669)','fa-indian-rupee-sign','Salary & Pay Scale',`<div style="padding:10px 14px;font-size:.83rem">${esc(obj)}</div>`);
   if(typeof obj==='object'){
     if(Array.isArray(obj._raw_list)&&obj._raw_list.length){
       var lis=obj._raw_list.map(s=>`<li class="val-item"><i class="fa-solid fa-indian-rupee-sign"></i><span>${esc(s)}</span></li>`).join('');
-      return card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<ul class="val-list">${lis}</ul>`);
+      return card('linear-gradient(135deg,#047857,#059669)','fa-indian-rupee-sign','Salary & Pay Scale',`<ul class="val-list">${lis}</ul>`);
     }
     var pairs=[['Pay Scale',obj.pay_scale],['Basic Pay',obj.basic_pay],['Grade Pay',obj.grade_pay],['Salary',obj.salary],['Details',obj.details]];
     var rows=pairs.filter(([,v])=>safe(v)).map(([l,v])=>`<tr><th>${esc(l)}</th><td>${esc(safe(v))}</td></tr>`).join('');
-    return rows?card('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary & Pay Scale',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+    return rows?card('linear-gradient(135deg,#047857,#059669)','fa-indian-rupee-sign','Salary & Pay Scale',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
   }
   return '';
 }
@@ -385,7 +385,7 @@ function renderSelection(sp){
   var steps=Array.isArray(sp)?sp.map(safe).filter(Boolean):String(sp).split(/[,\n;\/]/).map(s=>s.trim()).filter(Boolean);
   if(!steps.length) return '';
   var items=steps.map((s,i)=>`<div class="sel-step"><span class="sel-num">${i+1}</span>${esc(s.slice(0,80))}</div>`).join('');
-  return card('linear-gradient(135deg,#5b21b6,#7c3aed)','fa-list-check','Selection Process',`<div class="sel-steps">${items}</div>`);
+  return card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-list-check','Selection Process',`<div class="sel-steps">${items}</div>`);
 }
 
 function renderExamPattern(ep){
@@ -394,13 +394,13 @@ function renderExamPattern(ep){
     var cols=Object.keys(ep[0]);
     var head='<th>Sr.</th>'+cols.map(c=>`<th>${esc(c.replace(/_/g,' ').replace(/\b[a-z]/g,ch=>ch.toUpperCase()))}</th>`).join('');
     var rows=ep.map((r,i)=>`<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(safe(r[c]))}</td>`).join('')}</tr>`).join('');
-    return card('linear-gradient(135deg,#0369a1,#0284c7)','fa-file-lines','Exam Pattern',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+    return card('linear-gradient(135deg,#1e40af,#1a56db)','fa-file-lines','Exam Pattern',`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
   }
   if(typeof ep==='object'&&!Array.isArray(ep)){
     var rows=Object.entries(ep).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><th>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</th><td>${esc(safe(v))}</td></tr>`).join('');
-    return rows?card('linear-gradient(135deg,#0369a1,#0284c7)','fa-file-lines','Exam Pattern',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+    return rows?card('linear-gradient(135deg,#1e40af,#1a56db)','fa-file-lines','Exam Pattern',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
   }
-  if(typeof ep==='string'&&ep.trim()) return card('linear-gradient(135deg,#0369a1,#0284c7)','fa-file-lines','Exam Pattern',`<div style="padding:10px 14px;font-size:.83rem">${esc(ep)}</div>`);
+  if(typeof ep==='string'&&ep.trim()) return card('linear-gradient(135deg,#1e40af,#1a56db)','fa-file-lines','Exam Pattern',`<div style="padding:10px 14px;font-size:.83rem">${esc(ep)}</div>`);
   return '';
 }
 
@@ -408,16 +408,16 @@ function renderSyllabus(syl){
   if(!syl) return '';
   if(Array.isArray(syl)&&syl.length){
     var items=syl.map(s=>`<div class="sel-step"><i class="fa-solid fa-book-open" style="font-size:.7rem"></i>${esc(safe(s).slice(0,100))}</div>`).join('');
-    return items?card('linear-gradient(135deg,#4338ca,#6366f1)','fa-book','Syllabus',`<div class="sel-steps">${items}</div>`):'';
+    return items?card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-book','Syllabus',`<div class="sel-steps">${items}</div>`):'';
   }
-  if(typeof syl==='string'&&syl.trim()) return card('linear-gradient(135deg,#4338ca,#6366f1)','fa-book','Syllabus',`<div style="padding:10px 14px;font-size:.83rem">${esc(syl)}</div>`);
+  if(typeof syl==='string'&&syl.trim()) return card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-book','Syllabus',`<div style="padding:10px 14px;font-size:.83rem">${esc(syl)}</div>`);
   return '';
 }
 
 function renderPhysical(pe){
   if(!pe||typeof pe!=='object') return '';
   var rows=Object.entries(pe).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><th>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</th><td>${esc(safe(v))}</td></tr>`).join('');
-  return rows?card('linear-gradient(135deg,#be123c,#e11d48)','fa-dumbbell','Physical Eligibility',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
+  return rows?card('linear-gradient(135deg,#0f766e,#0d9488)','fa-dumbbell','Physical Eligibility',`<table class="jd-table"><tbody>${rows}</tbody></table>`):'';
 }
 
 function renderHTA(steps){
@@ -425,7 +425,7 @@ function renderHTA(steps){
   var filtered=steps.map(safe).filter(Boolean);
   if(!filtered.length) return '';
   var items=filtered.map((s,i)=>`<li class="hta-item"><span class="hta-num">${i+1}</span><span>${esc(s)}</span></li>`).join('');
-  return card('linear-gradient(135deg,#0f766e,#0891b2)','fa-clipboard-list','How to Apply',`<ul class="hta-list">${items}</ul>`);
+  return card('linear-gradient(135deg,#0f766e,#0d9488)','fa-clipboard-list','How to Apply',`<ul class="hta-list">${items}</ul>`);
 }
 
 function renderInstructions(insts){
@@ -433,7 +433,7 @@ function renderInstructions(insts){
   var filtered=insts.map(safe).filter(Boolean);
   if(!filtered.length) return '';
   var items=filtered.map(s=>`<li class="inst-item"><i class="fa-solid fa-triangle-exclamation"></i><span>${esc(s)}</span></li>`).join('');
-  return card('linear-gradient(135deg,#b45309,#ca8a04)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
+  return card('linear-gradient(135deg,#b45309,#d97706)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
 }
 
 // Detect if a row is a link row (e.g. ["Apply Online", "http..."] or ["Official Website", "UPSSSC Official Website"])
@@ -535,7 +535,7 @@ function renderRawTables(tables, ilRef){
       tableHtml=`<div class="tbl-scroll"><table class="vac-table"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`;
     }
 
-    result+=card('linear-gradient(135deg,#0369a1,#0ea5e9)','fa-table-list','Vacancy Details / Eligibility',tableHtml);
+    result+=card('linear-gradient(135deg,#1a56db,#0ea5e9)','fa-table-list','Vacancy Details / Eligibility',tableHtml);
   }
   return result;
 }
@@ -636,7 +636,7 @@ function renderLinks(il,ctx){
     if(_al&&!/^(click here|view|link|here|open|official pdf document)$/i.test(_al.trim())) _ll=_al;
     btns+=`<a href="${esc(_au)}" class="link-btn ${_lc}" target="_blank" rel="noopener noreferrer"><i class="fa-solid ${_li}"></i> ${esc(_ll.slice(0,70))}</a>\n`;
   }
-  return btns?card('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',`<div class="links-grid">${btns}</div>`):'';
+  return btns?card('linear-gradient(135deg,#0d2257,#1e3a8a)','fa-link','Important Links',`<div class="links-grid">${btns}</div>`):'';
 }
 
 function renderFAQ(faq){
@@ -666,7 +666,7 @@ function renderFAQ(faq){
       '<div class="faq-a">'+a+'</div>'+
     '</div>';
   }).join('');
-  return items?card('linear-gradient(135deg,#4338ca,#6366f1)','fa-circle-question','FAQs',items):'';
+  return items?card('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-circle-question','FAQs',items):'';
 }
 
 // ── Find job in data ─────────────────────────────────────────────
@@ -1093,7 +1093,7 @@ function buildPage(slug, job){
   sections+=renderFAQ(faq);
 
   if(!sections.trim()&&sourceUrl&&!isBlocked(sourceUrl)){
-    sections=card('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',
+    sections=card('linear-gradient(135deg,#0d2257,#1e3a8a)','fa-link','Important Links',
       `<div class="links-grid"><a href="${esc(sourceUrl)}" class="link-btn btn-green" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Official Website</a></div>`);
   }
 

@@ -367,7 +367,7 @@
       if (!items && !note) return '';
       const body = (items ? `<div class="fee-grid">${items}</div>` : '') +
                    (note  ? `<div class="fee-note"><i class="fa-solid fa-circle-info"></i> ${esc(note)}</div>` : '');
-      return makeCard('linear-gradient(135deg,#c2410c,#ea580c)','fa-indian-rupee-sign','Application Fee', body);
+      return makeCard('linear-gradient(135deg,#b45309,#d97706)','fa-indian-rupee-sign','Application Fee', body);
     }
 
     /* Age Limit */
@@ -378,14 +378,14 @@
         ['Age Relaxation', obj.age_relaxation || obj.details],['Age Details', obj.age_details],
       ];
       const tbl = renderKVTable(pairs);
-      return tbl ? makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-user-clock','Age Limit', tbl) : '';
+      return tbl ? makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-user-clock','Age Limit', tbl) : '';
     }
 
     /* Qualification */
     function renderQual(obj) {
       if (!obj) return '';
       if (typeof obj === 'string') {
-        return obj.trim() ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification',
+        return obj.trim() ? makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-graduation-cap','Qualification',
           `<div style="padding:10px 14px;font-size:.83rem;color:#1e293b">${esc(obj)}</div>`) : '';
       }
       const pairs = [
@@ -393,7 +393,7 @@
         ['Required Degree', obj.required_degree],['Experience', obj.experience_required],['Details', obj.details],
       ];
       const tbl = renderKVTable(pairs);
-      return tbl ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-graduation-cap','Qualification', tbl) : '';
+      return tbl ? makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-graduation-cap','Qualification', tbl) : '';
     }
 
     /* Vacancy table */
@@ -419,7 +419,7 @@
       if (!cols.length) return '';
       const head = '<th>Sr.</th>' + cols.map(c => `<th>${esc(LABELS[c])}</th>`).join('');
       const rows = norm.map((r,i) => `<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(r[c]||'')}</td>`).join('')}</tr>`).join('');
-      return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-pie','Vacancy Details',
+      return makeCard('linear-gradient(135deg,#047857,#059669)','fa-chart-pie','Vacancy Details',
         `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
     }
 
@@ -427,12 +427,12 @@
     function renderSalary(obj) {
       if (!obj) return '';
       if (typeof obj === 'string' && obj.trim())
-        return makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary',
+        return makeCard('linear-gradient(135deg,#047857,#059669)','fa-indian-rupee-sign','Salary',
           `<div style="padding:10px 14px;font-size:.83rem;">${esc(obj)}</div>`);
       if (typeof obj !== 'object') return '';
       const pairs = [['Pay Scale',obj.pay_scale],['Basic Pay',obj.basic_pay],['Grade Pay',obj.grade_pay],['Salary',obj.salary],['Details',obj.details]];
       const tbl = renderKVTable(pairs);
-      return tbl ? makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-indian-rupee-sign','Salary', tbl) : '';
+      return tbl ? makeCard('linear-gradient(135deg,#047857,#059669)','fa-indian-rupee-sign','Salary', tbl) : '';
     }
 
     /* Selection Process */
@@ -443,7 +443,7 @@
       if (!steps.length) return '';
       const items = steps.map((s,i) =>
         `<div class="sel-step"><span class="sel-num">${i+1}</span>${esc(s.slice(0,80))}</div>`).join('');
-      return makeCard('linear-gradient(135deg,#5b21b6,#7c3aed)','fa-list-check','Selection Process',
+      return makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-list-check','Selection Process',
         `<div class="sel-steps">${items}</div>`);
     }
 
@@ -453,7 +453,7 @@
       const filtered = steps.map(s=>safe(s)).filter(Boolean);
       if (!filtered.length) return '';
       const items = filtered.map((s,i) => `<li class="hta-item"><span class="hta-num">${i+1}</span><span>${esc(s)}</span></li>`).join('');
-      return makeCard('linear-gradient(135deg,#0f766e,#0891b2)','fa-clipboard-list','How to Apply',
+      return makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-clipboard-list','How to Apply',
         `<ul class="hta-list">${items}</ul>`);
     }
 
@@ -507,7 +507,7 @@
         }
       }
       if (!buttons) return '';
-      return makeCard('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',
+      return makeCard('linear-gradient(135deg,#0d2257,#1e3a8a)','fa-link','Important Links',
         `<div class="links-grid">${buttons}</div>`);
     }
 
@@ -521,7 +521,7 @@
   </div>
   <div class="faq-a">${esc(f.answer)}</div>
 </div>`).join('');
-      return items ? makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-circle-question','FAQs', items) : '';
+      return items ? makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-circle-question','FAQs', items) : '';
     }
 
     /* ── renderSection: handles raw scraper format from education_jobs ── */
@@ -678,7 +678,7 @@
       if (Array.isArray(vac) && vac.length) html += renderVacancyList(vac);
       if (cwv && Object.keys(cwv).length) {
         const cwvPairs = Object.entries(cwv).filter(([,v])=>safe(v)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()))}</td><td>${esc(safe(v))}</td></tr>`).join('');
-        if (cwvPairs) html += makeCard('linear-gradient(135deg,#15803d,#16a34a)','fa-chart-bar','Category-wise Vacancy',
+        if (cwvPairs) html += makeCard('linear-gradient(135deg,#047857,#059669)','fa-chart-bar','Category-wise Vacancy',
           `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr><th>Category</th><th>Posts</th></tr></thead><tbody>${cwvPairs}</tbody></table></div>`);
       }
 
@@ -694,7 +694,7 @@
           const cols = Object.keys(ep[0]).filter(k=>typeof ep[0][k]!=='object');
           const head = '<th>Sr.</th>' + cols.map(c=>`<th>${esc(c.replace(/_/g,' ').replace(/\b[a-z]/g,ch=>ch.toUpperCase()))}</th>`).join('');
           const rows = ep.map((r,i)=>`<tr><td>${i+1}</td>${cols.map(c=>`<td>${esc(safe(r[c]))}</td>`).join('')}</tr>`).join('');
-          return makeCard('linear-gradient(135deg,#0369a1,#0284c7)','fa-file-lines','Exam Pattern',
+          return makeCard('linear-gradient(135deg,#1e40af,#1a56db)','fa-file-lines','Exam Pattern',
             `<div class="edu-table-scroll"><table class="edu-table-full"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
         }
         return '';
@@ -704,7 +704,7 @@
       if (syl) html += (() => {
         if (Array.isArray(syl) && syl.length) {
           const items = syl.map(s=>`<div class="sel-step"><i class="fa-solid fa-book-open"></i>${esc(safe(s).slice(0,100))}</div>`).join('');
-          return makeCard('linear-gradient(135deg,#4338ca,#6366f1)','fa-book','Syllabus',`<div class="sel-steps">${items}</div>`);
+          return makeCard('linear-gradient(135deg,#6d28d9,#7c3aed)','fa-book','Syllabus',`<div class="sel-steps">${items}</div>`);
         }
         return '';
       })();
@@ -713,7 +713,7 @@
       if (pe && Object.keys(pe).length) {
         const pairs = Object.entries(pe).filter(([,v])=>safe(v)).map(([k,v])=>[k.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()),v]);
         const tbl = renderKVTable(pairs);
-        if (tbl) html += makeCard('linear-gradient(135deg,#be123c,#e11d48)','fa-dumbbell','Physical Eligibility', tbl);
+        if (tbl) html += makeCard('linear-gradient(135deg,#0f766e,#0d9488)','fa-dumbbell','Physical Eligibility', tbl);
       }
 
       /* 13. How to Apply */
@@ -723,7 +723,7 @@
       if (Array.isArray(insts) && insts.length) {
         const items = insts.map(s=>safe(s)).filter(Boolean).map(s =>
           `<li class="inst-item"><i class="fa-solid fa-triangle-exclamation"></i><span>${esc(s)}</span></li>`).join('');
-        if (items) html += makeCard('linear-gradient(135deg,#b45309,#ca8a04)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
+        if (items) html += makeCard('linear-gradient(135deg,#b45309,#d97706)','fa-circle-exclamation','Important Instructions',`<ul class="inst-list">${items}</ul>`);
       }
 
       /* Raw edu scraper sections — render in-between or here */
@@ -756,7 +756,7 @@
         /* Show official link if available */
         const offUrl = safe(item.url || '');
         if (offUrl && offUrl.startsWith('http') && !isBlocked(offUrl)) {
-          html += makeCard('linear-gradient(135deg,#1e40af,#1e3a8a)','fa-link','Important Links',
+          html += makeCard('linear-gradient(135deg,#0d2257,#1e3a8a)','fa-link','Important Links',
             `<div class="links-grid"><a href="${esc(offUrl)}" class="link-btn btn-green" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Official Website</a></div>`);
         }
       }

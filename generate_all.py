@@ -1599,33 +1599,33 @@ def render_smart_table(rows):
 
 # ── Section card builder ──────────────────────────────────────
 SECTION_META = {
-    'basic_details':        ('Job Overview',              'fa-circle-info',        '1e40af,#3b82f6'),
+    'basic_details':        ('Job Overview',              'fa-circle-info',        '1e40af,#1a56db'),
     'important_dates':      ('Important Dates',           'fa-calendar-check',     'b91c1c,#dc2626'),
-    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'c2410c,#ea580c'),
-    'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0891b2'),
-    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '4338ca,#6366f1'),
-    'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    '4338ca,#6366f1'),
-    'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '4338ca,#6366f1'),
-    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '15803d,#16a34a'),
-    'vacancy_breakdown':    ('Vacancy Breakdown',         'fa-table-list',         '0f766e,#0d9488'),
-    'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          '15803d,#16a34a'),
-    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '15803d,#16a34a'),
-    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '15803d,#16a34a'),
-    'selection_process':    ('Selection Process',         'fa-list-check',         '5b21b6,#7c3aed'),
-    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '0369a1,#0284c7'),
-    'syllabus':             ('Syllabus',                  'fa-book',               '4338ca,#6366f1'),
-    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           'be123c,#e11d48'),
-    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
-    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'b45309,#ca8a04'),
-    'important_links':      ('Important Links',           'fa-link',               '1e40af,#1e3a8a'),
-    'faq':                  ('FAQs',                      'fa-circle-question',    '4338ca,#6366f1'),
-    'tables':               ('Details',                   'fa-table',              '0f766e,#0891b2'),
-    'data_tables':          ('Additional Details',        'fa-table-list',         '0f766e,#0891b2'),
-    'all_links':            ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
-    'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#3b82f6'),
-    'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0891b2'),
-    'useful_links':         ('Useful Links',              'fa-link',               '1d4ed8,#1e3a8a'),
-    'sections':             ('Details',                   'fa-circle-info',        '1e40af,#3b82f6'),
+    'application_fee':      ('Application Fee',           'fa-indian-rupee-sign',  'b45309,#d97706'),
+    'age_limit':            ('Age Limit',                 'fa-user-clock',         '0f766e,#0d9488'),
+    'qualification':        ('Qualification / Eligibility','fa-graduation-cap',    '6d28d9,#7c3aed'),
+    'eligibility_section':  ('Eligibility Details',        'fa-graduation-cap',    '6d28d9,#7c3aed'),
+    'course_details':       ('Course-wise Eligibility',    'fa-list-check',         '6d28d9,#7c3aed'),
+    'vacancy_details':      ('Vacancy Details',           'fa-chart-pie',          '047857,#059669'),
+    'vacancy_breakdown':    ('Vacancy Breakdown',         'fa-table-list',         '047857,#059669'),
+    'subject_wise_vacancy': ('Subject-wise Vacancy',      'fa-chart-bar',          '047857,#059669'),
+    'category_wise_vacancy':('Category-wise Vacancy',     'fa-chart-bar',          '047857,#059669'),
+    'salary_details':       ('Salary & Pay Scale',        'fa-indian-rupee-sign',  '047857,#059669'),
+    'selection_process':    ('Selection Process',         'fa-list-check',         '6d28d9,#7c3aed'),
+    'exam_pattern':         ('Exam Pattern',              'fa-file-lines',         '1e40af,#1a56db'),
+    'syllabus':             ('Syllabus',                  'fa-book',               '6d28d9,#7c3aed'),
+    'physical_eligibility': ('Physical Eligibility',      'fa-dumbbell',           '0f766e,#0d9488'),
+    'how_to_apply':         ('How to Apply',              'fa-clipboard-list',     '0f766e,#0d9488'),
+    'important_instructions':('Important Instructions',   'fa-circle-exclamation', 'b45309,#d97706'),
+    'important_links':      ('Important Links',           'fa-link',               '0d2257,#1e3a8a'),
+    'faq':                  ('FAQs',                      'fa-circle-question',    '6d28d9,#7c3aed'),
+    'tables':               ('Details',                   'fa-table',              '0f766e,#0d9488'),
+    'data_tables':          ('Additional Details',        'fa-table-list',         '0f766e,#0d9488'),
+    'all_links':            ('Useful Links',              'fa-link',               '0d2257,#1e3a8a'),
+    'details_page_content': ('Scholarship Details',       'fa-circle-info',        '1e40af,#1a56db'),
+    'text_sections':        ('How to Apply',              'fa-clipboard-list',     '0f766e,#0d9488'),
+    'useful_links':         ('Useful Links',              'fa-link',               '0d2257,#1e3a8a'),
+    'sections':             ('Details',                   'fa-circle-info',        '1e40af,#1a56db'),
 }
 
 # ── DYNAMIC SEO HEADINGS ─────────────────────────────────────────────────────
@@ -3245,58 +3245,58 @@ def render_sarkari_sections(sections_list, existing_il=None, already_covered=Non
     if data['fee']:
         lis = render_list_items(data['fee'])
         if lis:
-            html += sec_card('application_fee','fa-indian-rupee-sign','c2410c,#ea580c', lis)
+            html += sec_card('application_fee','fa-indian-rupee-sign','b45309,#d97706', lis)
             if already_covered is not None: already_covered.add('application_fee')
     if data['age']:
         lis = render_list_items(data['age'])
         if lis:
-            html += sec_card('age_limit','fa-user-clock','0f766e,#0891b2', lis)
+            html += sec_card('age_limit','fa-user-clock','0f766e,#0d9488', lis)
             if already_covered is not None: already_covered.add('age_limit')
     if data['sel']:
-        html += sec_card('selection_process','fa-list-check','5b21b6,#7c3aed', render_selection(data['sel']))
+        html += sec_card('selection_process','fa-list-check','6d28d9,#7c3aed', render_selection(data['sel']))
     for tbl in data['vac_tables']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
-            if rendered: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', rendered)
+            if rendered: html += sec_card('vacancy_details','fa-chart-pie','047857,#059669', rendered)
         elif isinstance(tbl, dict) and tbl.get('_phys_table'):
             # Physical eligibility table — render in physical section
             rendered = render_smart_table(tbl['_phys_table'])
-            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', rendered)
+            if rendered: html += sec_card('physical_eligibility','fa-dumbbell','0f766e,#0d9488', rendered)
         elif isinstance(tbl, dict) and tbl.get('_qual_table'):
             rendered = render_smart_table(tbl['_qual_table'])
-            if rendered: html += sec_card('qualification','fa-graduation-cap','4338ca,#6366f1', rendered)
+            if rendered: html += sec_card('qualification','fa-graduation-cap','6d28d9,#7c3aed', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','047857,#059669', lis)
     for tbl in data['cat_vac']:
         if isinstance(tbl, list):
             rendered = render_smart_table(tbl)
-            if rendered: html += sec_card('category_wise_vacancy','fa-chart-bar','15803d,#16a34a', rendered)
+            if rendered: html += sec_card('category_wise_vacancy','fa-chart-bar','047857,#059669', rendered)
         elif isinstance(tbl, dict) and tbl.get('_list'):
             lis = render_list_items(tbl['_list'])
-            if lis: html += sec_card('vacancy_details','fa-chart-pie','15803d,#16a34a', lis)
+            if lis: html += sec_card('vacancy_details','fa-chart-pie','047857,#059669', lis)
     if data['salary']:
         salary_items = [x for x in data['salary'] if isinstance(x, str)]
         salary_tables = [x for x in data['salary'] if isinstance(x, list)]
         sal_body = render_list_items(salary_items) + ''.join(render_smart_table(t) for t in salary_tables)
-        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','15803d,#16a34a', sal_body)
+        if sal_body: html += sec_card('salary_details','fa-indian-rupee-sign','047857,#059669', sal_body)
     if data['exam']:
         items = [x for x in data['exam'] if isinstance(x,str)]
         tables = [x for x in data['exam'] if isinstance(x,list)]
         body = render_list_items(items) + ''.join(render_smart_table(t) for t in tables)
-        if body: html += sec_card('exam_pattern','fa-file-lines','0369a1,#0284c7', body)
+        if body: html += sec_card('exam_pattern','fa-file-lines','1e40af,#1a56db', body)
     if data['syllabus']:
         lis = render_list_items(data['syllabus'])
-        if lis: html += sec_card('syllabus','fa-book','4338ca,#6366f1', lis)
+        if lis: html += sec_card('syllabus','fa-book','6d28d9,#7c3aed', lis)
     if data['physical']:
         lis = render_list_items(data['physical'])
-        if lis: html += sec_card('physical_eligibility','fa-dumbbell','be123c,#e11d48', lis)
+        if lis: html += sec_card('physical_eligibility','fa-dumbbell','0f766e,#0d9488', lis)
     if data['hta']:
-        html += sec_card('how_to_apply','fa-clipboard-list','0f766e,#0891b2', render_hta(data['hta']))
+        html += sec_card('how_to_apply','fa-clipboard-list','0f766e,#0d9488', render_hta(data['hta']))
     if data['inst']:
         items = ''.join(f'<div class="inst-box"><i class="fa-solid fa-triangle-exclamation"></i><span>{e(s)}</span></div>'
                         for s in data['inst'] if s)
-        if items: html += sec_card('important_instructions','fa-circle-exclamation','b45309,#ca8a04', items)
+        if items: html += sec_card('important_instructions','fa-circle-exclamation','b45309,#d97706', items)
     if data['also_read'] and not (existing_il and any(v for v in existing_il.values() if v)):
         btns = ''
         for row in data['also_read']:
@@ -3321,11 +3321,11 @@ def render_sarkari_sections(sections_list, existing_il=None, already_covered=Non
                     btns += (f'<div class="lk-row"><span class="lk-label">{e(lbl[:60])}</span>'
                              f'<a href="{e(url)}" class="lk-open {cl}" target="_blank" rel="noopener noreferrer"{_dl}>'
                              f'<i class="fa-solid {ic}"></i> Open</a></div>\n')
-        if btns: html += sec_card('important_links','fa-link','1e40af,#1e3a8a', f'<div class="links-rows">{btns}</div>')
+        if btns: html += sec_card('important_links','fa-link','0d2257,#1e3a8a', f'<div class="links-rows">{btns}</div>')
     # Wrap raw sections in proper sec-card — prevents orphan edu-sec blocks floating outside cards
     raw_html = render_edu_sections(data['raw'])
     if raw_html.strip():
-        html += sec_card('Details', 'fa-circle-info', '0369a1,#0284c7', raw_html)
+        html += sec_card('Details', 'fa-circle-info', '1e40af,#1a56db', raw_html)
     return html
 
 
@@ -3609,13 +3609,13 @@ def _render_ai_sections(job_obj):
     out = ''
     # (key, heading, icon, color)
     ai_cards = [
-        ('ai_overview',            'Overview',              'fa-circle-info',       '1d4ed8,#3b82f6'),
-        ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '7c3aed,#a855f7'),
-        ('ai_who_should_apply',    'Who Should Apply',      'fa-user-check',        '0f766e,#0891b2'),
-        ('ai_preparation_tips',    'Preparation Tips',      'fa-list-check',        '047857,#10b981'),
-        ('ai_salary_insights',     'Salary Insights',       'fa-indian-rupee-sign', 'b45309,#f59e0b'),
+        ('ai_overview',            'Overview',              'fa-circle-info',       '1e40af,#1a56db'),
+        ('ai_expert_analysis',     'Expert Analysis',       'fa-lightbulb',         '6d28d9,#7c3aed'),
+        ('ai_who_should_apply',    'Who Should Apply',      'fa-user-check',        '0f766e,#0d9488'),
+        ('ai_preparation_tips',    'Preparation Tips',      'fa-list-check',        '047857,#059669'),
+        ('ai_salary_insights',     'Salary Insights',       'fa-indian-rupee-sign', 'b45309,#d97706'),
         ('ai_job_profile_analysis','Job Profile',           'fa-briefcase',         '475569,#334155'),
-        ('ai_selection_strategy',  'Selection Strategy',    'fa-bullseye',          'be123c,#f43f5e'),
+        ('ai_selection_strategy',  'Selection Strategy',    'fa-bullseye',          '6d28d9,#7c3aed'),
     ]
     for key, heading, icon, color in ai_cards:
         val = safe(job_obj.get(key, '') or '')
@@ -3640,18 +3640,18 @@ _CSALL_SKIP_RE = re.compile(
     re.I)
 _CSALL_ICONS = [
     ('date',      'fa-calendar-check',        'b91c1c,#dc2626'),
-    ('fee',       'fa-indian-rupee-sign',     'c2410c,#ea580c'),
-    ('salary',    'fa-indian-rupee-sign',     '15803d,#16a34a'),
-    ('pay',       'fa-indian-rupee-sign',     '15803d,#16a34a'),
-    ('age',       'fa-user-clock',            '0f766e,#0891b2'),
-    ('eligib',    'fa-graduation-cap',        '4338ca,#6366f1'),
-    ('qualif',    'fa-graduation-cap',        '4338ca,#6366f1'),
-    ('vacan',     'fa-chart-pie',             '15803d,#16a34a'),
-    ('post',      'fa-chart-pie',             '15803d,#16a34a'),
-    ('selection', 'fa-list-check',            '5b21b6,#7c3aed'),
-    ('exam',      'fa-file-lines',            '0369a1,#0284c7'),
-    ('pattern',   'fa-file-lines',            '0369a1,#0284c7'),
-    ('syllabus',  'fa-book',                  '4338ca,#6366f1'),
+    ('fee',       'fa-indian-rupee-sign',     'b45309,#d97706'),
+    ('salary',    'fa-indian-rupee-sign',     '047857,#059669'),
+    ('pay',       'fa-indian-rupee-sign',     '047857,#059669'),
+    ('age',       'fa-user-clock',            '0f766e,#0d9488'),
+    ('eligib',    'fa-graduation-cap',        '6d28d9,#7c3aed'),
+    ('qualif',    'fa-graduation-cap',        '6d28d9,#7c3aed'),
+    ('vacan',     'fa-chart-pie',             '047857,#059669'),
+    ('post',      'fa-chart-pie',             '047857,#059669'),
+    ('selection', 'fa-list-check',            '6d28d9,#7c3aed'),
+    ('exam',      'fa-file-lines',            '1e40af,#1a56db'),
+    ('pattern',   'fa-file-lines',            '1e40af,#1a56db'),
+    ('syllabus',  'fa-book',                  '6d28d9,#7c3aed'),
 ]
 
 def _csall_table_html(rows):
@@ -3745,7 +3745,7 @@ def build_all_sections(job_obj):
         if _bd and _bd != {}:
             _bd_body = render_basic_details(_bd)
             if _bd_body and _bd_body.strip():
-                _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', '1e40af,#3b82f6'))
+                _bm = SECTION_META.get('basic_details', ('Job Overview', 'fa-circle-info', '1e40af,#1a56db'))
                 html += sec_card(_dyn_section_heading('basic_details', job_obj), _bm[1], _bm[2], _bd_body)
                 rendered.add('basic_details')
         html += render_content_sections_all(_cs)
@@ -4330,7 +4330,7 @@ def build_all_sections(job_obj):
                         body = ''.join(_ft_parts)
                 # Use dynamic title instead of hardcoded SECTION_META label
                 if body and body.strip():
-                    html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#3b82f6', body)
+                    html += sec_card(_dpc_title, 'fa-circle-info', '1e40af,#1a56db', body)
                 body = ''  # mark as already rendered
         elif key == 'syllabus':         body = (render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
         elif key == 'physical_eligibility': body = (render_kv_dict(val) if isinstance(val,dict) else render_list_items(val) if isinstance(val,list) else f'<div class="edu-sec">{e(safe(val))}</div>')
@@ -4476,7 +4476,7 @@ def build_all_sections(job_obj):
         _body = ('<table class="kv-table"><tbody>'
                  '<tr><th>Course / Category</th><th>Eligibility</th></tr>'
                  + _rows + '</tbody></table>')
-        html += sec_card('Course-wise Eligibility', 'fa-list-check', '4338ca,#6366f1', _body)
+        html += sec_card('Course-wise Eligibility', 'fa-list-check', '6d28d9,#7c3aed', _body)
 
     # (leftover scalars now rendered inline above via _smart_render - no separate loop needed)
 
@@ -4488,7 +4488,7 @@ def build_all_sections(job_obj):
         if len(_auto) >= 2:  # show if we have at least a couple real FAQs
             _auto_body = render_faq(_auto)
             if _auto_body and _auto_body.strip():
-                _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','4338ca,#6366f1'))
+                _m = SECTION_META.get('faq', ('FAQs','fa-circle-question','6d28d9,#7c3aed'))
                 html += sec_card('faq', _m[1], _m[2], _auto_body)
                 rendered.add('faq')
 
@@ -4979,7 +4979,7 @@ a{text-decoration:none}.skip-link{position:absolute;left:-9999px}.skip-link:focu
 .btn-answer{background:#e0e7ff;color:#3730a3;border-color:#a5b4fc}.btn-answer:hover{background:#3730a3;color:#fff}
 .btn-result{background:#fefce8;color:#713f12;border-color:#fde047}.btn-result:hover{background:#a16207;color:#fff}
 .btn-syllabus{background:#f0fdf4;color:#15803d;border-color:#86efac}.btn-syllabus:hover{background:#15803d;color:#fff}
-.btn-merit{background:#f0f9ff;color:#0369a1;border-color:#7dd3fc}.btn-merit:hover{background:#0369a1;color:#fff}
+.btn-merit{background:#f0f9ff;color:#1a56db;border-color:#7dd3fc}.btn-merit:hover{background:#1a56db;color:#fff}
 .btn-default{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.btn-default:hover{background:#1e40af;color:#fff}
 .faq-item{border-bottom:1px solid #f1f5f9;padding:12px 14px}
 .faq-item:last-child{border-bottom:none}
@@ -8296,9 +8296,9 @@ for _state_name, _districts in _DIST_BY_STATE.items():
             if _sibling_links:
                 _chips = ''.join(
                     f'<a href="/district/{e(_os)}/" style="display:inline-flex;align-items:center;gap:5px;'
-                    f'background:#fff;border:1px solid #bae6fd;color:#0369a1;padding:5px 12px;border-radius:20px;'
+                    f'background:#fff;border:1px solid #bae6fd;color:#1a56db;padding:5px 12px;border-radius:20px;'
                     f'font-size:.76rem;font-weight:700;text-decoration:none;margin:3px">{e(_on)} '
-                    f'<span style="background:#0369a1;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_oc}</span></a>'
+                    f'<span style="background:#1a56db;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_oc}</span></a>'
                     for _on, _os, _oc in _sibling_links
                 )
                 _sibling_html = (
@@ -8309,12 +8309,12 @@ for _state_name, _districts in _DIST_BY_STATE.items():
             _empty_top = (
                 f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
                 f'border-radius:10px;text-align:center">'
-                f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
+                f'<p style="font-size:.9rem;color:#1a56db;font-weight:600;margin:0 0 8px">'
                 f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
                 f'Abhi {e(_dname)} district ke liye koi active government job nahi hai — naya notification aate hi yahan turant show hoga.</p>'
                 f'<p style="font-size:.82rem;color:#0284c7;margin:0 0 4px">'
                 f'{e(_state_name)} ke saare jobs dekhne ke liye: '
-                f'<a href="{_state_url_d}" style="color:#0369a1;font-weight:700;text-decoration:underline">'
+                f'<a href="{_state_url_d}" style="color:#1a56db;font-weight:700;text-decoration:underline">'
                 f'{e(_state_name)} State Jobs →</a></p>'
                 f'{_sibling_html}'
                 f'</div>'
@@ -8506,9 +8506,9 @@ for cat_slug, cat_data in _cat_listing_jobs.items():
         if _sibling_links:
             _chips = ''.join(
                 f'<a href="/category/study/{e(_ss)}/" style="display:inline-flex;align-items:center;gap:5px;'
-                f'background:#fff;border:1px solid #bae6fd;color:#0369a1;padding:5px 12px;border-radius:20px;'
+                f'background:#fff;border:1px solid #bae6fd;color:#1a56db;padding:5px 12px;border-radius:20px;'
                 f'font-size:.76rem;font-weight:700;text-decoration:none;margin:3px">{e(_sl)} '
-                f'<span style="background:#0369a1;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_sc}</span></a>'
+                f'<span style="background:#1a56db;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">{_sc}</span></a>'
                 for _sl, _ss, _sc in _sibling_links
             )
             _sib_html = (
@@ -8518,12 +8518,12 @@ for cat_slug, cat_data in _cat_listing_jobs.items():
         _empty_top = (
             f'<div style="margin:4px 10px 16px;padding:16px;background:#f0f9ff;border:1px solid #bae6fd;'
             f'border-radius:10px;text-align:center">'
-            f'<p style="font-size:.9rem;color:#0369a1;font-weight:600;margin:0 0 8px">'
+            f'<p style="font-size:.9rem;color:#1a56db;font-weight:600;margin:0 0 8px">'
             f'<i class="fa-solid fa-circle-info" style="margin-right:6px"></i>'
             f'Abhi {e(cat_label)} qualification ke liye koi active government job nahi hai — naya notification aate hi yahan turant show hoga.</p>'
             f'<p style="font-size:.82rem;color:#0284c7;margin:0 0 4px">'
             f'Saare qualification jobs dekhne ke liye: '
-            f'<a href="/category/study/" style="color:#0369a1;font-weight:700;text-decoration:underline">'
+            f'<a href="/category/study/" style="color:#1a56db;font-weight:700;text-decoration:underline">'
             f'All Qualification Jobs →</a></p>'
             f'{_sib_html}'
             f'</div>'
