@@ -345,16 +345,6 @@ a, button, [role="button"], input, select, textarea {
   .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
   .brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
   
-  .brand-title { 
-    font-size: 16px; 
-    font-weight: 900; 
-    line-height: 1.1; 
-    width: 60px; 
-    white-space: normal; 
-    word-spacing: 100vw; 
-    text-align: left;
-  }
-  
   /* Two-row header buttons */
   .mobile-header-btns {
     flex: 1 1 auto;
@@ -707,16 +697,6 @@ a, button, [role="button"], input, select, textarea {
   
   .brand { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
   .brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
-  
-  .brand-title { 
-    font-size: 16px; 
-    font-weight: 900; 
-    line-height: 1.1; 
-    width: 60px; 
-    white-space: normal; 
-    word-spacing: 100vw; 
-    text-align: left;
-  }
   
   /* Two-row header buttons */
   .mobile-header-btns {

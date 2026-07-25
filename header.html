@@ -116,14 +116,12 @@ a, button, [role="button"] {
 .header-logo-bar { background: var(--white); }
 /* Mobile: keep font readable, allow brand to take available space */
 @media (max-width: 480px) {
-  .brand-title { font-size: 1.08rem; white-space: nowrap; }
+  .brand-title { font-size: 1.02rem; white-space: normal; line-height: 1.15; }
   .brand-sub { font-size: .6rem; }
   .brand-logo { width: 42px; height: 42px; }
-  /* FIX: "Language" label was eating the width the brand title needed to fit
-     on one line without clipping — icon-only on small screens frees ~55px. */
-  .translate-hint { font-size: 0; gap: 0; }
-  .translate-hint i { font-size: 15px; }
-  .translate-box { padding: 4px 7px; }
+  .translate-box { padding: 4px 6px; }
+  .translate-widget { min-width: 40px; }
+  .header-actions { gap: 5px; }
 }
 /* Very small phones (iPhone SE / older Android ~360px and below): brand
    title + tagline still need a touch more room than 480px alone frees up. */
@@ -229,8 +227,8 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
     gap: 3px; font-size: .85rem; font-weight: 800; color: #595959;
     text-decoration: none; padding: 5px 0; min-height: 58px; justify-content: center;
   }
-  .mobile-bottom-bar a i { font-size: 1.4rem; }
-  .bnav-ic { font-size: 1.75rem; line-height: 1; display:block; }
+  .mobile-bottom-bar a i { font-size: 1.15rem; }
+  .bnav-ic { font-size: 1.3rem; line-height: 1; display:block; }
   .mobile-bottom-bar a.active,
   .mobile-bottom-bar a:hover { color: var(--blue); }
   body { padding-bottom: max(72px, calc(72px + env(safe-area-inset-bottom, 0px))); }
@@ -434,7 +432,7 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
 
     <div class="header-actions">
       <div class="translate-box" title="Select your preferred language for reading">
-        <span class="translate-hint"><i class="fa-solid fa-language"></i> Language</span>
+        <span class="translate-hint"><i class="fa-solid fa-language"></i></span>
         <div id="google_translate_element" class="translate-widget" aria-label="Change language"></div>
       </div>
       <a href="https://www.whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T" target="_blank" rel="noopener" class="wa-btn-header">
