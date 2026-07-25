@@ -193,40 +193,93 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   .btn-dl{width:100%;justify-content:center}
 }
 
-/* ================= Adobe-Scan-style App Shell ================= */
-.scan-intro{max-width:640px;margin:0 auto;padding:26px 18px 6px;text-align:center}
-.scan-intro h1{font-size:clamp(1.25rem,3vw,1.7rem);margin-bottom:8px;color:#0d2257}
-.scan-intro p{font-size:.86rem;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto}
+/* ================= Adobe-Scan-style App Shell =================
+   Mobile: near-full-screen (edge to edge, fills the viewport below the
+   site navbar) so the tool reads as a real scanner app, not a small
+   floating card. Desktop (>=821px): a proper side-by-side workspace —
+   viewport left, a persistent controls sidebar right — instead of a
+   tiny phone mockup, matching the layout pattern used elsewhere on
+   this site (photo-enhancer.html, passport-photo.html). Implemented as
+   one CSS Grid whose template reflows per breakpoint; no HTML/JS
+   change needed since #modeCrop/#modeFilters/#modeAdjust/#modeOcr/
+   #modeView all already share the .scan-controls class+grid-area. */
+.scan-intro{max-width:640px;margin:0 auto;padding:8px 18px 4px;text-align:center}
+.scan-intro h1{font-size:1rem;margin-bottom:0;color:#0d2257}
+.scan-intro p{display:none}
 
-.scan-shell{max-width:460px;margin:18px auto 22px;background:#111214;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden}
-@media(min-width:560px){.scan-shell{border-radius:30px;border:8px solid #1a1a1a}}
+.scan-shell{
+  display:grid;
+  grid-template-areas:"topbar" "dots" "viewport" "controls" "actionbar";
+  grid-template-rows:auto auto 1fr auto auto;
+  width:100%;max-width:100%;margin:0;background:#111214;box-shadow:0 4px 24px rgba(0,0,0,.25);overflow:hidden;
+  height:calc(100dvh - 100px);min-height:560px;
+}
+@media(min-width:821px){
+  .scan-intro{padding:22px 18px 10px}
+  .scan-intro h1{font-size:clamp(1.25rem,3vw,1.7rem);margin-bottom:8px}
+  .scan-intro p{display:block}
+  .scan-shell{
+    max-width:980px;margin:12px auto 26px;border-radius:22px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+    grid-template-columns:1fr 350px;
+    grid-template-areas:"topbar topbar" "dots dots" "viewport controls" "actionbar controls";
+    grid-template-rows:auto auto 1fr auto;
+    height:min(84vh,780px);min-height:600px;
+  }
+  .scan-controls{border-left:1px solid #232326;overflow-y:auto}
+  .scan-toolbar-row{flex-wrap:wrap;overflow-x:visible}
+}
 
-.scan-topbar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#1a1a1c;border-bottom:1px solid #262629;flex-shrink:0}
+.scan-topbar{grid-area:topbar;display:flex;align-items:center;gap:10px;padding:12px 14px;background:#1a1a1c;border-bottom:1px solid #262629;flex-shrink:0}
 .tb-icon{width:34px;height:34px;border-radius:50%;background:#262629;border:none;color:#eee;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:.85rem}
 .tb-icon:hover{background:#333}
 .tb-title{flex:1;min-width:0;text-align:center}
 .tb-title-main{color:#fff;font-weight:700;font-size:.9rem;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-title-sub{color:#9aa0a6;font-size:.67rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.scan-shell .page-strip{background:#151517;padding:8px 10px;margin-top:0;border-bottom:1px solid #232326}
+.scan-shell .page-strip{grid-area:dots;background:#151517;padding:8px 10px;margin-top:0;border-bottom:1px solid #232326}
 .scan-shell .page-thumb{width:44px;height:58px;border-color:#333}
 .scan-shell .page-thumb.active{border-color:#4f8cff}
 .scan-shell .page-add{width:44px;height:58px;border-color:#3a3a3a;color:#888;background:#1c1c1e}
 
-.scan-viewport{position:relative;flex:1;min-height:min(56vh,480px);background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px}
+.scan-viewport{grid-area:viewport;position:relative;min-height:0;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px}
 .scan-viewport .upload-title{color:#fff}
 .scan-viewport .upload-sub{color:#9aa0a6}
 .scan-viewport .crop-editor-imgwrap{width:100%;height:100%;max-height:none}
 .scan-livewrap{max-width:100%;max-height:100%;display:flex;align-items:center;justify-content:center}
-.scan-livewrap canvas{max-width:100%;max-height:min(56vh,480px);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.scan-livewrap canvas{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 
-.scan-controls{background:#161618;flex-shrink:0}
+.scan-controls{grid-area:controls;background:#161618;flex-shrink:0}
 .scan-shell .page-nav-strip{padding:8px 12px 0}
 .scan-shell .page-nav-btn{background:#232326;border-color:#3a3a3d;color:#eee}
 .scan-shell .page-nav-btn:hover:not(:disabled){border-color:#4f8cff;color:#4f8cff}
 .scan-shell .page-nav-count{color:#aaa}
 .scan-shell .crop-rotate-badge{color:#4f8cff;font-weight:800;font-size:.78rem}
 .scan-shell .crop-editor-hint{color:#9aa0a6;padding:0 12px;margin-top:6px}
+.fine-rot-row{padding:8px 14px 0}
+.fine-rot-row label{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:#9aa0a6;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.fine-rot-row label span{color:#7aa2ff}
+.fine-rot-row input[type=range]{accent-color:#4f8cff}
+.scan-shell input[type=range]{accent-color:#4f8cff}
+.resize-dims{font-size:.72rem;color:#9aa0a6;margin-top:6px}
+
+.markup-tools-row{display:flex;align-items:center;gap:8px;padding:10px 14px 0;flex-wrap:wrap}
+.markup-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;flex-shrink:0}
+.markup-swatch.active{border-color:#fff;box-shadow:0 0 0 2px #4f8cff}
+.markup-tools-row input[type=color]{width:26px;height:26px;padding:0;border:2px solid #3a3a3d;border-radius:50%;background:none;cursor:pointer;flex-shrink:0}
+.markup-hl-toggle{display:flex;align-items:center;gap:5px;font-size:.74rem;color:#ccc;cursor:pointer;margin-left:auto}
+.markup-hl-toggle input{accent-color:#4f8cff}
+
+.eraser-mode-btn{padding:7px 14px;border-radius:20px;border:1.5px solid #3a3a3d;background:#1c1c1e;color:#ccc;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit}
+.eraser-mode-btn.active{border-color:#4f8cff;background:#182238;color:#7aa2ff}
+
+.reorder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:10px;padding:12px 14px;max-height:100%;overflow-y:auto}
+.reorder-item{position:relative;border-radius:8px;overflow:hidden;border:2px solid #333;background:#1c1c1e}
+.reorder-item img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.reorder-item .pg-num{position:absolute;top:3px;left:4px;background:rgba(0,0,0,.65);color:#fff;font-size:.62rem;font-weight:700;padding:1px 5px;border-radius:6px}
+.reorder-move-btns{position:absolute;bottom:2px;left:2px;right:2px;display:flex;justify-content:space-between}
+.reorder-move-btns button{width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.65);color:#fff;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.reorder-move-btns button:disabled{opacity:.3;cursor:not-allowed}
+#markupCanvas,#eraserCanvas{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5);touch-action:none;cursor:crosshair}
 .scan-shell .filter-scroll-row{padding:10px 8px 0}
 .scan-shell .filter-card{background:#1c1c1e;border-color:#333}
 .scan-shell .filter-card.active{border-color:#4f8cff;background:#182238}
@@ -251,7 +304,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .tb-btn.tb-primary:hover{background:#182238}
 .tb-btn:disabled{opacity:.4;cursor:not-allowed}
 
-.scan-actionbar{display:none;gap:10px;padding:12px 16px 16px;background:#161618;flex-shrink:0}
+.scan-actionbar{grid-area:actionbar;display:none;gap:10px;padding:12px 16px 16px;background:#161618;flex-shrink:0}
 .ab-btn{flex:1;padding:13px;border-radius:26px;font-size:.85rem;font-weight:700;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
 .ab-outline{background:transparent;border:1.5px solid #444;color:#eee}
 .ab-outline:hover{border-color:#666}
@@ -343,6 +396,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     </div>
 
     <div class="scan-livewrap" id="livePreviewWrap" style="display:none"><canvas id="livePreview"></canvas></div>
+    <div class="scan-livewrap" id="markupWrap" style="display:none"><canvas id="markupCanvas"></canvas></div>
+    <div class="scan-livewrap" id="eraserWrap" style="display:none"><canvas id="eraserCanvas"></canvas></div>
   </main>
 
   <!-- MODE: CROP -->
@@ -354,11 +409,19 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <button class="page-nav-btn" id="cropNextBtn" onclick="cropGoPage(1)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     <p class="crop-editor-hint" id="autoDetectStatus">📱 Default rectangle crop hai — perspective/tilted document ke liye "Free Select" dabakar 4 corners drag karein, ya "AI Detect" try karein.</p>
+    <div class="fine-rot-row" id="fineRotRow">
+      <label>Straighten <span id="vCropFineRot">0°</span></label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" oninput="onFineRotChange()">
+        <button type="button" class="tb-icon" onclick="resetFineRot()" title="Reset Straighten to 0°" style="width:30px;height:30px;flex-shrink:0"><i class="fa-solid fa-rotate-right" style="font-size:.7rem"></i></button>
+      </div>
+    </div>
     <div class="scan-toolbar-row">
       <button class="tb-btn" onclick="retakeCurrentPage()"><i class="fa-solid fa-camera-rotate"></i><span>Retake</span></button>
       <button class="tb-btn" id="freeSelBtn" onclick="toggleFreeSelect()"><i class="fa-solid fa-draw-polygon"></i><span>Free Select</span></button>
       <button class="tb-btn" id="autoDetectBtn" onclick="autoDetectCorners()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Detect</span></button>
-      <button class="tb-btn" onclick="rotateCurrentPage(90)"><i class="fa-solid fa-rotate-right"></i><span>Rotate</span></button>
+      <button class="tb-btn" onclick="rotateCurrentPage(-90)"><i class="fa-solid fa-rotate-left"></i><span>Rotate ⟲</span></button>
+      <button class="tb-btn" onclick="rotateCurrentPage(90)"><i class="fa-solid fa-rotate-right"></i><span>Rotate ⟳</span></button>
       <button class="tb-btn" onclick="zoomCrop(0.4)"><i class="fa-solid fa-magnifying-glass-plus"></i><span>Zoom+</span></button>
       <button class="tb-btn" onclick="zoomCrop(-0.4)"><i class="fa-solid fa-magnifying-glass-minus"></i><span>Zoom-</span></button>
       <button class="tb-btn" id="cropResetBtn" onclick="resetCrop()"><i class="fa-solid fa-arrow-rotate-left"></i><span>Reset</span></button>
@@ -443,9 +506,85 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <button class="tb-btn" onclick="quickRotate()"><i class="fa-solid fa-rotate-right"></i><span>Rotate</span></button>
       <button class="tb-btn" onclick="setMode('filters')"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Filters</span></button>
       <button class="tb-btn" onclick="setMode('adjust')"><i class="fa-solid fa-sliders"></i><span>Adjust</span></button>
+      <button class="tb-btn" onclick="setMode('resize')"><i class="fa-solid fa-maximize"></i><span>Resize</span></button>
+      <button class="tb-btn" onclick="setMode('markup')"><i class="fa-solid fa-pen"></i><span>Markup</span></button>
+      <button class="tb-btn" onclick="setMode('eraser')"><i class="fa-solid fa-eraser"></i><span>Magic Eraser</span></button>
       <button class="tb-btn" onclick="setMode('ocr')"><i class="fa-solid fa-font"></i><span>Text</span></button>
+      <button class="tb-btn" onclick="setMode('reorder')"><i class="fa-solid fa-arrows-left-right"></i><span>Reorder</span></button>
       <button class="tb-btn" onclick="quickDuplicate()"><i class="fa-solid fa-clone"></i><span>Duplicate</span></button>
       <button class="tb-btn" onclick="quickDelete()"><i class="fa-solid fa-trash"></i><span>Delete</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: RESIZE -->
+  <div class="scan-controls" id="modeResize" style="display:none">
+    <div class="adj-grid">
+      <div class="adj-group">
+        <div class="adj-label">Scan Size <span id="resizePctVal">100%</span></div>
+        <input type="range" id="resizePct" min="25" max="100" value="100" step="5" oninput="onResizeSliderChange()">
+        <div class="resize-dims" id="resizeDimsLabel">— × — px</div>
+      </div>
+    </div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="setMode('view')"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="setResizePreset(50)"><span>50%</span></button>
+      <button class="tb-btn" onclick="setResizePreset(75)"><span>75%</span></button>
+      <button class="tb-btn" onclick="setResizePreset(100)"><span>100%</span></button>
+      <button class="tb-btn tb-primary" onclick="applyResizeAndDone()"><i class="fa-solid fa-check"></i><span>Apply</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: MARKUP -->
+  <div class="scan-controls" id="modeMarkup" style="display:none">
+    <div class="markup-tools-row" id="markupSwatches">
+      <span class="markup-swatch active" style="background:#e63946" onclick="setMarkupColor('#e63946',this)"></span>
+      <span class="markup-swatch" style="background:#2f7dff" onclick="setMarkupColor('#2f7dff',this)"></span>
+      <span class="markup-swatch" style="background:#2ecc71" onclick="setMarkupColor('#2ecc71',this)"></span>
+      <span class="markup-swatch" style="background:#f1c40f" onclick="setMarkupColor('#f1c40f',this)"></span>
+      <span class="markup-swatch" style="background:#111111" onclick="setMarkupColor('#111111',this)"></span>
+      <input type="color" id="markupCustomColor" value="#e63946" onchange="setMarkupColor(this.value)" title="Custom color">
+      <label class="markup-hl-toggle"><input type="checkbox" id="markupHighlighter" onchange="onMarkupHLToggle()"> Highlighter</label>
+    </div>
+    <div class="adj-grid">
+      <div class="adj-group">
+        <div class="adj-label">Stroke Width <span id="markupWidthVal">4px</span></div>
+        <input type="range" id="markupWidthRange" min="1" max="24" value="4" oninput="onMarkupWidthChange()">
+      </div>
+    </div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="markupDone()"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="markupUndo()"><i class="fa-solid fa-rotate-left"></i><span>Undo</span></button>
+      <button class="tb-btn" onclick="markupClear()"><i class="fa-solid fa-trash"></i><span>Clear</span></button>
+      <button class="tb-btn tb-primary" onclick="markupDone()"><i class="fa-solid fa-check"></i><span>Done</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: MAGIC ERASER (simplified paint-out brush, not true AI inpainting) -->
+  <div class="scan-controls" id="modeEraser" style="display:none">
+    <p class="crop-editor-hint">🧽 Auto mode us jagah ke aas-paas ke background color se paint karta hai; Solid Color mode ek fixed rang (jaise white) use karta hai.</p>
+    <div class="markup-tools-row" id="eraserModeRow">
+      <button type="button" class="eraser-mode-btn active" data-mode="auto" onclick="setEraserMode('auto',this)">Auto Background</button>
+      <button type="button" class="eraser-mode-btn" data-mode="solid" onclick="setEraserMode('solid',this)">Solid Color</button>
+      <input type="color" id="eraserCustomColor" value="#ffffff" onchange="setEraserColor(this.value)" title="Fill color" style="display:none">
+    </div>
+    <div class="adj-grid">
+      <div class="adj-group">
+        <div class="adj-label">Brush Size <span id="eraserWidthVal">28px</span></div>
+        <input type="range" id="eraserWidthRange" min="8" max="80" value="28" oninput="onEraserWidthChange()">
+      </div>
+    </div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="eraserDone()"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="eraserUndo()"><i class="fa-solid fa-rotate-left"></i><span>Undo All</span></button>
+      <button class="tb-btn tb-primary" onclick="eraserDone()"><i class="fa-solid fa-check"></i><span>Done</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: REORDER PAGES -->
+  <div class="scan-controls" id="modeReorder" style="display:none">
+    <div class="reorder-grid" id="reorderGrid"></div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn tb-primary" onclick="setMode('view')"><i class="fa-solid fa-check"></i><span>Done</span></button>
     </div>
   </div>
 
@@ -900,15 +1039,22 @@ var curPageIdx=0;
 var quadUI=null;
 var cropInst=null;
 var exportMode='pdf';
+/* First 6 match Adobe Scan's own named filters (verified from the app's
+   compiled resources: filter_options_original_photo/original_color/
+   grayscale/color_document/whiteboard/light_text) — kept in that order and
+   with those exact names for "same to same" parity. The rest are bonus
+   extras beyond the real app. */
 var FILTERS=[
-  {id:'none',name:'Original',css:''},
-  {id:'autoclean',name:'Auto Clean & Sharpen',css:'',pixel:true},
-  {id:'autocolor',name:'Auto Color',css:'saturate(126%) contrast(114%) brightness(107%)'},
-  {id:'bw',name:'B&W Scan',css:'grayscale(100%) contrast(160%) brightness(110%)'},
+  {id:'none',name:'Original Photo',css:''},
+  {id:'origcolor',name:'Original Color',css:''},
   {id:'gray',name:'Grayscale',css:'grayscale(100%) contrast(105%)'},
+  {id:'autocolor',name:'Color Document',css:'saturate(126%) contrast(114%) brightness(107%)'},
+  {id:'whiteboard',name:'Whiteboard',css:'brightness(126%) contrast(145%) saturate(55%)'},
+  {id:'lighttext',name:'Light Text',css:'contrast(145%) brightness(116%)'},
+  {id:'autoclean',name:'Auto Clean & Sharpen',css:'',pixel:true},
+  {id:'bw',name:'B&W Scan',css:'grayscale(100%) contrast(160%) brightness(110%)'},
   {id:'enhance',name:'Enhance',css:'contrast(122%) brightness(108%) saturate(112%)'},
   {id:'magic',name:'Magic Color',css:'saturate(145%) contrast(116%) brightness(104%)'},
-  {id:'whiteboard',name:'Whiteboard',css:'brightness(126%) contrast(145%) saturate(55%)'},
   {id:'hcbw',name:'High Contrast B&W',css:'grayscale(100%) contrast(210%)'},
   {id:'warm',name:'Warm Tone',css:'sepia(28%) saturate(122%) brightness(104%)'},
   {id:'cool',name:'Cool Tone',css:'hue-rotate(8deg) saturate(112%) contrast(106%)'},
@@ -949,11 +1095,15 @@ function loadPageIntoEditors(idx){
   previewImg.src=p.warpedDataURL;
   if(previewImg.complete&&previewImg.naturalWidth>0)previewImg.onload();
 }
+var VIEWPORT_LAYERS=['uploadZone','cropperWrap','livePreviewWrap','markupWrap','eraserWrap'];
+var MODE_PANELS=['modeCrop','modeFilters','modeAdjust','modeOcr','modeView','modeResize','modeMarkup','modeEraser','modeReorder'];
 function setMode(mode){
   G('uploadZone').style.display=(mode==='upload')?'block':'none';
   G('cropperWrap').style.display=(mode==='crop')?'block':'none';
-  G('livePreviewWrap').style.display=(mode==='upload'||mode==='crop')?'none':'flex';
-  ['modeCrop','modeFilters','modeAdjust','modeOcr','modeView'].forEach(function(id){G(id).style.display='none';});
+  G('markupWrap').style.display=(mode==='markup')?'flex':'none';
+  G('eraserWrap').style.display=(mode==='eraser')?'flex':'none';
+  G('livePreviewWrap').style.display=(mode==='upload'||mode==='crop'||mode==='markup'||mode==='eraser')?'none':'flex';
+  MODE_PANELS.forEach(function(id){G(id).style.display='none';});
   G('pageStrip').style.display=pages.length?'flex':'none';
   G('scanActionbar').style.display=(mode==='upload'||!pages.length)?'none':'flex';
   if(mode==='upload'||!pages.length){
@@ -967,6 +1117,10 @@ function setMode(mode){
     else if(mode==='filters'){G('modeFilters').style.display='block';initFilterStep();}
     else if(mode==='adjust'){G('modeAdjust').style.display='block';loadPageIntoEditors(curPageIdx);}
     else if(mode==='ocr'){G('modeOcr').style.display='block';loadPageIntoEditors(curPageIdx);initOcrStep();}
+    else if(mode==='resize'){G('modeResize').style.display='block';enterResizeMode();}
+    else if(mode==='markup'){G('modeMarkup').style.display='block';enterMarkupMode();}
+    else if(mode==='eraser'){G('modeEraser').style.display='block';enterEraserMode();}
+    else if(mode==='reorder'){G('modeReorder').style.display='block';renderReorderGrid();}
     else{G('modeView').style.display='block';loadPageIntoEditors(curPageIdx);}
     updateTopbarTitle();
   });
@@ -1020,6 +1174,277 @@ function resetAdjustSliders(){
   p.brightness=100;p.contrast=100;p.saturation=100;
   G('brRange').value=100;G('conRange').value=100;G('satRange').value=100;
   updateAdjust();
+}
+
+/* ================= Resize (per-page downscale, matches Adobe Scan's Resize tool) ================= */
+function enterResizeMode(){
+  var p=pages[curPageIdx];
+  var img=new Image();
+  img.onload=function(){
+    G('resizePct').value=100;
+    G('resizePctVal').textContent='100%';
+    G('resizePct').dataset.baseW=img.naturalWidth;
+    G('resizePct').dataset.baseH=img.naturalHeight;
+    G('resizeDimsLabel').textContent=img.naturalWidth+' × '+img.naturalHeight+' px';
+  };
+  img.src=p.warpedDataURL;
+}
+function onResizeSliderChange(){
+  var pct=parseInt(G('resizePct').value,10);
+  G('resizePctVal').textContent=pct+'%';
+  var bw=parseInt(G('resizePct').dataset.baseW,10)||0;
+  var bh=parseInt(G('resizePct').dataset.baseH,10)||0;
+  G('resizeDimsLabel').textContent=Math.round(bw*pct/100)+' × '+Math.round(bh*pct/100)+' px';
+}
+function setResizePreset(pct){
+  G('resizePct').value=pct;
+  onResizeSliderChange();
+}
+function applyResizeAndDone(){
+  var pct=parseInt(G('resizePct').value,10);
+  if(pct>=100){setMode('view');return;}
+  var idx=curPageIdx,p=pages[idx];
+  var img=new Image();
+  img.onload=function(){
+    var w=Math.max(80,Math.round(img.naturalWidth*pct/100));
+    var h=Math.max(80,Math.round(img.naturalHeight*pct/100));
+    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    cv.getContext('2d').drawImage(img,0,0,w,h);
+    p.warpedDataURL=cv.toDataURL('image/jpeg',0.94);
+    renderFinalForPage(idx);
+    setMode('view');
+  };
+  img.src=p.warpedDataURL;
+}
+
+/* ================= Markup (freehand pen/highlighter annotation) =================
+   Strokes are stored in FULL natural-resolution pixel coordinates on the
+   page object (pages[i].markupStrokes), so they stay pixel-accurate no
+   matter what size they're drawn at (live canvas is CSS-scaled down but
+   its buffer stays at natural size) or exported at (drawMarkupOnCanvas is
+   called again at the export scale in renderFinalForPage /
+   renderPageCanvasForExport). */
+var markupColor='#e63946',markupWidth=4,markupIsHL=false;
+var markupBaseCanvas=null,markupDrawing=false,markupCurStroke=null;
+function enterMarkupMode(){
+  var p=pages[curPageIdx];
+  var img=new Image();
+  img.onload=function(){
+    var cnv=G('markupCanvas');
+    cnv.width=img.naturalWidth;cnv.height=img.naturalHeight;
+    markupBaseCanvas=document.createElement('canvas');
+    markupBaseCanvas.width=img.naturalWidth;markupBaseCanvas.height=img.naturalHeight;
+    markupBaseCanvas.getContext('2d').drawImage(img,0,0);
+    redrawMarkup();
+  };
+  img.src=p.finalDataURL||p.warpedDataURL;
+}
+function drawStrokeOnCtx(ctx,s,scale){
+  if(!s.points||!s.points.length)return;
+  ctx.save();
+  ctx.globalAlpha=s.opacity||1;
+  ctx.strokeStyle=s.color;
+  ctx.lineWidth=Math.max(1,s.width*scale);
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();
+  s.points.forEach(function(pt,i){
+    var x=pt.x*scale,y=pt.y*scale;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  ctx.restore();
+}
+function redrawMarkup(){
+  var cnv=G('markupCanvas');
+  if(!markupBaseCanvas)return;
+  var ctx=cnv.getContext('2d');
+  ctx.clearRect(0,0,cnv.width,cnv.height);
+  ctx.drawImage(markupBaseCanvas,0,0);
+  (pages[curPageIdx].markupStrokes||[]).forEach(function(s){drawStrokeOnCtx(ctx,s,1);});
+}
+function markupCanvasPoint(ev){
+  var cnv=G('markupCanvas');
+  var r=cnv.getBoundingClientRect();
+  return {x:(ev.clientX-r.left)*(cnv.width/r.width),y:(ev.clientY-r.top)*(cnv.height/r.height)};
+}
+function markupPointerDown(ev){
+  if(!markupBaseCanvas)return;
+  ev.preventDefault();
+  var p=pages[curPageIdx];
+  if(!p.markupStrokes)p.markupStrokes=[];
+  var pt=markupCanvasPoint(ev);
+  markupCurStroke={color:markupColor,width:markupWidth,opacity:markupIsHL?0.35:1,points:[pt]};
+  p.markupStrokes.push(markupCurStroke);
+  markupDrawing=true;
+  redrawMarkup();
+}
+function markupPointerMove(ev){
+  if(!markupDrawing||!markupCurStroke)return;
+  ev.preventDefault();
+  markupCurStroke.points.push(markupCanvasPoint(ev));
+  redrawMarkup();
+}
+function markupPointerUp(){markupDrawing=false;markupCurStroke=null;}
+function setMarkupColor(color,el){
+  markupColor=color;
+  document.querySelectorAll('#markupSwatches .markup-swatch').forEach(function(s){s.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+function onMarkupHLToggle(){
+  markupIsHL=G('markupHighlighter').checked;
+}
+function onMarkupWidthChange(){
+  markupWidth=parseInt(G('markupWidthRange').value,10)||4;
+  G('markupWidthVal').textContent=markupWidth+'px';
+}
+function markupUndo(){
+  var p=pages[curPageIdx];
+  if(p.markupStrokes&&p.markupStrokes.length){p.markupStrokes.pop();redrawMarkup();}
+}
+function markupClear(){
+  var p=pages[curPageIdx];
+  if(!p.markupStrokes||!p.markupStrokes.length)return;
+  if(confirm('Sabhi markup hataayein?')){p.markupStrokes=[];redrawMarkup();}
+}
+function drawMarkupOnCanvas(cnv,p,scale){
+  if(!p.markupStrokes||!p.markupStrokes.length)return;
+  var ctx=cnv.getContext('2d');
+  p.markupStrokes.forEach(function(s){drawStrokeOnCtx(ctx,s,scale);});
+}
+function markupDone(){
+  renderFinalForPage(curPageIdx);
+  setMode('view');
+}
+(function(){
+  var cnv=G('markupCanvas');
+  cnv.addEventListener('pointerdown',markupPointerDown);
+  cnv.addEventListener('pointermove',markupPointerMove);
+  cnv.addEventListener('pointerup',markupPointerUp);
+  cnv.addEventListener('pointercancel',markupPointerUp);
+  cnv.addEventListener('pointerleave',markupPointerUp);
+})();
+
+/* ================= Magic Eraser (simplified paint-out brush) =================
+   Real Adobe Scan uses AI inpainting; this is an honest simplification —
+   "Auto Background" samples the color right under the brush from the
+   pristine base image before painting (works well for the common case of
+   erasing a small mark on an otherwise uniform document background),
+   "Solid Color" paints a fixed user-picked color (defaults to white).
+   Unlike Markup, erasing is baked directly into warpedDataURL on Done —
+   there is nothing meaningful to "layer" later since the erased pixels
+   ARE the new page content. */
+var eraserMode='auto',eraserColor='#ffffff',eraserWidth=28;
+var eraserBaseCanvas=null,eraserDrawing=false,eraserLastPt=null,eraserStrokeColor=null;
+function enterEraserMode(){
+  var p=pages[curPageIdx];
+  var img=new Image();
+  img.onload=function(){
+    var cnv=G('eraserCanvas');
+    cnv.width=img.naturalWidth;cnv.height=img.naturalHeight;
+    eraserBaseCanvas=document.createElement('canvas');
+    eraserBaseCanvas.width=img.naturalWidth;eraserBaseCanvas.height=img.naturalHeight;
+    eraserBaseCanvas.getContext('2d').drawImage(img,0,0);
+    cnv.getContext('2d').drawImage(eraserBaseCanvas,0,0);
+  };
+  img.src=p.warpedDataURL;
+}
+function eraserCanvasPoint(ev){
+  var cnv=G('eraserCanvas');
+  var r=cnv.getBoundingClientRect();
+  return {x:(ev.clientX-r.left)*(cnv.width/r.width),y:(ev.clientY-r.top)*(cnv.height/r.height)};
+}
+function sampleColorAt(cnv,x,y){
+  var ctx=cnv.getContext('2d');
+  var sx=Math.max(0,Math.min(cnv.width-1,Math.round(x)));
+  var sy=Math.max(0,Math.min(cnv.height-1,Math.round(y)));
+  var d=ctx.getImageData(sx,sy,1,1).data;
+  return 'rgb('+d[0]+','+d[1]+','+d[2]+')';
+}
+function eraserPointerDown(ev){
+  if(!eraserBaseCanvas)return;
+  ev.preventDefault();
+  var pt=eraserCanvasPoint(ev);
+  eraserStrokeColor=(eraserMode==='auto')?sampleColorAt(eraserBaseCanvas,pt.x,pt.y):eraserColor;
+  eraserDrawing=true;
+  eraserLastPt=pt;
+  paintEraserDab(pt);
+}
+function paintEraserDab(pt){
+  [G('eraserCanvas'),eraserBaseCanvas].forEach(function(target){
+    var ctx=target.getContext('2d');
+    ctx.fillStyle=eraserStrokeColor;
+    ctx.beginPath();ctx.arc(pt.x,pt.y,eraserWidth/2,0,Math.PI*2);ctx.fill();
+  });
+}
+function eraserPointerMove(ev){
+  if(!eraserDrawing||!eraserBaseCanvas)return;
+  ev.preventDefault();
+  var pt=eraserCanvasPoint(ev);
+  [G('eraserCanvas'),eraserBaseCanvas].forEach(function(target){
+    var ctx=target.getContext('2d');
+    ctx.strokeStyle=eraserStrokeColor;ctx.fillStyle=eraserStrokeColor;
+    ctx.lineWidth=eraserWidth;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();ctx.moveTo(eraserLastPt.x,eraserLastPt.y);ctx.lineTo(pt.x,pt.y);ctx.stroke();
+  });
+  eraserLastPt=pt;
+}
+function eraserPointerUp(){eraserDrawing=false;eraserLastPt=null;eraserStrokeColor=null;}
+function setEraserMode(mode,el){
+  eraserMode=mode;
+  document.querySelectorAll('.eraser-mode-btn').forEach(function(b){b.classList.remove('active');});
+  if(el)el.classList.add('active');
+  G('eraserCustomColor').style.display=(mode==='solid')?'inline-block':'none';
+}
+function setEraserColor(color){
+  eraserColor=color;
+}
+function onEraserWidthChange(){
+  eraserWidth=parseInt(G('eraserWidthRange').value,10)||28;
+  G('eraserWidthVal').textContent=eraserWidth+'px';
+}
+function eraserUndo(){
+  // Simplest reliable "undo": discard every stroke made this session and
+  // restart from the page's last committed (pre-eraser) image.
+  enterEraserMode();
+}
+function eraserDone(){
+  if(eraserBaseCanvas)pages[curPageIdx].warpedDataURL=eraserBaseCanvas.toDataURL('image/jpeg',0.94);
+  eraserBaseCanvas=null;
+  renderFinalForPage(curPageIdx);
+  setMode('view');
+}
+(function(){
+  var cnv=G('eraserCanvas');
+  cnv.addEventListener('pointerdown',eraserPointerDown);
+  cnv.addEventListener('pointermove',eraserPointerMove);
+  cnv.addEventListener('pointerup',eraserPointerUp);
+  cnv.addEventListener('pointercancel',eraserPointerUp);
+  cnv.addEventListener('pointerleave',eraserPointerUp);
+})();
+
+/* ================= Reorder Pages ================= */
+function renderReorderGrid(){
+  var grid=G('reorderGrid');
+  grid.innerHTML='';
+  pages.forEach(function(p,i){
+    var d=document.createElement('div');
+    d.className='reorder-item';
+    d.innerHTML='<img src="'+p.rawSrc+'"><span class="pg-num">'+(i+1)+'</span>'+
+      '<div class="reorder-move-btns">'+
+      '<button type="button" '+(i===0?'disabled':'')+' onclick="movePage('+i+',-1)"><i class="fa-solid fa-chevron-left"></i></button>'+
+      '<button type="button" '+(i===pages.length-1?'disabled':'')+' onclick="movePage('+i+',1)"><i class="fa-solid fa-chevron-right"></i></button>'+
+      '</div>';
+    grid.appendChild(d);
+  });
+}
+function movePage(i,dir){
+  var j=i+dir;
+  if(j<0||j>=pages.length)return;
+  var tmp=pages[i];pages[i]=pages[j];pages[j]=tmp;
+  if(curPageIdx===i)curPageIdx=j;
+  else if(curPageIdx===j)curPageIdx=i;
+  renderReorderGrid();
+  renderPageStrip();
 }
 function openExportSheet(){
   buildExportPreview();
@@ -1144,11 +1569,41 @@ function initRectCropper(){
       // false locks the image in place; only the crop box itself (via its
       // own resizable edges/corners below) can move.
       background:true,responsive:true,movable:false,zoomable:true,zoomOnTouch:true,zoomOnWheel:true,
-      wheelZoomRatio:.1,rotatable:false,scalable:false,
+      wheelZoomRatio:.1,rotatable:true,scalable:false,
       cropBoxMovable:true,cropBoxResizable:true,aspectRatio:NaN,
-      minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200
+      minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200,
+      ready:function(){
+        var fr=pages[curPageIdx]&&pages[curPageIdx].fineRot||0;
+        if(fr)cropInst.rotateTo(fr);
+      }
     });
   }catch(e){}
+}
+/* ---- Straighten (fine rotate, -45..45deg) — separate from the blunt 90 deg
+   Rotate button, matches Adobe Scan's "Straighten" tool. Only meaningful in
+   rectangle-crop mode (Cropper.js supports rotateTo()); Free Select already
+   achieves the same correction via its own 4-corner drag. ---- */
+function syncFineRotUI(){
+  var idx=curPageIdx,p=pages[idx];
+  var val=(p&&p.fineRot)||0;
+  var el=G('cropFineRot'),lbl=G('vCropFineRot'),row=G('fineRotRow');
+  if(el)el.value=val;
+  if(lbl)lbl.textContent=val+'°';
+  if(row)row.style.opacity=(quadUI&&quadUI.isActive())?'.4':'1';
+  if(row)row.style.pointerEvents=(quadUI&&quadUI.isActive())?'none':'auto';
+}
+function onFineRotChange(){
+  var idx=curPageIdx;
+  var val=parseFloat(G('cropFineRot').value)||0;
+  pages[idx].fineRot=val;
+  G('vCropFineRot').textContent=val+'°';
+  if(cropInst)cropInst.rotateTo(val);
+}
+function resetFineRot(){
+  pages[curPageIdx].fineRot=0;
+  G('cropFineRot').value=0;
+  G('vCropFineRot').textContent='0°';
+  if(cropInst)cropInst.rotateTo(0);
 }
 function getRotatedSrcForPage(idx){
   var p=pages[idx];
@@ -1170,6 +1625,7 @@ function initPageCropEditor(idx,opts){
     quadUI=new QuadCropUI(G('cropperWrap'),img);
     if(wantFree){quadUI.activate();pages[idx].freeSelect=true;}
     else{initRectCropper();pages[idx].freeSelect=false;}
+    syncFineRotUI();
     if(typeof opts.onReady==='function')opts.onReady();
   };
   img.src=getRotatedSrcForPage(idx);
@@ -1191,6 +1647,7 @@ function toggleFreeSelect(){
     pages[idx].freeSelect=true;
     setFreeSelBtnState(true);
   }
+  syncFineRotUI();
 }
 function resetCrop(){
   var idx=curPageIdx;
@@ -1201,7 +1658,9 @@ function resetCrop(){
     setFreeSelBtnState(false);
   }else if(cropInst){
     cropInst.reset();
+    pages[idx].fineRot=0;
   }
+  syncFineRotUI();
 }
 
 /* ================= AI Auto Detect Corners (OpenCV.js) =================
@@ -1522,6 +1981,7 @@ function renderFinalForPage(idx){
   img.onload=function(){
     var cnv=document.createElement('canvas');
     drawFilteredToCanvas(img,cnv,p,img.naturalWidth,img.naturalHeight);
+    drawMarkupOnCanvas(cnv,p,1);
     p.finalDataURL=cnv.toDataURL('image/jpeg',0.95);
   };
   img.src=p.warpedDataURL;
@@ -1780,6 +2240,7 @@ function renderPageCanvasForExport(idx,scale){
       var w=Math.max(1,Math.round(img.naturalWidth*scale));
       var h=Math.max(1,Math.round(img.naturalHeight*scale));
       drawFilteredToCanvas(img,cnv,p,w,h);
+      drawMarkupOnCanvas(cnv,p,scale);
       applyWatermarkToCanvas(cnv);
       resolve(cnv);
     };
