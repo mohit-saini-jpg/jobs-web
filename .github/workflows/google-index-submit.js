@@ -352,6 +352,7 @@ function collectCandidates(state) {
 // costs us nothing that matters. Returns true only on the unambiguous
 // "Submitted and indexed" coverage state — anything else (not yet crawled,
 // excluded, error, etc.) falls through to a real submission as before.
+let inspectFailLogged = 0;
 async function isAlreadyIndexed(token, url) {
   const body = JSON.stringify({ inspectionUrl: url, siteUrl: SITE + '/' });
   const res = await httpsRequest({
@@ -364,7 +365,16 @@ async function isAlreadyIndexed(token, url) {
       'Content-Length': Buffer.byteLength(body),
     },
   }, body);
-  if (res.status !== 200) return { indexed: false, checked: false };
+  if (res.status !== 200) {
+    // Log a handful of real failures (status + body) instead of swallowing
+    // them silently — this is the only way to tell "API/permission error"
+    // apart from "not indexed yet" without a Cloud Console screenshot.
+    if (inspectFailLogged < 3) {
+      inspectFailLogged++;
+      console.warn(`⚠️  URL Inspection failed (${res.status}) for ${url}: ${String(res.body).slice(0, 300)}`);
+    }
+    return { indexed: false, checked: false };
+  }
   try {
     const coverage = JSON.parse(res.body)
       ?.inspectionResult?.indexStatusResult?.coverageState || '';
@@ -416,7 +426,7 @@ async function publish(token, url) {
 
   const doneSet = new Set(state.done_slugs);
   let ok = 0, hubOk = 0, newOk = 0, backlogOk = 0, quotaStopped = false, forbidden = 0, other = 0;
-  let inspected = 0, alreadyIndexed = 0;
+  let inspected = 0, alreadyIndexed = 0, inspectFailed = 0;
   const INSPECT_CAP = 500;  // stay well under the 2000/day, 600/min URL Inspection quota
 
   // Pass 1: hub pages always submit unconditionally (freshness ping, not an
@@ -433,7 +443,8 @@ async function publish(token, url) {
     if (inspected >= INSPECT_CAP) break;    // hit the inspection safety cap for this run
 
     inspected++;
-    const { indexed } = await isAlreadyIndexed(token, item.url);
+    const { indexed, checked } = await isAlreadyIndexed(token, item.url);
+    if (!checked) inspectFailed++;
     if (indexed) {
       alreadyIndexed++;
       if (item.slug && !doneSet.has(item.slug)) {
@@ -478,6 +489,9 @@ async function publish(token, url) {
   saveState(state);
   const backlogAfter = Math.max(0, totalJobs - state.done_slugs.length);
   console.log(`🔎 Inspected ${inspected} candidate(s) — ${alreadyIndexed} already indexed by Google (recorded free, no quota spent)`);
+  if (inspectFailed > 0) {
+    console.warn(`⚠️  URL Inspection API call FAILED for ${inspectFailed}/${inspected} candidates (see the sample warnings above for status code) — the "already indexed" check is blind until this is fixed, so every candidate falls through to a real Indexing API submission.`);
+  }
   console.log(`✅ Google Indexing done — submitted ${ok} (hub ${hubOk}, new ${newOk}, backlog ${backlogOk}) | today ${state.count_today}/${DAILY_CAP} | quota-stopped ${quotaStopped ? 'yes' : 'no'} | forbidden ${forbidden} | other ${other}`);
   console.log(`   📊 Backlog: ${state.done_slugs.length}/${totalJobs} job pages ever submitted — ${backlogAfter} remaining.`);
   process.exit(0);
