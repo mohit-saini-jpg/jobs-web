@@ -192,6 +192,83 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   .dl-btns{flex-direction:column}
   .btn-dl{width:100%;justify-content:center}
 }
+
+/* ================= Adobe-Scan-style App Shell ================= */
+.scan-intro{max-width:640px;margin:0 auto;padding:26px 18px 6px;text-align:center}
+.scan-intro h1{font-size:clamp(1.25rem,3vw,1.7rem);margin-bottom:8px;color:#0d2257}
+.scan-intro p{font-size:.86rem;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto}
+
+.scan-shell{max-width:460px;margin:18px auto 22px;background:#111214;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden}
+@media(min-width:560px){.scan-shell{border-radius:30px;border:8px solid #1a1a1a}}
+
+.scan-topbar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#1a1a1c;border-bottom:1px solid #262629;flex-shrink:0}
+.tb-icon{width:34px;height:34px;border-radius:50%;background:#262629;border:none;color:#eee;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:.85rem}
+.tb-icon:hover{background:#333}
+.tb-title{flex:1;min-width:0;text-align:center}
+.tb-title-main{color:#fff;font-weight:700;font-size:.9rem;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-title-sub{color:#9aa0a6;font-size:.67rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.scan-shell .page-strip{background:#151517;padding:8px 10px;margin-top:0;border-bottom:1px solid #232326}
+.scan-shell .page-thumb{width:44px;height:58px;border-color:#333}
+.scan-shell .page-thumb.active{border-color:#4f8cff}
+.scan-shell .page-add{width:44px;height:58px;border-color:#3a3a3a;color:#888;background:#1c1c1e}
+
+.scan-viewport{position:relative;flex:1;min-height:min(56vh,480px);background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px}
+.scan-viewport .upload-title{color:#fff}
+.scan-viewport .upload-sub{color:#9aa0a6}
+.scan-viewport .crop-editor-imgwrap{width:100%;height:100%;max-height:none}
+.scan-livewrap{max-width:100%;max-height:100%;display:flex;align-items:center;justify-content:center}
+.scan-livewrap canvas{max-width:100%;max-height:min(56vh,480px);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+
+.scan-controls{background:#161618;flex-shrink:0}
+.scan-shell .page-nav-strip{padding:8px 12px 0}
+.scan-shell .page-nav-btn{background:#232326;border-color:#3a3a3d;color:#eee}
+.scan-shell .page-nav-btn:hover:not(:disabled){border-color:#4f8cff;color:#4f8cff}
+.scan-shell .page-nav-count{color:#aaa}
+.scan-shell .crop-rotate-badge{color:#4f8cff;font-weight:800;font-size:.78rem}
+.scan-shell .crop-editor-hint{color:#9aa0a6;padding:0 12px;margin-top:6px}
+.scan-shell .filter-scroll-row{padding:10px 8px 0}
+.scan-shell .filter-card{background:#1c1c1e;border-color:#333}
+.scan-shell .filter-card.active{border-color:#4f8cff;background:#182238}
+.scan-shell .fc-name{color:#eee}
+.scan-shell .filter-scroll-btn{background:#232326;border-color:#3a3a3d;color:#eee}
+.scan-shell .adj-grid{padding:12px 14px 0;grid-template-columns:1fr}
+.scan-shell .adj-label{color:#9aa0a6}
+.scan-shell .adj-label span{color:#7aa2ff}
+.scan-shell select,.scan-shell textarea,.scan-shell input[type=number]{background:#1c1c1e;border-color:#3a3a3d;color:#eee}
+.scan-shell .progress-bar-bg{background:#2a2a2d}
+.scan-shell #ocrText{margin:10px 14px 0;width:calc(100% - 28px)}
+.scan-shell .progress-wrap{margin:10px 14px 0}
+.scan-shell #ocrProgMsg{color:#9aa0a6;font-size:.74rem;margin-top:5px}
+.scan-shell .form-group{padding:0 2px}
+
+.scan-toolbar-row{display:flex;gap:2px;overflow-x:auto;padding:10px 6px 4px;scrollbar-width:none}
+.scan-toolbar-row::-webkit-scrollbar{display:none}
+.tb-btn{flex:0 0 auto;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 8px;background:none;border:none;color:#ccc;cursor:pointer;font-family:inherit;font-size:.65rem;font-weight:600;border-radius:10px;transition:background .15s}
+.tb-btn i{font-size:1.1rem}
+.tb-btn:hover{background:#232326;color:#fff}
+.tb-btn.tb-primary{color:#4f8cff}
+.tb-btn.tb-primary:hover{background:#182238}
+.tb-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.scan-actionbar{display:none;gap:10px;padding:12px 16px 16px;background:#161618;flex-shrink:0}
+.ab-btn{flex:1;padding:13px;border-radius:26px;font-size:.85rem;font-weight:700;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.ab-outline{background:transparent;border:1.5px solid #444;color:#eee}
+.ab-outline:hover{border-color:#666}
+.ab-primary{background:#2f7dff;color:#fff}
+.ab-primary:hover{background:#2563eb}
+
+.scan-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+.scan-sheet-backdrop.open{opacity:1;pointer-events:auto}
+.scan-sheet{position:fixed;left:0;right:0;bottom:0;max-height:85vh;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;z-index:901;padding:18px 18px 26px;transform:translateY(105%);transition:transform .25s ease;box-shadow:0 -8px 30px rgba(0,0,0,.25);pointer-events:none;max-width:520px;margin:0 auto;left:0;right:0}
+.scan-sheet.open{transform:translateY(0);pointer-events:auto}
+.scan-sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 14px}
+.scan-sheet-close{position:absolute;top:14px;right:16px;width:30px;height:30px;border-radius:50%;background:var(--mist);border:none;color:var(--muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:420px){
+  .scan-viewport{padding:8px}
+  .tb-title-main{font-size:.82rem}
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
@@ -228,252 +305,252 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   <a class="nav-tools-link" href="/tools/">All Tools</a>
 </div></nav>
 
-<section class="tool-hero">
-  <div class="hero-icon">📄</div>
+<section class="scan-intro">
   <h1>Document Scanner Online Free</h1>
   <p>Photo se seedha professional scan banayein — AI corners auto-detect karke perspective fix, Auto Clean &amp; Sharpen se shadow hatayein, OCR se text nikaalein, aur multi-page PDF banayein. Bilkul free, sirf browser mein, koi upload nahi.</p>
-  <div class="badges">
-    <span class="badge">🪄 AI Auto Detect Corners</span>
-    <span class="badge">🔤 Offline OCR</span>
-    <span class="badge">🔒 100% Browser-Based</span>
-    <span class="badge">📚 Multi-Page PDF</span>
-    <span class="badge">⚡ No Upload</span>
-  </div>
 </section>
 
-<div class="step-tabs">
-  <div class="stab active" data-step="1" onclick="goStep(1)"><span class="sn">1</span>Upload</div>
-  <div class="stab locked" data-step="2" onclick="goStep(2)"><span class="sn">2</span>Crop</div>
-  <div class="stab locked" data-step="3" onclick="goStep(3)"><span class="sn">3</span>Enhance</div>
-  <div class="stab locked" data-step="4" onclick="goStep(4)"><span class="sn">4</span>Text (OCR)</div>
-  <div class="stab locked" data-step="5" onclick="goStep(5)"><span class="sn">5</span>Export</div>
+<div class="scan-shell">
+  <!-- TOP BAR -->
+  <header class="scan-topbar">
+    <button class="tb-icon" onclick="history.length>1?history.back():location.href='/tools/'" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+    <div class="tb-title">
+      <div class="tb-title-main" id="tbTitleMain">Document Scanner</div>
+      <div class="tb-title-sub" id="tbTitleSub">Photo ya gallery se scan shuru karein</div>
+    </div>
+    <button class="tb-icon" onclick="newScan()" aria-label="New Scan" title="New Scan"><i class="fa-solid fa-plus"></i></button>
+  </header>
+
+  <!-- PAGE DOTS / THUMBNAIL STRIP (reused pageStrip, restyled dark) -->
+  <div class="page-strip" id="pageStrip" style="display:none"></div>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="scan-viewport" id="scanViewport">
+    <div class="upload-zone" id="uploadZone" style="border:none;background:transparent;padding:0">
+      <span class="upload-icon">📄</span>
+      <div class="upload-title">Document scan karna shuru karein</div>
+      <div class="upload-sub">Photo click karein ya gallery se choose karein — multiple pages ek saath</div>
+      <div class="upload-btn-row">
+        <button class="btn-choose" type="button" onclick="event.stopPropagation();G('cameraInput').click()"><i class="fa-solid fa-camera"></i> Camera Se Khinchein</button>
+        <button class="btn-choose btn-choose-alt" type="button" onclick="event.stopPropagation();G('galleryInput').click()"><i class="fa-solid fa-images"></i> Gallery Se Choose Karein</button>
+      </div>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment">
+      <input type="file" id="galleryInput" accept="image/*" multiple>
+    </div>
+
+    <div class="crop-editor-imgwrap" id="cropperWrap" style="display:none">
+      <img id="cropperImg" alt="Document page">
+    </div>
+
+    <div class="scan-livewrap" id="livePreviewWrap" style="display:none"><canvas id="livePreview"></canvas></div>
+  </main>
+
+  <!-- MODE: CROP -->
+  <div class="scan-controls" id="modeCrop" style="display:none">
+    <div class="page-nav-strip">
+      <button class="page-nav-btn" id="cropPrevBtn" onclick="cropGoPage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="page-nav-count" id="cropPageCount">Page 1 / 1</span>
+      <span class="crop-rotate-badge" id="cropRotateVal">0°</span>
+      <button class="page-nav-btn" id="cropNextBtn" onclick="cropGoPage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <p class="crop-editor-hint" id="autoDetectStatus">📱 Default rectangle crop hai — perspective/tilted document ke liye "Free Select" dabakar 4 corners drag karein, ya "AI Detect" try karein.</p>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="retakeCurrentPage()"><i class="fa-solid fa-camera-rotate"></i><span>Retake</span></button>
+      <button class="tb-btn" id="freeSelBtn" onclick="toggleFreeSelect()"><i class="fa-solid fa-draw-polygon"></i><span>Free Select</span></button>
+      <button class="tb-btn" id="autoDetectBtn" onclick="autoDetectCorners()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Detect</span></button>
+      <button class="tb-btn" onclick="rotateCurrentPage(90)"><i class="fa-solid fa-rotate-right"></i><span>Rotate</span></button>
+      <button class="tb-btn" onclick="zoomCrop(0.4)"><i class="fa-solid fa-magnifying-glass-plus"></i><span>Zoom+</span></button>
+      <button class="tb-btn" onclick="zoomCrop(-0.4)"><i class="fa-solid fa-magnifying-glass-minus"></i><span>Zoom-</span></button>
+      <button class="tb-btn" id="cropResetBtn" onclick="resetCrop()"><i class="fa-solid fa-arrow-rotate-left"></i><span>Reset</span></button>
+      <button class="tb-btn tb-primary" onclick="finishCropping()"><i class="fa-solid fa-check"></i><span>Done</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: FILTERS -->
+  <div class="scan-controls" id="modeFilters" style="display:none">
+    <div class="filter-scroll-row">
+      <button class="filter-scroll-btn" id="filterScrollLeft" type="button" aria-label="Filters left scroll karein"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="filter-grid" id="filterGrid"></div>
+      <button class="filter-scroll-btn" id="filterScrollRight" type="button" aria-label="Filters right scroll karein"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="page-nav-strip">
+      <button class="page-nav-btn" id="filtPrevBtn" onclick="filterGoPage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="page-nav-count" id="filtPageCount">Page 1 / 1</span>
+      <button class="page-nav-btn" id="filtNextBtn" onclick="filterGoPage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="setMode('view')"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="applyToAllPages()"><i class="fa-solid fa-layer-group"></i><span>Apply All</span></button>
+      <button class="tb-btn tb-primary" onclick="setMode('view')"><i class="fa-solid fa-check"></i><span>Done</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: ADJUST -->
+  <div class="scan-controls" id="modeAdjust" style="display:none">
+    <div class="adj-grid">
+      <div class="adj-group">
+        <div class="adj-label">Brightness <span id="brVal">100%</span></div>
+        <input type="range" id="brRange" min="50" max="150" value="100" oninput="updateAdjust()">
+      </div>
+      <div class="adj-group">
+        <div class="adj-label">Contrast <span id="conVal">100%</span></div>
+        <input type="range" id="conRange" min="50" max="180" value="100" oninput="updateAdjust()">
+      </div>
+      <div class="adj-group">
+        <div class="adj-label">Saturation <span id="satVal">100%</span></div>
+        <input type="range" id="satRange" min="0" max="200" value="100" oninput="updateAdjust()">
+      </div>
+    </div>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="setMode('view')"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="resetAdjustSliders()"><i class="fa-solid fa-arrow-rotate-left"></i><span>Reset</span></button>
+      <button class="tb-btn tb-primary" onclick="setMode('view')"><i class="fa-solid fa-check"></i><span>Done</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: TEXT / OCR -->
+  <div class="scan-controls" id="modeOcr" style="display:none">
+    <div class="page-nav-strip">
+      <button class="page-nav-btn" id="ocrPrevBtn" onclick="ocrGoPage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="page-nav-count" id="ocrPageCount">Page 1 / 1</span>
+      <button class="page-nav-btn" id="ocrNextBtn" onclick="ocrGoPage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="form-group"><label>🌐 Language</label>
+      <select id="ocrLang">
+        <option value="eng">English</option>
+        <option value="hin">Hindi</option>
+        <option value="eng+hin" selected>English + Hindi (Mixed)</option>
+      </select>
+    </div>
+    <div class="progress-wrap" id="ocrProgWrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="ocrProgBar"></div></div>
+      <div id="ocrProgMsg">Processing...</div>
+    </div>
+    <textarea id="ocrText" rows="6" style="padding:12px;border:1.5px solid #3a3a3d;border-radius:10px;font-family:inherit;font-size:.86rem;resize:vertical" placeholder="Extracted text yahan dikhega — aap edit bhi kar sakte hain..."></textarea>
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="setMode('view')"><i class="fa-solid fa-arrow-left"></i><span>Back</span></button>
+      <button class="tb-btn" onclick="runOcrCurrentPage()"><i class="fa-solid fa-magnifying-glass"></i><span>Extract</span></button>
+      <button class="tb-btn" onclick="runOcrAllPages()"><i class="fa-solid fa-layer-group"></i><span>All Pages</span></button>
+      <button class="tb-btn" onclick="copyOcrText()"><i class="fa-solid fa-copy"></i><span>Copy</span></button>
+      <button class="tb-btn" onclick="downloadOcrText()"><i class="fa-solid fa-download"></i><span>.txt</span></button>
+    </div>
+  </div>
+
+  <!-- MODE: VIEW (default per-page toolbar) -->
+  <div class="scan-controls" id="modeView" style="display:none">
+    <div class="scan-toolbar-row">
+      <button class="tb-btn" onclick="setMode('crop')"><i class="fa-solid fa-crop"></i><span>Crop</span></button>
+      <button class="tb-btn" onclick="quickRotate()"><i class="fa-solid fa-rotate-right"></i><span>Rotate</span></button>
+      <button class="tb-btn" onclick="setMode('filters')"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Filters</span></button>
+      <button class="tb-btn" onclick="setMode('adjust')"><i class="fa-solid fa-sliders"></i><span>Adjust</span></button>
+      <button class="tb-btn" onclick="setMode('ocr')"><i class="fa-solid fa-font"></i><span>Text</span></button>
+      <button class="tb-btn" onclick="quickDuplicate()"><i class="fa-solid fa-clone"></i><span>Duplicate</span></button>
+      <button class="tb-btn" onclick="quickDelete()"><i class="fa-solid fa-trash"></i><span>Delete</span></button>
+    </div>
+  </div>
+
+  <!-- BOTTOM ACTION BAR -->
+  <div class="scan-actionbar" id="scanActionbar">
+    <button class="ab-btn ab-outline" onclick="G('cameraInput').click()"><i class="fa-solid fa-plus"></i> Keep scanning</button>
+    <button class="ab-btn ab-primary" onclick="openExportSheet()">Save PDF <i class="fa-solid fa-chevron-up"></i></button>
+  </div>
+</div>
+
+<!-- EXPORT BOTTOM SHEET -->
+<div class="scan-sheet-backdrop" id="exportBackdrop" onclick="closeExportSheet()"></div>
+<div class="scan-sheet" id="exportSheet">
+  <div class="scan-sheet-handle"></div>
+  <button class="scan-sheet-close" onclick="closeExportSheet()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+  <div class="card-title"><i class="fa-solid fa-download"></i> Scan Download Karein</div>
+  <div class="export-tabs">
+    <div class="export-opt active" id="expPdf" onclick="setExportMode('pdf')"><i class="fa-solid fa-file-pdf"></i> PDF (Multi-Page)</div>
+    <div class="export-opt" id="expImg" onclick="setExportMode('image')"><i class="fa-solid fa-image"></i> Image (JPG/PNG/WEBP)</div>
+  </div>
+  <div class="print-preview" id="finalPreview"></div>
+  <div id="qrResultBox" style="display:none" class="info-notice"><i class="fa-solid fa-qrcode"></i> <span id="qrResultText"></span></div>
+
+  <div class="form-group" id="imgFormatWrap" style="display:none"><label>🖼️ Image Format</label>
+    <select id="imgFormat">
+      <option value="jpeg" selected>JPG (Small size, universal)</option>
+      <option value="png">PNG (Lossless, bigger size)</option>
+      <option value="webp">WEBP (Best compression)</option>
+    </select>
+  </div>
+  <div class="form-group" id="imgQualityWrap" style="display:none"><label>Quality (<span id="imgQualityVal">85%</span>)</label>
+    <input type="range" id="imgQuality" min="50" max="100" value="85">
+  </div>
+
+  <div class="form-group" id="pdfPageSizeWrap"><label>📄 PDF Page Size</label>
+    <select id="pdfPageSize">
+      <option value="auto" selected>Auto (Document ke asli size jaisa)</option>
+      <option value="a4">A4</option>
+      <option value="letter">Letter</option>
+      <option value="legal">Legal</option>
+    </select>
+  </div>
+  <div class="form-group" id="pdfMarginWrap"><label>Margins</label>
+    <select id="pdfMargin">
+      <option value="0" selected>None</option>
+      <option value="20">Small</option>
+      <option value="45">Medium</option>
+    </select>
+  </div>
+
+  <div class="form-group"><label>🎯 Image Quality (DPI)</label>
+    <select id="dpiSelect">
+      <option value="72">72 (Low / Small Size)</option>
+      <option value="96">96 (Screen)</option>
+      <option value="150" selected>150 (Good)</option>
+      <option value="200">200 (High)</option>
+      <option value="300">300 (Print)</option>
+      <option value="400">400 (Print+)</option>
+      <option value="600">600 (Ultra HD)</option>
+      <option value="900">900 (Scan Quality)</option>
+      <option value="1200">1200 (Maximum)</option>
+      <option value="custom">Custom DPI...</option>
+    </select>
+  </div>
+  <div class="form-group" id="dpiCustomWrap" style="display:none"><label>Custom DPI</label>
+    <input type="number" id="dpiCustom" min="36" max="2400" value="150">
+  </div>
+
+  <div class="target-size-box">
+    <label class="ts-enable-row">
+      <input type="checkbox" id="wmEnable" class="ts-checkbox">
+      <span>💧 Watermark add karein (optional)</span>
+    </label>
+    <div id="wmControls" style="opacity:.45;pointer-events:none;margin-top:12px">
+      <input type="text" id="wmText" placeholder="e.g. CONFIDENTIAL, DRAFT, Company Name" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.88rem;font-family:inherit;margin-bottom:10px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <select id="wmPosition" style="flex:1;min-width:140px"><option value="diagonal" selected>Diagonal (Center)</option><option value="bottom">Bottom</option><option value="top">Top</option></select>
+        <select id="wmOpacity" style="flex:1;min-width:120px"><option value="0.15">Light</option><option value="0.3" selected>Medium</option><option value="0.5">Dark</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="target-size-box">
+    <label class="ts-enable-row">
+      <input type="checkbox" id="tsEnable" class="ts-checkbox">
+      <span>🎯 Scanned document ka Target File Size apne hisaab se chunein <b id="tsVal" style="color:var(--brand)">(1.0 MB)</b></span>
+    </label>
+    <div id="tsControls" style="opacity:.45;pointer-events:none;margin-top:12px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input type="number" id="tsNum" value="1" min="1">
+        <select id="tsUnit" style="max-width:90px"><option value="KB">KB</option><option value="MB" selected>MB</option></select>
+      </div>
+      <input type="range" id="tsSlider" min="1" max="102400" value="1024">
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:2px"><span>1 KB</span><span>100 MB</span></div>
+      <div id="tsPresets" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"></div>
+    </div>
+  </div>
+  <div class="dl-btns">
+    <button class="btn-dl btn-dl-single" onclick="downloadScan()"><i class="fa-solid fa-download"></i> Download</button>
+    <button class="btn-dl btn-dl-print" onclick="newScan()"><i class="fa-solid fa-plus"></i> New Scan</button>
+  </div>
+  <div class="progress-wrap" id="progWrap"><div class="progress-bar-bg"><div class="progress-bar" id="progBar"></div></div></div>
 </div>
 
 <div class="main-container">
-
-  <!-- STEP 1: UPLOAD -->
-  <div class="step-panel active" id="panel-1">
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-camera"></i> Document Pages Upload Karein</div>
-      <div class="upload-zone" id="uploadZone">
-        <span class="upload-icon">📷</span>
-        <div class="upload-title">Photo click karein ya file choose karein</div>
-        <div class="upload-sub">Ek se zyada pages ek saath select kar sakte hain (<b>multi-page</b>)</div>
-        <div class="upload-btn-row">
-          <button class="btn-choose" type="button" onclick="event.stopPropagation();G('cameraInput').click()"><i class="fa-solid fa-camera"></i> Camera Se Khinchein</button>
-          <button class="btn-choose btn-choose-alt" type="button" onclick="event.stopPropagation();G('galleryInput').click()"><i class="fa-solid fa-images"></i> Gallery Se Choose Karein</button>
-        </div>
-        <input type="file" id="cameraInput" accept="image/*" capture="environment">
-        <input type="file" id="galleryInput" accept="image/*" multiple>
-      </div>
-      <div class="page-strip" id="pageStrip" style="display:none"></div>
-      <div class="info-notice"><i class="fa-solid fa-circle-info"></i> Tip: Achhi roshni me, document ko flat surface par rakh ke photo lein — corners saaf dikhne chahiye taaki crop accurate ho.</div>
-      <div class="nav-btns">
-        <button class="btn-next" id="toStep2Btn" disabled onclick="goStep(2)">Next: Crop Karein <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 2: CROP / PERSPECTIVE -->
-  <div class="step-panel" id="panel-2">
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-crop"></i> Crop Karein <span id="cropRotateVal" style="color:var(--brand);font-weight:800;margin-left:auto;font-size:.82rem">0°</span></div>
-      <div class="page-nav-strip">
-        <button class="page-nav-btn" id="cropPrevBtn" onclick="cropGoPage(-1)"><i class="fa-solid fa-chevron-left"></i> Back Page</button>
-        <span class="page-nav-count" id="cropPageCount">Page 1 / 1</span>
-        <button class="page-nav-btn" id="cropNextBtn" onclick="cropGoPage(1)">Next Page <i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      <div class="crop-editor-imgwrap" id="cropperWrap">
-        <img id="cropperImg" alt="Document page">
-      </div>
-      <div class="crop-editor-actions">
-        <button class="crop-editor-btn" id="autoDetectBtn" onclick="autoDetectCorners()" style="background:var(--brand);color:#fff;border-color:var(--brand)">🪄 AI Auto Detect Corners</button>
-        <button class="crop-editor-btn" id="cropResetBtn" onclick="resetCrop()">↺ Reset Crop</button>
-        <button class="crop-editor-btn" id="freeSelBtn" onclick="toggleFreeSelect()">🔓 Free Select (kisi bhi angle)</button>
-        <button class="crop-editor-btn" onclick="zoomCrop(-0.4)">➖ Zoom Out</button>
-        <button class="crop-editor-btn" onclick="zoomCrop(0.4)">➕ Zoom In</button>
-        <button class="crop-editor-btn" onclick="zoomResetCrop()">🔍 Reset Zoom</button>
-        <button class="crop-editor-btn" onclick="rotateCurrentPage(-90)">↺ Rotate Left</button>
-        <button class="crop-editor-btn" onclick="rotateCurrentPage(90)">↻ Rotate Right</button>
-      </div>
-      <p class="crop-editor-hint" id="autoDetectStatus">📱 2 finger se pinch karke bhi zoom kar sakte hain. Default rectangle crop hai — perspective/tilted document ke liye "Free Select" dabakar 4 corners drag karein, ya "AI Auto Detect Corners" try karein.</p>
-      <div class="info-notice"><i class="fa-solid fa-circle-info"></i> Crop apne aap save ho jata hai — har page set karke seedha "Next Page" ya "Next: Enhance" dabayein.</div>
-      <div class="nav-btns">
-        <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button class="btn-next" onclick="finishCropping()">Next: Enhance <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 3: FILTERS / ENHANCE -->
-  <div class="step-panel" id="panel-3">
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Filter Chunein</div>
-      <div class="page-nav-strip">
-        <button class="page-nav-btn" id="filtPrevBtn" onclick="filterGoPage(-1)"><i class="fa-solid fa-chevron-left"></i> Back Page</button>
-        <span class="page-nav-count" id="filtPageCount">Page 1 / 1</span>
-        <button class="page-nav-btn" id="filtNextBtn" onclick="filterGoPage(1)">Next Page <i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      <div class="filter-scroll-row">
-        <button class="filter-scroll-btn" id="filterScrollLeft" type="button" aria-label="Filters left scroll karein"><i class="fa-solid fa-chevron-left"></i></button>
-        <div class="filter-grid" id="filterGrid"></div>
-        <button class="filter-scroll-btn" id="filterScrollRight" type="button" aria-label="Filters right scroll karein"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      <div class="adj-grid">
-        <div class="adj-group">
-          <div class="adj-label">Brightness <span id="brVal">100%</span></div>
-          <input type="range" id="brRange" min="50" max="150" value="100" oninput="updateAdjust()">
-        </div>
-        <div class="adj-group">
-          <div class="adj-label">Contrast <span id="conVal">100%</span></div>
-          <input type="range" id="conRange" min="50" max="180" value="100" oninput="updateAdjust()">
-        </div>
-        <div class="adj-group">
-          <div class="adj-label">Saturation <span id="satVal">100%</span></div>
-          <input type="range" id="satRange" min="0" max="200" value="100" oninput="updateAdjust()">
-        </div>
-      </div>
-      <div class="live-preview-wrap"><canvas id="livePreview"></canvas></div>
-      <div class="nav-btns">
-        <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button class="btn-next" onclick="applyToAllPages()">Apply to All Pages <i class="fa-solid fa-layer-group"></i></button>
-        <button class="btn-next" onclick="goStep(4)">Next: Text (OCR) <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 4: TEXT / OCR -->
-  <div class="step-panel" id="panel-4">
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-font"></i> Text Nikaalein (OCR) <span style="margin-left:auto;font-size:.72rem;color:var(--muted);font-weight:600">Optional Step</span></div>
-      <div class="page-nav-strip">
-        <button class="page-nav-btn" id="ocrPrevBtn" onclick="ocrGoPage(-1)"><i class="fa-solid fa-chevron-left"></i> Back Page</button>
-        <span class="page-nav-count" id="ocrPageCount">Page 1 / 1</span>
-        <button class="page-nav-btn" id="ocrNextBtn" onclick="ocrGoPage(1)">Next Page <i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      <div class="form-group"><label>🌐 Language</label>
-        <select id="ocrLang">
-          <option value="eng">English</option>
-          <option value="hin">Hindi</option>
-          <option value="eng+hin" selected>English + Hindi (Mixed)</option>
-        </select>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-        <button class="btn-choose" type="button" onclick="runOcrCurrentPage()"><i class="fa-solid fa-magnifying-glass"></i> Is Page Se Text Nikaalein</button>
-        <button class="btn-choose btn-choose-alt" type="button" onclick="runOcrAllPages()"><i class="fa-solid fa-layer-group"></i> Sabhi Pages Se Nikaalein</button>
-      </div>
-      <div class="progress-wrap" id="ocrProgWrap">
-        <div class="progress-bar-bg"><div class="progress-bar" id="ocrProgBar"></div></div>
-        <div style="font-size:.76rem;color:var(--muted);margin-top:6px" id="ocrProgMsg">Processing...</div>
-      </div>
-      <textarea id="ocrText" rows="10" style="width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.86rem;resize:vertical" placeholder="Extracted text yahan dikhega — aap edit bhi kar sakte hain..."></textarea>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-        <button class="crop-editor-btn" onclick="copyOcrText()"><i class="fa-solid fa-copy"></i> Copy Text</button>
-        <button class="crop-editor-btn" onclick="downloadOcrText()"><i class="fa-solid fa-download"></i> Download .TXT</button>
-      </div>
-      <div class="info-notice"><i class="fa-solid fa-circle-info"></i> Yeh step optional hai — sirf tab use karein jab photo/scan se text copy-paste karna ho. Skip karke seedha Export bhi jaa sakte hain. Poora OCR aapke browser mein hi chalta hai (Tesseract.js), koi upload nahi hota.</div>
-      <div class="nav-btns">
-        <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button class="btn-next" onclick="goStep(5)">Next: Export <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 5: EXPORT -->
-  <div class="step-panel" id="panel-5">
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-download"></i> Scan Download Karein</div>
-      <div class="export-tabs">
-        <div class="export-opt active" id="expPdf" onclick="setExportMode('pdf')"><i class="fa-solid fa-file-pdf"></i> PDF (Multi-Page)</div>
-        <div class="export-opt" id="expImg" onclick="setExportMode('image')"><i class="fa-solid fa-image"></i> Image (JPG/PNG/WEBP)</div>
-      </div>
-      <div class="print-preview" id="finalPreview"></div>
-      <div id="qrResultBox" style="display:none" class="info-notice"><i class="fa-solid fa-qrcode"></i> <span id="qrResultText"></span></div>
-
-      <div class="form-group" id="imgFormatWrap" style="display:none"><label>🖼️ Image Format</label>
-        <select id="imgFormat">
-          <option value="jpeg" selected>JPG (Small size, universal)</option>
-          <option value="png">PNG (Lossless, bigger size)</option>
-          <option value="webp">WEBP (Best compression)</option>
-        </select>
-      </div>
-      <div class="form-group" id="imgQualityWrap" style="display:none"><label>Quality (<span id="imgQualityVal">85%</span>)</label>
-        <input type="range" id="imgQuality" min="50" max="100" value="85">
-      </div>
-
-      <div class="form-group" id="pdfPageSizeWrap"><label>📄 PDF Page Size</label>
-        <select id="pdfPageSize">
-          <option value="auto" selected>Auto (Document ke asli size jaisa)</option>
-          <option value="a4">A4</option>
-          <option value="letter">Letter</option>
-          <option value="legal">Legal</option>
-        </select>
-      </div>
-      <div class="form-group" id="pdfMarginWrap"><label>Margins</label>
-        <select id="pdfMargin">
-          <option value="0" selected>None</option>
-          <option value="20">Small</option>
-          <option value="45">Medium</option>
-        </select>
-      </div>
-
-      <div class="form-group"><label>🎯 Image Quality (DPI)</label>
-        <select id="dpiSelect">
-          <option value="72">72 (Low / Small Size)</option>
-          <option value="96">96 (Screen)</option>
-          <option value="150" selected>150 (Good)</option>
-          <option value="200">200 (High)</option>
-          <option value="300">300 (Print)</option>
-          <option value="400">400 (Print+)</option>
-          <option value="600">600 (Ultra HD)</option>
-          <option value="900">900 (Scan Quality)</option>
-          <option value="1200">1200 (Maximum)</option>
-          <option value="custom">Custom DPI...</option>
-        </select>
-      </div>
-      <div class="form-group" id="dpiCustomWrap" style="display:none"><label>Custom DPI</label>
-        <input type="number" id="dpiCustom" min="36" max="2400" value="150">
-      </div>
-
-      <div class="target-size-box">
-        <label class="ts-enable-row">
-          <input type="checkbox" id="wmEnable" class="ts-checkbox">
-          <span>💧 Watermark add karein (optional)</span>
-        </label>
-        <div id="wmControls" style="opacity:.45;pointer-events:none;margin-top:12px">
-          <input type="text" id="wmText" placeholder="e.g. CONFIDENTIAL, DRAFT, Company Name" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.88rem;font-family:inherit;margin-bottom:10px">
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <select id="wmPosition" style="flex:1;min-width:140px"><option value="diagonal" selected>Diagonal (Center)</option><option value="bottom">Bottom</option><option value="top">Top</option></select>
-            <select id="wmOpacity" style="flex:1;min-width:120px"><option value="0.15">Light</option><option value="0.3" selected>Medium</option><option value="0.5">Dark</option></select>
-          </div>
-        </div>
-      </div>
-
-      <div class="target-size-box">
-        <label class="ts-enable-row">
-          <input type="checkbox" id="tsEnable" class="ts-checkbox">
-          <span>🎯 Scanned document ka Target File Size apne hisaab se chunein <b id="tsVal" style="color:var(--brand)">(1.0 MB)</b></span>
-        </label>
-        <div id="tsControls" style="opacity:.45;pointer-events:none;margin-top:12px">
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <input type="number" id="tsNum" value="1" min="1">
-            <select id="tsUnit" style="max-width:90px"><option value="KB">KB</option><option value="MB" selected>MB</option></select>
-          </div>
-          <input type="range" id="tsSlider" min="1" max="102400" value="1024">
-          <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:2px"><span>1 KB</span><span>100 MB</span></div>
-          <div id="tsPresets" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"></div>
-        </div>
-      </div>
-      <div class="dl-btns">
-        <button class="btn-dl btn-dl-single" onclick="downloadScan()"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-dl btn-dl-print" onclick="goStep(1);resetAll();"><i class="fa-solid fa-plus"></i> New Scan</button>
-      </div>
-      <div class="progress-wrap" id="progWrap"><div class="progress-bar-bg"><div class="progress-bar" id="progBar"></div></div></div>
-      <div class="nav-btns">
-        <button class="btn-back" onclick="goStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      </div>
-    </div>
-  </div>
 
   <div class="secure-note"><p>🔒 100% Secure — Files sirf browser mein process hoti hain. Zero server upload. Zero data collection.</p></div>
 
@@ -840,25 +917,123 @@ var FILTERS=[
   {id:'soft',name:'Soft Enhance',css:'contrast(112%) brightness(105%) saturate(106%)'}
 ];
 
-function goStep(n){
-  if(n===2 && pages.length===0)return;
-  if(n===3 && pages.some(function(p){return !p.warpedDataURL;}))return;
-  document.querySelectorAll('.step-panel').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.stab').forEach(function(s){s.classList.remove('active');});
-  G('panel-'+n).classList.add('active');
-  document.querySelector('.stab[data-step="'+n+'"]').classList.add('active');
-  for(var i=1;i<n;i++){
-    var t=document.querySelector('.stab[data-step="'+i+'"]');
-    t.classList.add('done');t.classList.remove('locked');
+/* ================= Mode Controller (Adobe-Scan-style single screen) =================
+   Replaces the old 5-step wizard (goStep) with a mode switch on ONE screen:
+   'upload' (no pages yet) / 'view' (per-page toolbar) / 'crop' / 'filters' /
+   'adjust' / 'ocr'. Every mode-specific init below (initPageCropEditor,
+   initFilterStep, loadPageIntoEditors, initOcrStep) is unchanged from the
+   original wizard steps — only WHEN they're called changed. */
+var currentMode='upload';
+var MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatTodayLabel(){
+  var d=new Date();
+  return ('0'+d.getDate()).slice(-2)+'-'+MONTH_NAMES[d.getMonth()]+'-'+d.getFullYear();
+}
+function updateTopbarTitle(){
+  if(!pages.length){
+    G('tbTitleMain').textContent='Document Scanner';
+    G('tbTitleSub').textContent='Photo ya gallery se scan shuru karein';
+    return;
   }
-  document.querySelectorAll('.stab').forEach(function(s){
-    var sn=parseInt(s.dataset.step);
-    if(sn<=n || sn===n+1)s.classList.remove('locked');
+  var modeLabel={crop:'Cropping',filters:'Filters',adjust:'Adjust',ocr:'Text (OCR)'}[currentMode]||'';
+  G('tbTitleMain').textContent='Scan '+formatTodayLabel()+' ('+pages.length+')';
+  G('tbTitleSub').textContent='Page '+(curPageIdx+1)+' / '+pages.length+(modeLabel?' • '+modeLabel:'');
+}
+function loadPageIntoEditors(idx){
+  if(!pages[idx])return;
+  var p=pages[idx];
+  G('brRange').value=p.brightness||100;
+  G('conRange').value=p.contrast||100;
+  G('satRange').value=p.saturation||100;
+  previewImg.onload=function(){updateAdjust();};
+  previewImg.src=p.warpedDataURL;
+  if(previewImg.complete&&previewImg.naturalWidth>0)previewImg.onload();
+}
+function setMode(mode){
+  G('uploadZone').style.display=(mode==='upload')?'block':'none';
+  G('cropperWrap').style.display=(mode==='crop')?'block':'none';
+  G('livePreviewWrap').style.display=(mode==='upload'||mode==='crop')?'none':'flex';
+  ['modeCrop','modeFilters','modeAdjust','modeOcr','modeView'].forEach(function(id){G(id).style.display='none';});
+  G('pageStrip').style.display=pages.length?'flex':'none';
+  G('scanActionbar').style.display=(mode==='upload'||!pages.length)?'none':'flex';
+  if(mode==='upload'||!pages.length){
+    currentMode='upload';
+    updateTopbarTitle();
+    return;
+  }
+  currentMode=mode;
+  fallbackFillMissingCrops(function(){
+    if(mode==='crop'){G('modeCrop').style.display='block';initPageCropEditor(curPageIdx);}
+    else if(mode==='filters'){G('modeFilters').style.display='block';initFilterStep();}
+    else if(mode==='adjust'){G('modeAdjust').style.display='block';loadPageIntoEditors(curPageIdx);}
+    else if(mode==='ocr'){G('modeOcr').style.display='block';loadPageIntoEditors(curPageIdx);initOcrStep();}
+    else{G('modeView').style.display='block';loadPageIntoEditors(curPageIdx);}
+    updateTopbarTitle();
   });
-  if(n===2)initPageCropEditor(curPageIdx);
-  if(n===3)initFilterStep();
-  if(n===4)initOcrStep();
-  if(n===5)buildExportPreview();
+}
+function quickRotate(){
+  var idx=curPageIdx;
+  pages[idx].rotation=((pages[idx].rotation||0)+90+360)%360;
+  pages[idx].warpedDataURL=null; // old crop was framed for the previous orientation
+  fallbackFillMissingCrops(function(){loadPageIntoEditors(idx);});
+}
+function quickDuplicate(){
+  duplicatePage(curPageIdx);
+  fallbackFillMissingCrops(function(){loadPageIntoEditors(curPageIdx);});
+}
+function quickDelete(){
+  if(pages.length<=1){
+    if(confirm('Yeh akela page hai — delete karne se poora scan hat jayega. Continue?')){
+      deletePage(curPageIdx);
+      setMode('upload');
+    }
+    return;
+  }
+  if(!confirm('Is page ko delete karein?'))return;
+  deletePage(curPageIdx);
+  fallbackFillMissingCrops(function(){loadPageIntoEditors(curPageIdx);});
+}
+function retakeCurrentPage(){
+  var idx=curPageIdx;
+  var inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.capture='environment';
+  inp.onchange=function(){
+    var f=inp.files&&inp.files[0];
+    if(!f)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var im=new Image();
+      im.onload=function(){
+        pages[idx]={rawSrc:e.target.result,origImg:im,rotation:0,freeSelect:false,warpedDataURL:null,filter:'none',brightness:100,contrast:100,saturation:100,finalDataURL:null};
+        renderPageStrip();
+        initPageCropEditor(idx);
+      };
+      im.src=e.target.result;
+    };
+    reader.readAsDataURL(f);
+  };
+  inp.click();
+}
+function resetAdjustSliders(){
+  var p=pages[curPageIdx];
+  if(!p)return;
+  p.brightness=100;p.contrast=100;p.saturation=100;
+  G('brRange').value=100;G('conRange').value=100;G('satRange').value=100;
+  updateAdjust();
+}
+function openExportSheet(){
+  buildExportPreview();
+  G('exportBackdrop').classList.add('open');
+  G('exportSheet').classList.add('open');
+}
+function closeExportSheet(){
+  G('exportBackdrop').classList.remove('open');
+  G('exportSheet').classList.remove('open');
+}
+function newScan(){
+  resetAll();
+  closeExportSheet();
+  setMode('upload');
 }
 
 function resetAll(){
@@ -866,11 +1041,6 @@ function resetAll(){
   if(cropInst){cropInst.destroy();cropInst=null;}
   if(quadUI){quadUI.deactivate();quadUI=null;}
   G('pageStrip').style.display='none';G('pageStrip').innerHTML='';
-  G('toStep2Btn').disabled=true;
-  document.querySelectorAll('.stab').forEach(function(s,i){
-    s.classList.remove('done');
-    if(i>0)s.classList.add('locked');
-  });
 }
 
 /* ---- Step 1: Upload ---- */
@@ -884,6 +1054,7 @@ uz.addEventListener('drop',function(e){e.preventDefault();uz.classList.remove('d
 function handleFiles(fileList){
   var files=Array.prototype.slice.call(fileList).filter(function(f){return f.type.indexOf('image/')===0;});
   if(!files.length)return;
+  var startIdx=pages.length;
   var loaded=0;
   files.forEach(function(f){
     var reader=new FileReader();
@@ -895,7 +1066,13 @@ function handleFiles(fileList){
           warpedDataURL:null,filter:'none',brightness:100,contrast:100,saturation:100,finalDataURL:null
         });
         loaded++;
-        if(loaded===files.length)renderPageStrip();
+        if(loaded===files.length){
+          // Adobe Scan-style: jump straight into the crop screen for the
+          // newly captured page, same as a real scanner app does after a shot.
+          curPageIdx=startIdx;
+          renderPageStrip();
+          setMode('crop');
+        }
       };
       im.src=e.target.result;
     };
@@ -905,13 +1082,20 @@ function handleFiles(fileList){
 
 function renderPageStrip(){
   var strip=G('pageStrip');
-  strip.style.display='flex';
+  strip.style.display=pages.length?'flex':'none';
   strip.innerHTML='';
   pages.forEach(function(p,i){
     var d=document.createElement('div');
     d.className='page-thumb'+(i===curPageIdx?' active':'');
     d.innerHTML='<img src="'+p.rawSrc+'"><span class="pg-num">'+(i+1)+'</span><button class="pg-del" onclick="event.stopPropagation();deletePage('+i+')"><i class="fa-solid fa-xmark"></i></button><button class="pg-dup" title="Duplicate Page" onclick="event.stopPropagation();duplicatePage('+i+')"><i class="fa-solid fa-clone"></i></button>';
-    d.onclick=function(){curPageIdx=i;renderPageStrip();};
+    d.onclick=function(){
+      curPageIdx=i;
+      if(currentMode==='crop')initPageCropEditor(curPageIdx);
+      else if(currentMode==='filters')initFilterStep();
+      else if(currentMode==='ocr'){loadPageIntoEditors(curPageIdx);initOcrStep();}
+      else loadPageIntoEditors(curPageIdx);
+      renderPageStrip();
+    };
     strip.appendChild(d);
   });
   var addBtn=document.createElement('div');
@@ -919,7 +1103,7 @@ function renderPageStrip(){
   addBtn.innerHTML='<i class="fa-solid fa-plus"></i>';
   addBtn.onclick=function(){G('galleryInput').click();};
   strip.appendChild(addBtn);
-  G('toStep2Btn').disabled=pages.length===0;
+  updateTopbarTitle();
 }
 
 function deletePage(i){
@@ -1154,6 +1338,7 @@ function cropGoPage(delta){
   if(ni<0||ni>=pages.length)return;
   curPageIdx=ni;
   initPageCropEditor(curPageIdx);
+  renderPageStrip();
 }
 function fallbackFillMissingCrops(cb){
   var pending=pages.filter(function(p){return !p.warpedDataURL;});
@@ -1170,10 +1355,7 @@ function fallbackFillMissingCrops(cb){
 function finishCropping(){
   var cnv=getCurrentCropCanvas();
   if(cnv)pages[curPageIdx].warpedDataURL=cnv.toDataURL('image/jpeg',0.94);
-  fallbackFillMissingCrops(function(){
-    curPageIdx=0;
-    goStep(3);
-  });
+  setMode('view');
 }
 
 /* ---- Step 3: Filters / Enhance ---- */
@@ -1243,6 +1425,7 @@ function filterGoPage(delta){
   if(ni<0||ni>=pages.length)return;
   curPageIdx=ni;
   initFilterStep();
+  renderPageStrip();
 }
 function currentFilterCss(p){
   p=p||pages[curPageIdx];
@@ -1373,7 +1556,9 @@ function ocrGoPage(delta){
   var ni=curPageIdx+delta;
   if(ni<0||ni>=pages.length)return;
   curPageIdx=ni;
+  loadPageIntoEditors(curPageIdx);
   initOcrStep();
+  renderPageStrip();
 }
 function setOcrProgress(pct,msg){
   G('ocrProgWrap').style.display=pct===null?'none':'block';
