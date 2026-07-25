@@ -132,7 +132,7 @@ a:hover{ text-decoration:underline; }
 .search-row{ margin-top:12px; display:flex; gap:10px; align-items:center; }
 .search-row input{ flex:1; height:44px; border-radius:12px; border:1px solid var(--line); padding:0 12px; font-size:14px; outline:none; }
 .search-row input:focus{ border-color: rgba(14,165,233,.65); box-shadow: 0 0 0 4px rgba(14,165,233,.15); }
-.btn-primary{ height:44px; padding:0 14px; border-radius:12px; border:1px solid rgba(2,132,199,.4); background: linear-gradient(90deg, #0284c7, #4f46e5); color:#fff; font-weight:950; cursor:pointer; }
+.btn-primary{ height:44px; padding:0 14px; border-radius:12px; border:1px solid rgba(26,86,219,.4); background: linear-gradient(90deg, #1a56db, #1e40af); color:#fff; font-weight:950; cursor:pointer; }
 .btn-primary:hover{ filter: brightness(1.03); }
 
 .search-results{ margin-top:12px; display:none; border-top:1px solid var(--line); padding-top:12px; text-align: left; }
@@ -493,7 +493,7 @@ a, button, [role="button"], input, select, textarea {
 .search-row{ margin-top:12px; display:flex; gap:10px; align-items:center; }
 .search-row input{ flex:1; height:44px; border-radius:12px; border:1px solid var(--line); padding:0 12px; font-size:14px; outline:none; }
 .search-row input:focus{ border-color: rgba(14,165,233,.65); box-shadow: 0 0 0 4px rgba(14,165,233,.15); }
-.btn-primary{ height:44px; padding:0 14px; border-radius:12px; border:1px solid rgba(2,132,199,.4); background: linear-gradient(90deg, #0284c7, #4f46e5); color:#fff; font-weight:950; cursor:pointer; }
+.btn-primary{ height:44px; padding:0 14px; border-radius:12px; border:1px solid rgba(26,86,219,.4); background: linear-gradient(90deg, #1a56db, #1e40af); color:#fff; font-weight:950; cursor:pointer; }
 .btn-primary:hover{ filter: brightness(1.03); }
 
 .search-results{ margin-top:12px; display:none; border-top:1px solid var(--line); padding-top:12px; text-align: left; }
@@ -828,11 +828,11 @@ a, button, [role="button"], input, select, textarea {
   }
   .grid-nav-btn:active { transform: scale(0.95); }
 
-  .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(37,99,235,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+  .grid-nav-btn.solid-blue { background: linear-gradient(135deg, #1a56db, #1e40af); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(26,86,219,0.25); border: 1px solid #1e40af; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
   .grid-nav-btn.outline-blue { background: #f0f9ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
   .grid-nav-btn.outline-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; font-weight: 800; }
   .grid-nav-btn.outline-orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-weight: 800; }
-  .grid-nav-btn.solid-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(16,185,129,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+  .grid-nav-btn.solid-green { background: linear-gradient(135deg, #059669, #047857); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px rgba(5,150,105,0.25); border: 1px solid #047857; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
   /* Mobile bottom search (pre-baked in HTML to prevent CLS) */
   .mobile-bottom-search {
@@ -849,7 +849,7 @@ a, button, [role="button"], input, select, textarea {
   .mbs-row { display: flex; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #f8fafc; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
   .mbs-row input { flex: 1; height: 46px; border: none; background: transparent; padding: 0 14px; font-size: 14px; outline: none; color: #0f172a; }
   .mbs-row input:focus { background: #fff; border-color: #0ea5e9; }
-  .mbs-row button { background: linear-gradient(135deg, #0ea5e9, #4f46e5); color: #fff; border: none; padding: 0 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .mbs-row button { background: linear-gradient(135deg, #1a56db, #1e40af); color: #fff; border: none; padding: 0 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
 }
 
 /* Hide mobile-bottom-search on desktop (matches existing JS-injected behavior) */
