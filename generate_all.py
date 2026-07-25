@@ -7182,6 +7182,10 @@ def _pdf_name(job):
 
 # slug (base, no version) → set of version signatures already written
 seen_versions = {}
+# slug (base, no version) → {signature: title_fingerprint} for the same base_slug.
+# Lets _versioned_slug() tell "genuinely new notification" apart from "same
+# posting rescraped with noisy version-signature fields" (see comment there).
+seen_version_titles = {}
 versioned_variant_slugs = set()  # slugs that are intentional NEW VERSIONS (protect from prune)
 
 def _versioned_slug(base_slug, job):
@@ -7193,9 +7197,11 @@ def _versioned_slug(base_slug, job):
          multiple in a year  → -<advtno>    (ssc-gd-recruitment-02-2026)
     - Same base_slug AND same signature: it's a true duplicate → return None."""
     sig = _version_signature(job)
+    title_fp = _fingerprint(safe(job.get('title','')))
     known = seen_versions.get(base_slug)
     if known is None:
         seen_versions[base_slug] = {sig: base_slug}
+        seen_version_titles[base_slug] = {sig: title_fp}
         return base_slug
     if sig in known:
         return None                      # exact same version already written
@@ -7207,6 +7213,23 @@ def _versioned_slug(base_slug, job):
     elif year and year not in base_slug:
         suffix = year
     else:
+        # No advt number and no distinguishing year — the ONLY reason we think
+        # this might be a "new version" is the signature hash itself differing,
+        # which can happen from pure scrape noise (PDF re-uploaded under a
+        # different filename, whitespace/format drift in a date string) even
+        # when it's the exact same posting. Confirmed live 2026-07-25: ~5% of
+        # newly-generated pages were exact-title duplicates that only differed
+        # by this hash suffix (e.g. "...-vacancy-2026-apply-now" and
+        # "...-vacancy-2026-apply-now-ffa638515d"). If the title is
+        # fingerprint-identical to a version already seen under this same
+        # base_slug, treat it as that same posting re-scraped, not a new one —
+        # unlike the general _is_dup_job() cross-title matching (deliberately
+        # exact-only, see its ROOT-CAUSE FIX comment), this check only fires
+        # when there was already no stronger (advt/year) signal of a genuine
+        # new notification, so it can't collapse two postings that differ in
+        # a way advt/year would have caught.
+        if title_fp and title_fp in seen_version_titles.get(base_slug, {}).values():
+            return None
         suffix = sig                     # fallback: short hash keeps it unique
 
     def _slug_with_suffix(sfx):
@@ -7233,6 +7256,7 @@ def _versioned_slug(base_slug, job):
         # case defeats the suffix-uniqueness logic above.
         cand = _slug_with_suffix(_vh_hash.md5(f'{base_slug}{suffix}{n}'.encode()).hexdigest()[:8])
     known[sig] = cand
+    seen_version_titles.setdefault(base_slug, {})[sig] = title_fp
     versioned_variant_slugs.add(cand)   # protect this new-version page from H1 prune
     return cand
 
