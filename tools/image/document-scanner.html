@@ -227,7 +227,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   .scan-intro h1{font-size:clamp(1.25rem,3vw,1.7rem);margin-bottom:8px}
   .scan-intro p{display:block}
   .scan-shell{
-    max-width:980px;margin:12px auto 26px;border-radius:22px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+    max-width:1440px;width:96%;margin:12px auto 26px;border-radius:22px;box-shadow:0 10px 40px rgba(0,0,0,.35);
     grid-template-columns:minmax(0,1fr) 350px;
     grid-template-areas:"topbar topbar" "dots dots" "viewport controls" "actionbar controls";
     grid-template-rows:auto auto 1fr auto;
@@ -332,6 +332,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .scan-sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 14px}
 .scan-sheet-close{position:absolute;top:14px;right:16px;width:30px;height:30px;border-radius:50%;background:var(--mist);border:none;color:var(--muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
+@media(max-width:820px){
+  .tb-btn{min-width:92px;padding:15px 12px;gap:8px;font-size:.82rem}
+  .tb-btn i{font-size:1.85rem}
+  .scan-toolbar-row{gap:6px;padding:14px 10px 8px}
+}
 @media(max-width:420px){
   .scan-viewport{padding:8px}
   .tb-title-main{font-size:.82rem}
@@ -1606,7 +1611,14 @@ function initRectCropper(){
       // this made cropping feel like the image was "shaking"/jumping around.
       // false locks the image in place; only the crop box itself (via its
       // own resizable edges/corners below) can move.
-      background:true,responsive:true,movable:false,zoomable:true,zoomOnTouch:true,zoomOnWheel:true,
+      // BUG FIX: zoomOnWheel:true captured EVERY mouse-wheel/trackpad
+      // scroll over the crop image — on desktop, where the page can be
+      // taller than the viewport, a normal "scroll the page down" gesture
+      // that happened to be over the crop area zoomed the image in
+      // instead (reported as "image zoome ho jati h, puri screen me nahi
+      // aa rahi"). Pinch-zoom (zoomOnTouch) and the explicit Zoom+/Zoom-
+      // buttons remain the intended ways to zoom.
+      background:true,responsive:true,movable:false,zoomable:true,zoomOnTouch:true,zoomOnWheel:false,
       wheelZoomRatio:.1,rotatable:true,scalable:false,
       cropBoxMovable:true,cropBoxResizable:true,aspectRatio:NaN,
       minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200,
