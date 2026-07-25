@@ -69,6 +69,16 @@ const path   = require('path');
 
 const HOST = 'www.topsarkarijobs.com';
 const SITE = `https://${HOST}`;
+// The Search Console property is a DOMAIN property (confirmed 2026-07-25 via
+// GSC screenshots showing bare "topsarkarijobs.com", no protocol/www in the
+// property switcher). The URL Inspection API's siteUrl param must match the
+// exact property identifier Google has on file, which for a domain property
+// is this sc-domain: form -- NOT a URL-prefix string like
+// 'https://www.topsarkarijobs.com/'. Using the wrong form was causing the
+// Search Console API calls in isAlreadyIndexed() to fail 100% of the time
+// while the unrelated Indexing API kept working fine (different endpoint,
+// no siteUrl match required).
+const GSC_PROPERTY = 'sc-domain:topsarkarijobs.com';
 
 // Google Indexing API free quota. Kept at the real limit; the 429 handler is
 // the ultimate safety net if the day-boundary ever misaligns with Google's.
@@ -354,7 +364,7 @@ function collectCandidates(state) {
 // excluded, error, etc.) falls through to a real submission as before.
 let inspectFailLogged = 0;
 async function isAlreadyIndexed(token, url) {
-  const body = JSON.stringify({ inspectionUrl: url, siteUrl: SITE + '/' });
+  const body = JSON.stringify({ inspectionUrl: url, siteUrl: GSC_PROPERTY });
   const res = await httpsRequest({
     hostname: 'searchconsole.googleapis.com',
     path: '/v1/urlInspection/index:inspect',
