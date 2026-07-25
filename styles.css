@@ -878,12 +878,14 @@ a, button, [role="button"], input, select, textarea {
   margin-bottom: 8px;
 }
 
-/* Prevent vertical text break on ALL tables */
+/* Prevent text overflowing table cells on narrow screens, WITHOUT butchering
+   mid-word (word-break:break-word used to turn "Directorate" into "Direct-
+   orate" even when a column had room to wrap at the space instead). */
 table th,
 table td {
   white-space: normal;
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
 }
 
 /* Mobile-specific table rules */
@@ -1039,12 +1041,12 @@ table td {
   white-space: nowrap;
 }
 .link-btn:hover { opacity: .88; transform: translateY(-1px); text-decoration: none; }
-.btn-green  { background: #16a34a; color: #fff; }
-.btn-blue   { background: #1d4ed8; color: #fff; }
-.btn-purple { background: #7c3aed; color: #fff; }
-.btn-orange { background: #ea580c; color: #fff; }
-.btn-yellow { background: #ca8a04; color: #fff; }
-.btn-grey   { background: #475569; color: #fff; }
+.btn-green  { background: #16a34a; color: #fff; border: 1px solid #111; }
+.btn-blue   { background: #1d4ed8; color: #fff; border: 1px solid #111; }
+.btn-purple { background: #7c3aed; color: #fff; border: 1px solid #111; }
+.btn-orange { background: #ea580c; color: #fff; border: 1px solid #111; }
+.btn-yellow { background: #ca8a04; color: #fff; border: 1px solid #111; }
+.btn-grey   { background: #475569; color: #fff; border: 1px solid #111; }
 
 /* FAQ */
 .faq-list { display: flex; flex-direction: column; gap: .8rem; }
@@ -1333,35 +1335,35 @@ table td {
 
 /* ── KV table (jd-table) ── */
 .jd-table{width:100%;border-collapse:collapse;font-size:.82rem;border:1px solid #111}
-.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border:1px solid #111;vertical-align:top;word-break:break-word}
-.jd-table td{padding:8px 12px;color:#1e293b;font-weight:600;border:1px solid #111;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+.jd-table th{width:38%;background:#f8fafc;color:#374151;font-weight:700;padding:8px 12px;text-align:left;border:1px solid #111;vertical-align:top;word-break:normal;overflow-wrap:break-word}
+.jd-table td{padding:8px 12px;color:#1e293b;font-weight:600;border:1px solid #111;vertical-align:top;word-break:normal;overflow-wrap:break-word}
 .jd-table a{color:#1d4ed8;word-break:break-all}
 
 /* ── Vacancy table ── */
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-.vacancy-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:400px;border:1px solid #111}
-.vacancy-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;white-space:nowrap;text-align:left;border:1px solid #111}
-.vacancy-table td{padding:8px 12px;border:1px solid #111;color:#1e293b;font-weight:600;word-break:break-word;vertical-align:top}
+.vacancy-table{width:auto;min-width:100%;border-collapse:collapse;font-size:.82rem;border:1px solid #111}
+.vacancy-table th{background:#1d4ed8;color:#fff;padding:8px 12px;font-weight:700;white-space:nowrap;text-align:left;border:1px solid #111;min-width:90px}
+.vacancy-table td{padding:8px 12px;border:1px solid #111;color:#1e293b;font-weight:600;word-break:normal;overflow-wrap:break-word;vertical-align:top;min-width:90px}
 .vacancy-table .vac-total td{font-weight:700;background:#f0f9ff}
 
 /* ── Link buttons (new palette) ── */
 .links-grid{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
 .link-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .15s}
-.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #111}
 .btn-blue:hover{background:#1e40af;color:#fff}
-.btn-green{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.btn-green{background:#d1fae5;color:#065f46;border:1px solid #111}
 .btn-green:hover{background:#059669;color:#fff}
-.btn-red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.btn-red{background:#fee2e2;color:#991b1b;border:1px solid #111}
 .btn-red:hover{background:#dc2626;color:#fff}
-.btn-orange{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.btn-orange{background:#fef3c7;color:#92400e;border:1px solid #111}
 .btn-orange:hover{background:#d97706;color:#fff}
-.btn-purple{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+.btn-purple{background:#ede9fe;color:#5b21b6;border:1px solid #111}
 .btn-purple:hover{background:#6d28d9;color:#fff}
-.btn-teal{background:#ccfbf1;color:#0f766e;border:1px solid #5eead4}
+.btn-teal{background:#ccfbf1;color:#0f766e;border:1px solid #111}
 .btn-teal:hover{background:#0f766e;color:#fff}
-.btn-indigo{background:#e0e7ff;color:#3730a3;border:1px solid #a5b4fc}
+.btn-indigo{background:#e0e7ff;color:#3730a3;border:1px solid #111}
 .btn-indigo:hover{background:#3730a3;color:#fff}
-.btn-gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.btn-gray{background:#f1f5f9;color:#475569;border:1px solid #111}
 .btn-gray:hover{background:#475569;color:#fff}
 
 /* ── Selection steps ── */

@@ -3682,8 +3682,8 @@ def render_content_sections_all(sections):
         text = safe(sec.get('text', ''))
         body = ''
         if text:
-            body += (f'<div style="padding:10px 14px;font-size:.9rem;color:#334155;'
-                     f'line-height:1.6">{e(text[:900])}</div>')
+            body += (f'<div style="margin:10px 14px;padding:10px 14px;font-size:.9rem;color:#334155;'
+                     f'line-height:1.6;border:1px solid #111;border-radius:6px">{e(text[:900])}</div>')
         multi = len([t for t in tables if isinstance(t, dict) and t.get('rows')]) > 1
         for t in tables:
             if not isinstance(t, dict): continue
