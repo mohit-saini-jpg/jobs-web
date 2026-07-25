@@ -211,16 +211,24 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   display:grid;
   grid-template-areas:"topbar" "dots" "viewport" "controls" "actionbar";
   grid-template-rows:auto auto 1fr auto auto;
+  grid-template-columns:minmax(0,1fr);
   width:100%;max-width:100%;margin:0;background:#111214;box-shadow:0 4px 24px rgba(0,0,0,.25);overflow:hidden;
   height:calc(100dvh - 100px);min-height:560px;
 }
+/* CSS Grid "blowout" fix: a grid item's default min-width is auto (its
+   content's min-content size), so a horizontally-scrolling row inside
+   (.filter-grid, .scan-toolbar-row, .page-strip) was forcing the whole
+   grid track — and with it .scan-shell itself — wider than the viewport
+   instead of scrolling internally. min-width:0 on every grid item lets
+   overflow-x:auto actually take effect. */
+.scan-topbar,.scan-shell .page-strip,.scan-viewport,.scan-controls,.scan-actionbar{min-width:0}
 @media(min-width:821px){
   .scan-intro{padding:22px 18px 10px}
   .scan-intro h1{font-size:clamp(1.25rem,3vw,1.7rem);margin-bottom:8px}
   .scan-intro p{display:block}
   .scan-shell{
     max-width:980px;margin:12px auto 26px;border-radius:22px;box-shadow:0 10px 40px rgba(0,0,0,.35);
-    grid-template-columns:1fr 350px;
+    grid-template-columns:minmax(0,1fr) 350px;
     grid-template-areas:"topbar topbar" "dots dots" "viewport controls" "actionbar controls";
     grid-template-rows:auto auto 1fr auto;
     height:min(84vh,780px);min-height:600px;
@@ -280,6 +288,12 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .reorder-move-btns button{width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.65);color:#fff;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .reorder-move-btns button:disabled{opacity:.3;cursor:not-allowed}
 #markupCanvas,#eraserCanvas{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.5);touch-action:none;cursor:crosshair}
+
+.viewport-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:1.15rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;backdrop-filter:blur(2px)}
+.viewport-nav-btn:hover{background:rgba(0,0,0,.75)}
+.viewport-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.viewport-nav-prev{left:8px}
+.viewport-nav-next{right:8px}
 .scan-shell .filter-scroll-row{padding:10px 8px 0}
 .scan-shell .filter-card{background:#1c1c1e;border-color:#333}
 .scan-shell .filter-card.active{border-color:#4f8cff;background:#182238}
@@ -295,10 +309,10 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .scan-shell #ocrProgMsg{color:#9aa0a6;font-size:.74rem;margin-top:5px}
 .scan-shell .form-group{padding:0 2px}
 
-.scan-toolbar-row{display:flex;gap:2px;overflow-x:auto;padding:10px 6px 4px;scrollbar-width:none}
+.scan-toolbar-row{display:flex;gap:4px;overflow-x:auto;padding:12px 8px 6px;scrollbar-width:none}
 .scan-toolbar-row::-webkit-scrollbar{display:none}
-.tb-btn{flex:0 0 auto;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 8px;background:none;border:none;color:#ccc;cursor:pointer;font-family:inherit;font-size:.65rem;font-weight:600;border-radius:10px;transition:background .15s}
-.tb-btn i{font-size:1.1rem}
+.tb-btn{flex:0 0 auto;min-width:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px 10px;background:none;border:none;color:#ccc;cursor:pointer;font-family:inherit;font-size:.74rem;font-weight:600;border-radius:12px;transition:background .15s}
+.tb-btn i{font-size:1.5rem}
 .tb-btn:hover{background:#232326;color:#fff}
 .tb-btn.tb-primary{color:#4f8cff}
 .tb-btn.tb-primary:hover{background:#182238}
@@ -398,6 +412,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     <div class="scan-livewrap" id="livePreviewWrap" style="display:none"><canvas id="livePreview"></canvas></div>
     <div class="scan-livewrap" id="markupWrap" style="display:none"><canvas id="markupCanvas"></canvas></div>
     <div class="scan-livewrap" id="eraserWrap" style="display:none"><canvas id="eraserCanvas"></canvas></div>
+    <button type="button" class="viewport-nav-btn viewport-nav-prev" id="viewportPrevBtn" style="display:none" onclick="goToPage(curPageIdx-1)" aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="viewport-nav-btn viewport-nav-next" id="viewportNextBtn" style="display:none" onclick="goToPage(curPageIdx+1)" aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>
   </main>
 
   <!-- MODE: CROP -->
@@ -1109,6 +1125,7 @@ function setMode(mode){
   if(mode==='upload'||!pages.length){
     currentMode='upload';
     updateTopbarTitle();
+    updateViewportArrows();
     return;
   }
   currentMode=mode;
@@ -1123,6 +1140,7 @@ function setMode(mode){
     else if(mode==='reorder'){G('modeReorder').style.display='block';renderReorderGrid();}
     else{G('modeView').style.display='block';loadPageIntoEditors(curPageIdx);}
     updateTopbarTitle();
+    updateViewportArrows();
   });
 }
 function quickRotate(){
@@ -1505,6 +1523,32 @@ function handleFiles(fileList){
   });
 }
 
+/* Single choke point for "switch to page i while staying in whatever mode
+   we're currently in" — used by page-dot clicks AND the big viewport
+   prev/next arrows below, so both stay in sync. */
+function goToPage(i){
+  if(i<0||i>=pages.length||i===curPageIdx)return;
+  curPageIdx=i;
+  if(currentMode==='crop')initPageCropEditor(curPageIdx);
+  else if(currentMode==='filters')initFilterStep();
+  else if(currentMode==='ocr'){loadPageIntoEditors(curPageIdx);initOcrStep();}
+  else if(currentMode==='resize')enterResizeMode();
+  else if(currentMode==='markup')enterMarkupMode();
+  else if(currentMode==='eraser')enterEraserMode();
+  else loadPageIntoEditors(curPageIdx);
+  renderPageStrip();
+}
+function updateViewportArrows(){
+  var prev=G('viewportPrevBtn'),next=G('viewportNextBtn');
+  if(!prev||!next)return;
+  var show=pages.length>1&&currentMode!=='upload'&&currentMode!=='reorder';
+  prev.style.display=show?'flex':'none';
+  next.style.display=show?'flex':'none';
+  if(show){
+    prev.disabled=curPageIdx<=0;
+    next.disabled=curPageIdx>=pages.length-1;
+  }
+}
 function renderPageStrip(){
   var strip=G('pageStrip');
   strip.style.display=pages.length?'flex':'none';
@@ -1513,14 +1557,7 @@ function renderPageStrip(){
     var d=document.createElement('div');
     d.className='page-thumb'+(i===curPageIdx?' active':'');
     d.innerHTML='<img src="'+p.rawSrc+'"><span class="pg-num">'+(i+1)+'</span><button class="pg-del" onclick="event.stopPropagation();deletePage('+i+')"><i class="fa-solid fa-xmark"></i></button><button class="pg-dup" title="Duplicate Page" onclick="event.stopPropagation();duplicatePage('+i+')"><i class="fa-solid fa-clone"></i></button>';
-    d.onclick=function(){
-      curPageIdx=i;
-      if(currentMode==='crop')initPageCropEditor(curPageIdx);
-      else if(currentMode==='filters')initFilterStep();
-      else if(currentMode==='ocr'){loadPageIntoEditors(curPageIdx);initOcrStep();}
-      else loadPageIntoEditors(curPageIdx);
-      renderPageStrip();
-    };
+    d.onclick=function(){goToPage(i);};
     strip.appendChild(d);
   });
   var addBtn=document.createElement('div');
@@ -1529,6 +1566,7 @@ function renderPageStrip(){
   addBtn.onclick=function(){G('galleryInput').click();};
   strip.appendChild(addBtn);
   updateTopbarTitle();
+  updateViewportArrows();
 }
 
 function deletePage(i){
