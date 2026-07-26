@@ -1,4 +1,4 @@
-// Vercel Edge Middleware — historical 301 redirects at the edge.
+// Vercel Edge Middleware — historical 301 redirects + 410 Gone at the edge.
 //
 // WHY: Vercel ignores the Netlify-style `_redirects` file, and vercel.json caps
 // redirects at 1024. This site has thousands of historical /jobs/ slug-rename 301s
@@ -8,8 +8,15 @@
 //
 // vercel.json redirects run BEFORE middleware, so the ~96 structural redirects
 // there take precedence; this handles everything else.
+//
+// It also answers known-permanently-removed paths (old expired job postings
+// with no successor page) with a real HTTP 410 Gone instead of letting them
+// fall through to the platform's default 404 — Search Console deindexes 410s
+// much faster than 404s, which it keeps re-crawling indefinitely. That list
+// (gone-map.js) is compiled from `_gone_urls.txt` by build_gone_map.py.
 
 import REDIRECTS from './redirect-map.js';
+import GONE from './gone-map.js';
 
 // Legacy bare-state URL scheme: /{state}/{job}/ -> /state/{state}/{job}/
 const STATES = new Set([
@@ -56,6 +63,13 @@ function redirect(origin, dest, search) {
   return Response.redirect(origin + to + (search || ''), 301);
 }
 
+function gone() {
+  return new Response('410 Gone — this page has been permanently removed.', {
+    status: 410,
+    headers: { 'content-type': 'text/plain; charset=utf-8' },
+  });
+}
+
 export default function middleware(request) {
   const url = new URL(request.url);
   const p = url.pathname;
@@ -72,6 +86,13 @@ export default function middleware(request) {
   for (const c of candidates) {
     const dest = REDIRECTS[c];
     if (dest && dest !== p) return redirect(url.origin, dest, url.search);
+  }
+
+  // 1b) known-permanently-removed pages (expired postings, no successor) —
+  // 410 Gone instead of falling through to the platform default 404, so
+  // Search Console deindexes them instead of re-crawling forever.
+  for (const c of candidates) {
+    if (GONE.has(c)) return gone();
   }
 
   // 2) legacy bare-state scheme: /{state}/{rest} -> /state/{state}/{rest}

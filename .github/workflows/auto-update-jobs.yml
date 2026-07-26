@@ -139,6 +139,9 @@ jobs:
       - name: Build Vercel edge redirect map from _redirects (historical 301s)
         run: python3 build_redirect_map.py
 
+      - name: Build Vercel edge gone map from _gone_urls.txt (410 for removed pages)
+        run: python3 build_gone_map.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 
@@ -383,6 +386,11 @@ jobs:
           # 404-ing in production despite being correct in _redirects. This one line closes
           # that gap permanently.
           git add redirect-map.js 2>/dev/null || true
+          # Same staging gap as redirect-map.js above, for the 410-Gone map:
+          # build_gone_map.py regenerates gone-map.js every run (dropping any
+          # path that got a real redirect or came back to life), so it must be
+          # staged here too or middleware.js keeps serving a stale Gone list.
+          git add gone-map.js _gone_urls.txt 2>/dev/null || true
           git add seo_guardian_report.json 2>/dev/null || true
           git add education/ 2>/dev/null || true
           git add haryana/ andhra-pradesh/ arunachal-pradesh/ assam/ bihar/ 2>/dev/null || true
