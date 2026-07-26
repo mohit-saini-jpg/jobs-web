@@ -6429,7 +6429,6 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         _footer_html = f'<div class="jc-footer">{_hint_html}{_links_html}</div>' if (_hint_html or _links_html) else ''
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><h2><a href="{_row_url}">{e(jtitle)}</a></h2></div>
-  <div class="job-card-org"><i class="fa-solid fa-building"></i> {e(jorg[:60])}</div>
   {f'<table class="jc-info">{_jc_rows}</table>' if _jc_rows else ''}
   {status_badge}
   {_footer_html}
