@@ -123,6 +123,8 @@ html.js-faq .faq-a.open,.faq-a.open,.faq-a[style*="block"],.faq-a[style*="flex"]
 .jc-mode{color:#7c3aed;font-weight:700}
 .jc-date{font-weight:800;color:#0f172a}
 .jc-date.urgent{color:#dc2626}
+.jc-apply-hint{margin-top:10px;font-size:.86rem;font-weight:800;color:#1d4ed8;display:flex;align-items:center;gap:6px}
+.jc-apply-hint i{font-size:.78rem}
 .job-card-met.jm-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:12px}
 .job-card-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
 .jl-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-decoration:none;transition:all .12s;border:1px solid transparent;min-height:28px}

@@ -6278,6 +6278,31 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         if 'online' in t: return 'Online'
         return ''
 
+    # The Post Name / Qualification / Total Post / Apply Mode info-table only
+    # makes sense for genuine recruitment listings. On Result, Admit Card,
+    # Answer Key, Admission and Yojana/Scheme pages that data is either
+    # meaningless (a scheme has no "vacancy count" or "apply mode") or just
+    # not present in the underlying record, so those cards fall back to
+    # title-only rather than showing wrong/irrelevant fields.
+    _NON_JOB_INFO_KEYS = {
+        'result', 'results', 'admit-card', 'answer-key', 'admissions', 'admission',
+        'govt-scheme-yojna', 'important-csc-pdf', 'important-csc-link',
+        'importantcsc-pdf', 'importantcsc-link',
+    }
+    _show_job_info = _url_key not in _NON_JOB_INFO_KEYS
+    # Non-job categories get their own category name as the card hint instead
+    # of "Apply Now" (e.g. a Result listing isn't something you "apply" to).
+    _CATEGORY_HINT = {
+        'result': 'Result', 'results': 'Result',
+        'admit-card': 'Admit Card',
+        'answer-key': 'Answer Key',
+        'admissions': 'Admission', 'admission': 'Admission',
+        'govt-scheme-yojna': 'Yojana',
+        'important-csc-pdf': 'Details', 'importantcsc-pdf': 'Details',
+        'important-csc-link': 'Details', 'importantcsc-link': 'Details',
+    }
+    _card_hint = 'Apply Now' if _show_job_info else _CATEGORY_HINT.get(_url_key, '')
+
     cards_html = ''
     _idx = 0  # FIX: sequential display number for RENDERED cards only (skipped jobs must not eat a number)
     for job in jobs:
@@ -6381,11 +6406,15 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         jstatus = safe(job.get('status',''))
         status_badge = ''
         if jstatus:
+            # NOTE (2026-07-26): no 'application_open' -> 'Apply Now' entry here
+            # anymore -- the user wants zero apply-flavored text/buttons on
+            # listing cards, only informational status; clicking the card
+            # itself (or the surviving Notification/Result/Admit Card/Answer
+            # Key quick-links) is the only way to act on a card.
             _smap = {
                 'result_declared': ('#d1fae5','#065f46','Result Declared'),
                 'admit_card_out':  ('#cffafe','#0e7490','Admit Card Out'),
                 'answer_key_out':  ('#fef9c3','#854d0e','Answer Key Out'),
-                'application_open':('#dbeafe','#1e40af','Apply Now'),
                 'notification_out':('#ede9fe','#5b21b6','Notification Out'),
                 'admission_open':  ('#fce7f3','#9d174d','Admission Open'),
             }
@@ -6394,7 +6423,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
         _vac_noun  = "Posts" if _row_url.startswith("/jobs/") else list_noun
         _mode_span = f'<span class="jc-mode">{e(jmode)}</span>' if jmode and _row_url.startswith("/jobs/") else ''
-        _jc_rows = (
+        _jc_rows = '' if not _show_job_info else (
             (f'<tr><th><i class="fa-solid fa-graduation-cap"></i> Post Name</th><td>{e(jpost)}</td></tr>' if jpost else '') +
             (f'<tr><th><i class="fa-solid fa-book-open"></i> Qualification</th><td>{e(jqual)}</td></tr>' if jqual else '') +
             (f'<tr><th><i class="fa-solid fa-users"></i> Total Post</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
@@ -6405,6 +6434,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
   <div class="job-card-org"><i class="fa-solid fa-building"></i> {e(jorg[:60])}</div>
   {f'<table class="jc-info">{_jc_rows}</table>' if _jc_rows else ''}
   {status_badge}
+  {f'<div class="jc-apply-hint">{e(_card_hint)} <i class="fa-solid fa-arrow-right"></i></div>' if _card_hint else ''}
   {f'<div class="job-card-links" onclick="event.stopPropagation()">{ql}</div>' if ql else ''}
 </article>'''
 
