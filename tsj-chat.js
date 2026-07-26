@@ -438,11 +438,6 @@ var CSS = ''+
 // and the two floating circles were overlapping there.
 '#tsj-chat-fab:hover{transform:scale(1.07)}'+
 '#tsj-chat-fab .tsj-fab-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#10B981;border:2px solid #fff;border-radius:50%}'+
-'.tsj-fab-label{position:fixed;bottom:32px;left:88px;z-index:99991;background:#101828;color:#fff;padding:8px 14px;border-radius:10px;font-size:.78rem;font-weight:700;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:tsjLabelIn .3s ease-out}'+
-'.tsj-fab-label::after{content:"";position:absolute;left:-6px;bottom:14px;border:6px solid transparent;border-right-color:#101828}'+
-'.tsj-fab-label button{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;margin-left:8px;font-size:.85rem;vertical-align:middle}'+
-'@keyframes tsjLabelIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}'+
-'@media(max-width:480px){.tsj-fab-label{bottom:80px;left:16px;font-size:.72rem}}'+
 '#tsj-chat-panel{position:fixed;bottom:92px;left:20px;width:396px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 120px);background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.25);display:none;flex-direction:column;overflow:hidden;z-index:99990;border:1px solid #e5e7eb}'+
 '#tsj-chat-panel.open{display:flex}'+
 '#tsj-chat-panel.fullscreen{position:fixed;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;bottom:0;left:0}'+
@@ -546,7 +541,6 @@ var CSS = ''+
    bar hasn't been measured yet. */
 '@media(max-width:900px){'+
 '#tsj-chat-fab{bottom:calc(var(--tsj-nav-h,72px) + 10px)}'+
-'.tsj-fab-label{bottom:calc(var(--tsj-nav-h,72px) + 22px)}'+
 '#tsj-chat-panel{bottom:calc(var(--tsj-nav-h,72px) + 82px)}'+
 '}'+
 '@media(max-width:480px){'+
@@ -570,7 +564,6 @@ function buildHTML(){
   root.id = 'tsj-chat-root';
   root.innerHTML =
     '<button id="tsj-chat-fab" aria-label="Open TSJ AI — AI assistant to help you find the best government job for you" aria-expanded="false"><i class="fa-solid fa-robot"></i><span class="tsj-fab-badge"></span></button>'+
-    '<div class="tsj-fab-label" id="tsj-fab-label" role="status">🎯 <strong>TSJ AI</strong> — Aapke liye Best Government Job Dhundhne mein Help karega!<button id="tsj-fab-label-close" aria-label="Dismiss">&times;</button></div>'+
     '<div id="tsj-chat-panel" role="dialog" aria-label="TSJ AI Assistant chat">'+
       '<div class="tsj-hd">'+
         '<div class="tsj-hd-icon"><i class="fa-solid fa-robot"></i></div>'+
@@ -916,30 +909,9 @@ function showProfileForm(){
   });
 }
 
-/* ============================== FAB DISCOVERY LABEL ============================== */
-function dismissFabLabel(){
-  var label = $('#tsj-fab-label');
-  if(label) label.remove();
-  sessionStorage.setItem('tsj_ai_label_seen', '1');
-}
-function maybeShowFabLabel(){
-  if(sessionStorage.getItem('tsj_ai_label_seen')){
-    var label = $('#tsj-fab-label');
-    if(label) label.remove();
-    return;
-  }
-  setTimeout(function(){
-    var btn = $('#tsj-fab-label-close');
-    if(btn) btn.addEventListener('click', function(e){ e.stopPropagation(); dismissFabLabel(); });
-  }, 0);
-  // Auto-dismiss after a while so it doesn't nag returning visitors mid-session.
-  setTimeout(dismissFabLabel, 9000);
-}
-
 /* ============================== EVENT WIRING ============================== */
 function openPanel(){
   state.open = true;
-  dismissFabLabel();
   $('#tsj-chat-panel').classList.add('open');
   $('#tsj-chat-fab').setAttribute('aria-expanded','true');
   setTimeout(function(){ $('#tsj-input').focus(); }, 100);
@@ -1075,7 +1047,6 @@ function init(){
   [100, 400, 1000, 2000, 4000].forEach(function(ms){ setTimeout(syncNavOffset, ms); });
   window.addEventListener('resize', syncNavOffset);
   window.addEventListener('orientationchange', syncNavOffset);
-  maybeShowFabLabel();
   idbLoadLatest().then(function(conv){
     if(conv && conv.messages && conv.messages.length){
       state.messages = conv.messages;

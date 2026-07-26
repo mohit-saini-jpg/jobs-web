@@ -113,25 +113,26 @@ a, button, [role="button"] {
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand-title {
   font-size: 1.3rem; font-weight: 900; color: var(--navy); line-height: 1.2;
-  white-space: nowrap; overflow: visible;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
 }
 /* Solid navy — matches homepage brand color (no separate accent tint on "SARKARI") */
 .brand-title span { color: var(--navy); }
 .brand-sub {
   font-size: .62rem; color: var(--muted); font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: none; /* FIX: remove max-width that was truncating subtitle */
+  max-width: 100%;
 }
 /* Logo bar solid white background — prevents content bleed-through on mobile */
 .header-logo-bar { background: var(--white); }
-/* Mobile: keep font readable, allow brand to take available space */
+/* Mobile: keep font readable, allow brand to take available space. Title
+   truncates with an ellipsis (never wraps/overflows) so it can never bleed
+   under the translate-box/search/hamburger group next to it -- a wrapped
+   3-line title still overflowed past its shrunk flex width and got visually
+   covered by those opaque siblings. */
 @media (max-width: 480px) {
-  .brand-title { font-size: 1.02rem; white-space: normal; line-height: 1.15; }
+  .brand-title { font-size: 1.02rem; line-height: 1.15; }
   .brand-sub { font-size: .6rem; }
   .brand-logo { width: 42px; height: 42px; }
-  .translate-box { padding: 4px 6px; }
-  .translate-widget { min-width: 40px; }
-  .header-actions { gap: 5px; }
 }
 /* Very small phones (iPhone SE / older Android ~360px and below): brand
    title + tagline still need a touch more room than 480px alone frees up. */
@@ -169,6 +170,13 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
   font-family: inherit; flex-shrink: 0;
 }
 .icon-btn:hover { background: var(--navy); color: #fff; }
+@media (max-width: 480px) {
+  .translate-box { padding: 4px 6px; }
+  .translate-widget { min-width: 36px; }
+  .translate-widget .goog-te-gadget select { max-width: 88px; }
+  .header-actions { gap: 5px; }
+  .icon-btn { width: 34px; height: 34px; font-size: 1.1rem; border-radius: 8px; }
+}
 
 /* ── Desktop Nav ── */
 .desktop-nav {
@@ -234,14 +242,14 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
   }
   .mobile-bottom-bar a {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 3px; font-size: .85rem; font-weight: 800; color: #595959;
-    text-decoration: none; padding: 5px 0; min-height: 58px; justify-content: center;
+    gap: 2px; font-size: .68rem; font-weight: 800; color: #595959;
+    text-decoration: none; padding: 5px 0; min-height: 48px; justify-content: center;
   }
   .mobile-bottom-bar a i { font-size: 1.15rem; }
-  .bnav-ic { font-size: 1.3rem; line-height: 1; display:block; }
+  .bnav-ic { font-size: 1rem; line-height: 1; display:block; }
   .mobile-bottom-bar a.active,
   .mobile-bottom-bar a:hover { color: var(--blue); }
-  body { padding-bottom: max(72px, calc(72px + env(safe-area-inset-bottom, 0px))); }
+  body { padding-bottom: max(62px, calc(62px + env(safe-area-inset-bottom, 0px))); }
 }
 
 /* ── Mobile Overlay + Offcanvas ── */
@@ -746,9 +754,9 @@ body.translated-ltr, body.translated-rtl { top: 0 !important; }
      (Shown on all pages via header.html include)
 ============================================================ -->
 <nav class="mobile-bottom-bar" aria-label="Mobile navigation">
-  <a href="/"><span class="bnav-ic">🏠</span><span>Home</span></a>
-  <a href="/section/latest-jobs/"><span class="bnav-ic">💼</span><span>Jobs</span></a>
-  <a href="/section/admit-card/"><span class="bnav-ic">🪪</span><span>Admit Card</span></a>
-  <a href="/section/results/"><span class="bnav-ic">🏆</span><span>Results</span></a>
-  <a href="/tools/"><span class="bnav-ic">🔧</span><span>Tools</span></a>
+  <a href="/"><span class="bnav-ic"><i class="fa-solid fa-house"></i></span><span>Home</span></a>
+  <a href="/section/latest-jobs/"><span class="bnav-ic"><i class="fa-solid fa-briefcase"></i></span><span>Jobs</span></a>
+  <a href="/section/admit-card/"><span class="bnav-ic"><i class="fa-solid fa-id-card"></i></span><span>Admit Card</span></a>
+  <a href="/section/results/"><span class="bnav-ic"><i class="fa-solid fa-trophy"></i></span><span>Results</span></a>
+  <a href="/tools/"><span class="bnav-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span><span>Tools</span></a>
 </nav>
