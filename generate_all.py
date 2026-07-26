@@ -9846,6 +9846,49 @@ def _render_homepage_sr_cards(sec_index, max_items=5):
             '</div>')
     return ''.join(out)
 
+# ── "Fresh & New" homepage card (2026-07-26): featured internal links to
+# recently-published pages, rotated via data/unindexed_feed.json (built by
+# build_unindexed_feed.py from the previous run -- see that file for why an
+# age heuristic substitutes for real GSC-indexed status). Purpose: get new
+# pages a link from the homepage (the most-crawled page on the site) so
+# Google discovers/indexes them faster. Self-cleaning: a page only appears
+# here while young; once build_unindexed_feed.py's freshness window passes
+# it ages out on its own, no manual removal needed.
+def _render_fresh_updates_card(root_path):
+    import os as _os
+    feed_path = _os.path.join(str(root_path), 'data', 'unindexed_feed.json')
+    try:
+        feed = json.load(open(feed_path, encoding='utf-8'))
+    except Exception:
+        return ''
+    items = feed.get('items') or []
+    if not items:
+        return ''
+    _icon = {'job': 'fa-briefcase', 'nonjob': 'fa-star'}
+    li_parts = []
+    for n, it in enumerate(items, 1):
+        url = safe(it.get('url', ''))
+        title = safe(it.get('title', ''))
+        cat = safe(it.get('category', ''))
+        if not url or not title:
+            continue
+        ic = _icon.get(it.get('type'), 'fa-briefcase')
+        li_parts.append(
+            f'<li><a href="{e(url)}" class="sr-job-link"><span class="sr-num">{n}</span>'
+            f'<i class="fa-solid {ic}" style="color:#0d9488;font-size:.7rem;margin-right:4px;"></i>'
+            f'<span class="sr-job-title">{e(title[:80])}</span>'
+            f'<span class="sr-job-date">{e(cat)}</span></a></li>'
+        )
+    if not li_parts:
+        return ''
+    return (
+        '<div class="sr-card" style="grid-column:1/-1;content-visibility:auto;contain-intrinsic-size:0 420px">'
+        '<div class="sr-card-head" style="background:#0d9488">'
+        '<div class="left"><span class="sr-section-title">⚡ Fresh &amp; New — Just Added</span></div></div>'
+        f'<ul class="sr-job-list tsj-fresh-scroll">{"".join(li_parts)}</ul>'
+        '</div>'
+    )
+
 # Update version string in index.html to bust cache + inject pre-rendered cards
 _ver = __import__('datetime').datetime.now().strftime('%Y%m%d%H%M')
 _idx_path = str(ROOT/'index.html')
@@ -9853,7 +9896,7 @@ if __import__('os').path.exists(_idx_path):
     _idx = open(_idx_path, encoding='utf-8').read()
     import re as _re
     _idx_new = _re.sub(r'sections-index\.json\?v=\d+', f'sections-index.json?v={_ver}', _idx)
-    _sr_cards_html = _render_homepage_sr_cards(sections_index)
+    _sr_cards_html = _render_homepage_sr_cards(sections_index) + _render_fresh_updates_card(ROOT)
     _idx_new = _re.sub(
         r'(<div id="sr-sections-grid" class="sr-sections-grid">)(.*?)(</div>\s*</div>\s*<div id="dynamic-sections")',
         lambda _m: _m.group(1) + _sr_cards_html + _m.group(3),

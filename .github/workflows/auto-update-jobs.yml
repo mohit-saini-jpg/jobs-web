@@ -142,6 +142,9 @@ jobs:
       - name: Build Vercel edge gone map from _gone_urls.txt (410 for removed pages)
         run: python3 build_gone_map.py
 
+      - name: Build homepage "Fresh & New" rotation feed (fast-indexing helper)
+        run: python3 build_unindexed_feed.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 

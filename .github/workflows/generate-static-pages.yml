@@ -78,6 +78,7 @@ jobs:
           python3 fix_schema_dates.py
           python3 build_redirect_map.py
           python3 build_gone_map.py
+          python3 build_unindexed_feed.py
           echo "Generation complete"
 
       - name: Fix AI duplication in built pages
