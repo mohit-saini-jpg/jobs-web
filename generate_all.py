@@ -6262,6 +6262,22 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         f'<script type="application/ld+json">{json.dumps(s, ensure_ascii=False)}</script>'
         for s in _schemas_list)
 
+    # Apply-mode detection (2026-07-26 fix): the old code defaulted straight
+    # to 'Online' whenever the structured application_mode/apply_mode field
+    # was empty -- wrong for the many Offline/Walk-in postings whose data
+    # never got that field cleanly populated. The TITLE is far more reliable
+    # here (scrapers consistently write "... Apply Offline", "... Walk-in
+    # Interview" etc. into it) so it's checked first; the structured field is
+    # only a fallback. If neither says anything, return '' (don't guess) --
+    # the listing card then simply omits the apply-mode text instead of
+    # showing a mode that might be wrong.
+    def _detect_apply_mode(text):
+        t = safe(text).lower()
+        if re.search(r'walk[\s-]?in', t): return 'Walk-in'
+        if 'offline' in t: return 'Offline'
+        if 'online' in t: return 'Online'
+        return ''
+
     cards_html = ''
     _idx = 0  # FIX: sequential display number for RENDERED cards only (skipped jobs must not eat a number)
     for job in jobs:
@@ -6304,7 +6320,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         jorg   = safe(bd.get('organization_name','') or 'Government')
         jvac   = safe(bd.get('total_vacancies','') or job.get('total_post',''))
         jld    = safe(dates.get('last_date_to_apply','') or dates.get('last_date_apply_online','') or dates.get('last_date','') or job.get('last_date',''))
-        jmode  = safe(bd.get('application_mode','') or job.get('apply_mode','') or 'Online')
+        jmode  = _detect_apply_mode(jtitle) or _detect_apply_mode(bd.get('application_mode','') or job.get('apply_mode',''))
         _qraw  = (job.get('qualification') or {})
         jqual  = safe(_qraw.get('details','') or _qraw.get('education_qualification','') or _qraw.get('minimum_qualification',''))
         jpost  = safe(bd.get('post_name','') or job.get('post_name',''))
@@ -6333,21 +6349,16 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             if v and not v.startswith('[') and not v.startswith('{'):
                 return v
             return ''
-        apply_url = _get_link('apply_online') or _get_link('registration_link') or _get_link('login_link')
-        if not apply_url:
-            ch = _il.get('click_here') or _ul.get('click_here') or []
-            if isinstance(ch, str): ch = [ch]
-            if isinstance(ch, list):
-                for cu in ch:
-                    cu = safe(cu)
-                    if cu.startswith('http') and not is_blocked(cu):
-                        apply_url = cu; break
+        # NOTE (2026-07-26): deliberately NOT offering a direct external
+        # "Apply" quick-link here anymore -- clicking anywhere on the card
+        # (including where an Apply button used to sit) should take the user
+        # to our own /jobs/{slug}/ content page, not bypass straight to the
+        # official portal from the listing page.
         notif_url = _get_link('notification_pdf') or _get_link('download_notification') or _get_link('official_notification')
         result_url = _get_link('result_link') or _get_link('result')
         admit_url = _get_link('admit_card') or _get_link('admit')
         answer_url = _get_link('answer_key') or _get_link('answerkey')
         for url, lbl, css, ic in [
-            (apply_url,'Apply','btn-apply jl-btn','fa-paper-plane'),
             (notif_url,'Notification','btn-pdf jl-btn','fa-file-pdf'),
             (result_url,'Result','btn-result jl-btn','fa-trophy'),
             (admit_url,'Admit Card','btn-admit jl-btn','fa-id-card'),
