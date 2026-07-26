@@ -6280,8 +6280,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 
     # The Post Name / Qualification / Total Post / Apply Mode info-table only
     # makes sense for genuine recruitment listings. On Result, Admit Card,
-    # Answer Key, Admission and Yojana/Scheme pages that data is either
-    # meaningless (a scheme has no "vacancy count" or "apply mode") or just
+    # Answer Key, Admission, Yojana/Scheme and Education (state-wise exam/
+    # admission updates -- these are identified by list_noun='Updates' or a
+    # /education/ URL, since their per-state URL slug is the state name, not
+    # a fixed category key) pages that data is either meaningless (a scheme
+    # or an education update has no "vacancy count" or "apply mode") or just
     # not present in the underlying record, so those cards fall back to
     # title-only rather than showing wrong/irrelevant fields.
     _NON_JOB_INFO_KEYS = {
@@ -6289,19 +6292,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         'govt-scheme-yojna', 'important-csc-pdf', 'important-csc-link',
         'importantcsc-pdf', 'importantcsc-link',
     }
-    _show_job_info = _url_key not in _NON_JOB_INFO_KEYS
-    # Non-job categories get their own category name as the card hint instead
-    # of "Apply Now" (e.g. a Result listing isn't something you "apply" to).
-    _CATEGORY_HINT = {
-        'result': 'Result', 'results': 'Result',
-        'admit-card': 'Admit Card',
-        'answer-key': 'Answer Key',
-        'admissions': 'Admission', 'admission': 'Admission',
-        'govt-scheme-yojna': 'Yojana',
-        'important-csc-pdf': 'Details', 'importantcsc-pdf': 'Details',
-        'important-csc-link': 'Details', 'importantcsc-link': 'Details',
-    }
-    _card_hint = 'Apply Now' if _show_job_info else _CATEGORY_HINT.get(_url_key, '')
+    _is_education = list_noun == 'Updates' or '/education/' in canon_url
+    _show_job_info = _url_key not in _NON_JOB_INFO_KEYS and not _is_education
+    # Non-job categories get a generic "Get Details" hint instead of "Apply
+    # Now" (e.g. a Result or Education update isn't something you "apply" to).
+    _card_hint = 'Apply Now' if _show_job_info else 'Get Details'
 
     cards_html = ''
     _idx = 0  # FIX: sequential display number for RENDERED cards only (skipped jobs must not eat a number)
@@ -6429,13 +6424,15 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             (f'<tr><th><i class="fa-solid fa-users"></i> Total Post</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
             (f'<tr><th><i class="fa-solid fa-calendar-days"></i> Last Date</th><td class="jc-date{urgent_cls}">{e(jld)}</td></tr>' if jld else '')
         )
+        _hint_html  = f'<div class="jc-apply-hint">{e(_card_hint)} <i class="fa-solid fa-arrow-right"></i></div>' if _card_hint else ''
+        _links_html = f'<div class="job-card-links" onclick="event.stopPropagation()">{ql}</div>' if ql else ''
+        _footer_html = f'<div class="jc-footer">{_hint_html}{_links_html}</div>' if (_hint_html or _links_html) else ''
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><h2><a href="{_row_url}">{e(jtitle)}</a></h2></div>
   <div class="job-card-org"><i class="fa-solid fa-building"></i> {e(jorg[:60])}</div>
   {f'<table class="jc-info">{_jc_rows}</table>' if _jc_rows else ''}
   {status_badge}
-  {f'<div class="jc-apply-hint">{e(_card_hint)} <i class="fa-solid fa-arrow-right"></i></div>' if _card_hint else ''}
-  {f'<div class="job-card-links" onclick="event.stopPropagation()">{ql}</div>' if ql else ''}
+  {_footer_html}
 </article>'''
 
     if not cards_html:

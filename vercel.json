@@ -336,11 +336,6 @@
       "statusCode": 301
     },
     {
-      "source": "/section/latest-notifications/",
-      "destination": "/section/latest-jobs/",
-      "statusCode": 301
-    },
-    {
       "source": "/section/m-e-mtech/",
       "destination": "/category/study/",
       "statusCode": 301
