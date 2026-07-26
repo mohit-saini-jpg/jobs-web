@@ -432,18 +432,20 @@ function profileSearch(profile){
 /* ============================== CSS ============================== */
 var CSS = ''+
 '#tsj-chat-root{position:fixed;z-index:99990;font-family:"Noto Sans",system-ui,sans-serif}'+
-'#tsj-chat-fab{position:fixed;bottom:20px;left:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#345de6,#7c3aed);box-shadow:0 8px 24px rgba(52,93,230,.4);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;z-index:99991;transition:transform .2s}'+
+'#tsj-chat-fab{position:fixed;bottom:20px;left:20px;width:60px;height:60px;border-radius:50%;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.28);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:99991;transition:transform .2s}'+
 // Deliberately bottom-LEFT: the site's existing push-notification bell
 // button already owns the bottom-right corner (see tsj-push.js #tsj-bell),
 // and the two floating circles were overlapping there.
 '#tsj-chat-fab:hover{transform:scale(1.07)}'+
+'#tsj-chat-fab .tsj-fab-icon{width:100%;height:100%;object-fit:cover;border-radius:50%}'+
 '#tsj-chat-fab .tsj-fab-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#10B981;border:2px solid #fff;border-radius:50%}'+
 '#tsj-chat-panel{position:fixed;bottom:92px;left:20px;width:396px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 120px);background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.25);display:none;flex-direction:column;overflow:hidden;z-index:99990;border:1px solid #e5e7eb}'+
 '#tsj-chat-panel.open{display:flex}'+
 '#tsj-chat-panel.fullscreen{position:fixed;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;bottom:0;left:0}'+
 'html.tsj-dark #tsj-chat-panel{background:#0f172a;border-color:#2a3441;color:#f1f5f9}'+
 '.tsj-hd{background:linear-gradient(135deg,#345de6,#7c3aed);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}'+
-'.tsj-hd-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1rem}'+
+'.tsj-hd-icon{width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;overflow:hidden;flex-shrink:0}'+
+'.tsj-hd-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%}'+
 '.tsj-hd-title{font-weight:800;font-size:.95rem;font-family:"Space Grotesk",sans-serif}'+
 '.tsj-hd-sub{font-size:.68rem;opacity:.85}'+
 '.tsj-hd-btns{margin-left:auto;display:flex;gap:4px}'+
@@ -563,10 +565,10 @@ function buildHTML(){
   var root = document.createElement('div');
   root.id = 'tsj-chat-root';
   root.innerHTML =
-    '<button id="tsj-chat-fab" aria-label="Open TSJ AI — AI assistant to help you find the best government job for you" aria-expanded="false"><i class="fa-solid fa-robot"></i><span class="tsj-fab-badge"></span></button>'+
+    '<button id="tsj-chat-fab" aria-label="Open TSJ AI — AI assistant to help you find the best government job for you" aria-expanded="false"><img src="/DHFJH.png" alt="TSJ AI" class="tsj-fab-icon"><span class="tsj-fab-badge"></span></button>'+
     '<div id="tsj-chat-panel" role="dialog" aria-label="TSJ AI Assistant chat">'+
       '<div class="tsj-hd">'+
-        '<div class="tsj-hd-icon"><i class="fa-solid fa-robot"></i></div>'+
+        '<div class="tsj-hd-icon"><img src="/DHFJH.png" alt="TSJ AI"></div>'+
         '<div><div class="tsj-hd-title">TSJ AI</div><div class="tsj-hd-sub">Your Smart Government Job Assistant</div></div>'+
         '<div class="tsj-hd-btns">'+
           '<button class="tsj-hd-btn" id="tsj-dark-toggle" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>'+
