@@ -49,8 +49,17 @@ const STATE_PATH  = path.join(process.cwd(), 'data', 'gsc_index_state.json');
 const JOBS_DIR    = path.join(process.cwd(), 'jobs');
 
 const MAX_CHECKS_PER_RUN   = 1500;   // conservative vs the 2000/day quota
-const REQUEST_DELAY_MS     = 250;    // ~4/sec, well under the 600/min burst cap
 const NEVER_CHECKED_SHARE  = 0.7;    // fraction of budget spent on unseen URLs
+// CONCURRENCY: the URL Inspection API's real observed per-call latency is
+// ~6-7s (it does a live analysis, not a cached lookup -- this is normal for
+// this specific endpoint, confirmed by a live run that processed 100 URLs
+// serially in 11 minutes). At that latency a fully serial sweep of 1500 URLs
+// takes ~2.7 HOURS, blowing past the workflow's job timeout every time and
+// silently checking almost nothing. Running requests in-flight concurrently
+// fixes this: even at CONCURRENCY=12 the effective rate (~12/6.5s ≈ 110/min)
+// stays well under Google's documented 600/min burst cap, but cuts a full
+// 1500-URL sweep down to roughly 15 minutes.
+const CONCURRENCY          = 12;
 
 function b64url(input) {
   return Buffer.from(input).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -170,29 +179,40 @@ async function main() {
   console.log(`🔎 Checking ${batch.length} URLs this run (budget ${MAX_CHECKS_PER_RUN}/day).`);
 
   let checked = 0, indexed = 0, unindexed = 0, errors = 0, quotaStopped = false;
-  for (const urlPath of batch) {
-    const res = await inspect(token, SITE + urlPath);
-    if (res.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(res.body)) {
-      console.log(`⛔ Quota exhausted after ${checked} checks — stopping early, will resume next run.`);
-      quotaStopped = true;
-      break;
-    }
-    if (res.status !== 200) {
-      errors++;
-    } else {
-      try {
-        const r = JSON.parse(res.body)?.inspectionResult?.indexStatusResult || {};
-        const isIndexed = r.verdict === 'PASS';
-        state[urlPath] = { indexed: isIndexed, verdict: r.verdict || null, lastChecked: new Date().toISOString() };
-        isIndexed ? indexed++ : unindexed++;
-      } catch (e) {
+  let nextIndex = 0;
+
+  async function worker() {
+    while (!quotaStopped && nextIndex < batch.length) {
+      const urlPath = batch[nextIndex++];
+      const res = await inspect(token, SITE + urlPath);
+      if (res.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(res.body)) {
+        if (!quotaStopped) console.log(`⛔ Quota exhausted around ${checked} checks — stopping early, will resume next run.`);
+        quotaStopped = true;
+        break;
+      }
+      if (res.status !== 200) {
         errors++;
+      } else {
+        try {
+          const r = JSON.parse(res.body)?.inspectionResult?.indexStatusResult || {};
+          const isIndexed = r.verdict === 'PASS';
+          state[urlPath] = { indexed: isIndexed, verdict: r.verdict || null, lastChecked: new Date().toISOString() };
+          isIndexed ? indexed++ : unindexed++;
+        } catch (e) {
+          errors++;
+        }
+      }
+      checked++;
+      if (checked % 100 === 0) {
+        console.log(`  ...${checked}/${batch.length} checked`);
+        // Checkpoint so a job-timeout cancellation doesn't lose all progress
+        // from this run -- only the tail since the last checkpoint is at risk.
+        try { fs.writeFileSync(STATE_PATH, JSON.stringify(state)); } catch (e) {}
       }
     }
-    checked++;
-    if (checked % 100 === 0) console.log(`  ...${checked}/${batch.length} checked`);
-    await new Promise(r => setTimeout(r, REQUEST_DELAY_MS));
   }
+
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, batch.length) }, worker));
 
   fs.mkdirSync(path.dirname(STATE_PATH), { recursive: true });
   fs.writeFileSync(STATE_PATH, JSON.stringify(state));

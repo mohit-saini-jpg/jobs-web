@@ -46,7 +46,7 @@ jobs:
     needs: guard
     if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     permissions:
       contents: write
 
@@ -68,6 +68,7 @@ jobs:
         run: node .github/workflows/gsc_check_index_status.js
 
       - name: 💾 Commit GSC index-status state
+        if: always()
         run: node .github/workflows/save-gsc-index-state.js
 
       - name: 📊 Summary
