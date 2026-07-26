@@ -6307,7 +6307,22 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         jmode  = safe(bd.get('application_mode','') or job.get('apply_mode','') or 'Online')
         _qraw  = (job.get('qualification') or {})
         jqual  = safe(_qraw.get('details','') or _qraw.get('education_qualification','') or _qraw.get('minimum_qualification',''))
-        if len(jqual) > 90: jqual = jqual[:90].rsplit(' ',1)[0] + '…'
+        jpost  = safe(bd.get('post_name','') or job.get('post_name',''))
+        if not jpost:
+            # Fall back to the "for <post(s)>" tail of the title (e.g. "...
+            # Apply Online for General Manager, Chief Engineer and More Post")
+            # since most titles already carry the post name in that form.
+            _pm = re.search(r'\bfor\s+(.+?)(?:\s+Posts?)?$', jtitle, re.I)
+            jpost = safe(_pm.group(1)) if _pm else jtitle
+        # Many recruitments span lots of different post names / qualifications
+        # (e.g. GM, Chief Engineer, AE, JE, Store Keeper ...). Rather than
+        # mid-word-truncating that into a mangled ellipsis on the compact
+        # listing card, show a clear "see full details on the job page" CTA
+        # whenever the value is long OR visibly a multi-item list (2+ commas).
+        if jpost and (len(jpost) > 60 or jpost.count(',') >= 2):
+            jpost = 'Multiple Posts — See Full Details'
+        if jqual and (len(jqual) > 90 or jqual.count(',') >= 2):
+            jqual = 'Various Qualifications — See Full Details'
         # Quick links — with fallbacks for non-standard key names
         ql = ''
         # apply_online: try direct key, then click_here[0] as fallback
@@ -6366,16 +6381,20 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
             if jstatus in _smap:
                 _bg, _cl, _lb = _smap[jstatus]
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
+        _vac_noun  = "Posts" if _row_url.startswith("/jobs/") else list_noun
+        _mode_span = f'<span class="jc-mode">{e(jmode)}</span>' if jmode and _row_url.startswith("/jobs/") else ''
+        _jc_rows = (
+            (f'<tr><th><i class="fa-solid fa-graduation-cap"></i> Post Name</th><td>{e(jpost)}</td></tr>' if jpost else '') +
+            (f'<tr><th><i class="fa-solid fa-book-open"></i> Qualification</th><td>{e(jqual)}</td></tr>' if jqual else '') +
+            (f'<tr><th><i class="fa-solid fa-users"></i> Total Post</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
+            (f'<tr><th><i class="fa-solid fa-calendar-days"></i> Last Date</th><td class="jc-date{urgent_cls}">{e(jld)}</td></tr>' if jld else '')
+        )
         cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
-  <div class="job-card-title"><span class="jc-sn">{_idx}</span><a href="{_row_url}">{e(jtitle)}</a></div>
-  <div class="job-card-org"><i class="fa-regular fa-building"></i> {e(jorg[:60])}</div>
-  {f'<div class="job-card-qual"><i class="fa-solid fa-graduation-cap"></i> {e(jqual)}</div>' if jqual else ''}
-  <div class="job-card-meta">
-    {f'<span class="jm-badge" style="background:#dcfce7;color:#15803d">{e(jvac)} {"Posts" if _row_url.startswith("/jobs/") else list_noun}</span>' if jvac else ''}
-    {f'<span class="jm-badge" style="background:#ede9fe;color:#5b21b6">{e(jmode)}</span>' if _row_url.startswith("/jobs/") else ''}
-    {status_badge}
-  </div>
-  {f'<div class="job-card-date{urgent_cls}"><i class="fa-regular fa-clock"></i> Last Date: <strong>{e(jld)}</strong></div>' if jld else ''}
+  <div class="job-card-title"><span class="jc-sn">{_idx}</span><h2><a href="{_row_url}">{e(jtitle)}</a></h2></div>
+  <div class="job-card-org"><i class="fa-solid fa-building"></i> {e(jorg[:60])}</div>
+  {f'<table class="jc-info">{_jc_rows}</table>' if _jc_rows else ''}
+  {status_badge}
+  {f'<div class="job-card-links" onclick="event.stopPropagation()">{ql}</div>' if ql else ''}
 </article>'''
 
     if not cards_html:
