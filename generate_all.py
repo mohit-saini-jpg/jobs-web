@@ -7142,15 +7142,33 @@ def _extract_advt_no(job):
         return _re.sub(r'[^0-9a-z]+', '-', m.group(1).lower()).strip('-')
     return ''
 
+# Bug found 2026-07-26 while auditing merge_duplicate_jobs.py: this list was
+# missing 'last_date_to_apply' (the actual field name real data uses per
+# render_dates()'s PRIO list below) plus several other genuinely-used date
+# keys, so two postings with DIFFERENT real deadlines both hashed to an empty
+# `dates` string and silently looked identical -- confirmed on a real pair
+# (Ministry of Civil Aviation Young Professional: 20-06-2026 vs 30-06-2026)
+# that the merge script's dry-run had wrongly flagged as a safe auto-merge.
+# Mirrors render_dates()'s PRIO list so "does this signature capture every
+# date field real data uses" has one source of truth instead of drifting.
+_VERSION_SIG_DATE_KEYS = (
+    'applicationBegin','application_begin','application_start_date','start_date',
+    'date_of_notification','notification_date',
+    'lastDateApplyOnline','last_date_apply_online','last_date_to_apply','last_date',
+    'application_last_date','extended_last_date','date_extended',
+    'extended_fee_payment_date','fee_payment_last_date',
+    'examDate','exam_date','revised_exam_date','written_exam_date','online_exam_date','omr_exam_date',
+    'interview_date','revised_interview_date',
+    'admit_card_date','revised_admit_card_date','extended_correction_date','result_date','event',
+)
+
 def _version_signature(job):
     """Hash of the fields that define a *version* of a recruitment. If any of
     these change, it's a new notification → new page. Kept deliberately small &
     stable so cosmetic edits don't spawn pages, but real changes do."""
     d = job.get('importantDates') or job.get('important_dates') or {}
     if isinstance(d, dict):
-        dates = '|'.join(safe(d.get(k)) for k in
-                         ('applicationBegin','application_begin','lastDateApplyOnline',
-                          'last_date_apply_online','last_date','examDate','exam_date'))
+        dates = '|'.join(safe(d.get(k)) for k in _VERSION_SIG_DATE_KEYS)
     else:
         dates = safe(d)
     parts = [
