@@ -515,6 +515,21 @@ _SLUG_STATE_MAP = [
     ('chandigarh','Chandigarh','160001'),
     ('jammu','Jammu & Kashmir','180001'), ('jkpsc','Jammu & Kashmir','180001'),
     ('jkssb','Jammu & Kashmir','180001'),
+    # Island / small Union Territories (bug found 2026-07-26: missing entirely,
+    # so e.g. an Andaman and Nicobar Administration job silently fell through
+    # every detection level to the 'Delhi' master default in _version_signature's
+    # sibling logic below -- confirmed live via a GSC structured-data inspection
+    # showing addressLocality/addressRegion "Delhi" for a Sri Vijaya Puram job).
+    ('andaman','Andaman and Nicobar Islands','744101'),
+    ('nicobar','Andaman and Nicobar Islands','744101'),
+    ('sri-vijaya-puram','Andaman and Nicobar Islands','744101'),
+    ('port-blair','Andaman and Nicobar Islands','744101'),
+    ('puducherry','Puducherry','605001'), ('pondicherry','Puducherry','605001'),
+    ('lakshadweep','Lakshadweep','682551'),
+    ('dadra','Dadra and Nagar Haveli and Daman and Diu','396210'),
+    ('nagar-haveli','Dadra and Nagar Haveli and Daman and Diu','396210'),
+    ('daman-and-diu','Dadra and Nagar Haveli and Daman and Diu','396210'),
+    ('ladakh','Ladakh','194101'),
     # PSUs
     ('northern-coalfield','Madhya Pradesh','486001'),
     ('central-coalfields','Jharkhand','834001'),
@@ -4642,6 +4657,18 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             'arunachal pradesh':('Arunachal Pradesh','791001'), 'mizoram':('Mizoram','796001'),
             'sikkim':('Sikkim','737101'), 'chandigarh':('Chandigarh','160001'),
             'jammu':('Jammu & Kashmir','180001'), 'kashmir':('Jammu & Kashmir','190001'),
+            # Island / small Union Territories — see _SLUG_STATE_MAP for the
+            # matching 2026-07-26 fix; keep both maps in sync.
+            'andaman':('Andaman and Nicobar Islands','744101'),
+            'nicobar':('Andaman and Nicobar Islands','744101'),
+            'sri vijaya puram':('Andaman and Nicobar Islands','744101'),
+            'port blair':('Andaman and Nicobar Islands','744101'),
+            'puducherry':('Puducherry','605001'), 'pondicherry':('Puducherry','605001'),
+            'lakshadweep':('Lakshadweep','682551'),
+            'dadra':('Dadra and Nagar Haveli and Daman and Diu','396210'),
+            'nagar haveli':('Dadra and Nagar Haveli and Daman and Diu','396210'),
+            'daman and diu':('Dadra and Nagar Haveli and Daman and Diu','396210'),
+            'ladakh':('Ladakh','194101'),
             'india':('Delhi','110001'),  # national-level jobs default
         }
         # ── 4-LEVEL STATE DETECTION ─────────────────────────────────────────────
