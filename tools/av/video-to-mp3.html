@@ -114,11 +114,18 @@
     .tool-footer { background: #0f0c29; color: rgba(255,255,255,0.65); text-align: center; padding: 22px 20px; font-size: 0.8rem; }
     .tool-footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 7px; }
     .tool-footer a:hover { color: white; }
+    /* Tablet-style layout is kept on phones too (multi-column grids instead
+       of collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
       .card { padding: 18px 14px; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
