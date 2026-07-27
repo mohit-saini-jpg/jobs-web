@@ -91,6 +91,7 @@
     .preset-chip.active { border-color: var(--brand); background: var(--brand); color: #fff; }
 
     .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin-top: 6px; }
+    .form-group { min-width: 0; }
     .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
     .form-group select, .form-group input[type=number], .form-group input[type=text] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
@@ -125,8 +126,12 @@
     .result-card { display: none; }
     .result-card.show { display: block; }
     .result-ok { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 700; margin-bottom: 16px; font-size: 1rem; }
-    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    @media (max-width: 560px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; min-width: 0; }
+    .compare-grid > div { min-width: 0; }
+    /* Kept side-by-side (tablet-style) down to genuinely tiny screens instead
+       of collapsing to 1 column on normal phones -- real device width is
+       used throughout, no forced-viewport zoom-out, so text stays full-size. */
+    @media (max-width: 360px) { .compare-grid { grid-template-columns: 1fr; } }
     .compare-box { text-align: center; }
     .compare-box video { width: 100%; border-radius: 10px; background: #000; max-height: 240px; }
     .compare-lbl { font-size: 0.78rem; font-weight: 700; margin-top: 6px; color: var(--muted); }
@@ -188,6 +193,17 @@
     .tool-footer a { color: rgba(255,255,255,0.85); text-decoration: none; margin: 0 8px; }
     .tool-footer a:hover { color: #fff; }
     [aria-busy="true"] { cursor: wait; }
+
+    /* Tablet-style layout is kept on phones too (2-column grids instead of
+       collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
+    @media(max-width:640px){
+      .card { padding: 18px 14px; }
+      .form-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .mode-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .how-steps { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
