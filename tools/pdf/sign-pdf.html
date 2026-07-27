@@ -56,7 +56,8 @@
     .file-size { color: var(--muted); flex-shrink: 0; }
     .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
     .file-remove:hover { color: #EF4444; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 8px; }
+    .form-group { min-width: 0; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group select, .form-group input[type=number], .form-group input[type=text], .form-group input[type=password] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
@@ -147,11 +148,17 @@
     .saved-sig-banner .ssb-actions { margin-left:auto; display:flex; gap:6px; }
     .saved-sig-banner button { padding:5px 11px; border-radius:7px; border:1.5px solid var(--line); background:#fff; font-size:0.76rem; font-weight:700; cursor:pointer; font-family:inherit; }
     .saved-sig-banner button:hover { border-color:var(--brand); color:var(--brand); }
+    /* Tablet-style layout is kept on phones too (multi-column grids instead
+       of collapsing to a single stacked column) -- real device width is
+       used throughout (no forced-viewport zoom-out), just denser CSS grids,
+       so text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
+      .card { padding: 16px 12px; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
@@ -590,12 +597,22 @@
     return{xPct:100-m,yPct:100-m}; // br
   }
 
+  // Box position/size below is CSS pixels (assigned straight to
+  // box.style.left/top/width/height), so it must be measured against the
+  // canvas's on-screen CSS size, NOT its native drawing-buffer size
+  // (canvas.width/height attrs) -- those differ whenever max-width:100%
+  // scales the canvas down to fit a narrow screen, which is the normal
+  // case for a standard-size PDF page on any phone. Mixing the two spaces
+  // let the drag box and its resize handle render past the canvas's (and
+  // sometimes the viewport's) right edge on narrow screens.
+  function canvasCssW(canvas){ return canvas.getBoundingClientRect().width || canvas.clientWidth || canvas.width; }
+  function canvasCssH(canvas){ return canvas.getBoundingClientRect().height || canvas.clientHeight || canvas.height; }
   function boxSizeFor(canvas,sizeFactor,sig){
-    const boxW = Math.min(canvas.width*0.32,180)*sizeFactor;
+    const boxW = Math.min(canvasCssW(canvas)*0.32,180)*sizeFactor;
     const boxH = boxW*(sig.h/sig.w);
     return {boxW,boxH};
   }
-  function baseBoxW(canvas){ return Math.min(canvas.width*0.32,180); }
+  function baseBoxW(canvas){ return Math.min(canvasCssW(canvas)*0.32,180); }
 
   // Custom resize (drag the blue corner dot) — was previously only 3 fixed
   // presets (Small/Medium/Large). Dragging computes a new width from the
@@ -620,22 +637,26 @@
       if(!resizing)return; e.preventDefault();
       const rect=canvas.getBoundingClientRect();
       const p=getXY(e);
-      const scaleX=canvas.width/rect.width;
-      const px=(p.x-rect.left)*scaleX;
+      // Stay in CSS-pixel space throughout (same space as box.offsetLeft
+      // and box.style.*) -- this used to scale the pointer into native
+      // canvas-buffer pixels but then compare it against CSS-pixel left0,
+      // which silently let the box grow past the visible canvas edge
+      // whenever the canvas was downscaled by max-width:100%.
+      const px=p.x-rect.left;
       // Width the user is asking for, based on distance from the box's
-      // ORIGINAL top-left corner -- NOT clamped to "canvas.width-left0" here,
+      // ORIGINAL top-left corner -- NOT clamped to "rect.width-left0" here,
       // since a box already sitting flush against the right edge (e.g. the
       // default Bottom-Right preset) would have zero room to grow under that
       // clamp and resize would silently do nothing.
-      let newW=Math.max(30, Math.min(canvas.width-16, px-left0));
+      let newW=Math.max(30, Math.min(rect.width-16, px-left0));
       const newH=newW*(sig.h/sig.w);
       // If growing would push the box past the canvas edge, slide its
       // position back just enough to keep it fully visible instead of
       // capping the size -- same effect as a real resize handle bumping
       // against a window edge.
       let newLeft=left0, newTop=top0;
-      if(newLeft+newW>canvas.width) newLeft=Math.max(0,canvas.width-newW);
-      if(newTop+newH>canvas.height) newTop=Math.max(0,canvas.height-newH);
+      if(newLeft+newW>rect.width) newLeft=Math.max(0,rect.width-newW);
+      if(newTop+newH>rect.height) newTop=Math.max(0,rect.height-newH);
       box.style.width=newW+'px'; box.style.height=newH+'px';
       box.style.left=newLeft+'px'; box.style.top=newTop+'px';
       const lbl=box.querySelector('.sig-size-label');
@@ -679,8 +700,8 @@
       // drag feel), then convert back to the CENTER-based xPct/yPct the rest
       // of the system (drag-move, preset positions, final PDF) uses.
       const cx=left0+newW/2, cy=top0+newH/2;
-      dragPos.xPct = Math.max(0,Math.min(100, cx/canvas.width*100));
-      dragPos.yPct = Math.max(0,Math.min(100, cy/canvas.height*100));
+      dragPos.xPct = Math.max(0,Math.min(100, cx/canvasCssW(canvas)*100));
+      dragPos.yPct = Math.max(0,Math.min(100, cy/canvasCssH(canvas)*100));
     });
   }
 
@@ -692,17 +713,18 @@
       const {boxW,boxH}=boxSizeFor(canvas,pl.sizeFactor,{w:pl.sigW,h:pl.sigH});
       const box=document.createElement('div');
       box.className='sig-drag-box existing other-page';
-      const x=(pl.xPct/100)*canvas.width-boxW/2, y=(pl.yPct/100)*canvas.height-boxH/2;
-      box.style.left=Math.max(0,Math.min(canvas.width-boxW,x))+'px';
-      box.style.top=Math.max(0,Math.min(canvas.height-boxH,y))+'px';
+      const cw=canvasCssW(canvas), ch=canvasCssH(canvas);
+      const x=(pl.xPct/100)*cw-boxW/2, y=(pl.yPct/100)*ch-boxH/2;
+      box.style.left=Math.max(0,Math.min(cw-boxW,x))+'px';
+      box.style.top=Math.max(0,Math.min(ch-boxH,y))+'px';
       box.style.width=boxW+'px'; box.style.height=boxH+'px';
       box.innerHTML=`<img src="${pl.sigDataUrl}" alt=""><span class="sig-size-label">${Math.round(pl.sizeFactor*100)}%</span><div class="sig-resize-handle" title="Drag to resize"></div><span class="rm-placement" data-id="${pl.id}">✕</span>`;
       holder.appendChild(box);
       setupResizeHandle(box,canvas,{w:pl.sigW,h:pl.sigH},(newW,newH,left0,top0)=>{
         pl.sizeFactor = newW/baseBoxW(canvas);
         const cx=left0+newW/2, cy=top0+newH/2;
-        pl.xPct = Math.max(0,Math.min(100, cx/canvas.width*100));
-        pl.yPct = Math.max(0,Math.min(100, cy/canvas.height*100));
+        pl.xPct = Math.max(0,Math.min(100, cx/canvasCssW(canvas)*100));
+        pl.yPct = Math.max(0,Math.min(100, cy/canvasCssH(canvas)*100));
       });
     });
     holder.querySelectorAll('.rm-placement').forEach(btn=>{
@@ -754,10 +776,11 @@
   function positionDragBox(){
     const canvas=$('place-canvas'), box=$('sig-drag-box');
     if(!canvas.width) return;
-    const x = (dragPos.xPct/100) * canvas.width - box.offsetWidth/2;
-    const y = (dragPos.yPct/100) * canvas.height - box.offsetHeight/2;
-    box.style.left = Math.max(0, Math.min(canvas.width-box.offsetWidth, x)) + 'px';
-    box.style.top = Math.max(0, Math.min(canvas.height-box.offsetHeight, y)) + 'px';
+    const cw=canvasCssW(canvas), ch=canvasCssH(canvas);
+    const x = (dragPos.xPct/100) * cw - box.offsetWidth/2;
+    const y = (dragPos.yPct/100) * ch - box.offsetHeight/2;
+    box.style.left = Math.max(0, Math.min(cw-box.offsetWidth, x)) + 'px';
+    box.style.top = Math.max(0, Math.min(ch-box.offsetHeight, y)) + 'px';
   }
 
   function setupDrag(){

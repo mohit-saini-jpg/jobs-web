@@ -56,7 +56,8 @@
     .file-size { color: var(--muted); flex-shrink: 0; }
     .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
     .file-remove:hover { color: #EF4444; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 8px; }
+    .form-group { min-width: 0; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group select, .form-group input[type=number], .form-group input[type=text], .form-group input[type=password] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
@@ -109,11 +110,17 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    /* Tablet-style layout is kept on phones too (multi-column grids instead
+       of collapsing to a single stacked column) -- real device width is
+       used throughout (no forced-viewport zoom-out), just denser CSS grids,
+       so text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
+      .card { padding: 16px 12px; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
