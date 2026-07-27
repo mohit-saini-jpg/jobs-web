@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 
   <title>Image Merge Free Online – Combine 2 to 4 Photos in One | Top Sarkari Jobs</title>
   <meta name="description" content="Merge 2, 3 ya 4 images ko ek single photo mein free online combine karein. Vertically ya horizontally join karein, brightness/contrast/saturation adjust karein aur exact KB size mein download karein.">
@@ -198,10 +198,16 @@
     /* Tablet-style layout is kept on phones too (2-column grids instead of
        collapsing to a single stacked column) -- real device width is used
        throughout (no forced-viewport zoom-out), just denser CSS grids, so
-       text stays full-size and readable. */
-    @media(max-width:640px){
+       text stays full-size and readable.
+       Extended to 820px (not just 640px) because tools-mobile-zoom.js can
+       push the effective layout width up to ~800px on phones -- without
+       this, .related-grid/.features-grid's desktop default (auto-fill,
+       minmax(...,1fr)) has an edge case around 650-800px where an item's
+       min-content width doesn't divide evenly and the grid overflows. */
+    @media(max-width:820px){
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
       .card { padding: 16px 12px; }
     }
     @media(max-width:380px){
