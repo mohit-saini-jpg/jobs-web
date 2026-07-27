@@ -172,10 +172,11 @@
     .step h4 { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
     .step p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 6px; }
-    .feat { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 8px; background: var(--mist); }
+    .feat { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 8px; background: var(--mist); min-width: 0; }
     .feat-icon { font-size: 1.2rem; flex-shrink: 0; }
     .feat h4 { font-size: 0.84rem; font-weight: 600; margin-bottom: 3px; }
-    .feat p { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .feat p { font-size: 0.76rem; color: var(--muted); line-height: 1.5; overflow-wrap: break-word; }
+    .feat > div { min-width: 0; }
     .faq-item { border-bottom: 1px solid var(--line); }
     .faq-item:last-child { border-bottom: none; }
     .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: inherit; }
@@ -209,6 +210,14 @@
       .related-grid { grid-template-columns: repeat(3, 1fr); }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
       .card { padding: 16px 12px; }
+    }
+    /* Images Ko Kaise Jodein shares its row with Rotate above this width
+       (mobile-zoom keeps real phones at 650-800px effective width, plenty
+       of room) -- only falls back to its own full-width row in the narrow
+       380-460px band, which is a defensive fallback for whenever
+       tools-mobile-zoom.js isn't active (JS disabled, script failure). */
+    @media(max-width:460px){
+      #posToggleFg { grid-column: 1/-1; }
     }
     @media(max-width:380px){
       .merge-grid { grid-template-columns: 1fr; }
@@ -441,7 +450,7 @@
           <option value="180">180°</option>
           <option value="270">270° Clockwise</option>
         </select></div>
-        <div class="form-group" style="grid-column:1/-1"><label>Images Ko Kaise Jodein</label>
+        <div class="form-group" id="posToggleFg"><label>Images Ko Kaise Jodein</label>
           <div class="pos-toggle" id="posToggle">
             <span class="po active" data-val="v">Vertically</span>
             <span class="po" data-val="h">Horizontally</span>
@@ -842,7 +851,7 @@
     else{b.classList.remove('active');b.innerHTML='🔓 Free Select (kisi bhi angle)';}
   }
 
-  function initRectCropper(idx){
+  function initRectCropper(idx,onReady){
     var img=G('cropImg-'+idx);
     if(cropInst[idx]){cropInst[idx].destroy();cropInst[idx]=null;}
     try{
@@ -852,9 +861,14 @@
         wheelZoomRatio:.1,rotatable:true,scalable:false,
         cropBoxMovable:true,cropBoxResizable:true,aspectRatio:NaN,
         minCropBoxWidth:60,minCropBoxHeight:60,minContainerWidth:200,minContainerHeight:200,
+        // Cropper does its own async setup after construction (measuring
+        // the image, placing the default crop box) -- calling setData()
+        // any earlier than this ready callback gets silently overridden
+        // once that setup completes.
+        ready:function(){if(typeof onReady==='function')onReady();},
         crop:function(){scheduleLivePreview();}
       });
-    }catch(e){}
+    }catch(e){if(typeof onReady==='function')onReady();}
   }
 
   function initSlotCropEditor(idx,src,opts){
@@ -869,10 +883,10 @@
       if(opts.keepFreeSelect){
         quadInst[idx].activate();
         setFreeSelBtnState(idx,true);
+        if(typeof opts.onReady==='function')opts.onReady();
       }else{
-        initRectCropper(idx);
+        initRectCropper(idx,opts.onReady);
       }
-      if(typeof opts.onReady==='function')opts.onReady();
     };
     img.src=src;
     if(img.complete&&img.naturalWidth>0)img.onload();
@@ -929,30 +943,55 @@
   function updateRotateLabel(idx){
     var lbl=G('rotateVal-'+idx);if(lbl)lbl.textContent=(slotRotate[idx]||0)+'°';
   }
+  // Maps a crop rect (x,y,width,height, in the CURRENT image's pixel space)
+  // to the equivalent rect in the image's pixel space AFTER a further deg
+  // (+90/-90/180) rotation, so the crop selection keeps pointing at the
+  // same physical region of the photo instead of staying fixed in screen
+  // position while the image content rotates underneath it.
+  function rotateRectBy(rect,deg,oldW,oldH){
+    var d=((deg%360)+360)%360;
+    if(d===90) return {x:oldH-(rect.y+rect.height),y:rect.x,width:rect.height,height:rect.width};
+    if(d===270) return {x:rect.y,y:oldW-(rect.x+rect.width),width:rect.height,height:rect.width};
+    if(d===180) return {x:oldW-(rect.x+rect.width),y:oldH-(rect.y+rect.height),width:rect.width,height:rect.height};
+    return rect;
+  }
   function rotateSlot(idx,deg){
     if(!slots[idx])return;
-    slotRotate[idx]=((slotRotate[idx]||0)+deg+360)%360;
-    updateRotateLabel(idx);
     // Preserve scroll position across the rotate -- rebuilding/resizing the
     // crop editor shifts page layout on mobile, which browsers compensate
     // for by auto-scrolling, making the next image slot jump into view.
     var scrollY=window.scrollY;
     function restoreScroll(){window.scrollTo(window.scrollX,scrollY);}
-    if(cropInst[idx]&&!(quadInst[idx]&&quadInst[idx].isActive())){
-      // Rect-crop mode: rotate the LIVE Cropper.js instance in place instead
-      // of destroying/rebuilding it -- this keeps the crop box the user
-      // already dragged/resized instead of resetting it to a fresh default.
-      cropInst[idx].rotate(deg);
-      scheduleLivePreview();
-      requestAnimationFrame(restoreScroll);
-    }else{
-      var wasFree=quadInst[idx]&&quadInst[idx].isActive();
-      var rc=transformImage(slots[idx].img,slotRotate[idx],'none');
-      initSlotCropEditor(idx,rc.toDataURL('image/png'),{
-        keepFreeSelect:wasFree,
-        onReady:function(){scheduleLivePreview();requestAnimationFrame(restoreScroll);}
-      });
+
+    // Rect-crop mode: capture the CURRENT crop selection (in the current
+    // image's pixel space) before rebuilding, so it can be re-applied,
+    // rotated to match, after the new (rotated) image loads. Rebuilding
+    // (rather than calling Cropper's own live .rotate()) is deliberate --
+    // Cropper doesn't reliably re-fit the canvas to the container after a
+    // 90/270 dimension swap, which left part of the rotated image outside
+    // the visible viewport; a fresh instance always auto-fits correctly.
+    var wasFree=quadInst[idx]&&quadInst[idx].isActive();
+    var savedRect=null,oldW=0,oldH=0;
+    if(cropInst[idx]&&!wasFree){
+      var d=cropInst[idx].getData();
+      savedRect={x:d.x,y:d.y,width:d.width,height:d.height};
+      var oldImgEl=G('cropImg-'+idx);
+      oldW=oldImgEl.naturalWidth;oldH=oldImgEl.naturalHeight;
     }
+
+    slotRotate[idx]=((slotRotate[idx]||0)+deg+360)%360;
+    updateRotateLabel(idx);
+    var rc=transformImage(slots[idx].img,slotRotate[idx],'none');
+    initSlotCropEditor(idx,rc.toDataURL('image/png'),{
+      keepFreeSelect:wasFree,
+      onReady:function(){
+        if(savedRect&&cropInst[idx]){
+          cropInst[idx].setData(rotateRectBy(savedRect,deg,oldW,oldH));
+        }
+        scheduleLivePreview();
+        requestAnimationFrame(restoreScroll);
+      }
+    });
   }
   [0,1,2,3].forEach(function(idx){
     var rb=G('cropResetBtn-'+idx);if(rb)rb.addEventListener('click',function(){resetSlotCrop(idx);});
