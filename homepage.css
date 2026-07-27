@@ -11,6 +11,13 @@
 .cbi-tile .cbi-code+.cbi-icon-photo{margin-top:20px}
 .cbi-tile .cbi-icon-photo{width:82px;height:70px}
 .cbi-tile .cbi-name{font-size:.8rem;font-weight:800;color:var(--ink);margin-top:6px;line-height:1.35}
+@media (max-width:480px){
+.cbi-tile,.cbi-tile:last-child{min-width:0;max-width:none;flex:0 0 calc(33.333% - 8px);margin:4px;padding:10px 5px 8px}
+.cbi-tile .cbi-icon-photo{width:50px;height:42px}
+.cbi-tile .cbi-code{top:5px;left:6px;font-size:.54rem}
+.cbi-tile .cbi-code+.cbi-icon-photo{margin-top:13px}
+.cbi-tile .cbi-name{font-size:.66rem;margin-top:4px;line-height:1.25}
+}
 .tsj-fresh-scroll{max-height:340px;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#94a3b8 #f1f5f9}
 .tsj-fresh-scroll::-webkit-scrollbar{width:5px}
 .tsj-fresh-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px}
