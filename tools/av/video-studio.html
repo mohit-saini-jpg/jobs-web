@@ -212,7 +212,23 @@ a{color:inherit}
   .panel{width:240px}
   .sidebar{width:56px}
 }
-@media(max-width:700px){
+/* Tablet-style side-by-side layout (icon sidebar + tool panel + canvas/
+   timeline) is kept on phones too instead of stacking into a full-width
+   column list -- real device width is used throughout (no forced-viewport
+   zoom-out), just narrower fixed-width side panels so the canvas/timeline
+   keep working room, and internal scroll for the few rows that are too
+   dense to fit (10-band EQ) instead of squeezing text. */
+.toolbar select,.toolbar button{max-width:100%}
+.eq-preset-row{flex-wrap:wrap;row-gap:6px}
+.toggle-row{flex-wrap:wrap;row-gap:4px}
+@media(max-width:480px){
+  .panel{width:172px;padding:12px 10px}
+  .sidebar{width:48px}
+  .side-btn{width:40px;padding:6px 1px}
+  .eq-bands{overflow-x:auto}
+  .eq-band{flex:0 0 26px}
+}
+@media(max-width:340px){
   .app{flex-direction:column}
   .sidebar{width:100%;flex-direction:row;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
   .panel{width:100%;border-right:none;border-bottom:1px solid var(--line);max-height:280px}
