@@ -5,6 +5,12 @@
 .cbi-code{position:absolute;top:2px;left:4px;font-size:.68rem;font-weight:800;line-height:1;z-index:1}
 .cbi-code+.cbi-icon-photo{margin-top:16px}
 .cbi-name{font-size:.66rem;font-weight:600;line-height:1.3;color:var(--text)}
+.cbi-tile,.cbi-tile:last-child{border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--white);margin:5px;padding:16px 10px 14px;min-width:152px;max-width:180px}
+.cbi-tile:hover{background:var(--white);color:var(--text);box-shadow:var(--shadow-hover)}
+.cbi-tile .cbi-code{top:10px;left:12px;font-size:.82rem}
+.cbi-tile .cbi-code+.cbi-icon-photo{margin-top:26px}
+.cbi-tile .cbi-icon-photo{width:64px;height:54px}
+.cbi-tile .cbi-name{font-size:.8rem;font-weight:800;color:var(--ink);margin-top:6px;line-height:1.35}
 .tsj-fresh-scroll{max-height:340px;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#94a3b8 #f1f5f9}
 .tsj-fresh-scroll::-webkit-scrollbar{width:5px}
 .tsj-fresh-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px}
