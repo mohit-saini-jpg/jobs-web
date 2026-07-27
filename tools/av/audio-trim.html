@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 
   <title>Audio Trimmer Free Online – Cut Audio with Live Waveform | Top Sarkari Jobs</title>
   <meta name="description" content="Trim or cut any audio file online for free with a live waveform editor. Drag to select, live preview, fade in/out, undo/redo, export as WAV or MP3. 100% in-browser, no upload.">
@@ -152,10 +152,19 @@
     /* Tablet-style layout is kept on phones too (2-column grids instead of
        collapsing to a single stacked column) -- real device width is used
        throughout (no forced-viewport zoom-out), just denser CSS grids, so
-       text stays full-size and readable. */
-    @media(max-width:640px){
+       text stays full-size and readable.
+       Extended to 820px (not just 640px) because tools-mobile-zoom.js can
+       push the effective layout width up to ~800px on phones -- without
+       this, .form-grid/.features-grid/.related-grid's desktop default
+       (auto-fill, minmax(...,1fr)) has an edge case around 650-800px where
+       an item's min-content width doesn't divide evenly and the grid
+       overflows. */
+    @media(max-width:820px){
       .card { padding: 18px 14px; }
+      .form-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .related-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
