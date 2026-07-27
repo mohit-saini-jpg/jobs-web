@@ -436,11 +436,7 @@
 
     <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
       <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">📄 A4 Size Print</div>
-      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink)">
-        <input type="checkbox" id="a4Enable" style="width:18px;height:18px;accent-color:var(--brand);cursor:pointer">
-        Merged image ko A4 page mein fit karke print-ready banayein
-      </label>
-      <div id="a4Options" style="display:none;margin-top:10px">
+      <div id="a4Options" style="margin-top:10px">
         <div class="form-group"><label>Orientation</label><select id="a4Orientation">
           <option value="auto">Auto (image ke hisaab se)</option>
           <option value="portrait">Portrait</option>
@@ -488,6 +484,12 @@
         <input type="range" id="gapRange" min="0" max="500" value="0" style="flex:1">
       </div>
       <p style="font-size:.74rem;color:#94a3b8;margin:6px 0 14px">Gap ka colour box se choose karein (default white).</p>
+
+      <label style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between">📄 Sheet Margin <span id="sheetMarginVal" style="color:var(--brand)">10 mm</span></label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:8px">
+        <input type="range" id="sheetMarginRange" min="0" max="40" value="10" style="flex:1">
+      </div>
+      <p style="font-size:.74rem;color:#94a3b8;margin:6px 0 14px">A4 sheet ke charo taraf kitna khaali margin rakhna hai (print-safe border).</p>
       <h3>🖼️ Output Image</h3>
       <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
       <div class="result-card" id="result-card" style="margin-top:14px">
@@ -1024,7 +1026,7 @@
   G('gapColor').addEventListener('input',scheduleLivePreview);
   G('rotateSel').addEventListener('change',scheduleLivePreview);
   G('flipSel').addEventListener('change',scheduleLivePreview);
-  G('a4Enable').addEventListener('change',function(){G('a4Options').style.display=this.checked?'block':'none';scheduleLivePreview();});
+  G('sheetMarginRange').addEventListener('input',function(){G('sheetMarginVal').textContent=this.value+' mm';scheduleLivePreview();});
   G('a4Orientation').addEventListener('change',scheduleLivePreview);
 
   // ── File-size (KB) controls ──────────────────────────────────
@@ -1183,10 +1185,13 @@
     if(orientation==='auto'){ landscape=src.width>=src.height; portrait=!landscape; }
     var pageW=portrait?A4_PORTRAIT_W:A4_PORTRAIT_H;
     var pageH=portrait?A4_PORTRAIT_H:A4_PORTRAIT_W;
+    var marginMm=parseFloat(G('sheetMarginRange').value)||0;
+    var marginPx=Math.round(marginMm/25.4*A4_DPI);
+    var availW=Math.max(1,pageW-2*marginPx),availH=Math.max(1,pageH-2*marginPx);
     var cv=document.createElement('canvas');cv.width=pageW;cv.height=pageH;
     var ctx=cv.getContext('2d');
     ctx.fillStyle='#ffffff';ctx.fillRect(0,0,pageW,pageH);
-    var scale=Math.min(pageW/src.width,pageH/src.height);
+    var scale=Math.min(availW/src.width,availH/src.height);
     var dw=Math.max(1,Math.round(src.width*scale)),dh=Math.max(1,Math.round(src.height*scale));
     var dx=Math.round((pageW-dw)/2),dy=Math.round((pageH-dh)/2);
     ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -1221,7 +1226,7 @@
       scaledH.forEach(function(s){ctx.drawImage(s.src,x,0,s.w,s.h);x+=s.w+gap;});
     }
     applyAdjustments(cv);
-    if(G('a4Enable').checked)cv=fitToA4(cv);
+    cv=fitToA4(cv);
     return cv;
   }
 
@@ -1294,6 +1299,7 @@
     G('slot-wrap-2').classList.add('hidden');G('slot-wrap-3').classList.add('hidden');
     G('toggleExtraBtn').textContent='+ Third / Fourth Image Add Karein (Optional)';
     G('gapRange').value=0;G('gapVal').textContent='0 px';G('gapColor').value='#ffffff';
+    G('sheetMarginRange').value=10;G('sheetMarginVal').textContent='10 mm';
     G('briRange').value=100;G('briVal').textContent='100%';
     G('conRange').value=100;G('conVal').textContent='100%';
     G('satRange').value=100;G('satVal').textContent='100%';
