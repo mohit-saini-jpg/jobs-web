@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 
   <title>Add Name &amp; Date in Image – Free Online Tool for Govt Job Forms | Top Sarkari Jobs</title>
   <meta name="description" content="Edit photos online for free. Adjust brightness, contrast, saturation, crop and rotate images. No app download, works in any browser.">
@@ -160,10 +160,16 @@
        throughout (no forced-viewport zoom-out), just denser CSS grids, so
        text stays full-size and readable. (.adj-grid stays single-column at
        all widths by design -- sliders need full width for touch dragging,
-       it was never a mobile-only collapse.) */
-    @media(max-width:640px){
+       it was never a mobile-only collapse.)
+       Extended to 820px (not just 640px) because tools-mobile-zoom.js can
+       push the effective layout width up to ~800px on phones -- without
+       this, .features-grid's desktop default (auto-fill, minmax(...,1fr))
+       has an edge case around 650-800px where an item's min-content width
+       doesn't divide evenly and the grid overflows. */
+    @media(max-width:820px){
       .form-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
       .card { padding: 16px 12px; }
     }
