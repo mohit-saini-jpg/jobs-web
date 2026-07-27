@@ -331,15 +331,7 @@
       </div>
     </div>
     <button type="button" id="toggleExtraBtn" class="btn-secondary" style="margin-top:10px;font-size:.8rem;padding:7px 14px">+ Third / Fourth Image Add Karein (Optional)</button>
-    <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Kam se kam 2 images zaroori hain. Order badalne ke liye har image ke ▲▼ buttons use karein.</p>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:14px;padding-top:12px">
-      <label style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">How to position the images</label>
-      <div class="pos-toggle" id="posToggle">
-        <span class="po active" data-val="v">Vertically</span>
-        <span class="po" data-val="h">Horizontally</span>
-      </div>
-    </div>
+    <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Kam se kam 2 images zaroori hain. Order badalne ke liye har image ke ▲▼ buttons use karein. Images side-by-side (horizontally) merge hoti hain.</p>
   </div>
 
   <div class="card" id="cropSection" style="display:none">
@@ -437,7 +429,7 @@
           <option value="180">180°</option>
           <option value="270">270° Clockwise</option>
         </select></div>
-        <div class="form-group"><label>Flip / Mirror (Sab Par)</label><select id="flipSel">
+        <div class="form-group"><label>Flip (Sab Par)</label><select id="flipSel">
           <option value="none">None</option>
           <option value="h">Horizontal</option>
           <option value="v">Vertical</option>
@@ -546,7 +538,7 @@
   <div class="card seo-copy">
     <h3>🖼️ Image Merge Tool — Multiple Photos Ko Ek Mein Combine Karein</h3>
     <p>Image Merge tool se aap 2, 3 ya 4 alag-alag photos ko ek single image mein free online combine kar sakte hain — bina kisi software install kiye. Chahe aapko exam form ke liye signature aur photo ek saath jodni ho, social media ke liye collage banana ho, ya document proof ke liye multiple pages ek image mein merge karni ho, ye tool sab handle karta hai. Images ko Vertically (upar-niche) ya Horizontally (side-by-side) arrange kiya ja sakta hai, aur agar images ka size alag-alag ho to tool automatically unhe proportionally scale karke ek jaisi width ya height mein align kar deta hai — taaki final output clean aur professional dikhe.</p>
-    <p>Merge karne se pehle Photo Adjust panel se Brightness, Contrast, Saturation aur Sharpness set kar sakte hain — Dark/Normal/Bright, Low/Normal/High, B&amp;W/Normal/Vivid jaise quick presets bhi diye gaye hain taaki manual slider move kiye bina bhi turant sahi look mil jaaye. Images ke beech ka gap (Distance Between Image) aur uska colour bhi apni marzi se choose kar sakte hain. Rotate aur Flip/Mirror settings sabhi images par ek saath apply hoti hain, jisse alag-alag orientation wali photos bhi ek jaisi seedhi merge ho jaati hain.</p>
+    <p>Merge karne se pehle Photo Adjust panel se Brightness, Contrast, Saturation aur Sharpness set kar sakte hain — Dark/Normal/Bright, Low/Normal/High, B&amp;W/Normal/Vivid jaise quick presets bhi diye gaye hain taaki manual slider move kiye bina bhi turant sahi look mil jaaye. Images ke beech ka gap (Distance Between Image) aur uska colour bhi apni marzi se choose kar sakte hain. Rotate aur Flip settings sabhi images par ek saath apply hoti hain, jisse alag-alag orientation wali photos bhi ek jaisi seedhi merge ho jaati hain.</p>
     <p>Output ke liye JPG, PNG, WebP, AVIF, BMP, GIF, TIFF, ICO aur PDF jaise 10 formats available hain. Agar aapko government form ya online portal ke liye exact file size chahiye, to File Size (KB) section mein target daal dein — merged photo bilkul us size ki bankar milegi, chahe wo 20 KB ho ya 500 KB. Ye tool 100% browser-based hai, matlab koi bhi image kabhi bhi server par upload nahi hoti — sab kuch aapke device par hi process hota hai, isliye privacy bhi fully safe rehti hai.</p>
   </div>
 
@@ -990,15 +982,10 @@
   }
   buildOrderList();
 
-  // ── Position toggle ─────────────────────────────────────────
-  var posVal='v';
-  document.querySelectorAll('#posToggle .po').forEach(function(el){
-    el.addEventListener('click',function(){
-      document.querySelectorAll('#posToggle .po').forEach(function(e){e.classList.remove('active');});
-      el.classList.add('active');posVal=el.getAttribute('data-val');
-      scheduleLivePreview();
-    });
-  });
+  // Images always merge side-by-side (horizontally) -- the Vertically/
+  // Horizontally toggle was removed since horizontal is what's actually
+  // wanted here (e.g. 4 ID-card-style photos reading left-to-right).
+  var posVal='h';
 
   // ── Photo adjust sliders + chips ─────────────────────────────
   function bindAdjust(rangeId,valId,suffix){
@@ -1261,7 +1248,14 @@
     return cv;
   }
 
-  function buildMergedCanvas(){
+  // maxWorkDim: when set, the merged canvas is downscaled to this before
+  // the expensive per-pixel steps (Shadow Remove / Text Highlight /
+  // Sharpen all do manual getImageData/putImageData loops, and A4-fitting
+  // draws a fixed 2480x3508 canvas regardless of input size) -- used only
+  // for the live preview, which was re-running the FULL pipeline at full
+  // photo resolution on every slider tick, visibly lagging with 3-4 large
+  // phone photos. The real "Merge!" download always runs uncapped.
+  function buildMergedCanvas(maxWorkDim){
     var activeIdx=order.filter(function(i){return slots[i];});
     if(activeIdx.length<2)throw new Error('Kam se kam 2 images select karein!');
     var rotate=parseInt(G('rotateSel').value)||0;
@@ -1287,6 +1281,16 @@
       var x=0;
       scaledH.forEach(function(s){ctx.drawImage(s.src,x,0,s.w,s.h);x+=s.w+gap;});
     }
+    if(maxWorkDim&&Math.max(cv.width,cv.height)>maxWorkDim){
+      var wscale=maxWorkDim/Math.max(cv.width,cv.height);
+      var small=document.createElement('canvas');
+      small.width=Math.max(1,Math.round(cv.width*wscale));
+      small.height=Math.max(1,Math.round(cv.height*wscale));
+      var sctx=small.getContext('2d');
+      sctx.imageSmoothingEnabled=true;sctx.imageSmoothingQuality='high';
+      sctx.drawImage(cv,0,0,small.width,small.height);
+      cv=small;
+    }
     applyAdjustments(cv);
     cv=fitToA4(cv);
     return cv;
@@ -1305,7 +1309,7 @@
       return;
     }
     try{
-      var cv=buildMergedCanvas();
+      var cv=buildMergedCanvas(900);
       cv.style.maxWidth='100%';cv.style.maxHeight='420px';cv.style.borderRadius='8px';cv.style.display='block';
       ob.innerHTML='';
       ob.appendChild(cv);
