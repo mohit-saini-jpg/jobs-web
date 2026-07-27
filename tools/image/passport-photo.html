@@ -220,8 +220,15 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .sc-select{flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:.85rem;font-weight:700;color:var(--ink);background:#fff}
 .sc-hint{font-size:.72rem;color:var(--muted);line-height:1.5;background:var(--mist);border-radius:9px;padding:9px 11px;margin-top:12px}
 .sc-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.live-preview-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--line);text-align:center;padding:14px;background:var(--mist);box-shadow:var(--shadow)}
+.live-preview-wrap{border-radius:12px;overflow:auto;border:1px solid var(--line);text-align:center;padding:14px;background:var(--mist);box-shadow:var(--shadow);max-height:min(65vh,560px);touch-action:none}
 .live-preview-wrap canvas{max-width:100%;max-height:min(65vh,560px);border-radius:8px}
+.zoom-controls{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:9px}
+.zoom-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+.zoom-btn:hover{border-color:var(--brand);color:var(--brand)}
+.zoom-btn.zoom-reset{width:auto;padding:0 12px;font-size:.78rem}
+.erase-cursor-dot{position:fixed;left:0;top:0;transform:translate(-50%,-50%);border:2px solid #ef4444;border-radius:50%;background:rgba(239,68,68,.12);pointer-events:none;display:none;z-index:9999;box-shadow:0 0 0 1px rgba(255,255,255,.8)}
+.btn-icon:disabled{opacity:.4;cursor:not-allowed}
+.btn-icon:disabled:hover{border-color:var(--line);color:var(--ink)}
 @media(max-width:760px){
   .adjust-preview-col{position:static}
 }
@@ -483,12 +490,18 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="step-panel" id="panel-2">
   <div class="adjust-layout">
     <div class="adjust-preview-col">
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+        <button class="zoom-btn zoom-reset" onclick="zoomReset()" id="zoomLevelLabel">100%</button>
+        <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      </div>
       <div class="live-preview-wrap">
         <canvas id="adjCanvas"></canvas>
-        <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Live Preview</p>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:7px">Live Preview — zoom karke pinch/scroll se ghumaayein</p>
       </div>
       <button class="btn-icon" style="margin-top:11px;width:100%;justify-content:center" onclick="resetAdj()"><i class="fa-solid fa-rotate-right"></i> Reset Adjustments</button>
     </div>
+    <div id="eraseCursorDot" class="erase-cursor-dot"></div>
     <div class="card adjust-controls-col">
       <div class="card-title">🌟 Photo Adjust Karein</div>
       <button class="btn-choose" style="width:100%;justify-content:center;margin-bottom:16px;background:linear-gradient(135deg,#7c3aed,#345de6)" onclick="autoEnhance()"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Enhance — Ek Click Mein Clear &amp; Sharp</button>
@@ -505,7 +518,11 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
           <div class="adj-label">Hardness <span id="eraseHardnessVal">100%</span></div>
           <input type="range" id="eraseHardnessRange" min="0" max="100" value="100" oninput="onEraseHardnessChange()">
         </div>
-        <button class="btn-icon" style="width:100%;justify-content:center;margin-top:10px" onclick="resetErase()"><i class="fa-solid fa-rotate-left"></i> Reset Erase</button>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn-icon" style="flex:1;justify-content:center" id="eraseUndoBtn" onclick="undoErase()" disabled><i class="fa-solid fa-rotate-left"></i> Undo</button>
+          <button class="btn-icon" style="flex:1;justify-content:center" id="eraseRedoBtn" onclick="redoErase()" disabled><i class="fa-solid fa-rotate-right"></i> Redo</button>
+        </div>
+        <button class="btn-icon" style="width:100%;justify-content:center;margin-top:8px" onclick="resetErase()"><i class="fa-solid fa-trash"></i> Reset Erase (Sab Hatayein)</button>
       </div>
 
       <div class="card-title" style="margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);margin-bottom:10px">🎞️ Filters</div>
@@ -840,7 +857,10 @@ var S = {
   eraseMaskCanvas: null,   // same size as croppedCanvas; alpha channel = erase strength
   eraseEnabled: false,
   eraseBrushSize: 45,
-  eraseBrushHardness: 100
+  eraseBrushHardness: 100,
+  eraseHistory: [],        // undo stack -- mask snapshots taken before each stroke
+  eraseRedoStack: [],
+  adjZoom: 1
 };
 var cropperInst = null;
 
@@ -1814,6 +1834,9 @@ function ensureEraseMask(){
     var m=document.createElement('canvas');
     m.width=base.width;m.height=base.height;
     S.eraseMaskCanvas=m;
+    S.eraseHistory=[];
+    S.eraseRedoStack=[];
+    updateEraseUndoRedoButtons();
   }
 }
 function toggleErase(btn){
@@ -1823,7 +1846,8 @@ function toggleErase(btn){
     ? '<i class="fa-solid fa-eraser"></i> Erase Brush ON — Photo Par Draw Karein'
     : '<i class="fa-solid fa-eraser"></i> Enable Erase Brush';
   document.getElementById('eraseControlsRow').style.display=S.eraseEnabled?'block':'none';
-  document.getElementById('adjCanvas').style.cursor=S.eraseEnabled?'crosshair':'default';
+  document.getElementById('adjCanvas').style.cursor=S.eraseEnabled?'none':'default';
+  if(!S.eraseEnabled)hideEraseCursor();
 }
 function onEraseSizeChange(){
   S.eraseBrushSize=parseInt(document.getElementById('eraseSizeRange').value)||45;
@@ -1834,7 +1858,54 @@ function onEraseHardnessChange(){
   S.eraseBrushHardness=isNaN(v)?100:v;
   document.getElementById('eraseHardnessVal').textContent=S.eraseBrushHardness+'%';
 }
+// ── UNDO / REDO ─────────────────────────────────────
+// Snapshot-per-stroke (not per-pixel): one undo step always removes exactly
+// the last full stroke, matching what a user actually expects "Undo" to do.
+function snapshotEraseMask(){
+  ensureEraseMask();
+  if(!S.eraseMaskCanvas)return null;
+  var snap=document.createElement('canvas');
+  snap.width=S.eraseMaskCanvas.width;snap.height=S.eraseMaskCanvas.height;
+  snap.getContext('2d').drawImage(S.eraseMaskCanvas,0,0);
+  return snap;
+}
+function pushEraseHistory(){
+  var snap=snapshotEraseMask();
+  if(!snap)return;
+  S.eraseHistory.push(snap);
+  if(S.eraseHistory.length>15)S.eraseHistory.shift();
+  S.eraseRedoStack=[]; // a new stroke always invalidates the redo branch
+  updateEraseUndoRedoButtons();
+}
+function undoErase(){
+  if(!S.eraseHistory.length)return;
+  var current=snapshotEraseMask();
+  if(current)S.eraseRedoStack.push(current);
+  var prev=S.eraseHistory.pop();
+  var ctx=S.eraseMaskCanvas.getContext('2d');
+  ctx.clearRect(0,0,S.eraseMaskCanvas.width,S.eraseMaskCanvas.height);
+  ctx.drawImage(prev,0,0);
+  updateEraseUndoRedoButtons();
+  renderAdjPreview();
+}
+function redoErase(){
+  if(!S.eraseRedoStack.length)return;
+  var current=snapshotEraseMask();
+  if(current)S.eraseHistory.push(current);
+  var next=S.eraseRedoStack.pop();
+  var ctx=S.eraseMaskCanvas.getContext('2d');
+  ctx.clearRect(0,0,S.eraseMaskCanvas.width,S.eraseMaskCanvas.height);
+  ctx.drawImage(next,0,0);
+  updateEraseUndoRedoButtons();
+  renderAdjPreview();
+}
+function updateEraseUndoRedoButtons(){
+  var u=document.getElementById('eraseUndoBtn'),r=document.getElementById('eraseRedoBtn');
+  if(u)u.disabled=!(S.eraseHistory&&S.eraseHistory.length);
+  if(r)r.disabled=!(S.eraseRedoStack&&S.eraseRedoStack.length);
+}
 function resetErase(){
+  pushEraseHistory();
   if(S.eraseMaskCanvas){
     var ctx=S.eraseMaskCanvas.getContext('2d');
     ctx.clearRect(0,0,S.eraseMaskCanvas.width,S.eraseMaskCanvas.height);
@@ -1853,37 +1924,115 @@ function stampErase(maskCtx,cx,cy,radius,hardnessPct){
   maskCtx.fill();
   maskCtx.globalCompositeOperation='source-over';
 }
-function eraseAtEvent(evt){
+// Shared: CSS/viewport point -> {xCss,yCss,rect} relative to #adjCanvas.
+function pointOnCanvas(evt){
   var canvas=document.getElementById('adjCanvas');
   var rect=canvas.getBoundingClientRect();
-  if(!rect.width||!rect.height)return;
-  var t=(evt.touches&&evt.touches[0])?evt.touches[0]:evt;
-  var xCss=t.clientX-rect.left,yCss=t.clientY-rect.top;
-  var xPrev=xCss*(canvas.width/rect.width);
-  var yPrev=yCss*(canvas.height/rect.height);
+  var t=(evt.touches&&evt.touches[0])?evt.touches[0]:(evt.changedTouches&&evt.changedTouches[0])?evt.changedTouches[0]:evt;
+  return {canvas:canvas,rect:rect,xCss:t.clientX-rect.left,yCss:t.clientY-rect.top,clientX:t.clientX,clientY:t.clientY};
+}
+function eraseAtEvent(evt){
+  var p=pointOnCanvas(evt);
+  if(!p.rect.width||!p.rect.height)return;
+  var xPrev=p.xCss*(p.canvas.width/p.rect.width);
+  var yPrev=p.yCss*(p.canvas.height/p.rect.height);
   ensureEraseMask();
-  if(!S.eraseMaskCanvas||!canvas.width)return;
-  var scale=S.eraseMaskCanvas.width/canvas.width;
+  if(!S.eraseMaskCanvas||!p.canvas.width)return;
+  var scale=S.eraseMaskCanvas.width/p.canvas.width;
   var mx=xPrev*scale,my=yPrev*scale;
   var radius=(S.eraseBrushSize/2)*scale;
   stampErase(S.eraseMaskCanvas.getContext('2d'),mx,my,radius,S.eraseBrushHardness);
   renderAdjPreview();
+}
+// ── ROUND BRUSH CURSOR (mouse hover + mid-stroke on touch) ─────────────
+function showEraseCursorAt(evt){
+  var dot=document.getElementById('eraseCursorDot');
+  if(!dot||!S.eraseEnabled)return;
+  var p=pointOnCanvas(evt);
+  if(p.xCss<0||p.yCss<0||p.xCss>p.rect.width||p.yCss>p.rect.height){hideEraseCursor();return;}
+  var screenDiameter=p.rect.width?S.eraseBrushSize*(p.rect.width/p.canvas.width):S.eraseBrushSize;
+  dot.style.width=screenDiameter+'px';
+  dot.style.height=screenDiameter+'px';
+  dot.style.left=p.clientX+'px';
+  dot.style.top=p.clientY+'px';
+  dot.style.display='block';
+}
+function hideEraseCursor(){
+  var dot=document.getElementById('eraseCursorDot');
+  if(dot)dot.style.display='none';
 }
 function initEraseCanvas(){
   var canvas=document.getElementById('adjCanvas');
   if(!canvas||canvas.dataset.eraseInit)return;
   canvas.dataset.eraseInit='1';
   var drawing=false;
-  function start(e){ if(!S.eraseEnabled)return; drawing=true; eraseAtEvent(e); e.preventDefault(); }
-  function move(e){ if(!S.eraseEnabled||!drawing)return; eraseAtEvent(e); e.preventDefault(); }
+  function start(e){
+    if(!S.eraseEnabled)return;
+    if(e.touches&&e.touches.length!==1)return; // 2+ fingers -> let pinch/pan handle it
+    pushEraseHistory();
+    drawing=true;showEraseCursorAt(e);eraseAtEvent(e);e.preventDefault();
+  }
+  function move(e){
+    showEraseCursorAt(e);
+    if(!S.eraseEnabled||!drawing)return;
+    if(e.touches&&e.touches.length!==1){drawing=false;return;}
+    eraseAtEvent(e);e.preventDefault();
+  }
   function stop(){ drawing=false; }
   canvas.addEventListener('mousedown',start);
   canvas.addEventListener('mousemove',move);
   window.addEventListener('mouseup',stop);
-  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('mouseleave',function(){stop();hideEraseCursor();});
   canvas.addEventListener('touchstart',start,{passive:false});
   canvas.addEventListener('touchmove',move,{passive:false});
-  canvas.addEventListener('touchend',stop);
+  canvas.addEventListener('touchend',function(){stop();hideEraseCursor();});
+  initZoomPinch();
+}
+// ── ZOOM (buttons on PC + mobile, pinch+pan via touch) ──────────────────
+function applyZoom(){
+  var canvas=document.getElementById('adjCanvas');
+  if(!canvas||!canvas.width)return;
+  canvas.style.width='';canvas.style.height='';canvas.style.maxWidth='';
+  var rect=canvas.getBoundingClientRect();
+  if(S.adjZoom!==1&&rect.width>0){
+    canvas.style.maxWidth='none';
+    canvas.style.width=Math.round(rect.width*S.adjZoom)+'px';
+    canvas.style.height=Math.round(rect.height*S.adjZoom)+'px';
+  }
+  var lbl=document.getElementById('zoomLevelLabel');
+  if(lbl)lbl.textContent=Math.round(S.adjZoom*100)+'%';
+}
+function zoomIn(){ S.adjZoom=Math.min(4,+(S.adjZoom+0.25).toFixed(2)); applyZoom(); }
+function zoomOut(){ S.adjZoom=Math.max(0.5,+(S.adjZoom-0.25).toFixed(2)); applyZoom(); }
+function zoomReset(){ S.adjZoom=1; applyZoom(); var w=document.querySelector('.live-preview-wrap'); if(w){w.scrollLeft=0;w.scrollTop=0;} }
+function initZoomPinch(){
+  var wrap=document.querySelector('.live-preview-wrap');
+  if(!wrap||wrap.dataset.pinchInit)return;
+  wrap.dataset.pinchInit='1';
+  var startDist=null,startZoom=1,startMid=null,startScroll=null;
+  function dist(a,b){ var dx=a.clientX-b.clientX,dy=a.clientY-b.clientY; return Math.sqrt(dx*dx+dy*dy); }
+  function mid(a,b){ return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; }
+  wrap.addEventListener('touchstart',function(e){
+    if(e.touches.length===2){
+      startDist=dist(e.touches[0],e.touches[1]);
+      startZoom=S.adjZoom;
+      startMid=mid(e.touches[0],e.touches[1]);
+      startScroll={x:wrap.scrollLeft,y:wrap.scrollTop};
+      e.preventDefault();
+    }
+  },{passive:false});
+  wrap.addEventListener('touchmove',function(e){
+    if(e.touches.length===2&&startDist){
+      var d=dist(e.touches[0],e.touches[1]);
+      S.adjZoom=Math.max(0.5,Math.min(4,+(startZoom*(d/startDist)).toFixed(2)));
+      applyZoom();
+      var m=mid(e.touches[0],e.touches[1]);
+      wrap.scrollLeft=startScroll.x-(m.x-startMid.x);
+      wrap.scrollTop=startScroll.y-(m.y-startMid.y);
+      e.preventDefault();
+    }
+  },{passive:false});
+  wrap.addEventListener('touchend',function(e){ if(e.touches.length<2){startDist=null;startMid=null;} });
 }
 // Returns the working photo (bg-removed or plain crop) with the erase
 // mask's alpha reduction baked in, at its OWN native resolution -- the
@@ -1949,6 +2098,7 @@ function renderAdjPreview(){
   var c=document.getElementById('adjCanvas');
   c.width=pW;c.height=pH;
   c.getContext('2d').drawImage(result,0,0);
+  applyZoom();
 }
 
 // ── KB COMPRESS ───────────────────────────────────────
