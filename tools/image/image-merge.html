@@ -405,20 +405,8 @@
 
   <div class="card">
     <h3>⚙️ Options</h3>
-    <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">📄 A4 Size Print</div>
-      <div id="a4Options" style="margin-top:10px">
-        <div class="form-group"><label>Orientation</label><select id="a4Orientation">
-          <option value="auto">Auto (image ke hisaab se)</option>
-          <option value="portrait">Portrait</option>
-          <option value="landscape">Landscape</option>
-        </select></div>
-        <p style="font-size:.74rem;color:#94a3b8;margin-top:8px">Merged image A4 page (210×297mm, 300 DPI) ke center mein fit ho jayegi, baaki jagah white background se bhar jayegi — direct print karne ke liye ready.</p>
-      </div>
-    </div>
-
-    <div style="border-top:1px dashed #cbd5e1;margin-top:12px;padding-top:10px">
-      <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional, sab images par apply hoga</div>
-      <div style="margin-top:12px">
+    <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional, sab images par apply hoga</div>
+    <div style="margin-top:12px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span style="font-weight:600">Target Size:</span>
           <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
@@ -433,11 +421,10 @@
           <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
         </div>
         <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → merged image us size ki banegi (JPG/WEBP/AVIF). Khali chhodein → best quality.</p>
-      </div>
     </div>
 
     <div class="action-row">
-      <button class="btn-primary" id="process-btn"><span>⚙️</span> Merge &amp; Download!</button>
+      <button class="btn-primary" id="process-btn"><span>⚙️</span> Merge!</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
     </div>
     <div class="progress-wrap" id="progress-wrap">
@@ -461,11 +448,37 @@
       </div>
       <p style="font-size:.74rem;color:#94a3b8;margin:6px 0 14px">A4 sheet ke charo taraf kitna khaali margin rakhna hai (print-safe border).</p>
       <h3>🖼️ Output Image</h3>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-group"><label>Rotate (Sab Images Par)</label><select id="rotateSel">
+          <option value="0">0° (None)</option>
+          <option value="90">90° Clockwise</option>
+          <option value="180">180°</option>
+          <option value="270">270° Clockwise</option>
+        </select></div>
+        <div class="form-group"><label>Flip / Mirror (Sab Par)</label><select id="flipSel">
+          <option value="none">None</option>
+          <option value="h">Horizontal</option>
+          <option value="v">Vertical</option>
+          <option value="both">Both</option>
+        </select></div>
+      </div>
       <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
+      <div class="form-group" style="margin-top:12px"><label>Output Format</label><select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="png">PNG</option>
+        <option value="webp">WEBP</option>
+        <option value="avif">AVIF</option>
+        <option value="bmp">BMP</option>
+        <option value="gif">GIF</option>
+        <option value="tiff">TIFF</option>
+        <option value="ico">ICO</option>
+        <option value="pdf">PDF</option>
+      </select></div>
       <div class="result-card" id="result-card" style="margin-top:14px">
         <div class="result-ok">✅ Successfully Merged!</div>
         <div class="stat-row" id="stat-row"></div>
-        <button class="btn-dl" id="dl-btn">⬇️ Download File</button>
+        <button class="btn-dl" id="dl-btn">⬇️ Download JPG</button>
       </div>
     </div>
 
@@ -508,45 +521,23 @@
             <button type="button" class="chip" data-target="shpRange" data-val="70">Sharp</button>
           </div>
         </div>
-      </div>
-      <div style="border-top:1px dashed #cbd5e1;margin-top:14px;padding-top:12px;display:flex;flex-direction:column;gap:10px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink)">
-          <input type="checkbox" id="textHighlightChk" style="width:18px;height:18px;accent-color:var(--brand);cursor:pointer">
-          🖊️ Text Highlight <span style="font-weight:400;color:#94a3b8;font-size:.76rem">(text ko sharp/clear banayein)</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink)">
-          <input type="checkbox" id="shadowRemoveChk" style="width:18px;height:18px;accent-color:var(--brand);cursor:pointer">
-          🌤️ Shadow Remove <span style="font-weight:400;color:#94a3b8;font-size:.76rem">(document ke uneven shadow/lighting hataayein)</span>
-        </label>
-      </div>
-
-      <div style="border-top:1px dashed #cbd5e1;margin-top:14px;padding-top:12px">
-        <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;margin-bottom:14px">🎛️ Output Settings</div>
-        <div class="form-grid">
-          <div class="form-group"><label>Output Format</label><select id="fmt">
-            <option value="jpg">JPG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="png">PNG</option>
-            <option value="webp">WEBP</option>
-            <option value="avif">AVIF</option>
-            <option value="bmp">BMP</option>
-            <option value="gif">GIF</option>
-            <option value="tiff">TIFF</option>
-            <option value="ico">ICO</option>
-            <option value="pdf">PDF</option>
-          </select></div>
-          <div class="form-group"><label>Rotate (Sab Images Par)</label><select id="rotateSel">
-            <option value="0">0° (None)</option>
-            <option value="90">90° Clockwise</option>
-            <option value="180">180°</option>
-            <option value="270">270° Clockwise</option>
-          </select></div>
-          <div class="form-group"><label>Flip / Mirror (Sab Par)</label><select id="flipSel">
-            <option value="none">None</option>
-            <option value="h">Horizontal</option>
-            <option value="v">Vertical</option>
-            <option value="both">Both</option>
-          </select></div>
+        <div class="adjust-col">
+          <label class="at">🖊️ Text Highlight <span id="thVal">0</span></label>
+          <input type="range" id="thRange" min="0" max="100" value="0">
+          <div class="chip-row">
+            <button type="button" class="chip active" data-target="thRange" data-val="0">Off</button>
+            <button type="button" class="chip" data-target="thRange" data-val="50">Medium</button>
+            <button type="button" class="chip" data-target="thRange" data-val="100">Strong</button>
+          </div>
+        </div>
+        <div class="adjust-col">
+          <label class="at">🌤️ Shadow Remove <span id="srVal">0</span></label>
+          <input type="range" id="srRange" min="0" max="100" value="0">
+          <div class="chip-row">
+            <button type="button" class="chip active" data-target="srRange" data-val="0">Off</button>
+            <button type="button" class="chip" data-target="srRange" data-val="50">Medium</button>
+            <button type="button" class="chip" data-target="srRange" data-val="100">Strong</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1022,6 +1013,8 @@
   bindAdjust('conRange','conVal','%');
   bindAdjust('satRange','satVal','%');
   bindAdjust('shpRange','shpVal','');
+  bindAdjust('thRange','thVal','');
+  bindAdjust('srRange','srVal','');
   document.querySelectorAll('.chip').forEach(function(chip){
     chip.addEventListener('click',function(){
       var t=chip.getAttribute('data-target'),val=chip.getAttribute('data-val');
@@ -1038,9 +1031,7 @@
   G('rotateSel').addEventListener('change',scheduleLivePreview);
   G('flipSel').addEventListener('change',scheduleLivePreview);
   G('sheetMarginRange').addEventListener('input',function(){G('sheetMarginVal').textContent=this.value+' mm';scheduleLivePreview();});
-  G('a4Orientation').addEventListener('change',scheduleLivePreview);
-  G('textHighlightChk').addEventListener('change',scheduleLivePreview);
-  G('shadowRemoveChk').addEventListener('change',scheduleLivePreview);
+  G('fmt').addEventListener('change',function(){updateDlBtnLabel();scheduleLivePreview();});
 
   // ── File-size (KB) controls ──────────────────────────────────
   G('tkb').addEventListener('input',function(){var v=parseFloat(this.value);if(v>0)G('tkbRange').value=Math.min(2000,Math.max(5,v));});
@@ -1226,7 +1217,8 @@
 
   function applyAdjustments(cv){
     var bright=+G('briRange').value,contrast=+G('conRange').value,sat=+G('satRange').value,sharp=+G('shpRange').value;
-    if(G('shadowRemoveChk')&&G('shadowRemoveChk').checked)removeShadow(cv,0.85);
+    var shadowAmt=(+G('srRange').value)/100,textAmt=(+G('thRange').value)/100;
+    if(shadowAmt>0)removeShadow(cv,shadowAmt);
     if(bright!==100||contrast!==100||sat!==100){
       var tmp=document.createElement('canvas');tmp.width=cv.width;tmp.height=cv.height;
       var tctx=tmp.getContext('2d');
@@ -1236,7 +1228,7 @@
       ctx.clearRect(0,0,cv.width,cv.height);
       ctx.drawImage(tmp,0,0);
     }
-    if(G('textHighlightChk')&&G('textHighlightChk').checked)highlightText(cv,0.6);
+    if(textAmt>0)highlightText(cv,textAmt);
     if(sharp>0)sharpenCanvas(cv,Math.min(1,sharp/100));
   }
 
@@ -1244,10 +1236,10 @@
   var A4_DPI=300;
   var A4_PORTRAIT_W=Math.round(210/25.4*A4_DPI), A4_PORTRAIT_H=Math.round(297/25.4*A4_DPI); // 2480x3508
   function fitToA4(src){
-    var orientation=G('a4Orientation').value;
-    var portrait=orientation==='portrait';
-    var landscape=orientation==='landscape';
-    if(orientation==='auto'){ landscape=src.width>=src.height; portrait=!landscape; }
+    // Orientation is always auto now (no user-facing control -- A4 fit is
+    // an unconditional default, so a manual portrait/landscape override
+    // isn't worth the extra option clutter).
+    var landscape=src.width>=src.height,portrait=!landscape;
     var pageW=portrait?A4_PORTRAIT_W:A4_PORTRAIT_H;
     var pageH=portrait?A4_PORTRAIT_H:A4_PORTRAIT_W;
     var marginMm=parseFloat(G('sheetMarginRange').value)||0;
@@ -1317,6 +1309,17 @@
     }
   }
 
+  // Keeps the Download button's label matching whatever format is
+  // currently selected, even before the first merge -- not just after
+  // processing completes (that still wins with the ACTUAL output extension,
+  // which can differ from the selection when KB-compression forces a
+  // different format).
+  function updateDlBtnLabel(){
+    var dl=G('dl-btn');
+    if(dl)dl.textContent='⬇️ Download '+(G('fmt').value||'jpg').toUpperCase();
+  }
+  updateDlBtnLabel();
+
   async function runProcess(){
     var pw=G('progress-wrap'),bar=G('pbar'),pmsg=G('pmsg');
     try{
@@ -1369,15 +1372,18 @@
     G('conRange').value=100;G('conVal').textContent='100%';
     G('satRange').value=100;G('satVal').textContent='100%';
     G('shpRange').value=0;G('shpVal').textContent='0';
-    G('textHighlightChk').checked=false;G('shadowRemoveChk').checked=false;
+    G('thRange').value=0;G('thVal').textContent='0';
+    G('srRange').value=0;G('srVal').textContent='0';
     document.querySelectorAll('.chip').forEach(function(c){
       c.classList.remove('active');
-      var isDefault=(c.getAttribute('data-target')==='shpRange')?(c.getAttribute('data-val')==='0'):(c.getAttribute('data-val')==='100');
+      var zeroDefault=['shpRange','thRange','srRange'].indexOf(c.getAttribute('data-target'))>=0;
+      var isDefault=zeroDefault?(c.getAttribute('data-val')==='0'):(c.getAttribute('data-val')==='100');
       if(isDefault)c.classList.add('active');
     });
-    ['briRange','conRange','satRange','shpRange'].forEach(function(id){G(id).dispatchEvent(new Event('input'));});
+    ['briRange','conRange','satRange','shpRange','thRange','srRange'].forEach(function(id){G(id).dispatchEvent(new Event('input'));});
     G('tkb').value='';G('tkbRange').value=50;
     G('fmt').value='jpg';G('rotateSel').value='0';G('flipSel').value='none';
+    updateDlBtnLabel();
     G('output-box').innerHTML='<div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div>';
     G('result-card').classList.remove('show');
   });
