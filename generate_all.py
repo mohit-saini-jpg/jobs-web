@@ -6425,10 +6425,18 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
                 status_badge = f'<span class="jm-badge" style="background:{_bg};color:{_cl}">{_lb}</span>'
         _vac_noun  = "Posts" if _row_url.startswith("/jobs/") else list_noun
         _mode_span = f'<span class="jc-mode">{e(jmode)}</span>' if jmode and _row_url.startswith("/jobs/") else ''
+        # A /state/ or /district/ landing card isn't a job -- its "vacancy"
+        # count is really how many job listings exist for that region, so the
+        # row label should read "Total Jobs", not "Total Post" (which implies
+        # this card itself is a specific recruitment with N vacancies). Drop
+        # the trailing noun too so it doesn't read "Total Jobs: 5 Jobs".
+        _total_label = 'Total Jobs' if _is_landing_summary else 'Total Post'
+        if _is_landing_summary:
+            _vac_noun = ''
         _jc_rows = '' if not _show_job_info else (
             (f'<tr><th><i class="fa-solid fa-graduation-cap"></i> Post Name</th><td>{e(jpost)}</td></tr>' if jpost and not _is_landing_summary else '') +
             (f'<tr><th><i class="fa-solid fa-book-open"></i> Qualification</th><td>{e(jqual)}</td></tr>' if jqual else '') +
-            (f'<tr><th><i class="fa-solid fa-users"></i> Total Post</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
+            (f'<tr><th><i class="fa-solid fa-users"></i> {_total_label}</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
             (f'<tr><th><i class="fa-solid fa-calendar-days"></i> Last Date</th><td class="jc-date{urgent_cls}">{e(jld)}</td></tr>' if jld else '')
         )
         _hint_html  = f'<div class="jc-apply-hint">{e(_card_hint)} <i class="fa-solid fa-arrow-right"></i></div>' if _card_hint else ''
