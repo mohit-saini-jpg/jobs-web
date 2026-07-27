@@ -220,7 +220,8 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .sc-select{flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:.85rem;font-weight:700;color:var(--ink);background:#fff}
 .sc-hint{font-size:.72rem;color:var(--muted);line-height:1.5;background:var(--mist);border-radius:9px;padding:9px 11px;margin-top:12px}
 .sc-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.live-preview-wrap{border-radius:12px;overflow:auto;border:1px solid var(--line);text-align:center;padding:14px;background:var(--mist);box-shadow:var(--shadow);max-height:min(65vh,560px);touch-action:none}
+.live-preview-wrap{border-radius:12px;overflow:auto;border:1px solid var(--line);padding:14px;background:var(--mist);box-shadow:var(--shadow);max-height:min(65vh,560px);touch-action:none}
+.live-preview-wrap canvas{display:block}
 .live-preview-wrap canvas{max-width:100%;max-height:min(65vh,560px);border-radius:8px}
 .preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
 .zoom-controls{display:flex;align-items:center;justify-content:center;gap:8px}
@@ -692,6 +693,10 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="adj-label">Border Thickness <span id="borderThickVal">4px</span></div>
         <input type="range" id="borderThickRange" min="1" max="30" value="4" oninput="onBorderThicknessChange()">
       </div>
+      <div class="adj-group" id="borderGapRow" style="display:none;margin-top:8px">
+        <div class="adj-label">Gap Between Lines <span id="borderGapVal">6px</span></div>
+        <input type="range" id="borderGapRange" min="1" max="30" value="6" oninput="onBorderGapChange()">
+      </div>
     </div>
 
     <div style="margin-bottom:16px">
@@ -719,14 +724,14 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       <div id="customGridBox" style="display:none;margin-top:10px;padding:11px 13px;background:var(--mist);border-radius:8px;border:1px solid var(--line)">
         <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Quick Pick</div>
         <div class="print-options" id="customGridPresets">
-          <div class="print-opt" data-rows="1" data-cols="6" onclick="setCustomGrid(1,6)">6 Photos — 1 Row</div>
-          <div class="print-opt active" data-rows="2" data-cols="6" onclick="setCustomGrid(2,6)">12 Photos — 2 Rows</div>
+          <div class="print-opt active" data-rows="1" data-cols="6" onclick="setCustomGrid(1,6)">6 Photos — 1 Row</div>
+          <div class="print-opt" data-rows="2" data-cols="6" onclick="setCustomGrid(2,6)">12 Photos — 2 Rows</div>
           <div class="print-opt" data-rows="6" data-cols="6" onclick="setCustomGrid(6,6)">36 Photos — 6 Rows</div>
         </div>
         <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin:12px 0 6px">Or set your own:</div>
         <div class="print-options" style="align-items:center;gap:8px">
           <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Rows:</span>
-          <input type="number" id="customRows" value="2" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+          <input type="number" id="customRows" value="1" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
           <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Columns:</span>
           <input type="number" id="customCols" value="6" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
         </div>
@@ -856,9 +861,9 @@ var S = {
   bgRemoveEnabled: false,
   bgModelLoaded: false,
   filterPreset: 'original',
-  border: {type:'none', thickness:4},
+  border: {type:'none', thickness:4, gap:6},
   dpi: 300,
-  customRows: 2,
+  customRows: 1,
   customCols: 6,
   marginMode: 'default',   // 'full' | 'default' | 'custom'
   marginCustomMm: 5,
@@ -2019,6 +2024,14 @@ function initEraseCanvas(){
   initZoomPinch();
 }
 // ── ZOOM (buttons on PC + mobile, pinch+pan via touch) ──────────────────
+// IMPORTANT: this must NOT be called on every erase stamp/render -- doing
+// so was the root cause of "photo scrolls while erasing". Resizing the
+// canvas (even back to the exact same size) while it sits inside a
+// scrollable overflow:auto container can clamp wrap.scrollLeft/scrollTop
+// mid-resize, and that clamp doesn't undo itself when the canvas regrows --
+// repeated every stamp during a drag, that drift is exactly what looked
+// like the image "sliding". Call this ONLY when the zoom level itself
+// changes (buttons, wheel, pinch), never from renderAdjPreview().
 function applyZoom(){
   var canvas=document.getElementById('adjCanvas');
   if(!canvas||!canvas.width)return;
@@ -2032,37 +2045,77 @@ function applyZoom(){
   var lbl=document.getElementById('zoomLevelLabel');
   if(lbl)lbl.textContent=Math.round(S.adjZoom*100)+'%';
 }
-function zoomIn(){ S.adjZoom=Math.min(4,+(S.adjZoom+0.25).toFixed(2)); applyZoom(); }
-function zoomOut(){ S.adjZoom=Math.max(0.5,+(S.adjZoom-0.25).toFixed(2)); applyZoom(); }
+// Zooms to newZoom while keeping whatever content point is under
+// (clientX,clientY) visually fixed on screen -- "zoom to pointer", not
+// zoom-from-a-corner. Reads scroll position BEFORE resizing and writes the
+// recomputed position back AFTER, so it's correct regardless of any
+// transient scroll clamping applyZoom() causes mid-resize.
+function zoomAtPoint(newZoom,clientX,clientY){
+  var wrap=document.querySelector('.live-preview-wrap');
+  var canvas=document.getElementById('adjCanvas');
+  if(!wrap||!canvas)return;
+  newZoom=Math.max(0.5,Math.min(4,+newZoom.toFixed(2)));
+  var wrapRect=wrap.getBoundingClientRect();
+  var canvasRect=canvas.getBoundingClientRect();
+  if(!canvasRect.width||!canvasRect.height){ S.adjZoom=newZoom; applyZoom(); return; }
+  // Fraction across the CANVAS itself (not the wrap) -- the wrap has fixed
+  // padding around the canvas that doesn't scale with zoom, so anchoring to
+  // wrap-relative coordinates drifted slightly off the true pointer target.
+  var fx=(clientX-canvasRect.left)/canvasRect.width;
+  var fy=(clientY-canvasRect.top)/canvasRect.height;
+  // Canvas's left/top edge in wrap CONTENT space (i.e. where it'd sit if
+  // scrollLeft/Top were 0) -- this is just the fixed padding, unaffected by
+  // zoom, so it stays valid across the resize below.
+  var canvasContentLeft=canvasRect.left-wrapRect.left+wrap.scrollLeft;
+  var canvasContentTop=canvasRect.top-wrapRect.top+wrap.scrollTop;
+  var ratio=newZoom/(S.adjZoom||1);
+  var newCanvasW=canvasRect.width*ratio,newCanvasH=canvasRect.height*ratio;
+  S.adjZoom=newZoom;
+  applyZoom();
+  wrap.scrollLeft=wrapRect.left+canvasContentLeft+fx*newCanvasW-clientX;
+  wrap.scrollTop=wrapRect.top+canvasContentTop+fy*newCanvasH-clientY;
+}
+function zoomIn(){
+  var wrap=document.querySelector('.live-preview-wrap');
+  var r=wrap?wrap.getBoundingClientRect():null;
+  zoomAtPoint(S.adjZoom+0.25, r?r.left+r.width/2:0, r?r.top+r.height/2:0);
+}
+function zoomOut(){
+  var wrap=document.querySelector('.live-preview-wrap');
+  var r=wrap?wrap.getBoundingClientRect():null;
+  zoomAtPoint(S.adjZoom-0.25, r?r.left+r.width/2:0, r?r.top+r.height/2:0);
+}
 function zoomReset(){ S.adjZoom=1; applyZoom(); var w=document.querySelector('.live-preview-wrap'); if(w){w.scrollLeft=0;w.scrollTop=0;} }
 function initZoomPinch(){
   var wrap=document.querySelector('.live-preview-wrap');
   if(!wrap||wrap.dataset.pinchInit)return;
   wrap.dataset.pinchInit='1';
-  var startDist=null,startZoom=1,startMid=null,startScroll=null;
+  var startDist=null,startZoom=1;
   function dist(a,b){ var dx=a.clientX-b.clientX,dy=a.clientY-b.clientY; return Math.sqrt(dx*dx+dy*dy); }
   function mid(a,b){ return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; }
   wrap.addEventListener('touchstart',function(e){
     if(e.touches.length===2){
       startDist=dist(e.touches[0],e.touches[1]);
       startZoom=S.adjZoom;
-      startMid=mid(e.touches[0],e.touches[1]);
-      startScroll={x:wrap.scrollLeft,y:wrap.scrollTop};
       e.preventDefault();
     }
   },{passive:false});
   wrap.addEventListener('touchmove',function(e){
     if(e.touches.length===2&&startDist){
       var d=dist(e.touches[0],e.touches[1]);
-      S.adjZoom=Math.max(0.5,Math.min(4,+(startZoom*(d/startDist)).toFixed(2)));
-      applyZoom();
       var m=mid(e.touches[0],e.touches[1]);
-      wrap.scrollLeft=startScroll.x-(m.x-startMid.x);
-      wrap.scrollTop=startScroll.y-(m.y-startMid.y);
+      zoomAtPoint(startZoom*(d/startDist),m.x,m.y); // pinch center stays fixed under the fingers
       e.preventDefault();
     }
   },{passive:false});
-  wrap.addEventListener('touchend',function(e){ if(e.touches.length<2){startDist=null;startMid=null;} });
+  wrap.addEventListener('touchend',function(e){ if(e.touches.length<2)startDist=null; });
+  // Desktop: plain mouse wheel zooms to the cursor (no Ctrl needed -- this
+  // area is a dedicated zoom/pan viewport, not page content).
+  wrap.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var delta=e.deltaY<0?0.15:-0.15;
+    zoomAtPoint(S.adjZoom+delta,e.clientX,e.clientY);
+  },{passive:false});
 }
 // Returns the working photo (bg-removed or plain crop) with the erase
 // mask's alpha reduction baked in, at its OWN native resolution -- the
@@ -2126,9 +2179,10 @@ function renderAdjPreview(){
   var result=buildProcessedCanvas(pW,pH);
   if(!result)return;
   var c=document.getElementById('adjCanvas');
+  var zoomedW=c.style.width,zoomedH=c.style.height; // preserve current zoom CSS size across the redraw
   c.width=pW;c.height=pH;
   c.getContext('2d').drawImage(result,0,0);
-  applyZoom();
+  if(zoomedW){c.style.width=zoomedW;c.style.height=zoomedH;} // changing raster width/height doesn't touch inline style, but keep this explicit/defensive
 }
 
 // ── KB COMPRESS ───────────────────────────────────────
@@ -2260,12 +2314,19 @@ function selectBorder(el){
   el.classList.add('active');
   S.border.type=el.dataset.border;
   document.getElementById('borderThicknessRow').style.display=(S.border.type==='none')?'none':'block';
+  document.getElementById('borderGapRow').style.display=(S.border.type==='double')?'block':'none';
   renderFinal();
 }
 function onBorderThicknessChange(){
   var v=parseInt(document.getElementById('borderThickRange').value)||4;
   S.border.thickness=v;
   document.getElementById('borderThickVal').textContent=v+'px';
+  renderFinal();
+}
+function onBorderGapChange(){
+  var v=parseInt(document.getElementById('borderGapRange').value)||6;
+  S.border.gap=v;
+  document.getElementById('borderGapVal').textContent=v+'px';
   renderFinal();
 }
 // Draws the border INSIDE the existing canvas (border-box) — never resizes
@@ -2275,6 +2336,20 @@ function applyPhotoBorder(canvas,border){
   var ctx=canvas.getContext('2d');
   var w=canvas.width,h=canvas.height;
   var t=Math.max(1,Math.round(border.thickness));
+  var gap=Math.max(1,Math.round(border.gap||6));
+  // Safety clamp: the whole double-line border (outer + gap + inner) must
+  // stay within the photo -- on a small photo a large thickness/gap
+  // combination could otherwise overlap itself or eat past the center.
+  // Scale BOTH down together (keeping their ratio) rather than silently
+  // capping just one, so the line/gap proportion the user picked is kept.
+  var shortSide=Math.min(w,h);
+  var maxTotal=Math.floor(shortSide*0.18); // border band never eats more than ~18% of the shorter side
+  var total=(border.type==='double')?(2*t+gap):t;
+  if(total>maxTotal&&total>0){
+    var scale=maxTotal/total;
+    t=Math.max(1,Math.round(t*scale));
+    gap=Math.max(1,Math.round(gap*scale));
+  }
   function ring(inset,thick,color){
     ctx.fillStyle=color;
     ctx.fillRect(inset,inset,Math.max(0,w-2*inset),thick);
@@ -2285,7 +2360,6 @@ function applyPhotoBorder(canvas,border){
   if(border.type==='single'){
     ring(0,t,'#000000');
   }else if(border.type==='double'){
-    var gap=Math.max(2,Math.round(t*1.4));
     ring(0,t,'#000000');       // outer line
     ring(t,gap,'#FFFFFF');     // white space between the two lines
     ring(t+gap,t,'#000000');   // inner line
