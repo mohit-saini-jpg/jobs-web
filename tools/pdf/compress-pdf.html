@@ -61,6 +61,8 @@
     .form-group select, .form-group input[type=number], .form-group input[type=text], .form-group input[type=password] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
     .form-group input[type=range] { width: 100%; accent-color: var(--brand); }
+    .form-group { min-width: 0; }
+    .form-group input[type=file] { width: 100%; box-sizing: border-box; }
     .range-val { font-size: 0.85rem; font-weight: 700; color: var(--brand); margin-top: 3px; }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
     .btn-primary { padding: 13px 30px; background: var(--brand); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
@@ -121,8 +123,12 @@
     .chip:hover { border-color: var(--brand); color: var(--brand); }
     .chip.active { background: var(--brand); border-color: var(--brand); color: white; }
     .target-live { text-transform: none; font-weight: 800; color: var(--brand); letter-spacing: 0; font-size: 0.95rem; margin-left: 6px; }
+    /* Tablet-style layout is kept on phones too (2-column form grid instead
+       of collapsing to a single stacked column) -- real device width is
+       used throughout (no forced-viewport zoom-out), just a denser CSS
+       grid, so text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
       .card { padding: 18px 14px; }
