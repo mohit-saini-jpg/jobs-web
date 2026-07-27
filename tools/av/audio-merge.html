@@ -64,10 +64,10 @@
     .track-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
     .track { display: flex; align-items: center; gap: 10px; background: var(--mist); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; }
     .track-num { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .track-info { min-width: 130px; flex-shrink: 0; }
+    .track-info { flex: 0 1 90px; min-width: 0; }
     .track-name { font-size: 0.82rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
     .track-meta { font-size: 0.7rem; color: var(--muted); }
-    .track-canvas-wrap { flex: 1; height: 44px; background: #0b1220; border-radius: 6px; overflow: hidden; min-width: 90px; }
+    .track-canvas-wrap { flex: 1; height: 44px; background: #0b1220; border-radius: 6px; overflow: hidden; min-width: 50px; }
     .track-canvas { width: 100%; height: 100%; display: block; }
     .track-actions { display: flex; gap: 4px; flex-shrink: 0; }
     .track-actions button { width: 30px; height: 30px; border-radius: 6px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
@@ -76,6 +76,7 @@
     .track-actions button.danger:hover { border-color: #dc2626; color: #dc2626; }
 
     .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }
+    .form-group { min-width: 0; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group select, .form-group input[type=number] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
@@ -137,6 +138,16 @@
     .tool-footer { background: #0f172a; color: rgba(255,255,255,0.7); text-align: center; padding: 24px 20px; font-size: 0.82rem; }
     .tool-footer a { color: rgba(255,255,255,0.85); text-decoration: none; margin: 0 8px; }
     .tool-footer a:hover { color: #fff; }
+
+    /* Tablet-style layout is kept on phones too (2-column grids instead of
+       collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
+    @media(max-width:640px){
+      .card { padding: 18px 14px; }
+      .form-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .how-steps { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
