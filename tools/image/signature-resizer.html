@@ -108,6 +108,7 @@
     .file-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
     .file-remove:hover { color: #EF4444; }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .form-group { min-width: 0; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group select, .form-group input[type=number], .form-group input[type=text], .form-group input[type=password] { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 0.88rem; font-family: inherit; background: white; color: var(--ink); outline: none; }
     .form-group select:focus, .form-group input:focus { border-color: var(--brand); }
@@ -161,11 +162,18 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    /* Tablet-style layout is kept on phones too (multi-column grids instead
+       of collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
+      .card { padding: 16px 12px; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
@@ -281,9 +289,9 @@
       <button type="button" class="btn-secondary" id="cropRotL" title="Rotate Left 90°"><i class="fa-solid fa-rotate-left"></i></button>
       <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
-    <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px">
+    <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
       <label for="cropFineRot" style="font-size:.85rem;font-weight:600;white-space:nowrap"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
-      <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;accent-color:var(--brand)">
+      <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;min-width:120px;accent-color:var(--brand)">
       <span id="cropFineRotVal" style="font-size:.82rem;font-weight:700;color:var(--brand);min-width:38px;text-align:right">0°</span>
     </div>
     <p id="quadRotNote" style="display:none;font-size:.76rem;color:#94a3b8;margin:8px 0 0"><i class="fa-solid fa-circle-info"></i> Free Select mode mein seedha karne ke liye kisi bhi corner ko tilt karke drag karein — poora area khud seedha ho jayega.</p>

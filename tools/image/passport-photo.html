@@ -167,7 +167,7 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .bg-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);cursor:pointer}
 .bg-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);cursor:pointer}
 .bg-preview-container{display:flex;gap:0;overflow:hidden}
-.bg-preview-box{flex:1;padding:12px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative}
+.bg-preview-box{flex:1;min-width:0;padding:12px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative}
 .bg-preview-box:first-child{border-right:1px solid var(--line)}
 .bg-preview-box .preview-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .bg-preview-box canvas,.bg-preview-box img{max-width:100%;max-height:160px;border-radius:6px;object-fit:contain}
@@ -309,12 +309,19 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .tool-footer a{color:rgba(255,255,255,.5);text-decoration:none;margin:0 6px}
 .tool-footer a:hover{color:#fff}
 
+/* Tablet-style layout is kept on phones too (multi-column / side-by-side
+   content instead of collapsing to a single stacked column) -- real device
+   width is used throughout (no forced-viewport zoom-out), just denser
+   layout, so text stays full-size and readable. .adj-grid stays
+   single-column at all widths by design -- sliders need full width for
+   touch dragging, it was never a mobile-only collapse. */
 @media(max-width:580px){
   .size-grid{grid-template-columns:1fr 1fr}
-  .adj-grid{grid-template-columns:1fr}
   .how-steps{grid-template-columns:1fr 1fr}
   .related-grid{grid-template-columns:repeat(3,1fr)}
   .card{padding:14px 12px}
+}
+@media(max-width:380px){
   .btn-next{width:100%;justify-content:center}
   .dl-btns{flex-direction:column}
   .btn-dl{width:100%;justify-content:center}
