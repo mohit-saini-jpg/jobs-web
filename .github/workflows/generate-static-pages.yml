@@ -122,7 +122,8 @@ jobs:
              s/(seo-engine\.min\.js\?v=)[0-9]+/\1${VERSION}/g; \
              s/(sections-index\.json\?v=)[0-9]+/\1${VERSION}/g; \
              s/(dailyupdates\.json\?v=)[0-9]+/\1${VERSION}/g; \
-             s/(styles\.css\?v=)[0-9]+/\1${VERSION}/g" 2>/dev/null || true
+             s/(styles\.css\?v=)[0-9]+/\1${VERSION}/g; \
+             s/(homepage\.css\?v=)[0-9]+/\1${VERSION}/g" 2>/dev/null || true
           echo "Asset versions bumped to ${VERSION} across all HTML"
 
       - name: Count generated pages

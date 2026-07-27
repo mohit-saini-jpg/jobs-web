@@ -87,6 +87,19 @@ function patchHtmlFile(filePath) {
     .replace(/(<script[^>]+src="\/tsj-push\.js)\?v=[^"]*(")/g, `$1?v=${version}$2`)
     .replace(/(<script[^>]+src="\/tsj-push\.js")(?!\?)/g, `$1?v=${version}`);
 
+  // homepage.css / styles.css — update existing ?v= (add if missing). These
+  // were previously NOT covered by this script (only generate-static-pages.yml's
+  // manual-only "Bump asset cache versions" step touched them), so a CSS edit
+  // landing via the frequent auto-update-jobs.yml pipeline never busted the
+  // cache -- returning visitors kept a year-old (immutable) cached copy of a
+  // stylesheet that had since changed. Covering it here means every routine
+  // run self-heals this instead of relying on someone remembering to bump it.
+  content = content
+    .replace(/(href="\/homepage\.css)\?v=[^"]*(")/g, `$1?v=${version}$2`)
+    .replace(/(href="\/homepage\.css")(?!\?)/g, `$1?v=${version}`)
+    .replace(/(href="\/styles\.css)\?v=[^"]*(")/g, `$1?v=${version}$2`)
+    .replace(/(href="\/styles\.css")(?!\?)/g, `$1?v=${version}`);
+
   if (content !== before) {
     fs.writeFileSync(filePath, content);
     return true;
