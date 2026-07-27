@@ -695,6 +695,18 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
       </div>
       <p id="customGridInfo" style="display:none;font-size:.74rem;color:var(--muted);margin-top:6px">Photo size A4 sheet mein sabhi fit karne ke liye chota ho sakta hai.</p>
     </div>
+    <div style="margin-bottom:12px;display:none" id="marginSection">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Sheet Margin</div>
+      <div class="print-options">
+        <div class="print-opt" data-margin="full" onclick="selectMargin(this)">Full Sheet (No Margin)</div>
+        <div class="print-opt active" data-margin="default" onclick="selectMargin(this)">Default</div>
+        <div class="print-opt" data-margin="custom" onclick="selectMargin(this)">Custom</div>
+      </div>
+      <div class="print-options" id="customMarginRow" style="display:none;align-items:center;gap:8px">
+        <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Margin (mm):</span>
+        <input type="number" id="customMarginMm" value="5" min="0" max="30" step="0.5" oninput="onCustomMarginChange()" style="width:70px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+      </div>
+    </div>
     <div class="print-preview">
       <canvas id="printCanvas"></canvas>
     </div>
@@ -810,7 +822,9 @@ var S = {
   dpi: 300,
   a4Cols: 5,
   customRows: 5,
-  customCols: 2
+  customCols: 2,
+  marginMode: 'default',   // 'full' | 'default' | 'custom'
+  marginCustomMm: 5
 };
 var cropperInst = null;
 
@@ -1888,7 +1902,29 @@ function selectSheet(el){
   document.getElementById('customGridRow').style.display=(S.sheet==='custom')?'flex':'none';
   document.getElementById('customGridPresets').style.display=(S.sheet==='custom')?'flex':'none';
   document.getElementById('customGridInfo').style.display=(S.sheet==='custom')?'block':'none';
+  document.getElementById('marginSection').style.display=(S.sheet==='a4'||S.sheet==='custom')?'block':'none';
   renderPrintSheet();
+}
+// ── SHEET MARGIN ──────────────────────────────────────
+// A4 canvas is fixed at 2480px wide = 210mm, so px-per-mm is constant
+// regardless of export DPI (the print sheet is always rendered at this
+// fixed pixel size, then embedded with the chosen DPI at download time).
+var A4_PX_PER_MM = 2480/210;
+function selectMargin(el){
+  document.querySelectorAll('[data-margin]').forEach(function(o){o.classList.remove('active');});
+  el.classList.add('active');
+  S.marginMode=el.dataset.margin;
+  document.getElementById('customMarginRow').style.display=(S.marginMode==='custom')?'flex':'none';
+  renderPrintSheet();
+}
+function onCustomMarginChange(){
+  S.marginCustomMm=Math.max(0,parseFloat(document.getElementById('customMarginMm').value)||0);
+  renderPrintSheet();
+}
+function getSheetMarginPx(){
+  if(S.marginMode==='full') return 2;   // near-zero: true edge-to-edge, print-safe minimum
+  if(S.marginMode==='custom') return Math.round((S.marginCustomMm||0)*A4_PX_PER_MM);
+  return Math.round(5*A4_PX_PER_MM);    // default ≈ 5mm — a real, visible print margin
 }
 function onCustomGridChange(){
   S.customRows=Math.max(1,parseInt(document.getElementById('customRows').value)||1);
@@ -1984,7 +2020,7 @@ function renderPrintSheet(){
     // side) instead of anchored top-left — an off-center grid with a big
     // unused strip on the right/bottom is what reads as "crooked/misaligned"
     // next to a clean reference sheet, even though no rotation is involved.
-    var A4W=2480,A4H=3508,minMargin=20,gap=8;
+    var A4W=2480,A4H=3508,minMargin=getSheetMarginPx(),gap=8;
     pc.width=A4W;pc.height=A4H;
     ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
     var maxCols=S.a4Cols||5;
@@ -2000,7 +2036,7 @@ function renderPrintSheet(){
     // Exact rows×cols the user asked for (e.g. 5 photos, or 6×6=36) always
     // fits on the A4 page — the photo is scaled DOWN (never up) as much as
     // needed so every requested copy fits, instead of overflowing the sheet.
-    var A4W=2480,A4H=3508,minMargin=20,gap=8;
+    var A4W=2480,A4H=3508,minMargin=getSheetMarginPx(),gap=8;
     pc.width=A4W;pc.height=A4H;
     ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
     var cols=Math.max(1,S.customCols||2),rows=Math.max(1,S.customRows||5);
@@ -2009,8 +2045,9 @@ function renderPrintSheet(){
     var scale=Math.min(1,availW/(cols*pw),availH/(rows*phe));
     var cw=Math.max(1,Math.round(pw*scale)),ch=Math.max(1,Math.round(phe*scale));
     var usedW=cols*cw+(cols-1)*gap;
+    var usedH=rows*ch+(rows-1)*gap;
     var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
-    var marginY=minMargin;
+    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(cw+gap),marginY+r*(ch+gap),cw,ch);
     info='Custom — '+cols+'×'+rows+'='+(cols*rows)+' photos'+(scale<1?' (size thoda chota kiya gaya taaki sab fit ho jaayein)':'');
   }
