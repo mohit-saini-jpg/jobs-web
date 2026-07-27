@@ -222,13 +222,21 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .sc-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .live-preview-wrap{border-radius:12px;overflow:auto;border:1px solid var(--line);text-align:center;padding:14px;background:var(--mist);box-shadow:var(--shadow);max-height:min(65vh,560px);touch-action:none}
 .live-preview-wrap canvas{max-width:100%;max-height:min(65vh,560px);border-radius:8px}
-.zoom-controls{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:9px}
+.preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.zoom-controls{display:flex;align-items:center;justify-content:center;gap:8px}
 .zoom-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
 .zoom-btn:hover{border-color:var(--brand);color:var(--brand)}
 .zoom-btn.zoom-reset{width:auto;padding:0 12px;font-size:.78rem}
+.toolbar-btn{display:flex;align-items:center;gap:6px;padding:8px 13px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.toolbar-btn:hover{border-color:var(--brand);color:var(--brand)}
+.toolbar-btn:disabled{opacity:.4;cursor:not-allowed}
+.toolbar-btn:disabled:hover{border-color:var(--line);color:var(--ink)}
 .erase-cursor-dot{position:fixed;left:0;top:0;transform:translate(-50%,-50%);border:2px solid #ef4444;border-radius:50%;background:rgba(239,68,68,.12);pointer-events:none;display:none;z-index:9999;box-shadow:0 0 0 1px rgba(255,255,255,.8)}
 .btn-icon:disabled{opacity:.4;cursor:not-allowed}
 .btn-icon:disabled:hover{border-color:var(--line);color:var(--ink)}
+@media(max-width:420px){
+  .preview-toolbar{flex-wrap:wrap;justify-content:center}
+}
 @media(max-width:760px){
   .adjust-preview-col{position:static}
 }
@@ -490,10 +498,14 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 <div class="step-panel" id="panel-2">
   <div class="adjust-layout">
     <div class="adjust-preview-col">
-      <div class="zoom-controls">
-        <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-        <button class="zoom-btn zoom-reset" onclick="zoomReset()" id="zoomLevelLabel">100%</button>
-        <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <div class="preview-toolbar">
+        <button class="toolbar-btn" id="eraseUndoBtn" onclick="undoErase()" disabled aria-label="Undo"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+          <button class="zoom-btn zoom-reset" onclick="zoomReset()" id="zoomLevelLabel">100%</button>
+          <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+        </div>
+        <button class="toolbar-btn" id="eraseRedoBtn" onclick="redoErase()" disabled aria-label="Redo">Redo <i class="fa-solid fa-rotate-right"></i></button>
       </div>
       <div class="live-preview-wrap">
         <canvas id="adjCanvas"></canvas>
@@ -518,11 +530,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
           <div class="adj-label">Hardness <span id="eraseHardnessVal">100%</span></div>
           <input type="range" id="eraseHardnessRange" min="0" max="100" value="100" oninput="onEraseHardnessChange()">
         </div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn-icon" style="flex:1;justify-content:center" id="eraseUndoBtn" onclick="undoErase()" disabled><i class="fa-solid fa-rotate-left"></i> Undo</button>
-          <button class="btn-icon" style="flex:1;justify-content:center" id="eraseRedoBtn" onclick="redoErase()" disabled><i class="fa-solid fa-rotate-right"></i> Redo</button>
-        </div>
-        <button class="btn-icon" style="width:100%;justify-content:center;margin-top:8px" onclick="resetErase()"><i class="fa-solid fa-trash"></i> Reset Erase (Sab Hatayein)</button>
+        <button class="btn-icon" style="width:100%;justify-content:center;margin-top:10px" onclick="resetErase()"><i class="fa-solid fa-trash"></i> Reset Erase (Sab Hatayein)</button>
       </div>
 
       <div class="card-title" style="margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);margin-bottom:10px">🎞️ Filters</div>
@@ -1931,6 +1939,14 @@ function pointOnCanvas(evt){
   var t=(evt.touches&&evt.touches[0])?evt.touches[0]:(evt.changedTouches&&evt.changedTouches[0])?evt.changedTouches[0]:evt;
   return {canvas:canvas,rect:rect,xCss:t.clientX-rect.left,yCss:t.clientY-rect.top,clientX:t.clientX,clientY:t.clientY};
 }
+// Touch/mouse move events don't fire densely enough during a fast drag to
+// keep up with the pointer -- stamping only at each event's own position
+// left visible gaps ("dotted line" instead of a solid erase) on any quick
+// stroke, worse on mobile where touchmove fires less often than desktop
+// mousemove. Fix: remember the last stamped point and, on the next event,
+// interpolate + stamp along the straight line between old and new position
+// (spaced a quarter-radius apart) instead of a single stamp at the new spot.
+var _eraseLastPoint=null;
 function eraseAtEvent(evt){
   var p=pointOnCanvas(evt);
   if(!p.rect.width||!p.rect.height)return;
@@ -1941,7 +1957,20 @@ function eraseAtEvent(evt){
   var scale=S.eraseMaskCanvas.width/p.canvas.width;
   var mx=xPrev*scale,my=yPrev*scale;
   var radius=(S.eraseBrushSize/2)*scale;
-  stampErase(S.eraseMaskCanvas.getContext('2d'),mx,my,radius,S.eraseBrushHardness);
+  var ctx=S.eraseMaskCanvas.getContext('2d');
+  if(_eraseLastPoint){
+    var dx=mx-_eraseLastPoint.x,dy=my-_eraseLastPoint.y;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    var step=Math.max(1,radius/4);
+    var steps=Math.min(200,Math.max(1,Math.ceil(dist/step))); // cap guards against a stray huge jump (e.g. finger lift+re-touch)
+    for(var i=1;i<=steps;i++){
+      var t=i/steps;
+      stampErase(ctx,_eraseLastPoint.x+dx*t,_eraseLastPoint.y+dy*t,radius,S.eraseBrushHardness);
+    }
+  }else{
+    stampErase(ctx,mx,my,radius,S.eraseBrushHardness);
+  }
+  _eraseLastPoint={x:mx,y:my};
   renderAdjPreview();
 }
 // ── ROUND BRUSH CURSOR (mouse hover + mid-stroke on touch) ─────────────
@@ -1970,15 +1999,16 @@ function initEraseCanvas(){
     if(!S.eraseEnabled)return;
     if(e.touches&&e.touches.length!==1)return; // 2+ fingers -> let pinch/pan handle it
     pushEraseHistory();
+    _eraseLastPoint=null; // fresh stroke -- don't interpolate from wherever the last stroke ended
     drawing=true;showEraseCursorAt(e);eraseAtEvent(e);e.preventDefault();
   }
   function move(e){
     showEraseCursorAt(e);
     if(!S.eraseEnabled||!drawing)return;
-    if(e.touches&&e.touches.length!==1){drawing=false;return;}
+    if(e.touches&&e.touches.length!==1){drawing=false;_eraseLastPoint=null;return;}
     eraseAtEvent(e);e.preventDefault();
   }
-  function stop(){ drawing=false; }
+  function stop(){ drawing=false; _eraseLastPoint=null; }
   canvas.addEventListener('mousedown',start);
   canvas.addEventListener('mousemove',move);
   window.addEventListener('mouseup',stop);
