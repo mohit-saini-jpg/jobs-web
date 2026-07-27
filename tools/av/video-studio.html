@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 <title>Video Studio - Live Video Editor Free Online | Top Sarkari Jobs</title>
 <meta name="description" content="Live video editor: clips merge/trim karein, text add karein, speed/crop/opacity/vocal-remover/noise-reduction jaise effects lagayein — sab kuch live canvas preview ke saath, browser mein hi. 100% free.">
 <meta name="keywords" content="video editor, live video editor, video editing tool, video text add, video effects online">
@@ -232,6 +232,16 @@ a{color:inherit}
   .app{flex-direction:column}
   .sidebar{width:100%;flex-direction:row;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}
   .panel{width:100%;border-right:none;border-bottom:1px solid var(--line);max-height:280px}
+}
+/* tools-mobile-zoom.js can push the effective layout width up to ~800px on
+   phones -- the app-shell's own @media(max-width:900px) already narrows
+   .panel/.sidebar across that whole 650-820px zone, so the editor itself is
+   unaffected. But the marketing .info-section below it uses .features-grid
+   (auto-fill, minmax(210px,1fr)) with no mobile override at all, which has
+   an edge case around 650-800px where an item's min-content width doesn't
+   divide evenly and the grid overflows. */
+@media(max-width:820px){
+  .features-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
