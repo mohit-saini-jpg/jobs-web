@@ -153,16 +153,23 @@
     .cs-lock-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; margin-top: 10px; cursor: pointer; }
     .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 11px 22px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; max-width: 90vw; text-align: center; }
     .toast.show { opacity: 1; }
+    /* Tablet-style layout is kept on phones too (2-column grids instead of
+       collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
-      .btn-primary { width: 100%; justify-content: center; }
-      .stat-row { flex-direction: column; }
+      .card { padding: 16px 12px; }
       .thumb-grid { grid-template-columns: repeat(3, 1fr); }
       .adj-grid { grid-template-columns: 1fr 1fr; }
       .adjust-layout { flex-direction: column; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .stat-row { flex-direction: column; }
     }
 </style>
 

@@ -191,9 +191,10 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
   .related-grid{grid-template-columns:repeat(3,1fr)}
   .card{padding:14px 12px}
   .btn-next{width:100%;justify-content:center}
-  .dl-btns{flex-direction:column}
-  .btn-dl{width:100%;justify-content:center}
 }
+/* .dl-btns (Download / New Scan in the export sheet) already wraps via
+   flex-wrap -- no need to force a full single-column stack on phones, the
+   two buttons comfortably fit side by side down to real phone widths. */
 
 /* ================= Adobe-Scan-style App Shell =================
    Mobile: near-full-screen (edge to edge, fills the viewport below the
