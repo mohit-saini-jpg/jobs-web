@@ -6294,6 +6294,13 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
     }
     _is_education = list_noun == 'Updates' or '/education/' in canon_url
     _show_job_info = _url_key not in _NON_JOB_INFO_KEYS and not _is_education
+    # /state/ and /district/ LANDING pages (only — not /state-jobs/{state}/ or
+    # /district/{slug}/, whose _url_key is the actual state/district slug) feed
+    # each region in as a fake "job" whose title IS the card title, so falling
+    # back jpost to the full title (see the "for <post>" regex below) just
+    # echoes the title back as a bogus "Post Name" row. Total Post (the real
+    # job count for that region) is still meaningful and stays.
+    _is_landing_summary = _url_key in ('state', 'district')
     # Non-job categories get a generic "Get Details" hint instead of "Apply
     # Now" (e.g. a Result or Education update isn't something you "apply" to).
     _card_hint = 'Apply Now' if _show_job_info else 'Get Details'
@@ -6419,7 +6426,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         _vac_noun  = "Posts" if _row_url.startswith("/jobs/") else list_noun
         _mode_span = f'<span class="jc-mode">{e(jmode)}</span>' if jmode and _row_url.startswith("/jobs/") else ''
         _jc_rows = '' if not _show_job_info else (
-            (f'<tr><th><i class="fa-solid fa-graduation-cap"></i> Post Name</th><td>{e(jpost)}</td></tr>' if jpost else '') +
+            (f'<tr><th><i class="fa-solid fa-graduation-cap"></i> Post Name</th><td>{e(jpost)}</td></tr>' if jpost and not _is_landing_summary else '') +
             (f'<tr><th><i class="fa-solid fa-book-open"></i> Qualification</th><td>{e(jqual)}</td></tr>' if jqual else '') +
             (f'<tr><th><i class="fa-solid fa-users"></i> Total Post</th><td><span class="jc-vac">{e(jvac)}</span> {e(_vac_noun)} {_mode_span}</td></tr>' if jvac else '') +
             (f'<tr><th><i class="fa-solid fa-calendar-days"></i> Last Date</th><td class="jc-date{urgent_cls}">{e(jld)}</td></tr>' if jld else '')
