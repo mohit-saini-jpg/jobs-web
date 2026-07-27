@@ -159,11 +159,18 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    /* Tablet-style layout is kept on phones too (multi-column grids instead
+       of collapsing to a single stacked column) -- real device width is
+       used throughout (no forced-viewport zoom-out), so text stays
+       full-size and readable. */
     @media(max-width:640px){
-      .form-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
+      .card { padding: 16px 12px; }
+    }
+    @media(max-width:380px){
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
@@ -275,7 +282,7 @@
       <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
     <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px">
-      <label for="cropFineRot" style="font-size:.85rem;font-weight:600;white-space:nowrap"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
+      <label for="cropFineRot" style="font-size:.85rem;font-weight:600"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
       <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;accent-color:var(--brand)">
       <span id="cropFineRotVal" style="font-size:.82rem;font-weight:700;color:var(--brand);min-width:38px;text-align:right">0°</span>
     </div>
