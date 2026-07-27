@@ -331,7 +331,15 @@
       </div>
     </div>
     <button type="button" id="toggleExtraBtn" class="btn-secondary" style="margin-top:10px;font-size:.8rem;padding:7px 14px">+ Third / Fourth Image Add Karein (Optional)</button>
-    <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Kam se kam 2 images zaroori hain. Order badalne ke liye har image ke ▲▼ buttons use karein. Images side-by-side (horizontally) merge hoti hain.</p>
+    <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Kam se kam 2 images zaroori hain. Order badalne ke liye har image ke ▲▼ buttons use karein.</p>
+    <div style="border-top:1px dashed var(--line);margin-top:12px;padding-top:12px">
+      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:6px">Images Ko Kaise Jodein</label>
+      <div class="pos-toggle" id="posToggle">
+        <span class="po active" data-val="v">Vertically</span>
+        <span class="po" data-val="h">Horizontally</span>
+      </div>
+      <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Vertically: sabhi images ek column me upar-niche. Horizontally: images pair me side-by-side (jaise 4 images me 1-2 upar row, 3-4 niche row — Aadhaar/DL front-back jaisa layout).</p>
+    </div>
   </div>
 
   <div class="card" id="cropSection" style="display:none">
@@ -429,12 +437,12 @@
           <option value="180">180°</option>
           <option value="270">270° Clockwise</option>
         </select></div>
-        <div class="form-group"><label>Flip (Sab Par)</label><select id="flipSel">
-          <option value="none">None</option>
-          <option value="h">Horizontal</option>
-          <option value="v">Vertical</option>
-          <option value="both">Both</option>
-        </select></div>
+        <div class="form-group"><label>Flip (Sab Par)</label>
+          <div class="pos-toggle" id="flipToggle">
+            <span class="po" id="flipHBtn">Horizontal</span>
+            <span class="po" id="flipVBtn">Vertical</span>
+          </div>
+        </div>
       </div>
       <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
       <div class="form-grid" style="margin-top:12px;grid-template-columns:1fr 1fr">
@@ -982,10 +990,25 @@
   }
   buildOrderList();
 
-  // Images always merge side-by-side (horizontally) -- the Vertically/
-  // Horizontally toggle was removed since horizontal is what's actually
-  // wanted here (e.g. 4 ID-card-style photos reading left-to-right).
-  var posVal='h';
+  // Vertically: all images stacked in a single column. Horizontally: images
+  // are paired into rows of 2 side-by-side (e.g. 4 images -> a 2x2 grid,
+  // matching how ID-card front/back pairs are typically laid out).
+  var posVal='v';
+  document.querySelectorAll('#posToggle .po').forEach(function(po){
+    po.addEventListener('click',function(){
+      posVal=po.getAttribute('data-val');
+      document.querySelectorAll('#posToggle .po').forEach(function(p){p.classList.remove('active');});
+      po.classList.add('active');
+      scheduleLivePreview();
+    });
+  });
+
+  // Flip (Sab Par): two independent toggles instead of a combined dropdown --
+  // both can be on at once (equivalent to the old "Both" option).
+  var flipH=false,flipV=false;
+  function currentFlip(){return (flipH&&flipV)?'both':(flipH?'h':(flipV?'v':'none'));}
+  G('flipHBtn').addEventListener('click',function(){flipH=!flipH;this.classList.toggle('active',flipH);scheduleLivePreview();});
+  G('flipVBtn').addEventListener('click',function(){flipV=!flipV;this.classList.toggle('active',flipV);scheduleLivePreview();});
 
   // ── Photo adjust sliders + chips ─────────────────────────────
   function bindAdjust(rangeId,valId,suffix){
@@ -1012,7 +1035,6 @@
   G('gapRange').addEventListener('input',function(){G('gapVal').textContent=this.value+' px';scheduleLivePreview();});
   G('gapColor').addEventListener('input',scheduleLivePreview);
   G('rotateSel').addEventListener('change',scheduleLivePreview);
-  G('flipSel').addEventListener('change',scheduleLivePreview);
   G('sheetMarginRange').addEventListener('input',function(){G('sheetMarginVal').textContent=this.value+' mm';scheduleLivePreview();});
   G('fmt').addEventListener('change',function(){updateDlBtnLabel();scheduleLivePreview();});
 
@@ -1109,6 +1131,31 @@
     return{blob:best,ext:ext};
   }
   function fillBG(ctx,w,h,color){ctx.fillStyle=color||'#ffffff';ctx.fillRect(0,0,w,h);}
+
+  // Stacks canvases in a single column, each scaled to a common width.
+  function stackVertical(items,gap,gapColor){
+    var maxW=Math.max.apply(null,items.map(function(p){return p.width;}));
+    var scaled=items.map(function(p){var sc=maxW/p.width;return{w:maxW,h:Math.max(1,Math.round(p.height*sc)),src:p};});
+    var totalH=scaled.reduce(function(a,s){return a+s.h;},0)+gap*(scaled.length-1);
+    var cv=document.createElement('canvas');cv.width=maxW;cv.height=totalH;
+    var ctx=cv.getContext('2d');
+    fillBG(ctx,cv.width,cv.height,gapColor);
+    var y=0;
+    scaled.forEach(function(s){ctx.drawImage(s.src,0,y,s.w,s.h);y+=s.h+gap;});
+    return cv;
+  }
+  // Places canvases side-by-side in a single row, each scaled to a common height.
+  function stackHorizontal(items,gap,gapColor){
+    var maxH=Math.max.apply(null,items.map(function(p){return p.height;}));
+    var scaled=items.map(function(p){var sc=maxH/p.height;return{w:Math.max(1,Math.round(p.width*sc)),h:maxH,src:p};});
+    var totalW=scaled.reduce(function(a,s){return a+s.w;},0)+gap*(scaled.length-1);
+    var cv=document.createElement('canvas');cv.width=totalW;cv.height=maxH;
+    var ctx=cv.getContext('2d');
+    fillBG(ctx,cv.width,cv.height,gapColor);
+    var x=0;
+    scaled.forEach(function(s){ctx.drawImage(s.src,x,0,s.w,s.h);x+=s.w+gap;});
+    return cv;
+  }
 
   // ══════════════════════════════════════════════════════════
   // MERGE ENGINE
@@ -1259,27 +1306,21 @@
     var activeIdx=order.filter(function(i){return slots[i];});
     if(activeIdx.length<2)throw new Error('Kam se kam 2 images select karein!');
     var rotate=parseInt(G('rotateSel').value)||0;
-    var flip=G('flipSel').value;
+    var flip=currentFlip();
     var gap=parseInt(G('gapRange').value)||0;
     var gapColor=G('gapColor').value||'#ffffff';
     var pieces=activeIdx.map(function(i){return transformImage(getSlotRenderSource(i),rotate,flip);});
-    var cv,ctx;
+    var cv;
     if(posVal==='v'){
-      var maxW=Math.max.apply(null,pieces.map(function(p){return p.width;}));
-      var scaled=pieces.map(function(p){var sc=maxW/p.width;return{w:maxW,h:Math.max(1,Math.round(p.height*sc)),src:p};});
-      var totalH=scaled.reduce(function(a,s){return a+s.h;},0)+gap*(scaled.length-1);
-      cv=document.createElement('canvas');cv.width=maxW;cv.height=totalH;ctx=cv.getContext('2d');
-      fillBG(ctx,cv.width,cv.height,gapColor);
-      var y=0;
-      scaled.forEach(function(s){ctx.drawImage(s.src,0,y,s.w,s.h);y+=s.h+gap;});
+      cv=stackVertical(pieces,gap,gapColor);
     }else{
-      var maxH=Math.max.apply(null,pieces.map(function(p){return p.height;}));
-      var scaledH=pieces.map(function(p){var sc=maxH/p.height;return{w:Math.max(1,Math.round(p.width*sc)),h:maxH,src:p};});
-      var totalW=scaledH.reduce(function(a,s){return a+s.w;},0)+gap*(scaledH.length-1);
-      cv=document.createElement('canvas');cv.width=totalW;cv.height=maxH;ctx=cv.getContext('2d');
-      fillBG(ctx,cv.width,cv.height,gapColor);
-      var x=0;
-      scaledH.forEach(function(s){ctx.drawImage(s.src,x,0,s.w,s.h);x+=s.w+gap;});
+      // Paired into rows of 2 side-by-side; multiple pairs stack as extra
+      // rows (4 images -> a 2x2 grid, e.g. Aadhaar front/back on top,
+      // Driving Licence front/back below).
+      var rows=[];
+      for(var i=0;i<pieces.length;i+=2)rows.push(pieces.slice(i,i+2));
+      var rowCanvases=rows.map(function(rowPieces){return stackHorizontal(rowPieces,gap,gapColor);});
+      cv=rowCanvases.length>1?stackVertical(rowCanvases,gap,gapColor):rowCanvases[0];
     }
     if(maxWorkDim&&Math.max(cv.width,cv.height)>maxWorkDim){
       var wscale=maxWorkDim/Math.max(cv.width,cv.height);
@@ -1393,7 +1434,11 @@
     });
     ['briRange','conRange','satRange','shpRange','thRange','srRange'].forEach(function(id){G(id).dispatchEvent(new Event('input'));});
     G('tkb').value='';G('tkbRange').value=50;
-    G('fmt').value='jpg';G('rotateSel').value='0';G('flipSel').value='none';
+    G('fmt').value='jpg';G('rotateSel').value='0';
+    flipH=false;flipV=false;
+    G('flipHBtn').classList.remove('active');G('flipVBtn').classList.remove('active');
+    posVal='v';
+    document.querySelectorAll('#posToggle .po').forEach(function(p){p.classList.toggle('active',p.getAttribute('data-val')==='v');});
     updateDlBtnLabel();
     G('output-box').innerHTML='<div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div>';
     G('result-card').classList.remove('show');
