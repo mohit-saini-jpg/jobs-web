@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 
   <title>JPG to PNG Converter Free Online | Top Sarkari Jobs</title>
   <meta name="description" content="Convert JPG images to PNG format online for free. Lossless conversion with transparency support. No signup, instant download.">
@@ -125,11 +125,18 @@
     /* Tablet-style layout is kept on phones too (multi-column grids instead
        of collapsing to a single stacked column) -- real device width is used
        throughout (no forced-viewport zoom-out), just denser CSS grids, so
-       text stays full-size and readable. */
-    @media(max-width:640px){
+       text stays full-size and readable.
+       Extended to 820px (not just 640px) because tools-mobile-zoom.js can
+       push the effective layout width up to ~800px on phones -- without
+       this, .features-grid/.adj-grid's desktop default (auto-fill,
+       minmax(...,1fr)) has an edge case around 650-800px where an item's
+       min-content width doesn't divide evenly and the grid overflows. */
+    @media(max-width:820px){
       .form-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
       .how-steps { grid-template-columns: 1fr 1fr; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
+      .adj-grid { grid-template-columns: repeat(2, 1fr); }
       .card { padding: 16px 12px; }
     }
     @media(max-width:380px){

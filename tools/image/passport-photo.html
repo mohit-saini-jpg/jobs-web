@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1"><script src="/tools-mobile-zoom.js"></script>
 
 <title>Passport Photo Maker – Crop, BG Remove, Print Ready | Top Sarkari Jobs</title>
 <meta name="description" content="Free passport photo maker: crop, remove background, change BG color, adjust brightness/contrast, compress to custom KB, download single or A4 print sheet. 100% browser-based.">
@@ -314,8 +314,13 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
    width is used throughout (no forced-viewport zoom-out), just denser
    layout, so text stays full-size and readable. .adj-grid stays
    single-column at all widths by design -- sliders need full width for
-   touch dragging, it was never a mobile-only collapse. */
-@media(max-width:580px){
+   touch dragging, it was never a mobile-only collapse.
+   Extended to 820px (not just 580px) because tools-mobile-zoom.js can
+   push the effective layout width up to ~800px on phones -- without this,
+   .size-grid/.how-steps/.related-grid's desktop default (auto-fill,
+   minmax(...,1fr)) has an edge case around 650-800px where an item's
+   min-content width doesn't divide evenly and the grid overflows. */
+@media(max-width:820px){
   .size-grid{grid-template-columns:1fr 1fr}
   .how-steps{grid-template-columns:1fr 1fr}
   .related-grid{grid-template-columns:repeat(3,1fr)}
