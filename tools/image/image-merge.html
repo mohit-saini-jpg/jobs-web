@@ -90,7 +90,7 @@
     .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 14px; }
     .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
     .merge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .merge-slot { border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; background: var(--mist); position: relative; }
+    .merge-slot { min-width: 0; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; background: var(--mist); position: relative; }
     .merge-slot.hidden { display: none; }
     .merge-slot.filled { border-color: var(--brand); background: var(--brand-light); }
     .slot-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
@@ -101,7 +101,7 @@
     .reorder-btn:disabled { opacity: .3; cursor: not-allowed; }
     .upload-zone { border: 2px dashed var(--line); border-radius: 10px; padding: 10px 8px; text-align: center; background: var(--white); transition: all 0.2s; position: relative; }
     .upload-zone.drag { border-color: var(--brand); background: var(--brand-light); }
-    .native-file { display: block; margin: 0 auto 10px; font-size: 0.82rem; }
+    .native-file { display: block; width: 100%; box-sizing: border-box; margin: 0 auto 10px; font-size: 0.82rem; }
     .native-file::file-selector-button { background: var(--success); color: white; border: none; padding: 7px 14px; border-radius: 7px; font-weight: 600; font-size: 0.8rem; cursor: pointer; margin-right: 10px; }
     .native-file::file-selector-button:hover { filter: brightness(1.06); }
     .drop-icon { font-size: 1rem; color: var(--success); margin: 2px 0 1px; }
@@ -125,7 +125,7 @@
     .slot-move { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
     .slot-move button { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line); background: white; cursor: pointer; font-size: 0.7rem; line-height: 1; color: var(--muted); }
     .slot-move button:hover { border-color: var(--brand); color: var(--brand); }
-    .pos-toggle { display: flex; border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; width: fit-content; }
+    .pos-toggle { display: flex; border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; width: fit-content; max-width: 100%; }
     .pos-toggle label { padding: 6px 14px; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--muted); background: white; }
     .pos-toggle input { display: none; }
     .pos-toggle input:checked + span { color: white; }
@@ -195,12 +195,18 @@
     .tool-footer a:hover { color: white; }
     .seo-copy p { font-size: 0.86rem; color: var(--muted); line-height: 1.8; margin-bottom: 12px; }
     .seo-copy p:last-child { margin-bottom: 0; }
+    /* Tablet-style layout is kept on phones too (2-column grids instead of
+       collapsing to a single stacked column) -- real device width is used
+       throughout (no forced-viewport zoom-out), just denser CSS grids, so
+       text stays full-size and readable. */
     @media(max-width:640px){
-      .merge-grid { grid-template-columns: 1fr; }
-      .form-grid { grid-template-columns: 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; }
       .related-grid { grid-template-columns: repeat(3, 1fr); }
-      .card { padding: 18px 14px; }
+      .card { padding: 16px 12px; }
+    }
+    @media(max-width:380px){
+      .merge-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
     }
@@ -429,7 +435,7 @@
           <option value="180">180°</option>
           <option value="270">270° Clockwise</option>
         </select></div>
-        <div class="form-group"><label>Images Ko Kaise Jodein</label>
+        <div class="form-group" style="grid-column:1/-1"><label>Images Ko Kaise Jodein</label>
           <div class="pos-toggle" id="posToggle">
             <span class="po active" data-val="v">Vertically</span>
             <span class="po" data-val="h">Horizontally</span>
