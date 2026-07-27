@@ -96,12 +96,20 @@
        comment used to reference has been removed (it was forcing a
        ~640-820px CSS viewport on every phone, which shrank ALL text
        site-wide to fit — the actual bug users were reporting). Real phones
-       now report their true (narrower) width, so max-width:700px below
-       correctly falls back to single-column stacking on typical
-       360-430px-wide phones — a 320px fixed controls column genuinely
-       cannot sit side-by-side with a usable canvas at that width. */
+       now report their true (narrower) width, and a 320px FIXED controls
+       column genuinely cannot sit side-by-side with a usable canvas at
+       that width.
+       UPDATED AGAIN (tablet-style mobile pass): rather than fully stacking
+       below 700px, the controls column now narrows in steps (like
+       video-studio.html's sidebar) so canvas + controls stay side-by-side
+       down to real phone widths -- only collapses to a single column
+       below 420px, where even a narrow controls column would squeeze the
+       canvas unusably small. */
     .workspace{display:grid;grid-template-columns:1fr 320px;gap:18px}
-    @media (max-width:700px){.workspace{grid-template-columns:1fr}}
+    .workspace>*{min-width:0}
+    @media (max-width:900px){.workspace{grid-template-columns:1fr 240px;gap:14px}}
+    @media (max-width:700px){.workspace{grid-template-columns:1fr 190px;gap:10px}}
+    @media (max-width:420px){.workspace{grid-template-columns:1fr}}
     /* Controls column gets its OWN scroll instead of forcing the whole page
        to be as tall as 25+ sliders + effects + curves + HSL — it stays
        pinned alongside the canvas while scrolling. Fixed px (not vh)
@@ -114,7 +122,10 @@
     #controlsCol::-webkit-scrollbar{width:7px}
     #controlsCol::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
     @media (max-width:700px){
-      #controlsCol{max-height:520px;position:static}
+      #controlsCol{max-height:520px}
+    }
+    @media (max-width:420px){
+      #controlsCol{position:static}
     }
 
     .canvas-wrap{position:relative;background:repeating-conic-gradient(#e2e8f0 0% 25%,#f8fafc 0% 50%) 50%/16px 16px;border-radius:12px;overflow:auto;display:flex;align-items:center;justify-content:center;min-height:340px;max-height:70vh;border:1px solid var(--line)}
