@@ -405,24 +405,6 @@
 
   <div class="card">
     <h3>⚙️ Options</h3>
-    <div style="font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px">🗜️ File Size (KB) — Optional, sab images par apply hoga</div>
-    <div style="margin-top:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-          <span style="font-weight:600">Target Size:</span>
-          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:110px;padding:6px 10px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700"> <span style="color:#64748b">KB</span>
-        </div>
-        <input type="range" id="tkbRange" min="5" max="2000" value="50" style="width:100%">
-        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8"><span>5 KB</span><span>2000 KB</span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          <button type="button" class="tkb-p" data-kb="20" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">20 KB</button>
-          <button type="button" class="tkb-p" data-kb="50" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">50 KB</button>
-          <button type="button" class="tkb-p" data-kb="100" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">100 KB</button>
-          <button type="button" class="tkb-p" data-kb="200" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">200 KB</button>
-          <button type="button" class="tkb-p" data-kb="500" style="padding:6px 14px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:700">500 KB</button>
-        </div>
-        <p style="font-size:.76rem;color:#94a3b8;margin:10px 0 0">Target size daalein → merged image us size ki banegi (JPG/WEBP/AVIF). Khali chhodein → best quality.</p>
-    </div>
-
     <div class="action-row">
       <button class="btn-primary" id="process-btn"><span>⚙️</span> Merge!</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
@@ -463,21 +445,35 @@
         </select></div>
       </div>
       <div class="output-box" id="output-box"><div class="ph">Kam se kam 2 images upload karein — live preview yahan dikhega</div></div>
-      <div class="form-group" style="margin-top:12px"><label>Output Format</label><select id="fmt">
-        <option value="jpg">JPG</option>
-        <option value="jpeg">JPEG</option>
-        <option value="png">PNG</option>
-        <option value="webp">WEBP</option>
-        <option value="avif">AVIF</option>
-        <option value="bmp">BMP</option>
-        <option value="gif">GIF</option>
-        <option value="tiff">TIFF</option>
-        <option value="ico">ICO</option>
-        <option value="pdf">PDF</option>
-      </select></div>
+      <div class="form-grid" style="margin-top:12px;grid-template-columns:1fr 1fr">
+        <div class="form-group"><label>Output Format</label><select id="fmt" style="padding:6px 8px">
+          <option value="jpg">JPG</option>
+          <option value="jpeg">JPEG</option>
+          <option value="png">PNG</option>
+          <option value="webp">WEBP</option>
+          <option value="avif">AVIF</option>
+          <option value="bmp">BMP</option>
+          <option value="gif">GIF</option>
+          <option value="tiff">TIFF</option>
+          <option value="ico">ICO</option>
+          <option value="pdf">PDF</option>
+        </select></div>
+        <div class="form-group"><label>Size (KB) <span style="font-weight:400;color:#94a3b8;text-transform:none">Optional</span></label>
+          <input type="number" id="tkb" placeholder="e.g. 100" min="1" max="5000" style="width:100%;padding:6px 8px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:700">
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+        <button type="button" class="tkb-p" data-kb="20" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">20 KB</button>
+        <button type="button" class="tkb-p" data-kb="50" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">50 KB</button>
+        <button type="button" class="tkb-p" data-kb="100" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">100 KB</button>
+        <button type="button" class="tkb-p" data-kb="200" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">200 KB</button>
+        <button type="button" class="tkb-p" data-kb="500" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">500 KB</button>
+      </div>
+      <input type="range" id="tkbRange" min="5" max="2000" value="50" style="display:none">
       <div class="result-card" id="result-card" style="margin-top:14px">
         <div class="result-ok">✅ Successfully Merged!</div>
         <div class="stat-row" id="stat-row"></div>
+        <p id="fmt-note" style="display:none;font-size:.74rem;color:#b45309;background:#fef3c7;border-radius:8px;padding:8px 10px;margin-bottom:10px">⚠️</p>
         <button class="btn-dl" id="dl-btn">⬇️ Download JPG</button>
       </div>
     </div>
@@ -1101,13 +1097,22 @@
   }
   async function encodeToTargetKB(cv,fmt,targetKB){
     var lossy=['jpg','jpeg','webp','avif'].indexOf(fmt)>=0;
-    var useFmt=lossy?fmt:'jpg';
-    var mime=useFmt==='webp'?'image/webp':(useFmt==='avif'?'image/avif':'image/jpeg');
-    var ext=(useFmt==='webp')?'webp':(useFmt==='avif')?'avif':(useFmt==='jpeg'?'jpeg':'jpg');
+    if(!lossy){
+      // PNG/BMP/GIF/TIFF/ICO/PDF have no continuous quality dial to
+      // binary-search against a target size -- this used to silently swap
+      // the output to JPG, which broke "download the format I picked".
+      // Instead: respect the chosen format (skip KB targeting, since it
+      // genuinely doesn't apply here) and say why via `note`.
+      var normal=await encode(cv,fmt,92);
+      normal.note=fmt.toUpperCase()+' format exact KB size ko support nahi karta, isliye best-quality '+fmt.toUpperCase()+' diya gaya hai (KB target sirf JPG/WEBP/AVIF ke saath kaam karta hai).';
+      return normal;
+    }
+    var mime=fmt==='webp'?'image/webp':(fmt==='avif'?'image/avif':'image/jpeg');
+    var ext=(fmt==='webp')?'webp':(fmt==='avif')?'avif':(fmt==='jpeg'?'jpeg':'jpg');
     var target=Math.max(1,targetKB)*1024,lo=0.05,hi=0.98,best=null;
     for(var i=0;i<9;i++){
       var q=(lo+hi)/2,b;
-      try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(useFmt.toUpperCase()+' is browser mein support nahi — JPG ya WebP choose karein.');}
+      try{b=await canvasToBlobP(cv,mime,q);}catch(e){throw new Error(fmt.toUpperCase()+' is browser mein support nahi — JPG ya WebP choose karein.');}
       if(b.size<=target){best=b;lo=q;}else{hi=q;}
     }
     if(!best){try{best=await canvasToBlobP(cv,mime,0.05);}catch(e){throw new Error('Encode fail — chhota target ya doosra format try karein.');}}
@@ -1341,6 +1346,8 @@
       var ob=G('output-box');
       ob.innerHTML='<img src="'+url+'" alt="Merged output">';
       G('stat-row').innerHTML='<div class="stat-box"><div class="stat-val">'+cv.width+'×'+cv.height+'</div><div class="stat-lbl">Output px</div></div><div class="stat-box"><div class="stat-val">'+formatBytes(out.blob.size)+'</div><div class="stat-lbl">'+out.ext.toUpperCase()+'</div></div><div class="stat-box"><div class="stat-val">'+(activeIdx().length||'')+'</div><div class="stat-lbl">Images</div></div>';
+      var noteEl=G('fmt-note');
+      if(out.note){noteEl.textContent='⚠️ '+out.note;noteEl.style.display='block';}else{noteEl.style.display='none';}
       var rc=G('result-card');rc.classList.add('show');
       var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
       dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download='merged-image.'+out.ext;a.click();};
