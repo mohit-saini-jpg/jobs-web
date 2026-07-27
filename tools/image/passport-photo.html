@@ -676,24 +676,28 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="print-opt" data-sheet="a4" onclick="selectSheet(this)">A4 Full Sheet</div>
         <div class="print-opt" data-sheet="custom" onclick="selectSheet(this)">Custom Rows/Cols</div>
       </div>
-      <div class="print-options" id="a4ColsRow" style="display:none">
-        <span style="font-size:.76rem;font-weight:700;color:var(--muted);align-self:center;margin-right:2px">Photos per row:</span>
-        <div class="print-opt active" data-cols="5" onclick="selectA4Cols(this)">5 per row</div>
-        <div class="print-opt" data-cols="6" onclick="selectA4Cols(this)">6 per row</div>
+      <div id="a4ColsRow" style="display:none;margin-top:10px;padding:11px 13px;background:var(--mist);border-radius:8px;border:1px solid var(--line)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Photos per row</div>
+        <div class="print-options">
+          <div class="print-opt active" data-cols="5" onclick="selectA4Cols(this)">5 per row</div>
+          <div class="print-opt" data-cols="6" onclick="selectA4Cols(this)">6 per row</div>
+        </div>
       </div>
-      <div class="print-options" id="customGridRow" style="display:none;align-items:center;gap:8px">
-        <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Rows:</span>
-        <input type="number" id="customRows" value="5" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
-        <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Columns:</span>
-        <input type="number" id="customCols" value="2" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+      <div id="customGridBox" style="display:none;margin-top:10px;padding:11px 13px;background:var(--mist);border-radius:8px;border:1px solid var(--line)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Quick Pick</div>
+        <div class="print-options" id="customGridPresets">
+          <div class="print-opt" data-rows="1" data-cols="6" onclick="setCustomGrid(1,6)">6 Photos — 1 Row</div>
+          <div class="print-opt active" data-rows="2" data-cols="6" onclick="setCustomGrid(2,6)">12 Photos — 2 Rows</div>
+        </div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin:12px 0 6px">Or set your own:</div>
+        <div class="print-options" style="align-items:center;gap:8px">
+          <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Rows:</span>
+          <input type="number" id="customRows" value="2" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+          <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Columns:</span>
+          <input type="number" id="customCols" value="6" min="1" max="15" oninput="onCustomGridChange()" style="width:64px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
+        </div>
+        <p id="customGridInfo" style="display:none;font-size:.74rem;color:var(--muted);margin-top:8px">Photo size A4 sheet mein sabhi fit karne ke liye chota ho sakta hai.</p>
       </div>
-      <div class="print-options" id="customGridPresets" style="display:none;margin-top:6px">
-        <div class="print-opt" onclick="setCustomGrid(1,5)">5 photo — 1 row</div>
-        <div class="print-opt" onclick="setCustomGrid(1,6)">6 photo — 1 row</div>
-        <div class="print-opt" onclick="setCustomGrid(2,5)">10 photo — 2 row</div>
-        <div class="print-opt" onclick="setCustomGrid(2,6)">12 photo — 2 row</div>
-      </div>
-      <p id="customGridInfo" style="display:none;font-size:.74rem;color:var(--muted);margin-top:6px">Photo size A4 sheet mein sabhi fit karne ke liye chota ho sakta hai.</p>
     </div>
     <div style="margin-bottom:12px;display:none" id="marginSection">
       <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Sheet Margin</div>
@@ -702,7 +706,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         <div class="print-opt active" data-margin="default" onclick="selectMargin(this)">Default</div>
         <div class="print-opt" data-margin="custom" onclick="selectMargin(this)">Custom</div>
       </div>
-      <div class="print-options" id="customMarginRow" style="display:none;align-items:center;gap:8px">
+      <div class="print-options" id="customMarginRow" style="display:none;align-items:center;gap:8px;margin-top:8px">
         <span style="font-size:.76rem;font-weight:700;color:var(--muted)">Margin (mm):</span>
         <input type="number" id="customMarginMm" value="5" min="0" max="30" step="0.5" oninput="onCustomMarginChange()" style="width:70px;padding:8px;border:1.5px solid var(--line);border-radius:8px;font-size:.86rem">
       </div>
@@ -821,8 +825,8 @@ var S = {
   border: {type:'none', thickness:4},
   dpi: 300,
   a4Cols: 5,
-  customRows: 5,
-  customCols: 2,
+  customRows: 2,
+  customCols: 6,
   marginMode: 'default',   // 'full' | 'default' | 'custom'
   marginCustomMm: 5
 };
@@ -1898,9 +1902,8 @@ function selectSheet(el){
   document.querySelectorAll('[data-sheet]').forEach(function(o){o.classList.remove('active');});
   el.classList.add('active');
   S.sheet=el.dataset.sheet;
-  document.getElementById('a4ColsRow').style.display=(S.sheet==='a4')?'flex':'none';
-  document.getElementById('customGridRow').style.display=(S.sheet==='custom')?'flex':'none';
-  document.getElementById('customGridPresets').style.display=(S.sheet==='custom')?'flex':'none';
+  document.getElementById('a4ColsRow').style.display=(S.sheet==='a4')?'block':'none';
+  document.getElementById('customGridBox').style.display=(S.sheet==='custom')?'block':'none';
   document.getElementById('customGridInfo').style.display=(S.sheet==='custom')?'block':'none';
   document.getElementById('marginSection').style.display=(S.sheet==='a4'||S.sheet==='custom')?'block':'none';
   renderPrintSheet();
@@ -1929,10 +1932,20 @@ function getSheetMarginPx(){
 function onCustomGridChange(){
   S.customRows=Math.max(1,parseInt(document.getElementById('customRows').value)||1);
   S.customCols=Math.max(1,parseInt(document.getElementById('customCols').value)||1);
+  syncCustomGridPresetActive();
   renderPrintSheet();
 }
-// Quick presets for common counts (1 photo up to 36 on the sheet — the free
-// Rows/Columns inputs above cover anything beyond these too).
+// Highlights whichever Quick Pick preset (if any) matches the current
+// Rows/Columns values, so it's always clear whether you're on a preset or a
+// hand-typed custom size — never both, never neither with no visual cue.
+function syncCustomGridPresetActive(){
+  document.querySelectorAll('#customGridPresets [data-rows]').forEach(function(o){
+    var match=(parseInt(o.dataset.rows)===S.customRows && parseInt(o.dataset.cols)===S.customCols);
+    o.classList.toggle('active',match);
+  });
+}
+// Quick presets for the two most-requested passport photo print counts (6
+// and 12 copies) — the free Rows/Columns inputs below cover anything else.
 function setCustomGrid(rows,cols){
   document.getElementById('customRows').value=rows;
   document.getElementById('customCols').value=cols;
@@ -2016,10 +2029,11 @@ function renderPrintSheet(){
     info='8 photos (2×4) — A4 print ready';
   }else if(S.sheet==='a4'){
     // Tight, print-safe margin + gap so the sheet wastes as little paper as
-    // possible, and the whole grid is CENTERED (equal leftover space on every
-    // side) instead of anchored top-left — an off-center grid with a big
-    // unused strip on the right/bottom is what reads as "crooked/misaligned"
-    // next to a clean reference sheet, even though no rotation is involved.
+    // possible. Horizontally CENTERED (equal leftover space on left/right —
+    // an off-center grid there reads as "crooked/misaligned"), but anchored
+    // to the TOP vertically rather than centered — any leftover row space
+    // collects at the bottom instead of pushing the whole grid down into the
+    // middle of the page, which read as a big, confusing empty gap up top.
     var A4W=2480,A4H=3508,minMargin=getSheetMarginPx(),gap=8;
     pc.width=A4W;pc.height=A4H;
     ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
@@ -2027,15 +2041,16 @@ function renderPrintSheet(){
     var cols=Math.max(1,Math.min(maxCols,Math.floor((A4W-2*minMargin+gap)/(pw+gap))));
     var rows=Math.max(1,Math.floor((A4H-2*minMargin+gap)/(phe+gap)));
     var usedW=cols*pw+(cols-1)*gap;
-    var usedH=rows*phe+(rows-1)*gap;
     var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
-    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
+    var marginY=minMargin;
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(pw+gap),marginY+r*(phe+gap),pw,phe);
     info='A4 sheet — '+cols+'×'+rows+'='+(cols*rows)+' photos ('+maxCols+'/row max)';
   }else if(S.sheet==='custom'){
     // Exact rows×cols the user asked for (e.g. 5 photos, or 6×6=36) always
     // fits on the A4 page — the photo is scaled DOWN (never up) as much as
     // needed so every requested copy fits, instead of overflowing the sheet.
+    // Same top-anchored-vertically / centered-horizontally rule as the 'a4'
+    // branch above.
     var A4W=2480,A4H=3508,minMargin=getSheetMarginPx(),gap=8;
     pc.width=A4W;pc.height=A4H;
     ctx.fillStyle='#fff';ctx.fillRect(0,0,A4W,A4H);
@@ -2045,9 +2060,8 @@ function renderPrintSheet(){
     var scale=Math.min(1,availW/(cols*pw),availH/(rows*phe));
     var cw=Math.max(1,Math.round(pw*scale)),ch=Math.max(1,Math.round(phe*scale));
     var usedW=cols*cw+(cols-1)*gap;
-    var usedH=rows*ch+(rows-1)*gap;
     var marginX=Math.max(minMargin,Math.round((A4W-usedW)/2));
-    var marginY=Math.max(minMargin,Math.round((A4H-usedH)/2));
+    var marginY=minMargin;
     for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)ctx.drawImage(ph,marginX+c*(cw+gap),marginY+r*(ch+gap),cw,ch);
     info='Custom — '+cols+'×'+rows+'='+(cols*rows)+' photos'+(scale<1?' (size thoda chota kiya gaya taaki sab fit ho jaayein)':'');
   }
