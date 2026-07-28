@@ -8139,6 +8139,63 @@ def _district_cards_html(state_name):
         f'<div class="dwj-grid">{_cards}</div></div>'
     )
 
+# Official state/UT portal directory codes (igod.gov.in — the Indian govt's
+# own Integrated Government Online Directory). Using this single stable
+# government domain instead of guessing 33 individual state portal domains
+# avoids linking to a wrong/stale .gov.in URL for any one state.
+_STATE_IGOD_CODE = {
+    "Uttar Pradesh": "UP", "Rajasthan": "RJ", "Bihar": "BR", "Madhya Pradesh": "MP",
+    "Maharashtra": "MH", "Gujarat": "GJ", "West Bengal": "WB", "Tamil Nadu": "TN",
+    "Karnataka": "KA", "Telangana": "TS", "Andhra Pradesh": "AP", "Haryana": "HR",
+    "Punjab": "PB", "Delhi": "DL", "Odisha": "OD", "Jharkhand": "JH",
+    "Chhattisgarh": "CG", "Assam": "AS", "Kerala": "KL", "Himachal Pradesh": "HP",
+    "Uttarakhand": "UK", "Jammu and Kashmir": "JK", "Goa": "GA", "Tripura": "TR",
+    "Manipur": "MN", "Meghalaya": "ML", "Nagaland": "NL", "Mizoram": "MZ",
+    "Arunachal Pradesh": "AR", "Sikkim": "SK", "Chandigarh": "CH",
+    "Puducherry": "PY", "Andaman and Nicobar Islands": "AN", "Ladakh": "LA",
+}
+
+# Evergreen "how to apply" + useful-links block for state/district pages with
+# 0-1 active jobs right now. GSC flags near-empty listing pages as thin/soft-404
+# even though staying indexed is correct here (new postings land on these URLs
+# constantly) -- this adds genuine, useful, non-boilerplate depth instead of
+# leaving the page to rely on job cards alone.
+def _thin_content_evergreen_block(region_name, state_name, state_url):
+    _igod = _STATE_IGOD_CODE.get(state_name)
+    _links = [
+        (f'{e(state_name)} — All Jobs', state_url),
+        ('Qualification-Wise Eligibility Guide', '/category/study/'),
+        ('Central Govt Jobs (All India)', '/section/latest-jobs/'),
+    ]
+    if _igod:
+        _links.append((f'{e(state_name)} Official Govt Portal Directory ↗',
+                        f'https://igod.gov.in/sg/{_igod}/categories'))
+    _links_html = ''.join(
+        f'<a href="{e(_u)}" style="display:inline-block;background:#fff;border:1px solid #bae6fd;'
+        f'color:#1a56db;padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:700;'
+        f'text-decoration:none;margin:3px 6px 3px 0"'
+        + (' target="_blank" rel="noopener"' if _u.startswith('http') else '')
+        + f'>{_l}</a>'
+        for _l, _u in _links
+    )
+    return (
+        '<div style="margin:14px 10px 16px;padding:16px 18px;background:#f8fafc;'
+        'border:1px solid #e5e7eb;border-radius:10px">'
+        f'<h2 style="font-size:1rem;font-weight:800;color:#0d2257;margin:0 0 10px">'
+        f'{e(region_name)} Sarkari Naukri — Apply Karne Ka Tarika</h2>'
+        f'<ol style="margin:0 0 12px;padding-left:20px;font-size:.82rem;color:#334155;line-height:1.75">'
+        f'<li>{e(region_name)} ya {e(state_name)} ki naya bharti notification Top Sarkari Jobs par check karein.</li>'
+        '<li>Notification PDF me eligibility — age limit, qualification, category-wise relaxation — verify karein.</li>'
+        '<li>Official recruitment portal par online registration karein.</li>'
+        '<li>Application form sahi details ke saath bharein aur zaroori documents upload karein.</li>'
+        '<li>Application fee (agar lagu ho) online pay karein aur form submit karein.</li>'
+        '<li>Confirmation/printout save kar lein aur admit card ka update Top Sarkari Jobs par check karte rahein.</li>'
+        '</ol>'
+        f'<h3 style="font-size:.85rem;font-weight:800;color:#0d2257;margin:0 0 8px">Useful Links</h3>'
+        f'<div>{_links_html}</div>'
+        '</div>'
+    )
+
 # Build a full listing-card norm dict from a state_jobs item — works with
 # both the legacy shape (item['detail'] holds the full scraped record) and
 # the unified-fallback shape (organization_name/last_date/qualification are
@@ -8210,14 +8267,21 @@ for sec in SJ_SEC:
     canon_listing = f"{BASE_URL}/state/{state_slug}/"
     # Build simple listing page for /state/{slug}/ — with district cards on top
     _dist_cards = _district_cards_html(state_name)
+    _state_norm_jobs = [_norm_state_job(it, state_name)
+                        for it in state_jobs_list if (it.get('name') or it.get('title',''))]
+    _state_top_html = _dist_cards
+    if len(_state_norm_jobs) <= 1:
+        # 0-1 active jobs right now: add real how-to-apply + useful-links
+        # content so the page has genuine depth beyond a near-empty job list.
+        _state_top_html += _thin_content_evergreen_block(
+            state_name, state_name, canon_listing)
     state_listing = build_listing_page(
         f"{state_name} Government Jobs {YEAR}",
-        [_norm_state_job(it, state_name)
-         for it in state_jobs_list if (it.get('name') or it.get('title',''))],
+        _state_norm_jobs,
         canon_listing,
         [('Home','/'),('State Jobs','/state-jobs/')],
         f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
-        top_html=_dist_cards,
+        top_html=_state_top_html,
     )
     write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
 
@@ -8231,12 +8295,11 @@ for sec in SJ_SEC:
         canon_statejobs = f"{BASE_URL}/state-jobs/{_sj_slug}/"
         statejobs_listing = build_listing_page(
             f"{state_name} Government Jobs {YEAR}",
-            [_norm_state_job(it, state_name)
-             for it in state_jobs_list if (it.get('name') or it.get('title',''))],
+            _state_norm_jobs,
             canon_statejobs,
             [('Home','/'),('State Jobs','/state-jobs/')],
             f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
-            top_html=_district_cards_html(state_name),
+            top_html=_state_top_html,
         )
         write(str(ROOT/'state-jobs'/_sj_slug/'index.html'), statejobs_listing)
 
@@ -8476,6 +8539,12 @@ for _state_name, _districts in _DIST_BY_STATE.items():
                 f'{_sibling_html}'
                 f'</div>'
             )
+        # 0-1 active jobs: add the evergreen how-to-apply + useful-links block
+        # (real content, not boilerplate) so the page reads as genuinely useful
+        # to Google rather than thin, without touching its indexed status.
+        if len(_djobs) <= 1:
+            _empty_top += _thin_content_evergreen_block(
+                f"{_dname} ({_state_name})", _state_name, _state_url_d)
         _dlisting = build_listing_page(
             f"{_dname} Govt Jobs ({_state_name})",
             _djobs,
