@@ -358,6 +358,13 @@ html, body { overflow-x: hidden; max-width: 100%; }
     var seg = path.replace(/^\/category\/|\/$/g,'').toLowerCase().trim();
     var data = CATEGORY_MAP[seg] || DEFAULT;
 
+    // Unmapped slugs (bare /category.html, /category/popular/, /category/khabar/ etc.)
+    // only ever show the generic DEFAULT filler — not a real distinct page, so don't index it.
+    if (data === DEFAULT) {
+      var rb = document.querySelector('meta[name="robots"]');
+      if (rb) rb.setAttribute('content', 'noindex, follow');
+    }
+
     var h1El   = document.getElementById('categoryTitle');
     var descEl = document.getElementById('categoryDesc');
     var crumb  = document.getElementById('crumbText');
