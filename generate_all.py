@@ -7560,15 +7560,32 @@ def _find_fja_canonical(sark_title):
     best_score = 0.0
     best_slug = None
     best_inter_len = 0
+    best_symdiff_len = 0
     for ftok, fslug, _ in _fja_token_index:
         inter = stok & ftok
         n_inter = len(inter)
         if n_inter < 3: continue
-        jaccard = n_inter / len(stok | ftok)
+        union = stok | ftok
+        jaccard = n_inter / len(union)
         if jaccard > best_score:
             best_score = jaccard
             best_slug = fslug
             best_inter_len = n_inter
+            best_symdiff_len = len(union) - n_inter
+
+    # GUARD: per-district/location "template" postings that differ from each
+    # other by only the location name (e.g. "Hisar Anganwadi Vacancy...Worker
+    # & Helper Posts" vs "Fatehabad Anganwadi Vacancy...Worker & Helper Posts"
+    # vs "UP Anganwadi Recruitment...144 Anganwadi Worker and Helper Posts")
+    # score n_inter=4, jaccard=0.667 here — comfortably past the thresholds
+    # below — because with so few content tokens after stopword-stripping,
+    # the ONE token that actually differs (the district) is nearly invisible
+    # to Jaccard. These are DIFFERENT real jobs (different office, vacancy
+    # count, application process), not reworded duplicates. When almost the
+    # entire (small) vocabulary is shared, require a bigger token set before
+    # trusting the match at all, rather than just a high ratio.
+    if best_slug and best_symdiff_len <= 2 and (best_inter_len + best_symdiff_len) <= 7:
+        return None
 
     # Conservative thresholds to prevent false positives:
     if best_inter_len >= 5 and best_score >= 0.50: return best_slug
