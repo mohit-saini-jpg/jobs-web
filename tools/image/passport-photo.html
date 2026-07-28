@@ -119,6 +119,13 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 
 /* LAYOUT */
 .main-container{max-width:860px;margin:0 auto;padding:22px 15px 60px}
+.top-step-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.top-nav-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--brand);font-size:.9rem;box-shadow:var(--shadow);transition:all .15s;flex-shrink:0}
+.top-nav-btn:hover{border-color:var(--brand);background:var(--brand-light)}
+.top-nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.top-nav-btn.top-nav-download{background:var(--success);border-color:var(--success);color:#fff}
+.top-nav-btn.top-nav-download:hover{opacity:.9}
+.top-nav-btn.top-nav-hidden{visibility:hidden}
 .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:16px}
 .card-title{font-size:.98rem;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px;color:#0d2257}
 .step-panel{display:none}
@@ -196,8 +203,8 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
    you can actually SEE the effect of a slider without scrolling down to a
    thumbnail-sized preview every time) */
 .adjust-layout{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
-.adjust-preview-col{flex:1 1 340px;min-width:280px;position:sticky;top:120px}
-.adjust-controls-col{flex:1 1 340px;min-width:280px;margin-bottom:0}
+.adjust-preview-col{flex:1 1 340px;min-width:280px;position:sticky;top:120px;order:2}
+.adjust-controls-col{flex:1 1 340px;min-width:280px;margin-bottom:0;order:1}
 /* On mobile (tools-mobile-zoom.js keeps real phones at ~650-800px
    effective width, wide enough for this side-by-side layout to still
    fit), controls go on the left of the preview instead of the right --
@@ -386,6 +393,12 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
 <div class="main-container">
 
+<!-- TOP BACK / NEXT NAV (mirrors bottom nav-btns; last step shows Download) -->
+<div class="top-step-nav" id="topStepNav">
+  <button class="top-nav-btn top-nav-back" id="topBackBtn" onclick="topNavBack()" aria-label="Back" title="Back"><i class="fa-solid fa-arrow-left"></i></button>
+  <button class="top-nav-btn top-nav-next" id="topNextBtn" onclick="topNavNext()" aria-label="Next" title="Next"><i class="fa-solid fa-arrow-right"></i></button>
+</div>
+
 <!-- ══════════ STEP 0: UPLOAD + CROP ══════════ -->
 <div class="step-panel active" id="panel-0">
   <div class="card">
@@ -499,6 +512,13 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 
   <div class="card">
     <div class="card-title">📐 Photo Size Chunein</div>
+    <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:16px;padding-bottom:14px">
+      <label style="font-weight:800;font-size:1rem;display:block;margin-bottom:8px">📋 Exam / Job Preset — auto photo size</label>
+      <select id="jobPreset" onchange="onJobPresetChange()" style="width:100%;padding:10px 12px;border:2px solid var(--brand,#2563eb);border-radius:8px;font-weight:600;font-size:.9rem;background:#fff">
+        <option value="">— Apna exam / job choose karein (size apne aap set) —</option>
+      <optgroup label="HSSC (20–50 KB, 200×230)"><option value="HSSC CET" data-w="200" data-h="230" data-kb="50">HSSC CET  —  200×230 px, ≤50 KB</option><option value="HSSC Group C &amp; D / Clerk" data-w="200" data-h="230" data-kb="50">HSSC Group C &amp; D / Clerk  —  200×230 px, ≤50 KB</option><option value="Haryana Police" data-w="200" data-h="230" data-kb="50">Haryana Police  —  200×230 px, ≤50 KB</option></optgroup><optgroup label="SSC (20–50 KB, 200×240)"><option value="SSC CGL" data-w="200" data-h="240" data-kb="50">SSC CGL  —  200×240 px, ≤50 KB</option><option value="SSC CHSL" data-w="200" data-h="240" data-kb="50">SSC CHSL  —  200×240 px, ≤50 KB</option><option value="SSC MTS" data-w="200" data-h="240" data-kb="50">SSC MTS  —  200×240 px, ≤50 KB</option><option value="SSC GD Constable" data-w="200" data-h="240" data-kb="50">SSC GD Constable  —  200×240 px, ≤50 KB</option><option value="SSC JE" data-w="200" data-h="240" data-kb="50">SSC JE  —  200×240 px, ≤50 KB</option><option value="SSC Stenographer" data-w="200" data-h="240" data-kb="50">SSC Stenographer  —  200×240 px, ≤50 KB</option></optgroup><optgroup label="IBPS / SBI / Banking (20–50 KB, 200×230)"><option value="IBPS PO" data-w="200" data-h="230" data-kb="50">IBPS PO  —  200×230 px, ≤50 KB</option><option value="IBPS Clerk" data-w="200" data-h="230" data-kb="50">IBPS Clerk  —  200×230 px, ≤50 KB</option><option value="IBPS SO" data-w="200" data-h="230" data-kb="50">IBPS SO  —  200×230 px, ≤50 KB</option><option value="IBPS RRB Officer" data-w="200" data-h="230" data-kb="50">IBPS RRB Officer  —  200×230 px, ≤50 KB</option><option value="IBPS RRB Assistant" data-w="200" data-h="230" data-kb="50">IBPS RRB Assistant  —  200×230 px, ≤50 KB</option><option value="SBI PO" data-w="200" data-h="230" data-kb="50">SBI PO  —  200×230 px, ≤50 KB</option><option value="SBI Clerk" data-w="200" data-h="230" data-kb="50">SBI Clerk  —  200×230 px, ≤50 KB</option><option value="SBI SO" data-w="200" data-h="230" data-kb="50">SBI SO  —  200×230 px, ≤50 KB</option><option value="RBI Assistant" data-w="200" data-h="230" data-kb="50">RBI Assistant  —  200×230 px, ≤50 KB</option><option value="RBI Grade B" data-w="200" data-h="230" data-kb="50">RBI Grade B  —  200×230 px, ≤50 KB</option><option value="NABARD" data-w="200" data-h="230" data-kb="50">NABARD  —  200×230 px, ≤50 KB</option><option value="GIC" data-w="200" data-h="230" data-kb="50">GIC  —  200×230 px, ≤50 KB</option></optgroup><optgroup label="UPSC (20–300 KB, min 350×350)"><option value="UPSC Civil Services (IAS/IFS)" data-w="350" data-h="350" data-kb="300">UPSC Civil Services (IAS/IFS)  —  350×350 px, ≤300 KB</option><option value="UPSC NDA" data-w="350" data-h="350" data-kb="300">UPSC NDA  —  350×350 px, ≤300 KB</option><option value="UPSC CDS" data-w="350" data-h="350" data-kb="300">UPSC CDS  —  350×350 px, ≤300 KB</option><option value="UPSC CMS" data-w="350" data-h="350" data-kb="300">UPSC CMS  —  350×350 px, ≤300 KB</option><option value="UPSC CAPF AC" data-w="350" data-h="350" data-kb="300">UPSC CAPF AC  —  350×350 px, ≤300 KB</option></optgroup><optgroup label="Railway / RRB (20–50 KB, 320×240)"><option value="Railway NTPC" data-w="320" data-h="240" data-kb="50">Railway NTPC  —  320×240 px, ≤50 KB</option><option value="Railway Group D" data-w="320" data-h="240" data-kb="50">Railway Group D  —  320×240 px, ≤50 KB</option><option value="Railway ALP" data-w="320" data-h="240" data-kb="50">Railway ALP  —  320×240 px, ≤50 KB</option><option value="Railway Technician" data-w="320" data-h="240" data-kb="50">Railway Technician  —  320×240 px, ≤50 KB</option><option value="RPF SI / Constable" data-w="320" data-h="240" data-kb="50">RPF SI / Constable  —  320×240 px, ≤50 KB</option><option value="RRB JE" data-w="320" data-h="240" data-kb="50">RRB JE  —  320×240 px, ≤50 KB</option></optgroup><optgroup label="DSSSB (40–100 KB, Postcard 480×672)"><option value="DSSSB (All Teaching &amp; Non-Teaching Posts)" data-w="480" data-h="672" data-kb="100">DSSSB (All Teaching &amp; Non-Teaching Posts)  —  480×672 px, ≤100 KB</option></optgroup><optgroup label="KVS / NVS / NTA / CTET / UGC NET (10–200 KB, 200×230)"><option value="KVS Recruitment" data-w="200" data-h="230" data-kb="200">KVS Recruitment  —  200×230 px, ≤200 KB</option><option value="NVS Recruitment" data-w="200" data-h="230" data-kb="200">NVS Recruitment  —  200×230 px, ≤200 KB</option><option value="NTA CUET / Central Univ" data-w="200" data-h="230" data-kb="200">NTA CUET / Central Univ  —  200×230 px, ≤200 KB</option><option value="CTET / UGC NET / CSIR NET" data-w="200" data-h="230" data-kb="200">CTET / UGC NET / CSIR NET  —  200×230 px, ≤200 KB</option></optgroup><optgroup label="Delhi Police (20–50 KB, 200×240)"><option value="Delhi Police (Constable / SI)" data-w="200" data-h="240" data-kb="50">Delhi Police (Constable / SI)  —  200×240 px, ≤50 KB</option></optgroup><optgroup label="UP / Bihar / Rajasthan Police (20–50 KB, 350×450)"><option value="UP Police" data-w="350" data-h="450" data-kb="50">UP Police  —  350×450 px, ≤50 KB</option><option value="Bihar Police" data-w="350" data-h="450" data-kb="50">Bihar Police  —  350×450 px, ≤50 KB</option><option value="Rajasthan Police" data-w="350" data-h="450" data-kb="50">Rajasthan Police  —  350×450 px, ≤50 KB</option><option value="MP Police / Vyapam" data-w="350" data-h="450" data-kb="50">MP Police / Vyapam  —  350×450 px, ≤50 KB</option></optgroup><optgroup label="Defence (10–50 KB, 350×450)"><option value="Army Agniveer" data-w="350" data-h="450" data-kb="50">Army Agniveer  —  350×450 px, ≤50 KB</option><option value="Air Force Agniveer" data-w="350" data-h="450" data-kb="50">Air Force Agniveer  —  350×450 px, ≤50 KB</option><option value="Navy Agniveer SSR/MR" data-w="350" data-h="450" data-kb="50">Navy Agniveer SSR/MR  —  350×450 px, ≤50 KB</option></optgroup><optgroup label="Paramilitary (10–50 KB, 350×450)"><option value="BSF" data-w="350" data-h="450" data-kb="50">BSF  —  350×450 px, ≤50 KB</option><option value="CRPF" data-w="350" data-h="450" data-kb="50">CRPF  —  350×450 px, ≤50 KB</option><option value="CISF" data-w="350" data-h="450" data-kb="50">CISF  —  350×450 px, ≤50 KB</option><option value="ITBP" data-w="350" data-h="450" data-kb="50">ITBP  —  350×450 px, ≤50 KB</option><option value="SSB" data-w="350" data-h="450" data-kb="50">SSB  —  350×450 px, ≤50 KB</option><option value="Assam Rifles" data-w="350" data-h="450" data-kb="50">Assam Rifles  —  350×450 px, ≤50 KB</option></optgroup><optgroup label="AIIMS / ESIC / FSSAI (20–100 KB, 200×230)"><option value="AIIMS (NORCET / Group A,B,C)" data-w="200" data-h="230" data-kb="100">AIIMS (NORCET / Group A,B,C)  —  200×230 px, ≤100 KB</option><option value="ESIC" data-w="200" data-h="230" data-kb="100">ESIC  —  200×230 px, ≤100 KB</option><option value="FSSAI" data-w="200" data-h="230" data-kb="100">FSSAI  —  200×230 px, ≤100 KB</option></optgroup><optgroup label="State PSC (20–100 KB, 275×354)"><option value="UPPSC" data-w="275" data-h="354" data-kb="100">UPPSC  —  275×354 px, ≤100 KB</option><option value="BPSC" data-w="275" data-h="354" data-kb="100">BPSC  —  275×354 px, ≤100 KB</option><option value="RPSC" data-w="275" data-h="354" data-kb="100">RPSC  —  275×354 px, ≤100 KB</option><option value="MPPSC" data-w="275" data-h="354" data-kb="100">MPPSC  —  275×354 px, ≤100 KB</option><option value="State PSC (Other States)" data-w="275" data-h="354" data-kb="100">State PSC (Other States)  —  275×354 px, ≤100 KB</option></optgroup><optgroup label="LIC &amp; Insurance Exams (20–50 KB, 200×230)"><option value="LIC AAO / ADO / Asst" data-w="200" data-h="230" data-kb="50">LIC AAO / ADO / Asst  —  200×230 px, ≤50 KB</option><option value="NIACL / UIIC / OICL" data-w="200" data-h="230" data-kb="50">NIACL / UIIC / OICL  —  200×230 px, ≤50 KB</option></optgroup><optgroup label="Thumb Impression / Declaration"><option value="Left Thumb — IBPS/SBI/Bank/Insurance (240×240)" data-w="240" data-h="240" data-kb="50">Left Thumb — IBPS/SBI/Bank/Insurance (240×240)  —  240×240 px, ≤50 KB</option><option value="Left Thumb — Railway (140×60)" data-w="140" data-h="60" data-kb="40">Left Thumb — Railway (140×60)  —  140×60 px, ≤40 KB</option><option value="Left Thumb — SSC (140×60)" data-w="140" data-h="60" data-kb="30">Left Thumb — SSC (140×60)  —  140×60 px, ≤30 KB</option><option value="Hand-Written Declaration — Bank (800×400)" data-w="800" data-h="400" data-kb="100">Hand-Written Declaration — Bank (800×400)  —  800×400 px, ≤100 KB</option><option value="Hand-Written Declaration — KVS/NVS/National (800×400)" data-w="800" data-h="400" data-kb="100">Hand-Written Declaration — KVS/NVS/National (800×400)  —  800×400 px, ≤100 KB</option></optgroup></select>
+      <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Exam select karte hi <b>dimensions (px)</b> aur <b>File Size (KB)</b> apne aap set ho jayenge. Baad mein chahe to manually badal sakte hain.</p>
+    </div>
     <div class="form-group" style="margin-bottom:14px"><label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Size Preset (Passport / Social / Print)</label>
       <select id="sizePreset" onchange="onSizePresetChange()" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:var(--ink)"></select>
     </div>
@@ -926,8 +946,32 @@ function goStep(n){
   if(n===1){renderOrigPreview();renderBgFinalPreview();}
   if(n===2){onScColorChange();renderAdjPreview();renderFilterThumbnails();}
   if(n===3){renderFinal();renderPrintSheet();}
+  updateTopNav();
 }
 function unlock(n){if(n>S.maxUnlocked)S.maxUnlocked=n;}
+
+// ── TOP NAV (Back / Next-or-Download) ───────────────────
+function updateTopNav(){
+  var backBtn=document.getElementById('topBackBtn');
+  var nextBtn=document.getElementById('topNextBtn');
+  if(!backBtn||!nextBtn)return;
+  backBtn.classList.toggle('top-nav-hidden',S.step===0);
+  var isLast=(S.step===document.querySelectorAll('.step-panel').length-1);
+  nextBtn.classList.toggle('top-nav-download',isLast);
+  nextBtn.title=isLast?'Download':'Next';
+  nextBtn.setAttribute('aria-label',isLast?'Download':'Next');
+  nextBtn.innerHTML=isLast?'<i class="fa-solid fa-download"></i>':'<i class="fa-solid fa-arrow-right"></i>';
+}
+function topNavBack(){
+  if(S.step>0)goStep(S.step-1);
+}
+function topNavNext(){
+  if(S.step===0){cropAndNext();}
+  else if(S.step===document.querySelectorAll('.step-panel').length-1){downloadPhoto('single');}
+  else if(S.step===2){renderFinal();goStep(3);}
+  else{goStep(S.step+1);}
+}
+updateTopNav();
 
 // ── SIZE ───────────────────────────────────────────────
 var SIZE_PRESET_GROUPS=[
@@ -986,6 +1030,34 @@ function onSizePresetChange(){
   applySizeToCropped();
 }
 populateSizePresets();
+function onJobPresetChange(){
+  var sel=document.getElementById('jobPreset');if(!sel)return;
+  var opt=sel.options[sel.selectedIndex];
+  if(!opt.value)return; // placeholder — nothing chosen
+  var w=parseInt(opt.getAttribute('data-w'));
+  var h=parseInt(opt.getAttribute('data-h'));
+  var kb=parseInt(opt.getAttribute('data-kb'));
+  S.targetW=w;S.targetH=h;S.label=opt.value+' — '+w+'×'+h+'px';
+  // Reflect chosen size in the existing Size Preset UI as Custom so it's visible/editable
+  var sp=document.getElementById('sizePreset');if(sp)sp.value='custom';
+  document.getElementById('customRow').style.display='flex';
+  document.getElementById('customW').value=w;
+  document.getElementById('customH').value=h;
+  document.getElementById('customUnit').value='px';
+  document.getElementById('ratioHint').textContent=S.label;
+  if(cropperInst&&!isFreeCrop)cropperInst.setAspectRatio(w/h);
+  applySizeToCropped();
+  // Auto-set the KB target too
+  if(kb){
+    S.targetKb=kb;S.kbEnabled=true;
+    var kbToggle=document.getElementById('kbSizeToggle');if(kbToggle)kbToggle.checked=true;
+    var kbCtrl=document.getElementById('kbControls');if(kbCtrl)kbCtrl.classList.add('show');
+    var kbInput=document.getElementById('kbInput');if(kbInput)kbInput.value=kb;
+    var kbSlider=document.getElementById('kbSlider');if(kbSlider)kbSlider.value=Math.min(kb,2000);
+    document.querySelectorAll('.kb-preset-btn').forEach(function(b){b.classList.remove('active');});
+    updateKbStatus();
+  }
+}
 function updateCustomPx(){
   var w=parseFloat(document.getElementById('customW').value)||400;
   var h=parseFloat(document.getElementById('customH').value)||500;
