@@ -361,14 +361,18 @@ function setStatus(mode, text){
   statusText.textContent = text;
 }
 
-// Installed Android app shell (TWA/WebView) can silently return corrupted
-// mask data on the GPU delegate instead of throwing (garbled streak/noise
-// artifacts across the photo), so the CPU fallback below never triggers.
-// Skip GPU there entirely and start on CPU, which is slower but correct.
+// Android's shared WebView/Chrome GPU driver stack can silently return
+// corrupted mask data on the GPU delegate instead of throwing (garbled
+// streak/noise artifacts across the photo), so the CPU fallback below
+// never triggers. This traces to the Android GPU driver stack itself, not
+// to how the page happens to be installed -- originally this only skipped
+// GPU for an installed PWA/TWA app shell, but a plain Android Chrome tab
+// hits the identical corruption, which is the far more common case for
+// real users. Skip GPU on Android entirely and start on CPU, which is
+// slower but correct.
 function isAndroidAppShell(){
   try{
-    return /Android/i.test(navigator.userAgent) &&
-      ['standalone','fullscreen','minimal-ui'].some(m=>window.matchMedia('(display-mode: '+m+')').matches);
+    return /Android/i.test(navigator.userAgent);
   }catch(_){ return false; }
 }
 
@@ -393,8 +397,20 @@ async function loadSegmenter(modelKey, delegate){
   return segmenter;
 }
 
-loadSegmenter(modelSelect.value).catch(async () => {
-  try{ await loadSegmenter(modelSelect.value, 'CPU'); }
+// The model file is several MB and loads over the network -- on a slow
+// mobile connection a user can tap "Remove Background" before it's ready,
+// which used to just reject with a status message and require a manual
+// retry (easy to miss, reads as "the tool doesn't work"). pendingProcessClick
+// queues that tap instead, so it fires automatically the moment the model
+// finishes loading.
+let pendingProcessClick = false;
+loadSegmenter(modelSelect.value).then(() => {
+  if(pendingProcessClick){ pendingProcessClick = false; processBtn.click(); }
+}).catch(async () => {
+  try{
+    await loadSegmenter(modelSelect.value, 'CPU');
+    if(pendingProcessClick){ pendingProcessClick = false; processBtn.click(); }
+  }
   catch(e2){ setStatus('error', 'AI model load nahi ho paya. Internet check karke refresh karein.'); console.error(e2); }
 });
 
@@ -497,7 +513,7 @@ grid.addEventListener('click', (e) => {
 });
 
 processBtn.addEventListener('click', async () => {
-  if(!segmenter){ setStatus('error','Model abhi load ho raha hai, thoda ruko.'); return; }
+  if(!segmenter){ pendingProcessClick = true; setStatus('loading','Model load ho raha hai — ready hote hi process shuru ho jaayega…'); return; }
   processBtn.disabled = true;
   progressWrap.classList.add('show');
   let done = 0;

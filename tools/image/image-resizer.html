@@ -745,14 +745,18 @@
   var _bgCache=null;
   var _mpVision=null,_mpSegmenter=null;
   var MP_MODEL_URL='https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
-  // Installed Android app shell (TWA/WebView) can silently return corrupted
-  // mask data on the GPU delegate instead of throwing (garbled streak/noise
-  // artifacts across the photo), so the CPU fallback below never triggers.
-  // Skip GPU there entirely and start on CPU, which is slower but correct.
+  // Android's shared WebView/Chrome GPU driver stack can silently return
+  // corrupted mask data on the GPU delegate instead of throwing (garbled
+  // streak/noise artifacts across the photo), so the CPU fallback below
+  // never triggers. This traces to the Android GPU driver stack itself,
+  // not to how the page happens to be installed -- originally this only
+  // skipped GPU for an installed PWA/TWA app shell, but a plain Android
+  // Chrome tab hits the identical corruption, which is the far more
+  // common case for real users. Skip GPU on Android entirely and start
+  // on CPU, which is slower but correct.
   function _isAndroidAppShell(){
     try{
-      return /Android/i.test(navigator.userAgent) &&
-        ['standalone','fullscreen','minimal-ui'].some(function(m){return window.matchMedia('(display-mode: '+m+')').matches;});
+      return /Android/i.test(navigator.userAgent);
     }catch(_){ return false; }
   }
   async function _loadSegmenter(delegate){
