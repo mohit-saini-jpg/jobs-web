@@ -2144,10 +2144,18 @@ function initEraseCanvas(){
 function applyZoom(){
   var canvas=document.getElementById('adjCanvas');
   if(!canvas||!canvas.width)return;
-  canvas.style.width='';canvas.style.height='';canvas.style.maxWidth='';
+  canvas.style.width='';canvas.style.height='';canvas.style.maxWidth='';canvas.style.maxHeight='';
   var rect=canvas.getBoundingClientRect();
   if(S.adjZoom!==1&&rect.width>0){
+    // BUG FIX: only max-width was being cleared here. The CSS rule
+    // `.live-preview-wrap canvas{max-height:min(65vh,560px)}` was still in
+    // force, so once a zoomed height exceeded that cap the browser clamped
+    // HEIGHT only -- width kept growing with zoom while height got capped,
+    // stretching/distorting the photo (reported as the image "tearing").
+    // Clearing max-height too (like max-width already does) keeps both
+    // dimensions scaling together at the exact zoom ratio.
     canvas.style.maxWidth='none';
+    canvas.style.maxHeight='none';
     canvas.style.width=Math.round(rect.width*S.adjZoom)+'px';
     canvas.style.height=Math.round(rect.height*S.adjZoom)+'px';
   }
@@ -2184,21 +2192,33 @@ function zoomAtPoint(newZoom,clientX,clientY){
   wrap.scrollLeft=wrapRect.left+canvasContentLeft+fx*newCanvasW-clientX;
   wrap.scrollTop=wrapRect.top+canvasContentTop+fy*newCanvasH-clientY;
 }
+// Last known pointer position over the live-preview-wrap, so the +/- zoom
+// buttons zoom into whatever the user was last pointing at instead of
+// always zooming to the dead center of the viewport.
+var lastPointerX=null,lastPointerY=null;
 function zoomIn(){
   var wrap=document.querySelector('.live-preview-wrap');
   var r=wrap?wrap.getBoundingClientRect():null;
-  zoomAtPoint(S.adjZoom+0.25, r?r.left+r.width/2:0, r?r.top+r.height/2:0);
+  var hasPointer=lastPointerX!==null&&r&&lastPointerX>=r.left&&lastPointerX<=r.right&&lastPointerY>=r.top&&lastPointerY<=r.bottom;
+  var x=hasPointer?lastPointerX:(r?r.left+r.width/2:0);
+  var y=hasPointer?lastPointerY:(r?r.top+r.height/2:0);
+  zoomAtPoint(S.adjZoom+0.25, x, y);
 }
 function zoomOut(){
   var wrap=document.querySelector('.live-preview-wrap');
   var r=wrap?wrap.getBoundingClientRect():null;
-  zoomAtPoint(S.adjZoom-0.25, r?r.left+r.width/2:0, r?r.top+r.height/2:0);
+  var hasPointer=lastPointerX!==null&&r&&lastPointerX>=r.left&&lastPointerX<=r.right&&lastPointerY>=r.top&&lastPointerY<=r.bottom;
+  var x=hasPointer?lastPointerX:(r?r.left+r.width/2:0);
+  var y=hasPointer?lastPointerY:(r?r.top+r.height/2:0);
+  zoomAtPoint(S.adjZoom-0.25, x, y);
 }
 function zoomReset(){ S.adjZoom=1; applyZoom(); var w=document.querySelector('.live-preview-wrap'); if(w){w.scrollLeft=0;w.scrollTop=0;} }
 function initZoomPinch(){
   var wrap=document.querySelector('.live-preview-wrap');
   if(!wrap||wrap.dataset.pinchInit)return;
   wrap.dataset.pinchInit='1';
+  wrap.addEventListener('mousemove',function(e){ lastPointerX=e.clientX; lastPointerY=e.clientY; });
+  wrap.addEventListener('mouseleave',function(){ lastPointerX=null; lastPointerY=null; });
   var startDist=null,startZoom=1;
   function dist(a,b){ var dx=a.clientX-b.clientX,dy=a.clientY-b.clientY; return Math.sqrt(dx*dx+dy*dy); }
   function mid(a,b){ return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; }
@@ -2213,6 +2233,7 @@ function initZoomPinch(){
     if(e.touches.length===2&&startDist){
       var d=dist(e.touches[0],e.touches[1]);
       var m=mid(e.touches[0],e.touches[1]);
+      lastPointerX=m.x;lastPointerY=m.y;
       zoomAtPoint(startZoom*(d/startDist),m.x,m.y); // pinch center stays fixed under the fingers
       e.preventDefault();
     }
@@ -2222,6 +2243,7 @@ function initZoomPinch(){
   // area is a dedicated zoom/pan viewport, not page content).
   wrap.addEventListener('wheel',function(e){
     e.preventDefault();
+    lastPointerX=e.clientX;lastPointerY=e.clientY;
     var delta=e.deltaY<0?0.15:-0.15;
     zoomAtPoint(S.adjZoom+delta,e.clientX,e.clientY);
   },{passive:false});
