@@ -244,7 +244,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .sc-hint{font-size:.72rem;color:var(--muted);line-height:1.5;background:var(--mist);border-radius:9px;padding:9px 11px;margin-top:12px}
 .sc-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .live-preview-wrap{border-radius:12px;overflow:auto;border:1px solid var(--line);padding:14px;background:var(--mist);box-shadow:var(--shadow);max-height:min(65vh,560px);touch-action:none}
-.live-preview-wrap canvas{display:block}
+.live-preview-wrap canvas{display:block;cursor:grab}
 .live-preview-wrap canvas{max-width:100%;max-height:min(65vh,560px);border-radius:8px}
 .preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
 .zoom-controls{display:flex;align-items:center;justify-content:center;gap:8px}
@@ -552,6 +552,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
     <div class="adjust-preview-col">
       <div class="preview-toolbar">
         <button class="toolbar-btn" id="eraseUndoBtn" onclick="undoErase()" disabled aria-label="Undo"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+        <button class="toolbar-btn" id="eraseResetBtn" onclick="resetErase()" aria-label="Erase Reset" title="Saara erase hataa kar photo wapas laayein"><i class="fa-solid fa-eraser"></i> Reset</button>
         <div class="zoom-controls">
           <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
           <button class="zoom-btn zoom-reset" onclick="zoomReset()" id="zoomLevelLabel">100%</button>
@@ -1968,7 +1969,7 @@ function toggleErase(btn){
     ? '<i class="fa-solid fa-eraser"></i> Erase Brush ON — Photo Par Draw Karein'
     : '<i class="fa-solid fa-eraser"></i> Enable Erase Brush';
   document.getElementById('eraseControlsRow').style.display=S.eraseEnabled?'block':'none';
-  document.getElementById('adjCanvas').style.cursor=S.eraseEnabled?'none':'default';
+  document.getElementById('adjCanvas').style.cursor=S.eraseEnabled?'none':'grab';
   if(!S.eraseEnabled)hideEraseCursor();
 }
 function onEraseSizeChange(){
@@ -2222,6 +2223,47 @@ function initZoomPinch(){
   var startDist=null,startZoom=1;
   function dist(a,b){ var dx=a.clientX-b.clientX,dy=a.clientY-b.clientY; return Math.sqrt(dx*dx+dy*dy); }
   function mid(a,b){ return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; }
+
+  // ── DRAG-TO-PAN ── When the erase brush is off, pressing and dragging
+  // anywhere on the zoomed photo pans it (left/right/up/down) under the
+  // pointer, same as any image viewer's "grab" tool. Only active while
+  // erase is off so it never fights the erase-drawing drag.
+  var panning=false,panStartX=0,panStartY=0,panScrollL=0,panScrollT=0;
+  function panStart(x,y){
+    panning=true;panStartX=x;panStartY=y;panScrollL=wrap.scrollLeft;panScrollT=wrap.scrollTop;
+    var c=document.getElementById('adjCanvas');if(c)c.style.cursor='grabbing';
+  }
+  function panMove(x,y){
+    if(!panning)return;
+    wrap.scrollLeft=panScrollL-(x-panStartX);
+    wrap.scrollTop=panScrollT-(y-panStartY);
+  }
+  function panEnd(){
+    if(!panning)return;
+    panning=false;
+    var c=document.getElementById('adjCanvas');if(c)c.style.cursor=S.eraseEnabled?'none':'grab';
+  }
+  wrap.addEventListener('mousedown',function(e){
+    if(S.eraseEnabled)return;
+    panStart(e.clientX,e.clientY);
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove',function(e){ panMove(e.clientX,e.clientY); });
+  window.addEventListener('mouseup',panEnd);
+  wrap.addEventListener('touchstart',function(e){
+    if(e.touches.length===1&&!S.eraseEnabled){
+      panStart(e.touches[0].clientX,e.touches[0].clientY);
+      e.preventDefault();
+    }
+  },{passive:false});
+  wrap.addEventListener('touchmove',function(e){
+    if(e.touches.length===1&&panning){
+      panMove(e.touches[0].clientX,e.touches[0].clientY);
+      e.preventDefault();
+    }
+  },{passive:false});
+  wrap.addEventListener('touchend',function(e){ if(e.touches.length===0)panEnd(); });
+
   wrap.addEventListener('touchstart',function(e){
     if(e.touches.length===2){
       startDist=dist(e.touches[0],e.touches[1]);
