@@ -19,6 +19,23 @@
     return (document.title || '').split(/[–—|]/)[0].trim() || 'Government Job';
   }
 
+  // This widget mounts on every detail page -- jobs, results, admit cards,
+  // answer keys, admissions, schemes/yojana -- so a hardcoded "job" label
+  // was wrong outside actual recruitment posts (e.g. a Result or Yojana
+  // page). Keyword-match the page's own title (same technique
+  // generate_all.py's _detect_apply_mode() already uses) to pick a label
+  // that fits; unmatched pages fall back to the generic, always-correct
+  // "post / service" phrasing.
+  function getLabelPrefix(title) {
+    var t = (title || '').toLowerCase();
+    if (/\bresult(s)?\b/.test(t)) return 'आप जिस रिज़ल्ट को देख रहे हैं:';
+    if (/admit\s*card/.test(t)) return 'आप जिस एडमिट कार्ड को देख रहे हैं:';
+    if (/answer\s*key/.test(t)) return 'आप जिस आंसर की को देख रहे हैं:';
+    if (/admission/.test(t)) return 'आप जिस एडमिशन को देख रहे हैं:';
+    if (/yojana|yojna|scheme/.test(t)) return 'आप जिस योजना को देख रहे हैं:';
+    return 'आप जिस पोस्ट / सेवा को देख रहे हैं:';
+  }
+
   function getPageUrl() {
     var canon = document.querySelector('link[rel="canonical"]');
     return (canon && canon.href) || location.href;
@@ -38,7 +55,7 @@
       '<div class="jfw-box">' +
       '<div class="jfw-head">🏠 घर बैठे फॉर्म भरवाएं (CSC Partner Team)</div>' +
       '<div class="jfw-sub">ऑफ़िशियल CSC टीम से अपना फ़ॉर्म 100% सही भरवाएं</div>' +
-      '<div class="jfw-job">आप जिस जॉब को देख रहे हैं:<b>' + escapeHtml(jobTitle) + '</b></div>' +
+      '<div class="jfw-job">' + getLabelPrefix(jobTitle) + '<b>' + escapeHtml(jobTitle) + '</b></div>' +
       '<form id="jfwForm" novalidate>' +
       '<div class="jfw-field"><label>पूरा नाम</label><input type="text" id="jfwName" placeholder="अपना पूरा नाम लिखें" required autocomplete="name"></div>' +
       '<div class="jfw-field"><label>WhatsApp नंबर</label><input type="tel" id="jfwPhone" placeholder="10 अंकों का मोबाइल नंबर" required maxlength="10" inputmode="numeric" autocomplete="tel"></div>' +
