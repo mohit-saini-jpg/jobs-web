@@ -45,8 +45,10 @@
   ══════════════════════════════════════════ */
   function injectStyles() {
     var css = [
-      /* FAB */
-      '#tsj-fab{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:50%;',
+      /* FAB — bottom offset sits above the TSJ AI chat FAB (which sits at
+         var(--tsj-nav-h,72px) + 10px and is 60px tall), so the two never
+         overlap. Uses the same live-measured --tsj-nav-h var chat sets. */
+      '#tsj-fab{position:fixed;bottom:calc(var(--tsj-nav-h,72px) + 82px + env(safe-area-inset-bottom,0px));left:50%;',
       'transform:translateX(-50%) translateY(120px);z-index:2147483647;',
       'background:#f5c800;color:#111;border:none;border-radius:50px;padding:0;',
       'display:flex;align-items:center;overflow:hidden;white-space:nowrap;',
@@ -60,7 +62,7 @@
       '#tsj-fab.folded{left:0!important;transform:translateX(0) translateY(0)!important;',
       'border-radius:0 50px 50px 0!important;}',
       '#tsj-fab.folded .tsj-fab-txt{display:none;}',
-      '#tsj-fab.folded .tsj-fab-ico{width:46px;height:46px;}',
+      '#tsj-fab.folded .tsj-fab-ico{width:38px;height:38px;font-size:18px;}',
 
       '.tsj-fab-txt{display:flex;flex-direction:column;padding:8px 14px 8px 16px;line-height:1.3;}',
       '.tsj-fab-top{font-size:9px;font-weight:700;color:#111;}',
