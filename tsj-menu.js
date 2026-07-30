@@ -228,6 +228,18 @@ document.addEventListener('keydown', function(e){
   else window.addEventListener('load', armIdleGT, {once:true});
 })();
 
+// Site-wide mobile zoom control -- loaded on every page that includes
+// this file (i.e. every page on the site). Deferred script tag (not a
+// fetch+eval) so it behaves like a normal include: cached, executes
+// after parse, doesn't block render.
+(function(){
+  if(document.querySelector('script[src^="/site-mobile-zoom.js"]')) return;
+  var s = document.createElement('script');
+  s.src = '/site-mobile-zoom.js';
+  s.defer = true;
+  document.head.appendChild(s);
+})();
+
 window.googleTranslateElementInit=function(){
   var el=document.getElementById('google_translate_element');
   if(!el){ setTimeout(window.googleTranslateElementInit,200); return; }   // header may still be injecting
