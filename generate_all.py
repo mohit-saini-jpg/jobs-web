@@ -3755,7 +3755,15 @@ def build_all_sections(job_obj):
     if isinstance(job_obj.get('content_sections'), list):
         rendered.add('content_sections')
     _cs_rendered = False
-    if isinstance(_cs, list) and any(isinstance(s, dict) and s.get('tables') for s in _cs):
+    # NOT "has tables" only -- SARK Yojana/NON_JOB records (scraped content
+    # of heading+paragraph text, no tables at all, tables:[] on every
+    # section) were falling through this gate entirely, and since
+    # 'content_sections' gets marked rendered a few lines down regardless
+    # (so the raw-JSON fallback dump doesn't duplicate it), that rich Hindi
+    # text was being silently dropped from the page -- render_content_
+    # sections_all() already handles text-only sections fine, this just
+    # widens the gate to actually call it for them.
+    if isinstance(_cs, list) and any(isinstance(s, dict) and (s.get('tables') or s.get('text')) for s in _cs):
         _bd = job_obj.get('basic_details')
         if _bd and _bd != {}:
             _bd_body = render_basic_details(_bd)
