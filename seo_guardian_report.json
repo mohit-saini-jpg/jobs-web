@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-02T02:35:40.071878+00:00",
+  "timestamp": "2026-08-02T04:36:41.460626+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 6303,
+  "files_scanned": 6316,
   "issues_found_by_check": {
     "ai_marker_integrity": 10,
     "jobposting_schema": 43,
