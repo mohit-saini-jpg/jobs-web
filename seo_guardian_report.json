@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-02T02:05:16.087621+00:00",
+  "timestamp": "2026-08-02T02:35:40.071878+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 6271,
+  "files_scanned": 6303,
   "issues_found_by_check": {
-    "ai_marker_integrity": 11,
+    "ai_marker_integrity": 10,
     "jobposting_schema": 43,
-    "sitemap_sync": 188
+    "sitemap_sync": 200
   },
-  "issues_auto_fixed": 42,
+  "issues_auto_fixed": 54,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -57,12 +57,6 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
-    },
-    {
-      "file": "jobs/ncrtc-assistant-manager-recruitment-2026-apply-online/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
       "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
