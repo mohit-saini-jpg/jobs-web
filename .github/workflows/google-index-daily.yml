@@ -55,7 +55,7 @@ jobs:
     needs: guard
     if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: write
 
@@ -64,7 +64,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
+          # NOTE (2026-08-03): fetch-depth: 0 (full history) was taking 15+
+          # minutes on this repo and blowing past the job timeout, cancelling
+          # the checkout before the indexing script ever ran — same root
+          # cause as merge-sr.yml. This job doesn't need full git history.
+          fetch-depth: 1
 
       - name: 🟢 Setup Node.js 20
         uses: actions/setup-node@v4

@@ -73,7 +73,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
+          # NOTE (2026-08-03): fetch-depth: 0 (full history) risked the same
+          # slow-checkout/timeout failure seen in merge-sr.yml and
+          # google-index-daily.yml. Nothing in this job (generate_version.js,
+          # git diff --staged) reads git history — a shallow clone is enough.
+          fetch-depth: 1
 
       # ── STEP 2: Setup runtimes ───────────────────────────────────
       - name: 🟢 Setup Node.js 20

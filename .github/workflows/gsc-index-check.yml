@@ -55,7 +55,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
+          # NOTE (2026-08-03): fetch-depth: 0 risked the same slow-checkout/
+          # timeout failure as merge-sr.yml. No git history is read here.
+          fetch-depth: 1
 
       - name: 🟢 Setup Node.js 20
         uses: actions/setup-node@v4
