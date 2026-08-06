@@ -167,16 +167,26 @@ function buildAssertion() {
   return unsigned + '.' + signature;
 }
 
+// Shared keep-alive agent: the inspection pass alone can make hundreds of
+// sequential calls to the same host (searchconsole.googleapis.com), and a
+// fresh TCP+TLS handshake per call was a meaningful chunk of the latency
+// that caused the whole job to time out (see TIME_BUDGET_MS note in main()).
+// Reusing connections cuts that overhead for every call after the first to
+// a given host.
+const KEEP_ALIVE_AGENT = new https.Agent({ keepAlive: true, maxSockets: 8 });
+
 // ── Small promise wrapper around https.request ─────────────────────────────
 function httpsRequest(options, body) {
   return new Promise((resolve) => {
-    const req = https.request(options, (res) => {
+    const req = https.request({ agent: KEEP_ALIVE_AGENT, ...options }, (res) => {
       let data = '';
       res.on('data', (c) => { data += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
     });
     req.on('error', (e) => resolve({ status: 0, body: String(e && e.message || e) }));
-    req.setTimeout(15000, () => { req.destroy(); resolve({ status: 0, body: 'timeout' }); });
+    // 10s (was 15s): fail faster on a stuck call so more of a bounded time
+    // budget goes to real work instead of one hung connection.
+    req.setTimeout(10000, () => { req.destroy(); resolve({ status: 0, body: 'timeout' }); });
     if (body) req.write(body);
     req.end();
   });
@@ -410,6 +420,27 @@ async function publish(token, url) {
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────
+// ROOT CAUSE FIX (2026-08-06): every run since ~Aug 4 was cancelled at the
+// job's 20-minute timeout having submitted 0/200 URLs. The URL Inspection
+// pre-check pass below (Pass 2, up to 500 sequential `await`ed HTTPS calls
+// to searchconsole.googleapis.com, one at a time, no batching) was eating
+// the ENTIRE job timeout by itself -- confirmed from the actual run logs: a
+// 20-minute gap with zero output between the initial "📡 Google Indexing —
+// day..." line and "The operation was canceled", meaning the script never
+// even reached the publish() loop that comes after it. Two independent
+// fixes, both needed:
+//   1. Hub pages now publish FIRST, before the inspection pass starts, so
+//      the daily freshness ping always goes out even if everything after it
+//      is slow or hangs.
+//   2. The inspection pass is now bounded by a wall-clock TIME_BUDGET_MS,
+//      not just an inspection-count cap -- so no matter how slow Google's
+//      API is on a given day, the script always leaves itself enough time
+//      to reach the actual Indexing API publish() calls, and enough time
+//      after that for the workflow's state-commit step to run at all.
+const SCRIPT_START = Date.now();
+const TIME_BUDGET_MS = 15 * 60 * 1000;  // job timeout is 20min; leaves ~5min for checkout/setup/commit/summary
+const timeLeftMs = () => TIME_BUDGET_MS - (Date.now() - SCRIPT_START);
+
 (async function main() {
   const token = await getAccessToken();
   if (!token) {
@@ -436,38 +467,77 @@ async function publish(token, url) {
 
   const doneSet = new Set(state.done_slugs);
   let ok = 0, hubOk = 0, newOk = 0, backlogOk = 0, quotaStopped = false, forbidden = 0, other = 0;
-  let inspected = 0, alreadyIndexed = 0, inspectFailed = 0;
-  const INSPECT_CAP = 500;  // stay well under the 2000/day, 600/min URL Inspection quota
+  let inspected = 0, alreadyIndexed = 0, inspectFailed = 0, inspectTimeStopped = false, publishTimeStopped = 0;
+  const INSPECT_CAP = 300;  // was 500 -- see TIME_BUDGET_MS note above; stays well under the 2000/day URL Inspection quota either way
 
-  // Pass 1: hub pages always submit unconditionally (freshness ping, not an
-  // "is it indexed" question) — never checked, never skipped.
-  const toSubmit = candidates.filter((c) => c.kind === 'hub').slice(0, budget);
-
-  // Pass 2: for new/backlog job pages, ask Google first. Already-indexed ones
-  // get recorded into done_slugs for free (no Indexing-API quota spent) so
-  // done_slugs stays continuously accurate instead of drifting like before.
-  // Genuinely not-indexed ones queue for a real submission.
-  for (const item of candidates) {
-    if (item.kind === 'hub') continue;
-    if (toSubmit.length >= budget) break;   // already have enough to fill today's budget
-    if (inspected >= INSPECT_CAP) break;    // hit the inspection safety cap for this run
-
-    inspected++;
-    const { indexed, checked } = await isAlreadyIndexed(token, item.url);
-    if (!checked) inspectFailed++;
-    if (indexed) {
-      alreadyIndexed++;
-      if (item.slug && !doneSet.has(item.slug)) {
-        doneSet.add(item.slug);
-        state.done_slugs.push(item.slug);
-      }
-      continue;
+  function stopEarly(res) {
+    if (res.status === 429) {
+      quotaStopped = true;
+      console.warn('⚠️  Daily quota reached (429) — stopping early. Remaining go out next run.');
+      return true;
     }
-    toSubmit.push(item);
-    if (inspected % 50 === 0) saveState(state);  // periodic save mid-inspection pass
+    if (res.status === 403) {
+      forbidden++;
+      console.warn('⚠️  403 Permission denied — is the service account an OWNER in Search Console? ' + String(res.body).slice(0, 160));
+      return true;   // 403 applies to every URL — no point continuing
+    }
+    return false;
   }
 
+  // ── Phase A: hub/section pages publish IMMEDIATELY, no inspection needed
+  // (they're a "please recrawl, content changed" ping, not an "is it
+  // indexed" question) — must never be starved by a slow inspection pass. ──
+  const hubCandidates = candidates.filter((c) => c.kind === 'hub').slice(0, budget);
+  for (const item of hubCandidates) {
+    const res = await publish(token, item.url);
+    if (res.status === 200) {
+      ok++; hubOk++;
+      state.count_today++;
+      state.submitted_today.push(item.url);
+    } else {
+      if (stopEarly(res)) break;
+      other++;
+      if (other <= 3) console.warn(`⚠️  ${item.url} → ${res.status}: ${String(res.body).slice(0, 140)}`);
+    }
+  }
+  saveState(state);
+
+  // ── Phase B: for new/backlog job pages, ask Google first. Already-indexed
+  // ones get recorded into done_slugs for free (no Indexing-API quota
+  // spent) so done_slugs stays continuously accurate instead of drifting
+  // like before. Genuinely not-indexed ones queue for a real submission.
+  // Bounded by TIME_BUDGET_MS (keeping 3min in reserve for Phase C below)
+  // as well as INSPECT_CAP -- whichever comes first. ──
+  const toSubmit = [];
+  if (!quotaStopped && !forbidden) {
+    for (const item of candidates) {
+      if (item.kind === 'hub') continue;
+      if (state.count_today + toSubmit.length >= DAILY_CAP) break;  // already have enough to fill today's budget
+      if (inspected >= INSPECT_CAP) break;                          // hit the inspection safety cap for this run
+      if (timeLeftMs() < 3 * 60 * 1000) { inspectTimeStopped = true; break; }  // leave 3min for Phase C
+
+      inspected++;
+      const { indexed, checked } = await isAlreadyIndexed(token, item.url);
+      if (!checked) inspectFailed++;
+      if (indexed) {
+        alreadyIndexed++;
+        if (item.slug && !doneSet.has(item.slug)) {
+          doneSet.add(item.slug);
+          state.done_slugs.push(item.slug);
+        }
+        continue;
+      }
+      toSubmit.push(item);
+      if (inspected % 50 === 0) saveState(state);  // periodic save mid-inspection pass
+    }
+  }
+  if (inspectTimeStopped) {
+    console.warn(`⏱️  Stopped URL Inspection pass early (time budget, not count) after ${inspected} check(s) — remaining candidates go out next run.`);
+  }
+
+  // ── Phase C: publish whatever Phase B queued. ──
   for (const item of toSubmit) {
+    if (timeLeftMs() < 20 * 1000) { publishTimeStopped = toSubmit.length - (newOk + backlogOk); break; }
     const res = await publish(token, item.url);
     if (res.status === 200) {
       ok++;
@@ -477,23 +547,18 @@ async function publish(token, url) {
         doneSet.add(item.slug);
         state.done_slugs.push(item.slug);
       }
-      if (item.kind === 'hub') hubOk++;
-      else if (item.kind === 'new') newOk++;
+      if (item.kind === 'new') newOk++;
       else backlogOk++;
       // periodic save so a mid-run crash doesn't lose progress
       if (ok % 25 === 0) saveState(state);
-    } else if (res.status === 429) {
-      quotaStopped = true;
-      console.warn('⚠️  Daily quota reached (429) — stopping early. Remaining go out next run.');
-      break;
-    } else if (res.status === 403) {
-      forbidden++;
-      console.warn('⚠️  403 Permission denied — is the service account an OWNER in Search Console? ' + String(res.body).slice(0, 160));
-      break;   // 403 applies to every URL — no point continuing
     } else {
+      if (stopEarly(res)) break;
       other++;
       if (other <= 3) console.warn(`⚠️  ${item.url} → ${res.status}: ${String(res.body).slice(0, 140)}`);
     }
+  }
+  if (publishTimeStopped > 0) {
+    console.warn(`⏱️  Stopped publish pass early (time budget) — ${publishTimeStopped} already-queued item(s) go out next run.`);
   }
 
   saveState(state);
