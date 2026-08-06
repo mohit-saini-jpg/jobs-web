@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-06T02:20:32.775206+00:00",
+  "timestamp": "2026-08-06T07:25:54.764772+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 6598,
+  "files_scanned": 6612,
   "issues_found_by_check": {
-    "ai_marker_integrity": 9,
-    "jobposting_schema": 49,
+    "ai_marker_integrity": 10,
+    "jobposting_schema": 48,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 60,
+  "issues_auto_fixed": 59,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -57,6 +57,12 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
     },
     {
       "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
@@ -1205,5 +1211,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 22.3
+  "duration_sec": 38.3
 }
