@@ -62,7 +62,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet; then
+          # Scoped to _redirects specifically -- the only file this step ever
+          # stages. A repo-wide `git diff --quiet` also trips on unrelated
+          # working-tree drift (e.g. merged_sarkari_data.json is committed
+          # with CRLF endings while .gitattributes declares *.json eol=lf,
+          # so a fresh checkout shows it "modified" from line-ending
+          # normalization alone, no script involved). That made this step
+          # enter the commit branch with nothing actually staged --
+          # `git commit` then failed with "nothing added to commit" and the
+          # whole job errored out even though there was no real link fix to
+          # commit. Scoping the diff check to the one file we act on makes
+          # the decision correct regardless of any other file's state.
+          if git diff --quiet -- _redirects; then
             echo "No changes to commit"
           else
             git add _redirects
