@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-12T09:54:28.266735+00:00",
+  "timestamp": "2026-08-13T01:43:39.266073+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 7100,
+  "files_scanned": 7203,
   "issues_found_by_check": {
     "ai_marker_integrity": 11,
     "jobposting_schema": 50,
@@ -1215,7 +1215,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     120 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 24.8
+  "duration_sec": 25.8
 }
