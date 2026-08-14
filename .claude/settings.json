@@ -3,7 +3,16 @@
     "allow": [
       "Bash(python -c ' *)",
       "Bash(git commit -m ' *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s *)",
+      "Bash(curl -sI *)",
+      "Bash(git fetch *)",
+      "Bash(npm run lint)",
+      "Bash(vercel ls)",
+      "Bash(npx vercel ls)",
+      "Bash(npx tsc --noEmit -p tsconfig.json)",
+      "Bash(node --check *)",
+      "Bash(tasklist *)"
     ]
   }
 }
