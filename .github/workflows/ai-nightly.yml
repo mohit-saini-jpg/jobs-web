@@ -106,7 +106,7 @@ jobs:
             -X POST \
             -H "Authorization: Bearer $GROQ_API_KEY" \
             -H "Content-Type: application/json" \
-            -d '{"model":"llama-3.1-8b-instant","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}' \
+            -d '{"model":"llama-3.3-70b-versatile","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}' \
             https://api.groq.com/openai/v1/chat/completions)
           echo "HTTP Code: $HTTP_CODE"
           cat /tmp/groq_resp.json
@@ -119,7 +119,7 @@ jobs:
       - name: 🤖 Run AI HTML Enricher
         env:
           GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
-          GROQ_MODEL:    'llama-3.1-8b-instant'
+          GROQ_MODEL:    'llama-3.3-70b-versatile'
           # 3 RPM (20s) keeps us under the free-tier tokens-per-minute limit so we
           # don't burn the budget in a 429 storm. The script also reads Retry-After
           # on any 429 and waits exactly, then continues (never skips/stops early).
@@ -178,5 +178,5 @@ jobs:
       - name: 📊 Summary
         run: |
           echo "### 🌙 AI Nightly Enrichment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Model:** \`llama-3.1-8b-instant\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Model:** \`llama-3.3-70b-versatile\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Time (IST):** $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" >> $GITHUB_STEP_SUMMARY

@@ -21,7 +21,6 @@ export const config = { runtime: 'edge' };
 const MODEL_FALLBACK_CHAIN = [
   'llama-3.3-70b-versatile',
   'openai/gpt-oss-120b',
-  'llama-3.1-8b-instant',
   'openai/gpt-oss-20b',
 ];
 

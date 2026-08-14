@@ -20,7 +20,7 @@ from hashlib import md5
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
-MODEL        = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+MODEL        = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "3")))
 DELAY_SEC    = 60.0 / SAFE_RPM                    # 20s at 3 RPM
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "800"))
