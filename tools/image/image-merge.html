@@ -419,12 +419,7 @@
   <div class="card">
     <h3>⚙️ Options</h3>
     <div class="action-row">
-      <button class="btn-primary" id="process-btn"><span>⚙️</span> Merge!</button>
       <button class="btn-secondary" id="reset-btn">↺ Reset</button>
-    </div>
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
-      <div class="progress-msg" id="pmsg">Processing...</div>
     </div>
   </div>
 
@@ -484,11 +479,18 @@
         <button type="button" class="tkb-p" data-kb="500" style="padding:3px 10px;border:1px solid #cbd5e1;border-radius:20px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:700">500 KB</button>
       </div>
       <input type="range" id="tkbRange" min="5" max="2000" value="50" style="display:none">
+      <div class="action-row" style="margin-top:14px">
+        <button class="btn-primary" id="process-btn"><span>⬇️</span> Download JPG</button>
+      </div>
+      <p style="font-size:.72rem;color:#94a3b8;margin-top:6px">Is button pe click karte hi image process hokar seedha download ho jayegi.</p>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar" id="pbar"></div></div>
+        <div class="progress-msg" id="pmsg">Processing...</div>
+      </div>
       <div class="result-card" id="result-card" style="margin-top:14px">
         <div class="result-ok">✅ Successfully Merged!</div>
         <div class="stat-row" id="stat-row"></div>
         <p id="fmt-note" style="display:none;font-size:.74rem;color:#b45309;background:#fef3c7;border-radius:8px;padding:8px 10px;margin-bottom:10px">⚠️</p>
-        <button class="btn-dl" id="dl-btn">⬇️ Download JPG</button>
       </div>
     </div>
 
@@ -1415,8 +1417,8 @@
   // which can differ from the selection when KB-compression forces a
   // different format).
   function updateDlBtnLabel(){
-    var dl=G('dl-btn');
-    if(dl)dl.textContent='⬇️ Download '+(G('fmt').value||'jpg').toUpperCase();
+    var pb=G('process-btn');
+    if(pb)pb.innerHTML='<span>⬇️</span> Download '+(G('fmt').value||'jpg').toUpperCase();
   }
   updateDlBtnLabel();
 
@@ -1444,8 +1446,10 @@
       var noteEl=G('fmt-note');
       if(out.note){noteEl.textContent='⚠️ '+out.note;noteEl.style.display='block';}else{noteEl.style.display='none';}
       var rc=G('result-card');rc.classList.add('show');
-      var dl=G('dl-btn');dl.textContent='⬇️ Download '+out.ext.toUpperCase();
-      dl.onclick=function(){var a=document.createElement('a');a.href=url;a.download='merged-image.'+out.ext;a.click();};
+      var doDownload=function(){var a=document.createElement('a');a.href=url;a.download='merged-image.'+out.ext;a.click();};
+      // Process button click hi seedha download bhi kar deta hai — alag se
+      // "Download" button dabane ki zaroorat khatam.
+      doDownload();
       setTimeout(function(){pw.style.display='none';},500);
     }catch(err){
       pw.style.display='none';
