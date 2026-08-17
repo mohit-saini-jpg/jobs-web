@@ -717,20 +717,21 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
         </select>
       </div>
       <div class="adj-group" style="margin-top:16px">
-        <div class="adj-label"><span id="scAmountLabel">Reds Kam Karein</span> <span id="scAmountVal">0%</span></div>
-        <input type="range" id="scAmountRange" min="0" max="100" value="0" oninput="updateSelColor()">
+        <div class="adj-label"><span id="scAmountLabel">Reds</span> <span id="scAmountVal">0%</span></div>
+        <input type="range" id="scAmountRange" min="-100" max="100" value="0" oninput="updateSelColor()">
         <div class="adj-presets">
+          <button class="preset-btn" type="button" onclick="setScAmount(-100)">Poora Kam</button>
+          <button class="preset-btn" type="button" onclick="setScAmount(-35)">Halka Kam</button>
           <button class="preset-btn" type="button" onclick="setScAmount(0)">Off</button>
-          <button class="preset-btn" type="button" onclick="setScAmount(35)">Halka</button>
-          <button class="preset-btn" type="button" onclick="setScAmount(70)">Medium</button>
-          <button class="preset-btn" type="button" onclick="setScAmount(100)">Poora Kam</button>
+          <button class="preset-btn" type="button" onclick="setScAmount(35)">Halka Zyada</button>
+          <button class="preset-btn" type="button" onclick="setScAmount(100)">Poora Zyada</button>
         </div>
       </div>
       <div class="adj-presets" style="margin-top:14px">
         <button class="preset-btn" type="button" onclick="resetSelColorCurrent()">Is Color ko Reset Karein</button>
         <button class="preset-btn" type="button" onclick="resetSelColorAll()">Sab Selective Colors Reset Karein</button>
       </div>
-      <div class="sc-hint">💡 Dropdown se woh color chunein jise photo se kam karna hai — jaise chehre ka lalpan kam karne ke liye <b>Reds</b> chunein. Slider ko jitna daayein (right) le jaayenge, photo mein <b>sirf wahi selected color utna hi kam</b> hota jayega — baaki sab colors (background, kapde, waghera) bilkul unchanged rahenge. <b>Whites/Neutrals/Blacks</b> chunkar overall highlights/midtones/shadows ko bhi halka control kiya ja sakta hai.</div>
+      <div class="sc-hint">💡 Dropdown se woh color chunein jise adjust karna hai — jaise chehre ka lalpan control karne ke liye <b>Reds</b> chunein. Slider ke <b>center (0%)</b> se point ko <b>left</b> le jaane par woh color <b>kam</b> hoga, <b>right</b> le jaane par <b>zyada/gehra</b> hoga — <b>sirf wahi selected color</b> badlega, baaki sab colors (background, kapde, waghera) bilkul unchanged rahenge. <b>Whites/Neutrals/Blacks</b> chunkar overall highlights/midtones/shadows ko bhi is tarah control kiya ja sakta hai.</div>
     </div>
   </div>
 
@@ -2204,19 +2205,20 @@ function hslToRgb(h,s,l){
 var SC_HUE_BASED={reds:1,yellows:1,greens:1,cyans:1,blues:1,magentas:1};
 function hasActiveSelectiveColor(){
   for(var i=0;i<SC_RANGES.length;i++){
-    if((S.selectiveColor[SC_RANGES[i]].amount||0)>0)return true;
+    if((S.selectiveColor[SC_RANGES[i]].amount||0)!==0)return true;
   }
   return false;
 }
-// Directly reduces ONLY the selected color from the photo: for every pixel,
-// it works out how strongly that pixel belongs to the chosen range (e.g.
-// "Reds" — skin tone) and pulls its saturation toward gray by that amount.
-// Pixels that don't match the selected color/tone (weight ~0) are left
-// completely untouched — so "Reds kam karo" only fades the red areas,
-// nothing else in the photo shifts.
+// Adjusts ONLY the selected color from the photo, in both directions: for
+// every pixel, it works out how strongly that pixel belongs to the chosen
+// range (e.g. "Reds" — skin tone). Slider LEFT of center (negative %)
+// fades that color toward gray (kam); RIGHT of center (positive %) makes
+// it richer/more saturated (zyada). Pixels that don't match the selected
+// color/tone (weight ~0) are left completely untouched — so adjusting
+// "Reds" only changes red areas, nothing else in the photo shifts.
 function applySelectiveColor(canvas){
   if(!hasActiveSelectiveColor())return;
-  var active=SC_RANGES.map(function(name){return {name:name,amt:(S.selectiveColor[name].amount||0)/100};}).filter(function(o){return o.amt>0;});
+  var active=SC_RANGES.map(function(name){return {name:name,amt:(S.selectiveColor[name].amount||0)/100};}).filter(function(o){return o.amt!==0;});
   var w=canvas.width,h=canvas.height;
   var ctx=canvas.getContext('2d');
   var imgData=ctx.getImageData(0,0,w,h);
@@ -2226,18 +2228,19 @@ function applySelectiveColor(canvas){
     var hsl=rgbToHsl(r,g,b),hue=hsl[0],sat=hsl[1],light=hsl[2];
     var changed=false;
     for(var ai=0;ai<active.length;ai++){
-      var name=active[ai].name,amt=active[ai].amt;
+      var name=active[ai].name,amt=active[ai].amt; // -1 (poora kam) .. +1 (poora zyada)
       var weight=scRangeWeight(name,hue,sat,light);
       if(weight<=0.01)continue;
-      var reduce=weight*amt;
-      if(SC_HUE_BASED[name]){
-        sat=sat*(1-reduce); // fade that specific hue toward gray
+      var eff=weight*amt; // negative = kam, positive = zyada
+      if(SC_HUE_BASED[name]||name==='neutrals'){
+        if(eff>=0)sat=sat+(1-sat)*eff;   // zyada: push toward more saturated
+        else sat=sat*(1+eff);            // kam: fade toward gray
       }else if(name==='whites'){
-        light=light-light*reduce*0.35; // tone down bright/highlight areas
+        if(eff>=0)light=light+(1-light)*eff*0.5; // zyada: brighten highlights more
+        else light=light+light*eff*0.5;           // kam: tone highlights down
       }else if(name==='blacks'){
-        light=light+(1-light)*reduce*0.35; // lift dark/shadow areas
-      }else if(name==='neutrals'){
-        sat=sat*(1-reduce);
+        if(eff>=0)light=light*(1-eff*0.5);         // zyada: darken shadows more
+        else light=light+(1-light)*(-eff)*0.5;     // kam: lift shadows (lighter)
       }
       changed=true;
     }
@@ -2248,16 +2251,21 @@ function applySelectiveColor(canvas){
   }
   ctx.putImageData(imgData,0,0);
 }
+function scAmountLabelText(amt){
+  if(amt===0)return '0%';
+  return (amt>0?'+':'')+amt+'% ('+(amt>0?'Zyada':'Kam')+')';
+}
 function onScColorChange(){
   var sel=document.getElementById('scColorSelect');
   var name=sel.value;
   var v=S.selectiveColor[name];
-  document.getElementById('scAmountRange').value=v.amount||0;
-  document.getElementById('scAmountVal').textContent=(v.amount||0)+'%';
+  var amt=v.amount||0;
+  document.getElementById('scAmountRange').value=amt;
+  document.getElementById('scAmountVal').textContent=scAmountLabelText(amt);
   document.getElementById('scSwatch').style.background=SC_SWATCH_COLORS[name];
   var fullLabel=sel.selectedOptions[0].textContent;
   var shortLabel=fullLabel.split('—')[0].trim();
-  document.getElementById('scAmountLabel').textContent=shortLabel+' Kam Karein';
+  document.getElementById('scAmountLabel').textContent=shortLabel;
 }
 function setScAmount(v){
   document.getElementById('scAmountRange').value=v;
@@ -2267,7 +2275,7 @@ function updateSelColor(){
   var name=document.getElementById('scColorSelect').value;
   var amt=parseInt(document.getElementById('scAmountRange').value,10)||0;
   S.selectiveColor[name]={amount:amt};
-  document.getElementById('scAmountVal').textContent=amt+'%';
+  document.getElementById('scAmountVal').textContent=scAmountLabelText(amt);
   renderAdjPreview();
 }
 function resetSelColorCurrent(){
