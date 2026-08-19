@@ -324,6 +324,8 @@ INTENT_FIELDS = {
 PROMPT_TEMPLATE = """\
 You are a veteran Sarkari Naukri journalist writing for Indian government job aspirants.
 Write in natural Hinglish (Hindi words in English script + English terms mixed naturally).
+Never use an em dash (—) anywhere in the output. Use a comma, colon, period, or a new
+sentence instead.
 
 This page is about: {intent_label}
 
@@ -518,7 +520,7 @@ INTENT_HEADINGS = {
     },
     "answerkey": {
         "ai_who_should_apply":     "Who Should Check {t}",
-        "ai_preparation_tips":     "How To Raise Objection — {t}",
+        "ai_preparation_tips":     "How To Raise Objection: {t}",
         "ai_salary_insights":      "{t} Marking Scheme",
         "ai_job_profile_analysis": "{t} Expected Cutoff",
         "ai_selection_strategy":   "{t}: What To Do Next",
@@ -538,7 +540,7 @@ INTENT_HEADINGS = {
         "ai_selection_strategy":   "{t} Admission Strategy",
     },
     "scheme": {
-        "ai_who_should_apply":     "Who Is Eligible — {t}",
+        "ai_who_should_apply":     "Who Is Eligible: {t}",
         "ai_preparation_tips":     "{t} Application Process",
         "ai_salary_insights":      "{t} Benefits Details",
         "ai_job_profile_analysis": "How {t} Works",
