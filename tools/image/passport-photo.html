@@ -216,12 +216,10 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
    basis here it was wrapping to a stacked layout for most of that range.
    Reducing it to 280px each (280+280+18=578px) keeps the two columns
    reliably side-by-side -- photo left, controls right, natural DOM order,
-   no reordering. Sticky is dropped below 820px: pinning the photo in
-   place while only the controls column scrolls past it read as "the page
-   isn't scrolling". */
+   no reordering. Sticky stays on (same as desktop): the photo pins in
+   place while the taller controls column scrolls past it. */
 @media(max-width:820px){
   .adjust-preview-col,.adjust-controls-col{flex-basis:280px}
-  .adjust-preview-col{position:static}
 }
 .adj-grid{display:grid;grid-template-columns:1fr;gap:18px}
 .adj-group{}
