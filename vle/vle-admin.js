@@ -66,6 +66,34 @@
     renderPending(res.data || []);
   }
 
+  // ── Site Settings: Form Filling Requests on/off switch ──────────────────
+  // Backed by site_settings (supabase/site_settings_migration.sql). Reads
+  // once on boot, then writes straight through on every flip -- no separate
+  // "Save" button, since a toggle that visually shows "on" but silently
+  // hasn't saved yet is exactly the kind of surprise this control shouldn't
+  // have (a request slipping through after the admin thought it was off).
+  async function loadJfwToggle() {
+    var toggle = $('jfwToggle');
+    var res = await client.from('site_settings').select('value_bool').eq('key', 'jfw_enabled').maybeSingle();
+    toggle.checked = !res.data || res.data.value_bool !== false;
+    toggle.disabled = false;
+  }
+
+  async function onJfwToggleChange() {
+    var toggle = $('jfwToggle');
+    var msg = $('jfwToggleMsg');
+    var next = toggle.checked;
+    toggle.disabled = true;
+    var res = await client.from('site_settings').update({ value_bool: next }).eq('key', 'jfw_enabled');
+    toggle.disabled = false;
+    if (res.error) {
+      toggle.checked = !next; // revert the visual switch to match reality
+      showMsg(msg, 'Save nahi hua: ' + res.error.message, false);
+      return;
+    }
+    showMsg(msg, next ? 'Form Filling Requests ON kar diye gaye.' : 'Form Filling Requests OFF kar diye gaye.', true);
+  }
+
   async function setStatus(itemEl, approve) {
     var id = itemEl.getAttribute('data-id');
     if (!approve && !confirm('Ye VLE signup reject/remove kar dein?')) return;
@@ -85,6 +113,7 @@
     $('vleAdminLoginScreen').style.display = 'none';
     $('vleAdminApp').style.display = '';
     loadPending();
+    loadJfwToggle();
   }
 
   async function boot() {
@@ -119,6 +148,8 @@
     if (client) await client.auth.signOut();
     location.href = '/vle/admin/';
   });
+
+  $('jfwToggle').addEventListener('change', onJfwToggleChange);
 
   boot();
 })();

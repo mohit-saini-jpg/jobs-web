@@ -26,14 +26,31 @@
 // reuse (protected by the table's own Row Level Security policy, which only
 // allows anonymous INSERT, not SELECT/UPDATE/DELETE).
 
-const config = require('../config.json');
-
 const SUPABASE_URL = 'https://cykkclkfimmqbahanidg.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a2tjbGtmaW1tcWJhaGFuaWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzYxODAsImV4cCI6MjA4MTY1MjE4MH0.iZEnetgYn7j0ltJyjhxUGZ3nCT7YMxGP3_Qd-agI1C0';
 const TABLE = 'job_form_requests';
 
 function isValidPhone(v) {
   return typeof v === 'string' && /^[6-9][0-9]{9}$/.test(v.trim());
+}
+
+// Site-wide kill switch, flippable from /vle/admin/ (see
+// supabase/site_settings_migration.sql + api/jfw-status.js, which the
+// client-side widget checks). Fails open (allows the submit) on any error --
+// this endpoint should only ever actually BLOCK on an explicit off switch,
+// never because Supabase had a bad moment.
+async function jfwEnabled() {
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/site_settings?key=eq.jfw_enabled&select=value_bool`,
+      { headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` } }
+    );
+    if (!r.ok) return true;
+    const rows = await r.json();
+    return !rows.length || rows[0].value_bool !== false;
+  } catch (e) {
+    return true;
+  }
 }
 
 async function notifyTelegram(lead) {
@@ -69,9 +86,9 @@ module.exports = async function handler(req, res) {
   }
 
   // Real enforcement of the site-wide kill switch -- job-form-widget.js
-  // hides the form when this is false, but that alone doesn't stop someone
+  // hides the form when this is off, but that alone doesn't stop someone
   // from POSTing here directly, so check it here too.
-  if (config.jfw_enabled === false) {
+  if (!(await jfwEnabled())) {
     res.status(403).json({ error: 'form filling requests are temporarily disabled' });
     return;
   }

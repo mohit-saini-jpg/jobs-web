@@ -119,19 +119,19 @@
     });
   }
 
-  // Site-wide kill switch: toggle "jfw_enabled" in /config.json to turn the
-  // widget off everywhere without editing every page. Fails OPEN (renders
-  // anyway) if the fetch itself fails, so a transient network/config issue
-  // never silently kills a working feature -- only an explicit `false` in
-  // config.json disables it. The server-side /api/submit-lead check is the
-  // real enforcement; this is just so the form doesn't show when off.
+  // Site-wide kill switch, flippable from /vle/admin/ (no code push needed) --
+  // see api/jfw-status.js + supabase/site_settings_migration.sql. Fails OPEN
+  // (renders anyway) if the check itself fails, so a transient network issue
+  // never silently kills a working feature -- only an explicit off switch
+  // does. The server-side /api/submit-lead check is the real enforcement;
+  // this is just so the form doesn't show when off.
   function init() {
     var mount = document.getElementById('tsj-job-form-widget');
     if (!mount) return;
-    fetch('/config.json', { cache: 'no-store' })
+    fetch('/api/jfw-status', { cache: 'no-store' })
       .then(function (res) { return res.json(); })
-      .then(function (cfg) {
-        if (cfg && cfg.jfw_enabled === false) return;
+      .then(function (status) {
+        if (status && status.enabled === false) return;
         render(mount);
       })
       .catch(function () { render(mount); });
