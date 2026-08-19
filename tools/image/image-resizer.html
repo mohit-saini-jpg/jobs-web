@@ -159,6 +159,15 @@
     .tool-footer a:hover { color: white; }
     .warn-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 0.82rem; color: #92400E; }
     .info-box { background: var(--mist); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+    .crop-flex-wrap { display: flex; gap: 18px; align-items: flex-start; }
+    .crop-flex-left { flex: 1 1 auto; min-width: 0; }
+    .adj-panel { flex: 0 0 220px; background: #161618; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .adj-group { display: flex; flex-direction: column; gap: 6px; }
+    .adj-label { display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: .76rem; font-weight: 600; color: #9aa0a6; letter-spacing: .02em; }
+    .adj-label span { color: #7aa2ff; font-weight: 700; }
+    .adj-panel input[type=range] { width: 100%; accent-color: #7aa2ff; }
+    .adj-panel .btn-secondary { background: #26262a; border-color: #34343a; color: #e5e7eb; }
+    .adj-panel .btn-secondary:hover { background: #313136; }
     /* Tablet-style layout is kept on phones too (multi-column grids instead
        of collapsing to a single stacked column) -- real device width is
        used throughout (no forced-viewport zoom-out), so text stays
@@ -173,6 +182,10 @@
       .form-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
       .stat-row { flex-direction: column; }
+    }
+    @media(max-width:820px){
+      .crop-flex-wrap { flex-direction: column; }
+      .adj-panel { flex-basis: auto; width: 100%; }
     }
 </style>
 
@@ -269,25 +282,56 @@
 
   <div class="card" id="crop-card" style="display:none">
     <h3>✂️ Crop Karein</h3>
-    <div id="cropImgWrap" style="max-height:440px;background:#0f172a;border-radius:10px;overflow:visible">
-      <img id="cropImg" style="max-width:100%;display:block">
+    <div class="crop-flex-wrap">
+      <div class="crop-flex-left">
+        <div id="cropImgWrap" style="max-height:440px;background:#0f172a;border-radius:10px;overflow:visible">
+          <img id="cropImg" style="max-width:100%;display:block">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
+          <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
+          <button type="button" class="btn-secondary" id="cropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+          <button type="button" class="btn-secondary" id="cropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+          <button type="button" class="btn-secondary" id="cropRotL" title="Rotate Left 90°"><i class="fa-solid fa-rotate-left"></i></button>
+          <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+        <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <label for="cropFineRot" style="font-size:.85rem;font-weight:600"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
+          <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;accent-color:var(--brand)">
+          <span id="cropFineRotVal" style="font-size:.82rem;font-weight:700;color:var(--brand);min-width:38px;text-align:right">0°</span>
+        </div>
+        <p id="quadRotNote" style="display:none;font-size:.76rem;color:#94a3b8;margin:8px 0 0"><i class="fa-solid fa-circle-info"></i> Free Select mode mein seedha karne ke liye kisi bhi corner ko tilt karke drag karein — poora area khud seedha ho jayega.</p>
+        <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — zoom se precise selection aur rotate se angle theek karein. Process karte hi sirf cropped part hi resize/save hoga.</p>
+      </div>
+      <div class="adj-panel">
+        <div class="adj-group">
+          <div class="adj-label">Brightness <span id="adjBrVal">100%</span></div>
+          <input type="range" id="adjBrRange" min="50" max="150" value="100" oninput="updateResizerAdjust()">
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Contrast <span id="adjConVal">100%</span></div>
+          <input type="range" id="adjConRange" min="50" max="180" value="100" oninput="updateResizerAdjust()">
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Saturation <span id="adjSatVal">100%</span></div>
+          <input type="range" id="adjSatRange" min="0" max="200" value="100" oninput="updateResizerAdjust()">
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Sharpen <span id="adjSharpVal">0%</span></div>
+          <input type="range" id="adjSharpRange" min="0" max="100" value="0" oninput="updateResizerAdjust()">
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Text Highlight <span id="adjTextBoostVal">0%</span></div>
+          <input type="range" id="adjTextBoostRange" min="0" max="100" value="0" oninput="updateResizerAdjust()">
+        </div>
+        <div class="adj-group">
+          <div class="adj-label">Shadow Remove <span id="adjShadowVal">0%</span></div>
+          <input type="range" id="adjShadowRange" min="0" max="100" value="0" oninput="updateResizerAdjust()">
+        </div>
+        <button type="button" class="btn-secondary" id="adjResetBtn" style="width:100%">↺ Reset Adjustments</button>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
-      <button type="button" class="btn-secondary" id="cropReset">↺ Reset Crop</button>
-      <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer"><input type="checkbox" id="cropSquare" style="width:auto;margin:0"> Square (1:1)</label>
-      <button type="button" class="btn-secondary" id="freeSelBtn"><i class="fa-solid fa-lock-open"></i> Free Select (kisi bhi angle)</button>
-      <button type="button" class="btn-secondary" id="cropZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-      <button type="button" class="btn-secondary" id="cropZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-      <button type="button" class="btn-secondary" id="cropRotL" title="Rotate Left 90°"><i class="fa-solid fa-rotate-left"></i></button>
-      <button type="button" class="btn-secondary" id="cropRotR" title="Rotate Right 90°"><i class="fa-solid fa-rotate-right"></i></button>
-    </div>
-    <div id="fineRotRow" style="display:flex;align-items:center;gap:10px;margin-top:12px">
-      <label for="cropFineRot" style="font-size:.85rem;font-weight:600"><i class="fa-solid fa-compass"></i> Sidha Karein (Fine Rotate)</label>
-      <input type="range" id="cropFineRot" min="-45" max="45" value="0" step="0.5" style="flex:1;accent-color:var(--brand)">
-      <span id="cropFineRotVal" style="font-size:.82rem;font-weight:700;color:var(--brand);min-width:38px;text-align:right">0°</span>
-    </div>
-    <p id="quadRotNote" style="display:none;font-size:.76rem;color:#94a3b8;margin:8px 0 0"><i class="fa-solid fa-circle-info"></i> Free Select mode mein seedha karne ke liye kisi bhi corner ko tilt karke drag karein — poora area khud seedha ho jayega.</p>
-    <p style="font-size:.76rem;color:#94a3b8;margin:8px 0 0">Box ko drag / resize karke area choose karein — zoom se precise selection aur rotate se angle theek karein. Process karte hi sirf cropped part hi resize/save hoga.</p>
   </div>
 
   <div class="card">
@@ -898,6 +942,7 @@
     setFreeSelBtnState(false);
     syncRotUIForMode(false);
     resetCropRotationState();
+    resetResizerAdjustSliders();
     if(cropperInst){cropperInst.destroy();cropperInst=null;}
     img.onload=function(){
       // Wait a frame for the browser to actually LAY OUT the crop-card that
@@ -942,6 +987,113 @@
     }
   }
 
+  var adjBrightness=100, adjContrast=100, adjSaturation=100, adjSharpen=0, adjTextBoost=0, adjShadowRemove=0;
+  function updateResizerAdjust(){
+    adjBrightness=parseInt(G('adjBrRange').value);
+    adjContrast=parseInt(G('adjConRange').value);
+    adjSaturation=parseInt(G('adjSatRange').value);
+    adjSharpen=parseInt(G('adjSharpRange').value);
+    adjTextBoost=parseInt(G('adjTextBoostRange').value);
+    adjShadowRemove=parseInt(G('adjShadowRange').value);
+    G('adjBrVal').textContent=adjBrightness+'%';
+    G('adjConVal').textContent=adjContrast+'%';
+    G('adjSatVal').textContent=adjSaturation+'%';
+    G('adjSharpVal').textContent=adjSharpen+'%';
+    G('adjTextBoostVal').textContent=adjTextBoost+'%';
+    G('adjShadowVal').textContent=adjShadowRemove+'%';
+    var img=G('cropImg');
+    if(img)img.style.filter='brightness('+adjBrightness+'%) contrast('+adjContrast+'%) saturate('+adjSaturation+'%)';
+  }
+  function resetResizerAdjustSliders(){
+    G('adjBrRange').value=100;G('adjConRange').value=100;G('adjSatRange').value=100;
+    G('adjSharpRange').value=0;G('adjTextBoostRange').value=0;G('adjShadowRange').value=0;
+    updateResizerAdjust();
+  }
+  /* ---- Ported verbatim from document-scanner.html's Adjust panel ---- */
+  function applyShadowRemove(canvas,strength){
+    var amt=Math.min(1,Math.max(0,strength/100));
+    if(!amt)return;
+    var w=canvas.width,h=canvas.height;
+    var ctx=canvas.getContext('2d');
+    var srcData=ctx.getImageData(0,0,w,h);
+    var sw=Math.max(1,Math.round(w/24)),sh=Math.max(1,Math.round(h/24));
+    var small=document.createElement('canvas');
+    small.width=sw;small.height=sh;
+    small.getContext('2d').drawImage(canvas,0,0,sw,sh);
+    var bgCanvas=document.createElement('canvas');
+    bgCanvas.width=w;bgCanvas.height=h;
+    var bgCtx=bgCanvas.getContext('2d');
+    bgCtx.imageSmoothingEnabled=true;bgCtx.imageSmoothingQuality='high';
+    bgCtx.drawImage(small,0,0,w,h);
+    var bgData=bgCtx.getImageData(0,0,w,h);
+    var sd=srcData.data,bd=bgData.data;
+    var CONTRAST=1.22;
+    for(var i=0;i<sd.length;i+=4){
+      for(var c=0;c<3;c++){
+        var bgVal=bd[i+c]<15?15:bd[i+c];
+        var norm=(sd[i+c]/bgVal)*255;
+        norm=(norm-255)*CONTRAST+255;
+        norm=sd[i+c]*(1-amt)+norm*amt;
+        sd[i+c]=norm<0?0:(norm>255?255:norm);
+      }
+    }
+    ctx.putImageData(srcData,0,0);
+  }
+  function applySharpen(canvas,strength){
+    var amt=Math.min(1,Math.max(0,strength/100))*1.6;
+    if(!amt)return;
+    var w=canvas.width,h=canvas.height;
+    var ctx=canvas.getContext('2d');
+    var blurPx=Math.max(1,Math.round(Math.min(w,h)*0.004));
+    var blurCanvas=document.createElement('canvas');
+    blurCanvas.width=w;blurCanvas.height=h;
+    var bctx=blurCanvas.getContext('2d');
+    bctx.filter='blur('+blurPx+'px)';
+    bctx.drawImage(canvas,0,0);
+    bctx.filter='none';
+    var orig=ctx.getImageData(0,0,w,h);
+    var blur=bctx.getImageData(0,0,w,h);
+    var od=orig.data,bd=blur.data;
+    for(var i=0;i<od.length;i+=4){
+      for(var c=0;c<3;c++){
+        var v=od[i+c]+(od[i+c]-bd[i+c])*amt;
+        od[i+c]=v<0?0:(v>255?255:v);
+      }
+    }
+    ctx.putImageData(orig,0,0);
+  }
+  function applyTextBoost(canvas,strength){
+    var amt=Math.min(1,Math.max(0,strength/100));
+    if(!amt)return;
+    var w=canvas.width,h=canvas.height;
+    var ctx=canvas.getContext('2d');
+    var data=ctx.getImageData(0,0,w,h);
+    var d=data.data;
+    var THRESH=170;
+    for(var i=0;i<d.length;i+=4){
+      var lum=d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
+      if(lum<THRESH){
+        var factor=1-amt*0.55*(1-lum/THRESH);
+        d[i]=d[i]*factor;
+        d[i+1]=d[i+1]*factor;
+        d[i+2]=d[i+2]*factor;
+      }
+    }
+    ctx.putImageData(data,0,0);
+  }
+  function applyAdjustmentsToCanvas(src,w,h){
+    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    var ctx=cv.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.filter='brightness('+adjBrightness+'%) contrast('+adjContrast+'%) saturate('+adjSaturation+'%)';
+    ctx.drawImage(src,0,0,w,h);
+    ctx.filter='none';
+    if(adjShadowRemove)applyShadowRemove(cv,adjShadowRemove);
+    if(adjSharpen)applySharpen(cv,adjSharpen);
+    if(adjTextBoost)applyTextBoost(cv,adjTextBoost);
+    return cv;
+  }
+
   async function runProcess(){
     var inp=G('main-file');
     if(!inp||!inp.files[0]){alert('Pehle image select karein!');return;}
@@ -960,6 +1112,10 @@
       if(G('bgRemove')&&G('bgRemove').checked){
         bar.style.width='20%';G('pmsg').textContent='Background remove ho raha hai (AI, pehli baar ~10-15s)...';
         renderSrc=await removeBgToCanvas(renderSrc);sw=renderSrc.width;sh=renderSrc.height;
+      }
+      if(adjBrightness!==100||adjContrast!==100||adjSaturation!==100||adjSharpen||adjTextBoost||adjShadowRemove){
+        bar.style.width='25%';G('pmsg').textContent='Adjustments apply ho rahe hain...';
+        renderSrc=applyAdjustmentsToCanvas(renderSrc,sw,sh);
       }
       var cv=document.createElement('canvas'),ctx=cv.getContext('2d');
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -1115,6 +1271,7 @@
     if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){rot90=((rot90-90)%360+360)%360;applyCropRotation();});
     if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){rot90=(rot90+90)%360;applyCropRotation();});
     if(G('cropFineRot'))G('cropFineRot').addEventListener('input',function(){rotFine=parseFloat(this.value);G('cropFineRotVal').textContent=rotFine+'°';applyCropRotation();});
+    if(G('adjResetBtn'))G('adjResetBtn').addEventListener('click',resetResizerAdjustSliders);
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
       G('main-file').value='';srcImg=null;natW=0;natH=0;if(cropperInst){cropperInst.destroy();cropperInst=null;}if(G('crop-card'))G('crop-card').style.display='none';
