@@ -210,14 +210,17 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .adjust-layout{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
 .adjust-preview-col{flex:1 1 340px;min-width:280px;position:sticky;top:120px}
 .adjust-controls-col{flex:1 1 340px;min-width:280px;margin-bottom:0}
-/* On mobile, keeping both columns side-by-side (even at tools-mobile-zoom.js's
-   boosted effective width) squeezed the controls column too narrow for its
-   long list of sliders/filters, which also broke normal page scrolling
-   through it. Stack to a single column instead: photo on top (in its
-   natural DOM position), controls below -- full width, normal scroll. */
+/* tools-mobile-zoom.js keeps real phones at ~650-800px effective width --
+   flex-wrap's line-break check uses the UNSHRUNK basis sum (2x340px+18px
+   gap=698px), not the post-shrink/min-width sum, so without reducing the
+   basis here it was wrapping to a stacked layout for most of that range.
+   Reducing it to 280px each (280+280+18=578px) keeps the two columns
+   reliably side-by-side -- photo left, controls right, natural DOM order,
+   no reordering. Sticky is dropped below 820px: pinning the photo in
+   place while only the controls column scrolls past it read as "the page
+   isn't scrolling". */
 @media(max-width:820px){
-  .adjust-layout{flex-direction:column}
-  .adjust-preview-col,.adjust-controls-col{flex-basis:auto;min-width:0;width:100%}
+  .adjust-preview-col,.adjust-controls-col{flex-basis:280px}
   .adjust-preview-col{position:static}
 }
 .adj-grid{display:grid;grid-template-columns:1fr;gap:18px}
