@@ -64,7 +64,7 @@
       HARYANA_DISTRICTS.map(function (d) { return '<option value="' + escapeHtml(d) + '">' + escapeHtml(d) + '</option>'; }).join('') +
       '</select></div>' +
       '<button type="submit" class="jfw-btn" id="jfwSubmitBtn">📩 Request Form Filling (WhatsApp)</button>' +
-      '<div class="jfw-note">🔒 आपकी जानकारी सुरक्षित है — सिर्फ़ CSC Partner Team आपसे संपर्क करेगी</div>' +
+      '<div class="jfw-note">🔒 आपकी जानकारी सुरक्षित है: सिर्फ़ CSC Partner Team आपसे संपर्क करेगी</div>' +
       '<div class="jfw-msg" id="jfwMsg"></div>' +
       '</form>' +
       '</div>';
@@ -119,10 +119,22 @@
     });
   }
 
+  // Site-wide kill switch: toggle "jfw_enabled" in /config.json to turn the
+  // widget off everywhere without editing every page. Fails OPEN (renders
+  // anyway) if the fetch itself fails, so a transient network/config issue
+  // never silently kills a working feature -- only an explicit `false` in
+  // config.json disables it. The server-side /api/submit-lead check is the
+  // real enforcement; this is just so the form doesn't show when off.
   function init() {
     var mount = document.getElementById('tsj-job-form-widget');
     if (!mount) return;
-    render(mount);
+    fetch('/config.json', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (cfg) {
+        if (cfg && cfg.jfw_enabled === false) return;
+        render(mount);
+      })
+      .catch(function () { render(mount); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

@@ -26,6 +26,8 @@
 // reuse (protected by the table's own Row Level Security policy, which only
 // allows anonymous INSERT, not SELECT/UPDATE/DELETE).
 
+const config = require('../config.json');
+
 const SUPABASE_URL = 'https://cykkclkfimmqbahanidg.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a2tjbGtmaW1tcWJhaGFuaWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzYxODAsImV4cCI6MjA4MTY1MjE4MH0.iZEnetgYn7j0ltJyjhxUGZ3nCT7YMxGP3_Qd-agI1C0';
 const TABLE = 'job_form_requests';
@@ -63,6 +65,14 @@ async function notifyTelegram(lead) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'method not allowed' });
+    return;
+  }
+
+  // Real enforcement of the site-wide kill switch -- job-form-widget.js
+  // hides the form when this is false, but that alone doesn't stop someone
+  // from POSTing here directly, so check it here too.
+  if (config.jfw_enabled === false) {
+    res.status(403).json({ error: 'form filling requests are temporarily disabled' });
     return;
   }
 
