@@ -210,21 +210,15 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 .adjust-layout{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
 .adjust-preview-col{flex:1 1 340px;min-width:280px;position:sticky;top:120px}
 .adjust-controls-col{flex:1 1 340px;min-width:280px;margin-bottom:0}
-/* On mobile (tools-mobile-zoom.js keeps real phones at ~650-800px
-   effective width, wide enough for this side-by-side layout to still
-   fit), controls go on the left of the preview instead of the right --
-   requested so the controls a user is actively tapping sit closer to
-   their thumb without covering the photo they're looking at.
-   flex-basis is also reduced here: flex-wrap's line-breaking decision
-   uses the UNSHRUNK basis sum (2x340px+18px gap=698px), not the
-   post-shrink/min-width sum, so it was wrapping to a stacked layout
-   any time available width fell under ~698px -- which is most of the
-   650-800px zoomed range phones actually land in, defeating the
-   side-by-side layout entirely. Below 302px each (620px total) fits
-   comfortably within the narrowest zoomed width. */
+/* On mobile, keeping both columns side-by-side (even at tools-mobile-zoom.js's
+   boosted effective width) squeezed the controls column too narrow for its
+   long list of sliders/filters, which also broke normal page scrolling
+   through it. Stack to a single column instead: photo on top (in its
+   natural DOM position), controls below -- full width, normal scroll. */
 @media(max-width:820px){
-  .adjust-controls-col{order:-1}
-  .adjust-preview-col,.adjust-controls-col{flex-basis:280px}
+  .adjust-layout{flex-direction:column}
+  .adjust-preview-col,.adjust-controls-col{flex-basis:auto;min-width:0;width:100%}
+  .adjust-preview-col{position:static}
 }
 .adj-grid{display:grid;grid-template-columns:1fr;gap:18px}
 .adj-group{}
@@ -265,9 +259,6 @@ input[type=range]{width:100%;accent-color:var(--brand);height:4px;cursor:pointer
 .btn-icon:disabled:hover{border-color:var(--line);color:var(--ink)}
 @media(max-width:420px){
   .preview-toolbar{flex-wrap:wrap;justify-content:center}
-}
-@media(max-width:760px){
-  .adjust-preview-col{position:static}
 }
 
 /* CURVES */
