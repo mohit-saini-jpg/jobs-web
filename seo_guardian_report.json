@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-19T14:08:50.801855+00:00",
+  "timestamp": "2026-08-20T01:13:16.114587+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 7603,
+  "files_scanned": 7685,
   "issues_found_by_check": {
     "ai_marker_integrity": 11,
-    "jobposting_schema": 58,
-    "sitemap_sync": 192
+    "jobposting_schema": 59,
+    "sitemap_sync": 201
   },
-  "issues_auto_fixed": 61,
+  "issues_auto_fixed": 70,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -51,6 +51,12 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
+    },
+    {
+      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
     },
     {
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
@@ -1215,7 +1221,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     121 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     122 urls [ok]"
   ],
-  "duration_sec": 31.3
+  "duration_sec": 27.6
 }
