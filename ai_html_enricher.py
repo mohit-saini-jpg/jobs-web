@@ -20,7 +20,15 @@ from hashlib import md5
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GROQ_KEY     = os.environ.get("GROQ_API_KEY", "").strip()
-MODEL        = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+# Groq periodically deprecates/decommissions models outright (llama-3.3-70b-
+# versatile was shut down 2026-08-16, same as api/chat.js's chain hit
+# earlier) -- a plain 404 from a dead model used to hard-abort the whole run.
+# call_groq() now advances to the next entry here on that specific error and
+# keeps going, instead of failing every page for the rest of the run.
+MODEL_FALLBACK_CHAIN = list(dict.fromkeys(
+    [os.environ.get("GROQ_MODEL") or "openai/gpt-oss-120b", "openai/gpt-oss-20b"]
+))
+MODEL        = MODEL_FALLBACK_CHAIN[0]
 SAFE_RPM     = max(1, int(os.environ.get("GROQ_SAFE_RPM", "3")))
 DELAY_SEC    = 60.0 / SAFE_RPM                    # 20s at 3 RPM
 DAILY_LIMIT  = int(os.environ.get("DAILY_LIMIT", "800"))
@@ -388,6 +396,13 @@ def _retry_after_secs(ex) -> float | None:
         return None
 
 
+# Single-element list (not a plain int) so call_groq can advance it in place
+# without a `global` statement -- once a model 404s as dead, every later
+# call in this same run starts on the next one straight away instead of
+# re-discovering it's dead on every single page.
+_current_model_idx = [0]
+
+
 def call_groq(facts: dict, intent: str = "job"):
     """Returns a dict on success, None on a soft failure (skip this page), or the
     RATE_LIMITED sentinel when the daily quota is genuinely exhausted."""
@@ -403,7 +418,7 @@ def call_groq(facts: dict, intent: str = "job"):
         f_who=fields["who"], f_prep=fields["prep"], f_salary=fields["salary"],
         f_profile=fields["profile"], f_strategy=fields["strategy"])
     body = {
-        "model": MODEL,
+        "model": MODEL_FALLBACK_CHAIN[_current_model_idx[0]],
         "max_tokens": 800,
         "temperature": 0.2,                          # low temp → stable, valid JSON
         "response_format": {"type": "json_object"},  # JSON mode → no more malformed replies
@@ -478,6 +493,16 @@ def call_groq(facts: dict, intent: str = "job"):
                 print("  ⏳ Token overflow — waiting 20s…")
                 time.sleep(20)
                 continue
+            if ex.code == 404 or "model_not_found" in body_err or "does not exist" in body_err.lower():
+                dead_model = body["model"]
+                if _current_model_idx[0] + 1 < len(MODEL_FALLBACK_CHAIN):
+                    _current_model_idx[0] += 1
+                    body["model"] = MODEL_FALLBACK_CHAIN[_current_model_idx[0]]
+                    print(f"  ⚠️  Model '{dead_model}' unavailable (HTTP 404, likely deprecated) "
+                          f"— switching to '{body['model']}' for the rest of this run")
+                    continue
+                print(f"  ❌ Model '{dead_model}' unavailable and no fallback left: {body_err[:160]}")
+                return None
             print(f"  ❌ HTTP {ex.code}: {body_err[:120]}")
             return None
         except Exception as ex:

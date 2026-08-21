@@ -19,7 +19,6 @@ export const config = { runtime: 'edge' };
 // falls through to the next one. Update this list from
 // https://console.groq.com/docs/models if Groq deprecates one of these.
 const MODEL_FALLBACK_CHAIN = [
-  'llama-3.3-70b-versatile',
   'openai/gpt-oss-120b',
   'openai/gpt-oss-20b',
 ];
