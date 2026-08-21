@@ -419,9 +419,17 @@ def call_groq(facts: dict, intent: str = "job"):
         f_profile=fields["profile"], f_strategy=fields["strategy"])
     body = {
         "model": MODEL_FALLBACK_CHAIN[_current_model_idx[0]],
-        "max_tokens": 800,
+        "max_tokens": 1400,
         "temperature": 0.2,                          # low temp → stable, valid JSON
         "response_format": {"type": "json_object"},  # JSON mode → no more malformed replies
+        # openai/gpt-oss-* models are reasoning models that spend part of the
+        # token budget on a hidden reasoning trace before the actual answer --
+        # at the API default ("medium") that reliably ate enough of the old
+        # 800-token budget to truncate the JSON mid-object ("Failed to
+        # validate JSON" 400s on every single call). This task is plain
+        # structured extraction, not multi-step reasoning, so "low" is both
+        # cheaper and more reliable here; max_tokens raised too as a margin.
+        "reasoning_effort": "low",
         "messages": [{"role": "user", "content": prompt}],
     }
 
@@ -492,6 +500,16 @@ def call_groq(facts: dict, intent: str = "job"):
             if ex.code == 400 and ("rate" in body_err.lower() or "token" in body_err.lower()):
                 print("  ⏳ Token overflow — waiting 20s…")
                 time.sleep(20)
+                continue
+            if ex.code == 400 and "validate json" in body_err.lower():
+                # A reasoning model occasionally still burns through the
+                # budget on a longer trace for a particular prompt even at
+                # low effort -- one deterministic retry with a bit more
+                # headroom before giving up on this page.
+                print(f"  ⚠️  Model's JSON failed validation (attempt {attempt+1}) — retrying deterministically")
+                body["temperature"] = 0.0
+                body["max_tokens"] = min(3000, body["max_tokens"] + 800)
+                time.sleep(3)
                 continue
             if ex.code == 404 or "model_not_found" in body_err or "does not exist" in body_err.lower():
                 dead_model = body["model"]

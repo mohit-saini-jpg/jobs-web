@@ -448,6 +448,12 @@ export default async function handler(request) {
           stream: true,
           temperature: 0.4,
           max_tokens: 1600,
+          // Both chain entries are openai/gpt-oss-* reasoning models -- at
+          // the API default ("medium") they spend a chunk of the response
+          // "thinking" before the first visible token streams out, which
+          // reads as extra lag on a live chat UI for what's really a
+          // straightforward Q&A task, not deep multi-step reasoning.
+          reasoning_effort: 'low',
         }),
       });
       if (!groqRes.ok || !groqRes.body) {
