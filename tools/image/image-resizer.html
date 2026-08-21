@@ -939,8 +939,55 @@
       }catch(e){}
     }
   }
+  // Cropper.js's OWN rotateTo() turns out fundamentally unreliable here:
+  // measured directly, its canvas kept centering itself using the
+  // UNROTATED image's offset even immediately after rotateTo(), and even
+  // an explicit setCanvasData({left:...}) override got silently reverted
+  // back to that same stale offset by Cropper's own internal re-render --
+  // confirmed by reading getCanvasData() synchronously right after the
+  // override call and seeing the old value again. Rather than keep
+  // fighting Cropper's rotation handling, physically rotate the SOURCE
+  // pixels via canvas -- always re-rendered fresh from the pristine
+  // srcImg, never incrementally from the previous rotation, so repeated
+  // rotating never compounds blur -- and feed Cropper a plain image that's
+  // already at the target angle. Cropper then only ever sees rotation:0
+  // from its own perspective, which is the one case it already handles
+  // correctly (same code path as the initial unrotated crop step).
+  var _rotateScheduled=false;
+  function scheduleApplyCropRotation(){
+    if(_rotateScheduled)return;
+    _rotateScheduled=true;
+    requestAnimationFrame(function(){_rotateScheduled=false;applyCropRotation();});
+  }
   function applyCropRotation(){
-    if(cropperInst)withCropBoxPreserved(function(){cropperInst.rotateTo(rot90+rotFine);});
+    if(!srcImg||(quadUI&&quadUI.isActive()))return;
+    var img=G('cropImg');
+    var targetDeg=rot90+rotFine;
+    var rad=targetDeg*Math.PI/180;
+    var boundW=Math.abs(natW*Math.cos(rad))+Math.abs(natH*Math.sin(rad));
+    var boundH=Math.abs(natW*Math.sin(rad))+Math.abs(natH*Math.cos(rad));
+    var cv=document.createElement('canvas');
+    cv.width=Math.max(1,Math.round(boundW));
+    cv.height=Math.max(1,Math.round(boundH));
+    var ctx=cv.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.translate(cv.width/2,cv.height/2);
+    ctx.rotate(rad);
+    ctx.drawImage(srcImg,-natW/2,-natH/2,natW,natH);
+    if(cropperInst){cropperInst.destroy();cropperInst=null;}
+    img.onload=function(){
+      // Same double-rAF layout wait as initCrop() -- onload can fire before
+      // the browser has actually laid out the (possibly just-resized)
+      // container, handing Cropper a stale size.
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          fitCropWrapToImage();
+          try{cropperInst=new Cropper(img,makeCropperOptions());}catch(e){}
+          _bgCache=null;
+        });
+      });
+    };
+    img.src=cv.toDataURL('image/png');
   }
   function resetCropRotationState(){
     rot90=0;rotFine=0;
@@ -982,6 +1029,13 @@
   // sides. Shrinking the wrap to the image's own rendered aspect ratio
   // (capped by the available column width and the 440px height cap) makes
   // the crop box hug the image tightly instead.
+  //
+  // #cropImg's own naturalWidth/Height are read here, which is what makes
+  // this work correctly for rotation too now that applyCropRotation()
+  // physically re-renders #cropImg's pixels to the target angle's own
+  // (already-expanded) bounding box before calling this -- by the time
+  // this runs, the "current orientation" IS the rotated one, no separate
+  // rotation-aware math needed here anymore.
   function fitCropWrapToImage(){
     var wrap=G('cropImgWrap'),img=G('cropImg');
     if(!wrap||!img||!img.naturalWidth)return;
@@ -1378,13 +1432,17 @@
     if(G('tkbRange'))G('tkbRange').addEventListener('input',function(){G('tkb').value=this.value;});
     document.querySelectorAll('.tkb-p').forEach(function(btn){btn.addEventListener('click',function(){var kb=this.getAttribute('data-kb');G('tkb').value=kb;G('tkbRange').value=Math.min(2000,+kb);document.querySelectorAll('.tkb-p').forEach(function(b){b.style.background='#fff';b.style.borderColor='#cbd5e1';b.style.color='';});this.style.background='var(--brand,#2563eb)';this.style.color='#fff';this.style.borderColor='var(--brand,#2563eb)';});});
     if(G('cropSquare'))G('cropSquare').addEventListener('change',function(){if(cropperInst){cropperInst.setAspectRatio(this.checked?1:NaN);syncSizeFromCrop();}});
-    if(G('cropReset'))G('cropReset').addEventListener('click',function(){resetCropRotationState();if(cropperInst)cropperInst.reset();if(quadUI&&quadUI.isActive()){quadUI.deactivate();var img=G('cropImg');try{cropperInst=new Cropper(img,makeCropperOptions());}catch(e){}setFreeSelBtnState(false);syncRotUIForMode(false);}});
+    if(G('cropReset'))G('cropReset').addEventListener('click',function(){
+      resetCropRotationState();
+      if(quadUI&&quadUI.isActive()){quadUI.deactivate();setFreeSelBtnState(false);syncRotUIForMode(false);}
+      applyCropRotation();
+    });
     if(G('freeSelBtn'))G('freeSelBtn').addEventListener('click',toggleFreeSelect);
     if(G('cropZoomIn'))G('cropZoomIn').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1.15);else if(cropperInst&&cropperReady)withCropBoxPreserved(function(){cropperInst.zoom(0.1);});});
     if(G('cropZoomOut'))G('cropZoomOut').addEventListener('click',function(){if(quadUI&&quadUI.isActive())quadUI.zoom(1/1.15);else if(cropperInst&&cropperReady)withCropBoxPreserved(function(){cropperInst.zoom(-0.1);});});
-    if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){rot90=((rot90-90)%360+360)%360;applyCropRotation();});
-    if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){rot90=(rot90+90)%360;applyCropRotation();});
-    if(G('cropFineRot'))G('cropFineRot').addEventListener('input',function(){rotFine=parseFloat(this.value);G('cropFineRotVal').textContent=rotFine+'°';applyCropRotation();});
+    if(G('cropRotL'))G('cropRotL').addEventListener('click',function(){rot90=((rot90-90)%360+360)%360;scheduleApplyCropRotation();});
+    if(G('cropRotR'))G('cropRotR').addEventListener('click',function(){rot90=(rot90+90)%360;scheduleApplyCropRotation();});
+    if(G('cropFineRot'))G('cropFineRot').addEventListener('input',function(){rotFine=parseFloat(this.value);G('cropFineRotVal').textContent=rotFine+'°';scheduleApplyCropRotation();});
     if(G('adjResetBtn'))G('adjResetBtn').addEventListener('click',resetResizerAdjustSliders);
     var pb=G('process-btn');if(pb)pb.addEventListener('click',runProcess);
     var rb=G('reset-btn');if(rb)rb.addEventListener('click',function(){
