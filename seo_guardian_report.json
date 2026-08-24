@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-24T02:15:05.037692+00:00",
+  "timestamp": "2026-08-24T06:07:05.823407+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 7938,
+  "files_scanned": 7945,
   "issues_found_by_check": {
     "ai_marker_integrity": 11,
-    "jobposting_schema": 61,
-    "sitemap_sync": 187
+    "jobposting_schema": 60,
+    "sitemap_sync": 194
   },
-  "issues_auto_fixed": 58,
+  "issues_auto_fixed": 64,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -62,7 +62,7 @@
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 14 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 15 END)"
     },
     {
       "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
@@ -1223,5 +1223,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 28.8
+  "duration_sec": 24.9
 }
