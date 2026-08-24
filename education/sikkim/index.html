@@ -59,7 +59,7 @@
 🔔 Aaj Hi Apni Favorite Jobs Ke Liye Form Bharein!
 #Topsarkarijobs #Topsarkarijob" data-share-url="https://www.topsarkarijobs.com/education/sikkim/" aria-label="Copy details"><i class="fa-solid fa-link"></i></button>
     </div>
-  </div><p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">9 records</p><div class="search-bar" style="margin:0 10px 12px"><input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/></div><div id="jobList" style="padding:0 10px"><article class="job-card" data-title="quick overview - sikkim university result 2026" data-org="sikkim" onclick="if(!getSelection().toString()){location.href='/jobs/quick-overview-sikkim-university-result-2026/'}">
+  </div><p class="cat-count" id="catCount" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">9 records</p><div class="search-bar" style="margin:0 10px 12px"><input type="search" placeholder="Search by title, department, post, qualification..." aria-label="Search" oninput="filterJobs(this.value)" autocomplete="off"/></div><div id="jobList" style="padding:0 10px"><article class="job-card" data-title="quick overview - sikkim university result 2026" data-org="sikkim" onclick="if(!getSelection().toString()){location.href='/jobs/quick-overview-sikkim-university-result-2026/'}">
   <div class="job-card-title"><span class="jc-sn">1</span><h2><a href="/jobs/quick-overview-sikkim-university-result-2026/">Quick Overview - Sikkim University Result 2026</a></h2></div>
   
   
@@ -265,7 +265,7 @@
 </div>
 
 </div>
-</details></div></div><script>function filterJobs(q){q=q.toLowerCase().trim();var cards=document.querySelectorAll(".job-card");for(var i=0;i<cards.length;i++){var t=cards[i].dataset.title||"",o=cards[i].dataset.org||"";cards[i].style.display=(!q||t.includes(q)||o.includes(q))?"":"none";}}</script></main>
+</details></div></div><script>function filterJobs(q){clearTimeout(window._fjT);window._fjT=setTimeout(function(){_doFilterJobs(q);},150);}function _doFilterJobs(q){q=q.toLowerCase().trim();var terms=q.split(/\s+/).filter(Boolean);var cards=document.querySelectorAll(".job-card");var shown=0;for(var i=0;i<cards.length;i++){var c=cards[i];var hay=(c.dataset.title||"")+" "+(c.dataset.org||"")+" "+(c.dataset.qual||"")+" "+(c.dataset.post||"");var match=!terms.length||terms.every(function(t){return hay.indexOf(t)>-1;});c.style.display=match?"":"none";if(match)shown++;}var cnt=document.getElementById("catCount");if(cnt){cnt.textContent=q?(shown+" of "+cards.length+" records match \""+q+"\""):(cards.length+" records");}var noRes=document.getElementById("noResultsMsg");if(noRes)noRes.style.display=(shown===0&&cards.length>0)?"":"none";}</script></main>
 <div id="footerPlaceholder"></div>
 <script src="/tsj-footer-init.js?v=20260824060537"></script>
 <script src="/tsj-menu.js?v=20260824060537" defer></script>
