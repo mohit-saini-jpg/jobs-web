@@ -6370,6 +6370,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         # mid-word-truncating that into a mangled ellipsis on the compact
         # listing card, show a clear "see full details on the job page" CTA
         # whenever the value is long OR visibly a multi-item list (2+ commas).
+        # Captured BEFORE the long-value fallback substitution below, so the
+        # search index still has the real post/qualification text even when
+        # the visible card text gets simplified to "See Full Details".
+        _jpost_search = jpost.lower()
+        _jqual_search = jqual.lower()
         if jpost and (len(jpost) > 60 or jpost.count(',') >= 2):
             jpost = 'Multiple Posts : See Full Details'
         if jqual and (len(jqual) > 90 or jqual.count(',') >= 2):
@@ -6450,7 +6455,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         _hint_html  = f'<div class="jc-apply-hint">{e(_card_hint)} <i class="fa-solid fa-arrow-right"></i></div>' if _card_hint else ''
         _links_html = f'<div class="job-card-links" onclick="event.stopPropagation()">{ql}</div>' if ql else ''
         _footer_html = f'<div class="jc-footer">{_hint_html}{_links_html}</div>' if (_hint_html or _links_html) else ''
-        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
+        cards_html += f'''<article class="job-card" data-title="{e(jtitle.lower())}" data-org="{e(jorg.lower())}" data-qual="{e(_jqual_search)}" data-post="{e(_jpost_search)}" onclick="if(!getSelection().toString()){{location.href='{_row_url}'}}">
   <div class="job-card-title"><span class="jc-sn">{_idx}</span><h2><a href="{_row_url}">{e(jtitle)}</a></h2></div>
   {f'<table class="jc-info">{_jc_rows}</table>' if _jc_rows else ''}
   {status_badge}
@@ -6460,12 +6465,33 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
     if not cards_html:
         cards_html = '<div style="padding:30px;text-align:center;color:#94a3b8"><i class="fa-solid fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>No records found.</div>'
 
+    # Debounced (150ms) so a fast typist doesn't re-scan the whole card list
+    # on every single keystroke. Matches across title + organization +
+    # qualification + post name -- not just title/org like before -- and
+    # splits the query into separate words so e.g. "railway junior engineer"
+    # matches even when those words land in different fields or a different
+    # order than the title itself. oninput (not onkeyup) so paste, IME
+    # composition (Hindi/Devanagari input) and the native search-field "x"
+    # clear button all trigger it reliably -- keyup silently misses those.
     filter_js = ('<script>function filterJobs(q){'
+                 'clearTimeout(window._fjT);'
+                 'window._fjT=setTimeout(function(){_doFilterJobs(q);},150);}'
+                 'function _doFilterJobs(q){'
                  'q=q.toLowerCase().trim();'
+                 'var terms=q.split(/\\s+/).filter(Boolean);'
                  'var cards=document.querySelectorAll(".job-card");'
+                 'var shown=0;'
                  'for(var i=0;i<cards.length;i++){'
-                 'var t=cards[i].dataset.title||"",o=cards[i].dataset.org||"";'
-                 'cards[i].style.display=(!q||t.includes(q)||o.includes(q))?"":"none";}}'
+                 'var c=cards[i];'
+                 'var hay=(c.dataset.title||"")+" "+(c.dataset.org||"")+" "+(c.dataset.qual||"")+" "+(c.dataset.post||"");'
+                 'var match=!terms.length||terms.every(function(t){return hay.indexOf(t)>-1;});'
+                 'c.style.display=match?"":"none";'
+                 'if(match)shown++;}'
+                 'var cnt=document.getElementById("catCount");'
+                 'if(cnt){'
+                 'cnt.textContent=q?(shown+" of "+cards.length+" records match \\""+q+"\\""):(cards.length+" records");}'
+                 'var noRes=document.getElementById("noResultsMsg");'
+                 'if(noRes)noRes.style.display=(shown===0&&cards.length>0)?"":"none";}'
                  '</script>')
 
     # ── INTERNAL LINKING: Add 12 related job links at bottom of listing pages ──
@@ -6512,8 +6538,12 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 
     _search_and_cards = (
         f'<div class="search-bar" style="margin:0 10px 12px">'
-        f'<input type="search" placeholder="Search..." aria-label="Search" onkeyup="filterJobs(this.value)" autocomplete="off"/>'
-        f'</div><div id="jobList" style="padding:0 10px">{cards_html}</div>'
+        f'<input type="search" placeholder="Search by title, department, post, qualification..." aria-label="Search" oninput="filterJobs(this.value)" autocomplete="off"/>'
+        f'</div>'
+        f'<div id="jobList" style="padding:0 10px">{cards_html}</div>'
+        f'<div id="noResultsMsg" style="display:none;padding:30px 10px;text-align:center;color:#94a3b8">'
+        f'<i class="fa-solid fa-magnifying-glass" style="font-size:1.5rem;display:block;margin-bottom:8px"></i>'
+        f'Is search se koi match nahi mila. Kam ya alag keyword try karein.</div>'
     ) if render_cards else ''
     # Dynamic share-message row — same dh-share component used on job detail
     # pages (build_detail_page), but with copy tailored per listing type
@@ -6585,7 +6615,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
     body = (f'<div class="cat-wrap">'
             f'<h1 class="cat-h1" style="margin:12px 10px 4px">{e(title)}</h1>'
             f'{share_row}'
-            f'<p class="cat-count" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
+            f'<p class="cat-count" id="catCount" style="margin:0 10px 12px;color:#64748b;font-size:.78rem">{len(jobs)} records</p>'
             f'{top_html}'
             f'{_search_and_cards}'
             f'{_seo_listing_content(title, jobs, canon_url)}'
