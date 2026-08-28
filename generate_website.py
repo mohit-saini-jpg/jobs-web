@@ -1364,7 +1364,14 @@ def bc_html(crumbs):
 
 # ── Job Detail Page Builder ──────────────────────────────────────────
 
-def build_job_detail_page(job_obj, slug, canon_url, breadcrumbs):
+def build_job_detail_page(job_obj, slug, canon_url, breadcrumbs, location_suffix=''):
+    """`location_suffix`, when set (e.g. a state name), disambiguates the
+    <title>/meta description ONLY -- not the visible <h1> or body -- for a
+    posting that's genuinely republished per-state under the same job slug
+    (e.g. state/gujarat/aadhaar-supervisor-recruitment/ and
+    state/jharkhand/aadhaar-supervisor-recruitment/ describing the same
+    national posting). Without it, every state's copy shared byte-identical
+    title/description text."""
     bd     = job_obj.get('basic_details', {}) or {}
     dates  = job_obj.get('important_dates', {}) or {}
     il     = job_obj.get('important_links', {}) or {}
@@ -1384,9 +1391,15 @@ def build_job_detail_page(job_obj, slug, canon_url, breadcrumbs):
     # don't append the year again if the title already carries it anywhere
     # ("...Results 2026 Key Highlights" + " 2026 | ..." -> duplicated "2026 2026")
     _has_year = re.search(r'\b' + re.escape(str(YEAR)) + r'\b', title) is not None
-    _yr_suffix = f" {YEAR} | Top Sarkari Jobs" if not _has_year else " | Top Sarkari Jobs"
+    # location_suffix must live INSIDE the protected suffix (not the
+    # truncatable base) -- otherwise smart_title_cut can drop it for longer
+    # titles, defeating the one thing it's there for: making the title
+    # actually unique across states.
+    _loc_part  = f" ({location_suffix})" if location_suffix else ''
+    _yr_suffix = (f" {YEAR}" if not _has_year else '') + _loc_part + " | Top Sarkari Jobs"
     title_tag  = build_title_tag(title, suffix=_yr_suffix)
-    meta_desc  = (short_i[:130] or f"{title}: Apply online, check vacancies, dates.") + f" | {YEAR}"
+    _desc_loc  = f" — {location_suffix}" if location_suffix else ''
+    meta_desc  = (short_i[:130] or f"{title}: Apply online, check vacancies, dates.") + _desc_loc + f" | {YEAR}"
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
     crumb_html   = bc_html(breadcrumbs + [(title, None)])
@@ -2029,7 +2042,11 @@ for sec in STATE:
         canon = f"{BASE_URL}/state/{state_slug}/{job_slug}/"
         bc    = [('State Jobs', '/state-jobs/'), (state_name, state_url)]
         path  = str(ROOT / 'state' / state_slug / job_slug / 'index.html')
-        html_content = build_job_detail_page(detail, job_slug, canon, bc)
+        # location_suffix disambiguates title/description when the same
+        # national posting is republished under multiple states with the
+        # same job_slug (e.g. state/gujarat/x/ and state/jharkhand/x/) --
+        # the /jobs/ mirror below stays state-agnostic, so no suffix there.
+        html_content = build_job_detail_page(detail, job_slug, canon, bc, location_suffix=state_name)
         write(path, html_content)
         # ALSO write to /jobs/{slug}/ so site URL /jobs/{slug}/ works
         jobs_path = str(ROOT / 'jobs' / job_slug / 'index.html')
