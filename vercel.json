@@ -566,6 +566,16 @@
       "statusCode": 301
     },
     {
+      "source": "/state/manipur/",
+      "destination": "/state-jobs/manipur/",
+      "statusCode": 301
+    },
+    {
+      "source": "/state/lakshadweep/",
+      "destination": "/state-jobs/lakshadweep/",
+      "statusCode": 301
+    },
+    {
       "source": "/state/jk/",
       "destination": "/state-jobs/jammu-and-kashmir/",
       "statusCode": 301
