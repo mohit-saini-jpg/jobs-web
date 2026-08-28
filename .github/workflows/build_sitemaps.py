@@ -183,8 +183,11 @@ def main():
 
     # Core static pages -> sitemap.xml is now a REAL urlset (no longer a 2nd index)
     core = [f"{BASE}/"]
+    # "search" deliberately excluded: search/index.html is noindex + disallowed
+    # in robots.txt (it's the live search UI, not indexable content) -- listing
+    # it here submitted a URL to Google that's blocked from ever being crawled.
     for p in ["about","contact","terms","privacy","disclaimer","helpdesk","sitemap",
-              "tools","govt-services","resume-maker","search","education",
+              "tools","govt-services","resume-maker","education",
               "state","state-jobs","district","app","apply-request",
               "editorial-policy","fact-check-policy","correction-policy"]:
         d = os.path.join(ROOT, p)
