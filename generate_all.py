@@ -1384,6 +1384,27 @@ _JSONLD_RE = re.compile(
     re.S | re.I
 )
 
+_BC_NAV_RE = re.compile(r'<nav[^>]*class="bc"[^>]*>(.*?)</nav>', re.S)
+_BC_LINK_RE = re.compile(r'<a href="([^"]+)">([^<]*)</a>')
+
+def _extract_visible_breadcrumbs(html):
+    """Pull (label, url) pairs straight from the page's own visible <nav
+    class="bc"> chain, skipping the leading Home link (already hardcoded as
+    position 1 by build_schemas) and the trailing non-link current-page span
+    (added separately as the title position). Used by the permanent-page
+    preload/patch pass so the re-patched BreadcrumbList JSON-LD always has the
+    same depth as what's actually on the page, instead of collapsing to a
+    bare Home > Title every deploy."""
+    m = _BC_NAV_RE.search(html)
+    if not m:
+        return []
+    out = []
+    for url, label in _BC_LINK_RE.findall(m.group(1))[1:]:
+        label = _html.unescape(label).strip()
+        if label:
+            out.append((label, url))
+    return out
+
 def _patch_jsonld(page_path, new_html):
     """Replace JSON-LD <script> blocks in existing page with fresh ones.
     All other page content is preserved. Fixes schema fields on permanent pages.
@@ -7273,7 +7294,16 @@ def _preload_one(_existing_html):
                 # No saved JSON (old/orphan page) — reconstruct from HTML
                 _djob = _reconstruct_job_from_html(_eh, _etitle, _eslug)
             _dcanon = f"{BASE_URL}/jobs/{_eslug}/"
-            _dhtml  = build_schemas(_djob, _dcanon, [], _eslug)
+            # BUGFIX: this patch pass used to pass breadcrumbs=[], which made
+            # every rebuilt BreadcrumbList collapse to a bare Home > Title (2
+            # levels) even though the page's own visible nav shows the full
+            # Home > Study Wise > Category > Title chain (4 levels) -- and
+            # since this pass touches every existing job page on every deploy,
+            # it kept re-flattening the schema back down after every rebuild.
+            # Pull the real chain from the page's own on-disk breadcrumb nav
+            # instead, so the schema always matches what's actually visible.
+            _dbc = _extract_visible_breadcrumbs(_eh)
+            _dhtml  = build_schemas(_djob, _dcanon, _dbc, _eslug)
             _patched = _patch_jsonld(Path(_existing_html), _dhtml)
         except Exception:
             pass

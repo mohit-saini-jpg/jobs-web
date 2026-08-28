@@ -73,6 +73,49 @@ DEFAULT_REGION, DEFAULT_PIN = _SMAP["default"]
 NAME_MAP = _SMAP["name_map"]                                   # {name: [region, pin]}
 SLUG_MAP = [(kw, r, p) for kw, r, p in _SMAP["slug_map"]]      # ordered list
 
+# district name -> (region, pin), built from the same data that powers the
+# /district/ tree. Used as a lower-confidence fallback when a job's own
+# job_location or slug/title/org mentions a district ("Tiruppur") without the
+# state name ("Tamil Nadu"), which previously fell all the way through to the
+# blind DEFAULT_REGION with no signal ever surfaced for review (e.g. the
+# dcpu-tiruppur page). District names are shorter/more collision-prone than
+# state names, so matches from this map are never auto-applied -- only
+# reported via region_lowconf_review, same as an L3 slug guess.
+DISTRICT_TO_REGION = {}
+_DISTRICT_META_PATH = os.path.join(ROOT, "district_meta_by_state.json")
+try:
+    with open(_DISTRICT_META_PATH, encoding="utf-8") as _f:
+        _dmeta = json.load(_f)
+    for _state_name, _districts in _dmeta.items():
+        _rv_pv = NAME_MAP.get(_state_name.strip().lower())
+        if not _rv_pv:
+            continue
+        for _d in _districts:
+            _dn = str((_d or {}).get('district') or '').strip().lower().replace('_', ' ')
+            if _dn and len(_dn) >= 4:
+                DISTRICT_TO_REGION.setdefault(_dn, tuple(_rv_pv))
+except Exception:
+    DISTRICT_TO_REGION = {}
+
+
+_DISTRICT_PATTERN = None
+if DISTRICT_TO_REGION:
+    _alts = sorted((re.escape(n) for n in DISTRICT_TO_REGION), key=len, reverse=True)
+    _DISTRICT_PATTERN = re.compile(r'(?<![a-z])(' + '|'.join(_alts) + r')(?![a-z])')
+
+
+def _detect_district_from_text(text):
+    """Whole-word district-name match -> (region, pin) or (None, None). Single
+    compiled alternation (not a 697-entry Python loop) so this stays cheap to
+    call on every page that reaches the 'default' level."""
+    if not _DISTRICT_PATTERN or not text:
+        return None, None
+    t = str(text).lower().replace('-', ' ')
+    m = _DISTRICT_PATTERN.search(t)
+    if not m:
+        return None, None
+    return DISTRICT_TO_REGION[m.group(1)]
+
 _LDJSON_RE = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
 # whole microdata block incl. both wrapping comment markers and surrounding newlines
 _MICRODATA_RE = re.compile(r'[ \t]*<!-- tsj-microdata -->.*?<!-- tsj-microdata -->[ \t]*\n?', re.S)
@@ -149,6 +192,17 @@ def detect_region(job_obj, slug):
         r3, p3 = _detect_state_from_text(f"{slug or ''} {title} {org}")
         if r3:
             region, pin, level = r3, p3, 'L3'
+
+    # District fallback: a job's own stated location or slug/title/org sometimes
+    # names a district ("Tiruppur") without the state ("Tamil Nadu"), which state
+    # keyword matching above can't resolve. Report-only (like L3) since district
+    # names are more collision-prone than full state names -- never auto-applied.
+    if level == 'default':
+        rd, pd = _detect_district_from_text(loc if loc.lower().strip() not in ('india', '') else '')
+        if not rd:
+            rd, pd = _detect_district_from_text(f"{slug or ''} {title} {org}")
+        if rd:
+            region, pin, level = rd, pd, 'L_DISTRICT'
 
     # ai_data.postal_code hard override (6-digit only)
     ai_pin = str(ai_data.get('postal_code') or '').strip()
@@ -298,7 +352,7 @@ def audit_page(path, idx, idx_keys):
             info['stale_region'] = True
             info['region_from'] = f"{cur_region}/{cur_pin}"
             info['region_to'] = f"{region}/{pin}"
-        elif differs and level in ('L3',) or (slug in REGION_SKIP and differs):
+        elif differs and level in ('L3', 'L_DISTRICT') or (slug in REGION_SKIP and differs):
             # a weaker signal disagrees with the baked value — report, never auto-fix
             info['region_lowconf_review'] = True
             info['region_from'] = f"{cur_region}/{cur_pin}"
