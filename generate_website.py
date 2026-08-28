@@ -23,6 +23,27 @@ YEAR     = date.today().year
 # ── Helpers ─────────────────────────────────────────────────────────
 def e(s): return html_mod.escape(str(s or ''), quote=True)
 
+def smart_title_cut(text, limit=60):
+    """Cut a <title> at a word boundary so there's no mid-word truncation."""
+    text = str(text or '')
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(' ', 1)[0]
+    return cut.rstrip(' ,;:-–(')
+
+def build_title_tag(base, suffix=' | Top Sarkari Jobs', limit=60):
+    """Compose a <title> that never exceeds `limit` chars WITHOUT losing the
+    brand suffix -- reserves room for `suffix` first, then cuts `base` on a
+    word boundary if it still doesn't fit. (Bug this replaces: several call
+    sites used to concatenate base+suffix and only then blindly slice to 60
+    chars, which routinely truncated mid-word into the brand suffix itself,
+    e.g. "...2026 | Top Sarkari " with "Jobs" cut off.)"""
+    base = str(base or '').strip()
+    avail = limit - len(suffix)
+    if len(base) > avail:
+        base = smart_title_cut(base, avail)
+    return f"{base}{suffix}"
+
 def strip_html(text):
     """Strip HTML tags from text"""
     if not text: return ''
@@ -1147,7 +1168,11 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
 
 def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
                bc_html, body_html, extra_head=''):
-    title_tag = title_tag[:60]
+    # Callers should already build a <=60-char title via build_title_tag();
+    # this is a word-boundary-aware backstop, not the primary truncation --
+    # a blind title_tag[:60] here would silently re-introduce the mid-word/
+    # mid-brand cut bug for any caller that didn't reserve room correctly.
+    title_tag = smart_title_cut(title_tag, 60)
     meta_desc = meta_desc[:155]
     return f'''<!DOCTYPE html>
 <html lang="hi-IN" dir="ltr">
@@ -1356,7 +1381,11 @@ def build_job_detail_page(job_obj, slug, canon_url, breadcrumbs):
     kw_list   = (seo if isinstance(seo, list) else []) + [org, location, 'sarkari job', str(YEAR)]
     keywords  = ', '.join(str(k) for k in kw_list if k)[:200]
 
-    title_tag  = f"{title[:40]} {YEAR} | Top Sarkari Jobs"
+    # don't append the year again if the title already carries it anywhere
+    # ("...Results 2026 Key Highlights" + " 2026 | ..." -> duplicated "2026 2026")
+    _has_year = re.search(r'\b' + re.escape(str(YEAR)) + r'\b', title) is not None
+    _yr_suffix = f" {YEAR} | Top Sarkari Jobs" if not _has_year else " | Top Sarkari Jobs"
+    title_tag  = build_title_tag(title, suffix=_yr_suffix)
     meta_desc  = (short_i[:130] or f"{title}: Apply online, check vacancies, dates.") + f" | {YEAR}"
 
     schemas_html = build_schemas(job_obj, canon_url, breadcrumbs)
@@ -1528,7 +1557,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, description=''):
     # year from the title before composing the tag/description.
     _title_noyr = re.sub(r'\s*\b' + re.escape(str(YEAR)) + r'\b\s*$', '', str(title)).strip()
     _has_year = bool(re.search(r'\b' + re.escape(str(YEAR)) + r'\b', str(title)))
-    title_tag = f"{_title_noyr} {YEAR} — Notification, Apply Online | Top Sarkari Jobs"
+    title_tag = build_title_tag(_title_noyr, suffix=f" {YEAR} — Notification, Apply Online | Top Sarkari Jobs")
     if description:
         # meta description: prefer the first full sentence; else trim on a word
         # boundary (never mid-word) and add an ellipsis.
@@ -1610,7 +1639,7 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, description=''):
             f'</div>'
             f'{filter_js}')
 
-    return page_shell(title_tag[:60], meta_desc, canon_url, f"{title}, sarkari jobs {YEAR}",
+    return page_shell(title_tag, meta_desc, canon_url, f"{title}, sarkari jobs {YEAR}",
                       schemas_tag, crumb_html, body)
 
 # ── Load JSON Data ───────────────────────────────────────────────────
@@ -1949,9 +1978,9 @@ for sec in DU_SECS:
                   +f'<script type="application/ld+json">{json.dumps(bc_s,ensure_ascii=False)}</script>')
     crumb = bc_html([('Home','/'),('Today Updates','/section/today-updates/'),(sec_title, None)])
     body  = f'<div class="cat-wrap"><div class="cat-header"><h1 class="cat-title">{e(sec_title)}</h1><p class="cat-count">{len(items)} items</p></div><div id="jobList">{cards}</div></div>'
-    title_tag = f"{sec_title} {YEAR} | Top Sarkari Jobs"
+    title_tag = build_title_tag(sec_title, suffix=f" {YEAR} | Top Sarkari Jobs")
     meta_desc = f"Latest {sec_title} updates {YEAR}. All important links, PDFs and notifications."
-    page = page_shell(title_tag[:60], meta_desc, canon, sec_title, schemas_tag, crumb, body)
+    page = page_shell(title_tag, meta_desc, canon, sec_title, schemas_tag, crumb, body)
     path = str(ROOT / 'section' / slug_key / 'index.html')
     write(path, page)
 
