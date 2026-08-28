@@ -1987,7 +1987,13 @@ for sec in STATE:
         detail['source_url'] = item_url
         detail['category'] = state_name
 
-        canon = f"{BASE_URL}/state-jobs/{state_slug}/{job_slug}/"
+        # BUG FIX: this used to canonicalize to /state-jobs/{state}/{job}/, a URL
+        # that's never actually written anywhere (the file always lands under
+        # /state/{state}/{job}/ below) -- every one of these pages was pointing
+        # its own canonical at a 404. Self-referential now, matching where the
+        # file really lives (no /jobs/{slug}/ mirror exists to consolidate to --
+        # the write below is conditional and was apparently never firing).
+        canon = f"{BASE_URL}/state/{state_slug}/{job_slug}/"
         bc    = [('State Jobs', '/state-jobs/'), (state_name, state_url)]
         path  = str(ROOT / 'state' / state_slug / job_slug / 'index.html')
         html_content = build_job_detail_page(detail, job_slug, canon, bc)
