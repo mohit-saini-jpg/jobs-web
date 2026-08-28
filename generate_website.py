@@ -1131,6 +1131,20 @@ def section_card(title, icon, grad, body):
 
 # ── SEO Schemas ──────────────────────────────────────────────────────
 
+def _norm_date_for_schema(raw):
+    """Parse various date formats into YYYY-MM-DD, or None."""
+    raw = str(raw or '').strip()
+    if not raw:
+        return None
+    if re.match(r'^\d{4}-\d{2}-\d{2}$', raw):
+        return raw
+    for fmt in ('%d %b %Y','%d %B %Y','%d/%m/%Y','%d-%m-%Y'):
+        try:
+            return datetime.strptime(raw, fmt).strftime('%Y-%m-%d')
+        except Exception:
+            pass
+    return None
+
 def build_schemas(job_obj, canon_url, breadcrumbs):
     bd     = job_obj.get('basic_details', {}) or {}
     dates  = job_obj.get('important_dates', {}) or {}
@@ -1148,9 +1162,13 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
     schemas = []
 
     # JobPosting
+    _lu = _norm_date_for_schema(bd.get('last_updated',''))
     jp = {
         '@context':'https://schema.org','@type':'JobPosting',
         'title':title,'description':desc,'datePosted':posted,
+        'dateModified':f"{_lu or posted}T00:00:00+05:30",
+        'author':{'@id':BASE_URL+'/#organization'},
+        'publisher':{'@id':BASE_URL+'/#organization'},
         'url':canon_url,'employmentType':'FULL_TIME',
         'hiringOrganization':{'@type':'Organization','name':org or 'Government of India'},
         'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress',

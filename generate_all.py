@@ -4826,8 +4826,16 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
             if _b and _b not in _seen_ab:
                 _seen_ab.append(_b)
         _street_address = ', '.join(_seen_ab) or f"{org} Head Office"
+        # dateModified: was never populated (a GSC-flagged gap for a page
+        # that gets edited after posting). Reuses the SAME real per-job
+        # last_updated field the visible details table already shows,
+        # rather than the build date -- see the editorial byline below,
+        # which used to disagree with this because it hardcoded TODAY.
+        _lu_norm = norm_date(bd.get('last_updated', ''))
+        _lu_iso  = _lu_norm or date_posted
         jp = {'@context':'https://schema.org','@type':'JobPosting','title':title,
-              'description':desc,'datePosted':date_posted_iso,'url':canon_url,
+              'description':desc,'datePosted':date_posted_iso,
+              'dateModified':f"{_lu_iso}T00:00:00+05:30",'url':canon_url,
               'employmentType':'FULL_TIME','directApply':False,
               'identifier':{'@type':'PropertyValue','name':org,
                             'value':safe(bd.get('advt_no','') or bd.get('notification_no','') or slug)},
@@ -4835,7 +4843,38 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
               'jobLocation':{'@type':'Place','address':{'@type':'PostalAddress','addressCountry':'IN',
                   'addressLocality':(_loc_city or _address_region),'addressRegion':_address_region,
                   'postalCode':_postal_code,'streetAddress':_street_address}},
-              'applicantLocationRequirements':{'@type':'Country','name':'India'}}
+              'applicantLocationRequirements':{'@type':'Country','name':'India'},
+              'author':{'@id':BASE_URL+'/#organization'},
+              'publisher':{'@id':BASE_URL+'/#organization'}}
+        # educationRequirements: map the job's own free-text qualification
+        # to Google's controlled vocabulary for JobPosting filtering. Only
+        # set when a confident match is found -- no value is better than a
+        # guessed one for an unrecognised qualification string.
+        def _clean_qual(s):
+            s = safe(s).strip()
+            return '' if s.lower() in ('details', 'n/a', 'na', '-', '') else s
+        _qual_obj = job_obj.get('qualification')
+        _edu_raw = _clean_qual(bd.get('education_qualification','')) or _clean_qual(bd.get('qualification',''))
+        if not _edu_raw and isinstance(_qual_obj, dict):
+            # education_qualification is sometimes just the literal placeholder
+            # "Details" -- fall back to the free-text details paragraph, which
+            # still works fine for keyword matching below.
+            _edu_raw = _clean_qual(_qual_obj.get('education_qualification','')) or _clean_qual(_qual_obj.get('details',''))
+        elif not _edu_raw and isinstance(_qual_obj, str):
+            _edu_raw = _clean_qual(_qual_obj)
+        _edu_l = _edu_raw.lower()
+        _edu_cred = None
+        if any(k in _edu_l for k in ('post graduate','postgraduate','p.g.','m.tech','m.e.','m.sc','m.a.','m.com','mba','mca','master')):
+            _edu_cred = 'postgraduate degree'
+        elif any(k in _edu_l for k in ('graduate','b.tech','b.e.','b.sc','b.a.','b.com','bca','bba','bachelor','degree')):
+            _edu_cred = 'bachelor degree'
+        elif any(k in _edu_l for k in ('diploma','iti','associate')):
+            _edu_cred = 'associate degree'
+        elif any(k in _edu_l for k in ('10th','12th','8th','matric','intermediate','high school','ssc pass','hsc')):
+            _edu_cred = 'high school'
+        if _edu_cred:
+            jp['educationRequirements'] = {'@type':'EducationalOccupationalCredential',
+                                            'credentialCategory':_edu_cred}
         # SECURE FALLBACK: baseSalary — use pay_scale if available, else Govt default range
         _pay_str = safe((job_obj.get('basic_details') or {}).get('pay_scale','') or
                         (job_obj.get('salary_details') or {}).get('pay_scale','') or
@@ -5566,10 +5605,20 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
     # Header (with share buttons)
     cat_badge = safe(job_obj.get('category','') or badge_label).replace('_',' ')
     # human-readable "Updated" date for the editorial byline (E-E-A-T signal)
+    # FIX: this used to always show TODAY (the build date) regardless of
+    # whether the job's data actually changed, disagreeing with the real
+    # last_updated value already shown in the details table below (see
+    # render_basic_details) -- now uses that SAME source so both agree,
+    # falling back to TODAY only when no real last_updated value exists.
+    # (Recomputed here rather than reused from the JobPosting dateModified
+    # above because this code path also runs for non-JobPosting content
+    # types, e.g. Result/Admit Card pages, where that branch never ran.)
+    _lu_norm = norm_date(bd.get('last_updated', ''))
+    _lu_iso = _lu_norm or TODAY
     try:
-        _byline_date = date.fromisoformat(TODAY).strftime('%d %B %Y').lstrip('0')
+        _byline_date = date.fromisoformat(_lu_iso).strftime('%d %B %Y').lstrip('0')
     except Exception:
-        _byline_date = TODAY
+        _byline_date = _lu_iso
     import urllib.parse as _uparse
     _raw_url = canon_url
     # Build rich, attractive share message (WhatsApp / Telegram / X) — format
