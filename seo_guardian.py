@@ -45,7 +45,13 @@ sys.path.insert(0, ROOT)
 
 from checks._base import Issue, CRITICAL, structural_ok  # noqa: E402
 
-SCAN_DIRS = ("jobs", "state", "education", "category", "section", "qualification")
+SCAN_DIRS = ("jobs", "state", "education", "category", "section", "qualification",
+             "state-jobs", "district",
+             # static/legal pages -- previously never scanned by any check in
+             # any mode, so bugs here (e.g. a missing <h1>) were structurally
+             # invisible to the guardian regardless of how clean its report read.
+             "about", "contact", "privacy", "terms", "disclaimer", "helpdesk",
+             "editorial-policy", "fact-check-policy", "correction-policy")
 MAX_PASSES = 3
 REPORT_PATH = os.path.join(ROOT, "seo_guardian_report.json")
 
