@@ -1115,10 +1115,14 @@ def build_schemas(job_obj, canon_url, breadcrumbs):
         'name':title,'description':desc,'url':canon_url,
         'publisher':{'@type':'Organization','name':'Top Sarkari Jobs','url':BASE_URL}})
 
-    # Organization
-    if org:
+    # Organization (only when we actually have a real org identity to describe --
+    # 'org' is sometimes just the page's state/category label, e.g. education
+    # pages set organization_name to the state name, which produced a bogus
+    # standalone Organization entity like {"name": "Andhra Pradesh", "url": ""})
+    _org_site = safe(bd.get('official_website','') or '')
+    if org and _org_site:
         schemas.append({'@context':'https://schema.org','@type':'Organization',
-            'name':org,'url':safe(bd.get('official_website','') or '')})
+            'name':org,'url':_org_site})
 
     # BreadcrumbList
     bc_items = [{'@type':'ListItem','position':1,'name':'Home','item':BASE_URL+'/'}]

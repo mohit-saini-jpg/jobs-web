@@ -27,6 +27,42 @@ CJ_FILE   = _root_cj if _root_cj.exists() else _data_cj
 DU_FILE  = ROOT / 'dailyupdates.json'
 BASE_URL = 'https://www.topsarkarijobs.com'
 
+# Single source of truth for the site's Organization + WebSite identity,
+# matching the homepage's own @graph exactly (same @id, same data) so every
+# page describes the same entity instead of a separate, drifting redeclaration.
+_ORG_SCHEMA_SHARED = {'@context':'https://schema.org','@type':'Organization','@id':BASE_URL+'/#organization',
+    'name':'Top Sarkari Jobs','legalName':'Top Sarkari Jobs',
+    'alternateName':['TSJ','topsarkarijobs','topsarkarijobs.com'],'url':BASE_URL+'/',
+    'logo':{'@type':'ImageObject','@id':BASE_URL+'/#logo','url':BASE_URL+'/image.webp',
+            'contentUrl':BASE_URL+'/image.webp','width':512,'height':512,
+            'caption':'Top Sarkari Jobs'},
+    'image':{'@id':BASE_URL+'/#logo'},
+    'description':'Top Sarkari Jobs (topsarkarijobs.com) is an independent platform for latest Government Jobs, Sarkari Naukri, Results, Admit Cards, Answer Keys and Admissions 2026, updated daily. It is not affiliated with any Government department, ministry, commission, or recruitment agency.',
+    'foundingDate':'2020','slogan':"India's No.1 Sarkari Jobs Portal",
+    'areaServed':{'@type':'Country','name':'India'},
+    'address':{'@type':'PostalAddress','addressCountry':'IN','addressLocality':'India'},
+    'contactPoint':[{'@type':'ContactPoint','contactType':'customer support',
+                      'email':'Topsarkarijobs.com@gmail.com','url':BASE_URL+'/helpdesk/',
+                      'areaServed':'IN','availableLanguage':['Hindi','English']}],
+    'sameAs':['https://www.facebook.com/profile.php?id=61587033757932',
+              'https://www.instagram.com/topsarkarijobs',
+              'https://x.com/TopSarkariJobs',
+              'https://www.youtube.com/@Topsarkarijobs',
+              'https://whatsapp.com/channel/0029Vb2rMdsHbFUyxUBfKk0T',
+              'https://www.snapchat.com/add/topsarkarijobss'],
+    'knowsAbout':['Government Jobs India','Sarkari Naukri','SSC Jobs','Railway Jobs',
+                   'Bank Jobs','UPSC Jobs','State Government Jobs','Sarkari Result',
+                   'Admit Card Download','Answer Key','Online Form']}
+_SITE_SCHEMA_SHARED = {'@context':'https://schema.org','@type':'WebSite','@id':BASE_URL+'/#website',
+    'url':BASE_URL+'/','name':'Top Sarkari Jobs','alternateName':['TSJ'],
+    'description':'Latest Sarkari Jobs, Results, Admit Cards and Online Forms 2026',
+    'publisher':{'@id':BASE_URL+'/#organization'},
+    'potentialAction':{'@type':'SearchAction',
+        'target':{'@type':'EntryPoint','urlTemplate':BASE_URL+'/search/?q={search_term_string}'},
+        'query-input':'required name=search_term_string'},
+    'inLanguage':'en-IN','copyrightYear':'2026',
+    'copyrightHolder':{'@id':BASE_URL+'/#organization'}}
+
 _DEVANAGARI_RE = re.compile('[ऀ-ॿ]')
 
 def _english_headline(text, slug_fallback=''):
@@ -4887,20 +4923,11 @@ def build_schemas(job_obj, canon_url, breadcrumbs, slug=None):
 
     # Part C: sitewide WebSite (SearchAction) + Organization schema so AI/answer
     # engines and Google sitelinks-search-box can parse the brand on every page.
-    _site_schema = {'@context':'https://schema.org','@type':'WebSite',
-        'name':'Top Sarkari Jobs','url':BASE_URL+'/',
-        'potentialAction':{'@type':'SearchAction',
-            'target':{'@type':'EntryPoint','urlTemplate':BASE_URL+'/search/?q={search_term_string}'},
-            'query-input':'required name=search_term_string'}}
-    _org_schema = {'@context':'https://schema.org','@type':'Organization',
-        'name':'Top Sarkari Jobs','url':BASE_URL+'/',
-        'logo':BASE_URL+'/image.png',
-        'sameAs':['https://www.youtube.com/@topsarkarijobs',
-                  'https://www.instagram.com/topsarkarijobs',
-                  'https://whatsapp.com/channel/topsarkarijobs']}
-
-    out = (f'<script type="application/ld+json">{json.dumps(_site_schema, ensure_ascii=False)}</script>\n'
-           f'<script type="application/ld+json">{json.dumps(_org_schema, ensure_ascii=False)}</script>\n'
+    # Uses the shared, homepage-matching nodes (see _ORG_SCHEMA_SHARED /
+    # _SITE_SCHEMA_SHARED near the top of this file) instead of a separate,
+    # drifting redeclaration.
+    out = (f'<script type="application/ld+json">{json.dumps(_SITE_SCHEMA_SHARED, ensure_ascii=False)}</script>\n'
+           f'<script type="application/ld+json">{json.dumps(_ORG_SCHEMA_SHARED, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(primary, ensure_ascii=False)}</script>\n'
            f'<script type="application/ld+json">{json.dumps(bc_schema, ensure_ascii=False)}</script>\n')
 
@@ -6261,7 +6288,11 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
         if _jt2 and _js2:
             _il_elements.append({'@type':'ListItem','position':_ili,'name':_jt2,
                                  'url':f"{BASE_URL}/jobs/{_js2}/"})
-    _schemas_list = [bc_schema]
+    # SEO FIX: listing pages (section/, category/study/, qualification/,
+    # district/, state-jobs/ + education hubs -- 959 pages) previously carried
+    # no Organization/WebSite schema at all. Same @id'd nodes as every other
+    # page type so Google/AI systems can resolve the same site identity here too.
+    _schemas_list = [_ORG_SCHEMA_SHARED, _SITE_SCHEMA_SHARED, bc_schema]
     if _il_elements:
         _schemas_list.append({'@context':'https://schema.org','@type':'ItemList',
             'name':title_tag,'description':meta_desc,'url':canon_url,
