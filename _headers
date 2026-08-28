@@ -1,5 +1,14 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# _headers — Top Sarkari Jobs (Netlify / Cloudflare Pages)
+# _headers — Top Sarkari Jobs (Netlify / Cloudflare Pages format)
+#
+# NOT LIVE: this site is served by Vercel (confirmed via response Server
+# header), which does not read this file -- Netlify/Cloudflare Pages are
+# the only hosts that do. The equivalent, ACTUAL live security-header
+# policy lives in vercel.json's top-level "/(.*)" headers rule (added
+# 2026-08-28, with corrections this file was missing: script-src/connect-
+# src/frame-src additions for the Google Translate widget and Firebase
+# Cloud Messaging, both loaded dynamically and not covered here). Keep
+# this file in sync if you edit the Vercel policy, or retire it.
 # AUDIT OPTIMIZED: 2026-05-25
 # ✅ PWA / Service Worker headers
 # ✅ Security headers (CSP, HSTS, XSS, CORS)
