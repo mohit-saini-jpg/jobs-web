@@ -63,6 +63,53 @@ _SITE_SCHEMA_SHARED = {'@context':'https://schema.org','@type':'WebSite','@id':B
     'inLanguage':'en-IN','copyrightYear':'2026',
     'copyrightHolder':{'@id':BASE_URL+'/#organization'}}
 
+# SEO FIX: every page except the homepage rendered site navigation via
+# <div id="headerPlaceholder"></div> + a client-side fetch('/header.html')
+# that replaces it (tsj-init.js) -- a crawler or AI system that doesn't
+# execute JS saw an EMPTY header/footer and never discovered the site's
+# main taxonomy (state/qualification/section links) from any page but the
+# homepage. Fix: put a small, real, server-rendered nav INSIDE each
+# placeholder instead of leaving it empty. tsj-init.js/tsj-footer-init.js
+# are unchanged -- they replace the placeholder's entire outerHTML on load
+# regardless of what was inside it, so real browsers still get the full
+# rich header/footer almost immediately, identical to today. Deliberately
+# NOT the full header.html/footer.html content (~50KB combined) -- just
+# the top-level entry points, since the deeper links (all 36 states, every
+# qualification, etc.) are already reachable via the hub pages these link
+# to, which are themselves crawlable. Kept link text/hrefs literally
+# copied from header.html/footer.html so there's one source of truth for
+# what the nav actually contains.
+_LIGHT_HEADER_NAV = (
+    '<nav aria-label="Primary navigation" style="font-size:.78rem;padding:8px 10px;'
+    'display:flex;flex-wrap:wrap;gap:4px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0">'
+    '<a href="/">Home</a>'
+    '<a href="/section/latest-jobs/">Latest Jobs</a>'
+    '<a href="/section/results/">Results</a>'
+    '<a href="/section/admit-card/">Admit Card</a>'
+    '<a href="/section/answer-key/">Answer Key</a>'
+    '<a href="/section/admissions/">Admissions</a>'
+    '<a href="/state/">State Jobs</a>'
+    '<a href="/category/study/">Qualification Wise Jobs</a>'
+    '<a href="/resume-maker/">Resume / CV Maker</a>'
+    '<a href="/helpdesk/">Contact Us</a>'
+    '</nav>'
+)
+_LIGHT_FOOTER_NAV = (
+    '<nav aria-label="Footer navigation" style="font-size:.78rem;padding:8px 10px;'
+    'display:flex;flex-wrap:wrap;gap:4px 12px;background:#f8fafc;border-top:1px solid #e2e8f0">'
+    '<a href="/about/">About Us</a>'
+    '<a href="/privacy/">Privacy Policy</a>'
+    '<a href="/disclaimer/">Disclaimer</a>'
+    '<a href="/terms/">Terms &amp; Conditions</a>'
+    '<a href="/editorial-policy/">Editorial Policy</a>'
+    '<a href="/correction-policy/">Correction Policy</a>'
+    '<a href="/sitemap/">Sitemap</a>'
+    '<a href="/section/syllabus/">Syllabus</a>'
+    '<a href="/section/govt-scheme-yojna/">Govt Schemes</a>'
+    '<a href="/resume-maker/">Resume Maker</a>'
+    '</nav>'
+)
+
 _DEVANAGARI_RE = re.compile('[ऀ-ॿ]')
 
 def _english_headline(text, slug_fallback=''):
@@ -5739,10 +5786,10 @@ try {{ if (window.location.pathname !== '/jobs/{slug}/') {{ window.history.repla
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
-<div id="headerPlaceholder"></div>
+<div id="headerPlaceholder">{_LIGHT_HEADER_NAV}</div>
 <script src="/tsj-init.js?v={ASSET_VER}"></script>
 <main id="main">{body}</main>
-<div id="footerPlaceholder"></div>
+<div id="footerPlaceholder">{_LIGHT_FOOTER_NAV}</div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 <script src="/faq-init.js?v={ASSET_VER}" defer></script>
@@ -6716,10 +6763,10 @@ def build_listing_page(title, jobs, canon_url, breadcrumbs, desc='', top_html=''
 <link rel="stylesheet" href="/styles-detail.css" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="/styles-detail.css"/></noscript>
 </head>
 <body>
-<div id="headerPlaceholder"></div>
+<div id="headerPlaceholder">{_LIGHT_HEADER_NAV}</div>
 <script src="/tsj-init.js?v={ASSET_VER}"></script>
 <main id="main">{bc_html}{body}</main>
-<div id="footerPlaceholder"></div>
+<div id="footerPlaceholder">{_LIGHT_FOOTER_NAV}</div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>
@@ -9273,7 +9320,7 @@ def _du_page(name, url, sec_title, other_items):
         '<script src="/tsj-config.js"></script>',
         _du_ld_script,
         '</head>', '<body>',
-        '<div id="headerPlaceholder"></div>',
+        '<div id="headerPlaceholder">' + _LIGHT_HEADER_NAV + '</div>',
         '<script src="/tsj-init.js?v=' + ASSET_VER + '"></script>',
         '<main id="main">',
         '<div style="max-width:680px;margin:0 auto;padding:12px 10px 60px;">',
@@ -9286,7 +9333,7 @@ def _du_page(name, url, sec_title, other_items):
         '</div>',
         others,
         '</div>', '</main>',
-        '<div id="footerPlaceholder"></div>',
+        '<div id="footerPlaceholder">' + _LIGHT_FOOTER_NAV + '</div>',
         '<script src="/tsj-footer-init.js?v=' + ASSET_VER + '"></script>',
         '<script src="/tsj-menu.js?v=' + ASSET_VER + '" defer></script>',
         '</body>', '</html>',
@@ -9629,10 +9676,10 @@ for _vst, _vdistricts in VLE_STATE_DISTRICTS.items():
 <meta name="theme-color" content="#0d2257"/>
 </head>
 <body>
-<div id="headerPlaceholder"></div>
+<div id="headerPlaceholder">{_LIGHT_HEADER_NAV}</div>
 <script src="/tsj-init.js?v={ASSET_VER}"></script>
 <main id="main">{_vd_body}</main>
-<div id="footerPlaceholder"></div>
+<div id="footerPlaceholder">{_LIGHT_FOOTER_NAV}</div>
 <script src="/tsj-footer-init.js?v={ASSET_VER}"></script>
 <script src="/tsj-menu.js?v={ASSET_VER}" defer></script>
 </body>

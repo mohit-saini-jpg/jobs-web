@@ -20,6 +20,43 @@ BASE_URL = 'https://www.topsarkarijobs.com'
 TODAY    = date.today().isoformat()
 YEAR     = date.today().year
 
+# SEO FIX: same fix as generate_all.py -- a crawler that doesn't run JS saw
+# an empty header/footer on every state/<state>/<job>/ page (placeholder +
+# client-side fetch of header.html/footer.html). Real browsers still get
+# the full header/footer almost immediately (the fetch scripts below are
+# unchanged, they replace the whole placeholder regardless of what's
+# inside it) -- this only changes what's server-rendered before that swap.
+_LIGHT_HEADER_NAV = (
+    '<nav aria-label="Primary navigation" style="font-size:.78rem;padding:8px 10px;'
+    'display:flex;flex-wrap:wrap;gap:4px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0">'
+    '<a href="/">Home</a>'
+    '<a href="/section/latest-jobs/">Latest Jobs</a>'
+    '<a href="/section/results/">Results</a>'
+    '<a href="/section/admit-card/">Admit Card</a>'
+    '<a href="/section/answer-key/">Answer Key</a>'
+    '<a href="/section/admissions/">Admissions</a>'
+    '<a href="/state/">State Jobs</a>'
+    '<a href="/category/study/">Qualification Wise Jobs</a>'
+    '<a href="/resume-maker/">Resume / CV Maker</a>'
+    '<a href="/helpdesk/">Contact Us</a>'
+    '</nav>'
+)
+_LIGHT_FOOTER_NAV = (
+    '<nav aria-label="Footer navigation" style="font-size:.78rem;padding:8px 10px;'
+    'display:flex;flex-wrap:wrap;gap:4px 12px;background:#f8fafc;border-top:1px solid #e2e8f0">'
+    '<a href="/about/">About Us</a>'
+    '<a href="/privacy/">Privacy Policy</a>'
+    '<a href="/disclaimer/">Disclaimer</a>'
+    '<a href="/terms/">Terms &amp; Conditions</a>'
+    '<a href="/editorial-policy/">Editorial Policy</a>'
+    '<a href="/correction-policy/">Correction Policy</a>'
+    '<a href="/sitemap/">Sitemap</a>'
+    '<a href="/section/syllabus/">Syllabus</a>'
+    '<a href="/section/govt-scheme-yojna/">Govt Schemes</a>'
+    '<a href="/resume-maker/">Resume Maker</a>'
+    '</nav>'
+)
+
 # ── Helpers ─────────────────────────────────────────────────────────
 def e(s): return html_mod.escape(str(s or ''), quote=True)
 
@@ -1206,13 +1243,13 @@ def page_shell(title_tag, meta_desc, canon_url, keywords, schemas_html,
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <div id="headerPlaceholder"></div>
+  <div id="headerPlaceholder">{_LIGHT_HEADER_NAV}</div>
   <script>fetch('/header.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('headerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
   <main id="main-content">
     <nav class="breadcrumb" aria-label="Breadcrumb">{bc_html}</nav>
     {body_html}
   </main>
-  <div id="footerPlaceholder"></div>
+  <div id="footerPlaceholder">{_LIGHT_FOOTER_NAV}</div>
   <script>fetch('/footer.html',{{cache:'no-store'}}).then(r=>r.ok?r.text():null).catch(()=>null).then(h=>{{if(h){{var d=document.getElementById('footerPlaceholder');if(d)d.outerHTML=h;}}}})</script>
   <script src="/tsj-menu.js" defer></script>
   <!-- FAQ accordion init — makes .faq-a toggle on click for all static pages -->
