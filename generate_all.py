@@ -2149,6 +2149,12 @@ def _derive_link_label(url, job_core=''):
     def has(*ks): return any(k in ul for k in ks)
 
     if any(h in host for h in _EXAM_PORTAL_HOSTS):  return 'Online Application Portal'
+    # Google Forms (forms.gle / docs.google.com/forms/...) has no filename or
+    # apply-ish keyword to key off -- it fell through to the generic path
+    # fallback below, which title-cased the random form ID itself and showed
+    # garbage like "2rgenkpn2bukeq2xa" as the visible link text.
+    if 'forms.gle' in host or ('docs.google.com' in host and 'forms' in path):
+        return 'Apply Online (Google Form)'
     if has('corrigend'):                            return 'Corrigendum Notice PDF'
     if has('addend'):                               return 'Addendum Notice PDF'
     if has('admit', 'hallticket', 'hall-ticket', 'call-letter', 'callletter'): return 'Download Admit Card'
@@ -2389,6 +2395,20 @@ def render_links(il_obj):
             elif 'answer' in key: icon, css = 'fa-key', 'lk-answer'
             # NEVER show literal "Click Here" — resolve a real label from URL
             _final_lbl = _smart_link_label(u, lbl_override or label)
+            # FIX (#25): a generic key (e.g. click_here) whose resolved label
+            # clearly reads "Apply Online"/"Official Website"/"Official Link"
+            # still fell through to the grey lk-default style here -- the
+            # other 3 hand-duplicated link classifiers in this file already
+            # check for this (see _smart_link, the all_links handler, the
+            # also_read handler), this one didn't. Only applies when nothing
+            # more specific (pdf/apply/result/admit/answer via key) already
+            # matched.
+            if css == 'lk-default':
+                _fl = _final_lbl.lower()
+                if 'apply' in _fl:
+                    icon, css = 'fa-paper-plane', 'lk-apply'
+                elif 'official' in _fl or 'website' in _fl:
+                    icon, css = 'fa-globe', 'lk-official'
             rows += _row(_final_lbl, u, css, icon)
     for item in (il_obj.get('structured_links') or []):
         if not isinstance(item, dict): continue
