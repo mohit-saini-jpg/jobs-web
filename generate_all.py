@@ -7422,8 +7422,25 @@ def _related_jobs_html(slug, cat='', org='', qual='', state='', limit=8):
     if cat:   _take(lambda it: cat and it['cat'] == cat)
     if qual:  _take(lambda it: qual and it['qual'] == qual)
     if state: _take(lambda it: state and it['state'] == state)
-    # top-up with any recent jobs so every page has >=6 internal links
-    _take(lambda it: True)
+    # top-up with any recent jobs so every page has >=6 internal links.
+    # BUGFIX: this used to scan _REL_INDEX from index 0 every time, so the
+    # ~15-20 jobs registered earliest in the generation pass absorbed almost
+    # all "top-up" inbound links while jobs deeper in the pool -- especially
+    # ones with an uncommon org/cat/qual/state that never won a tiered match
+    # from any OTHER page either -- got zero inbound internal links (a site
+    # audit found 3,476 orphaned job pages, reachable only via sitemap.xml).
+    # Starting the scan at a slug-derived offset spreads the top-up picks
+    # evenly across the whole pool instead of concentrating on the front.
+    # Deterministic (not random) so re-running the generator on unchanged
+    # data doesn't churn every page's related-links block.
+    if len(picked) < limit and _REL_INDEX:
+        n = len(_REL_INDEX)
+        offset = int(hashlib.md5(slug.encode('utf-8')).hexdigest(), 16) % n
+        for i in range(n):
+            if len(picked) >= limit: break
+            it = _REL_INDEX[(offset + i) % n]
+            if it['slug'] in used: continue
+            picked.append(it); used.add(it['slug'])
     if len(picked) < 3:
         return ''
     items = ''.join(
