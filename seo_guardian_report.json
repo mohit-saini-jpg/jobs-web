@@ -1,14 +1,13 @@
 {
-  "timestamp": "2026-08-28T08:41:00.260883+00:00",
+  "timestamp": "2026-08-28T10:26:59.307012+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 8282,
+  "files_scanned": 8246,
   "issues_found_by_check": {
     "ai_marker_integrity": 11,
-    "jobposting_schema": 63,
-    "sitemap_sync": 5
+    "jobposting_schema": 63
   },
-  "issues_auto_fixed": 65,
+  "issues_auto_fixed": 60,
   "unfixable": [
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -98,8 +97,7 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     121 urls [ok]"
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e"
   ],
-  "duration_sec": 30.6
+  "duration_sec": 30.1
 }

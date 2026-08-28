@@ -402,7 +402,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301!
 /state-jobs.html?state=Kerala                                     /state/kerala/                                301
 /state-jobs.html?state=Madhya+Pradesh                             /state/madhya-pradesh/                        301
 /state-jobs.html?state=Maharashtra                                /state/maharashtra/                           301
-/state-jobs.html?state=Manipur                                    /state/manipur/                               301
+/state-jobs.html?state=Manipur  /  301
 /state-jobs.html?state=Meghalaya                                  /state/meghalaya/                             301
 /state-jobs.html?state=Odisha                                     /state/odisha/                                301
 /state-jobs.html?state=Punjab                                     /state/punjab/                                301
