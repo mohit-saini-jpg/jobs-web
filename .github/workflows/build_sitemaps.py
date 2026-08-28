@@ -152,8 +152,10 @@ def main():
     counts["sitemap-jobs.xml"] = write_urlset(
         "sitemap-jobs.xml", job_urls, "weekly", "0.8")
 
-    # States (both /state/ and /state-jobs/ hubs)
-    state_urls = urls_from_dir("state") + urls_from_dir("state-jobs")
+    # States: state-jobs/<slug>/ is the only real hub URL (state/<slug>/ hub
+    # duplicates were removed 2026-08-28 -- vercel.json 301s that path to
+    # state-jobs/<slug>/, so submitting it would just submit a redirect).
+    state_urls = urls_from_dir("state-jobs")
     state_urls = [u for u in state_urls if not u.endswith("/index.html/")]
     counts["sitemap-states.xml"] = write_urlset(
         "sitemap-states.xml", state_urls, "weekly", "0.7")

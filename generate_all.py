@@ -8294,7 +8294,13 @@ for sec in SJ_SEC:
             write(str(ROOT/'jobs'/item_slug/'index.html'), jobs_html, skip_if_exists=True)
         s_count += 1
 
-# Generate /state/{state-slug}/index.html listing pages
+# Generate /state-jobs/{state-slug}/ listing pages — the real, served hub URL.
+# NOTE: this used to ALSO write a duplicate hub at /state/{slug}/index.html.
+# That tree is redirected away by vercel.json (state/<x>/ -> state-jobs/<x>/,
+# a live 301) so its own content/canonical was never actually reachable by a
+# crawler -- pure duplicate-content dead weight. Removed 2026-08-28; the
+# 789 individual /state/<state>/<job>/ DETAIL pages are a separate code path
+# (generate_website.py) and are untouched by this change.
 for sec in SJ_SEC:
     state_name = safe(sec.get('state') or sec.get('title',''))
     raw_state_slug = slugify(state_name)
@@ -8302,8 +8308,8 @@ for sec in SJ_SEC:
     if not state_name or not state_slug: continue
     state_jobs_list = sec.get('items', [])
     if not state_jobs_list: continue
-    canon_listing = f"{BASE_URL}/state/{state_slug}/"
-    # Build simple listing page for /state/{slug}/ — with district cards on top
+    canon_listing = f"{BASE_URL}/state-jobs/{state_slug}/"
+    # Build simple listing page for /state-jobs/{slug}/ — with district cards on top
     _dist_cards = _district_cards_html(state_name)
     _state_norm_jobs = [_norm_state_job(it, state_name)
                         for it in state_jobs_list if (it.get('name') or it.get('title',''))]
@@ -8313,29 +8319,21 @@ for sec in SJ_SEC:
         # content so the page has genuine depth beyond a near-empty job list.
         _state_top_html += _thin_content_evergreen_block(
             state_name, state_name, canon_listing)
-    state_listing = build_listing_page(
-        f"{state_name} Government Jobs {YEAR}",
-        _state_norm_jobs,
-        canon_listing,
-        [('Home','/'),('State Jobs','/state-jobs/')],
-        f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
-        top_html=_state_top_html,
-    )
-    write(str(ROOT/'state'/state_slug/'index.html'), state_listing)
 
-    # Also write to /state-jobs/{slug}/ — this is the URL the site nav + cards
-    # actually link to. Generating it here keeps it FRESH with ALL items from
-    # JSON (the old static /state-jobs/ pages were stale and missing items).
-    # IMPORTANT: site nav links use the FULL state slug (e.g. jammu-and-kashmir),
-    # not the abbreviated detail-page slug (jk), so write to BOTH so whichever
-    # the nav points at is always complete.
+    # Site nav links use the FULL state slug (e.g. jammu-and-kashmir), not the
+    # abbreviated detail-page slug (jk), so write to BOTH so whichever the nav
+    # points at is always complete.
     for _sj_slug in {state_slug, raw_state_slug}:
         canon_statejobs = f"{BASE_URL}/state-jobs/{_sj_slug}/"
         statejobs_listing = build_listing_page(
             f"{state_name} Government Jobs {YEAR}",
             _state_norm_jobs,
             canon_statejobs,
-            [('Home','/'),('State Jobs','/state-jobs/')],
+            # 'State Jobs' hub link is /state/ (the real landing page) not the
+            # bare /state-jobs/, which itself 301s to /state/ -- pointing
+            # here directly avoids sending every breadcrumb click through an
+            # extra redirect hop.
+            [('Home','/'),('State Jobs','/state/')],
             f"Latest {state_name} government jobs {YEAR}. All sarkari naukri for {state_name} state.",
             top_html=_state_top_html,
         )
@@ -8343,14 +8341,17 @@ for sec in SJ_SEC:
 
 print(f"  State pages: {s_count}")
 
-# 3b. /state/ LANDING INDEX — links to every /state/{slug}/ page.
+# 3b. /state/ LANDING INDEX — the real, served state-directory page (bare
+# /state-jobs/ 301s to this). Links out to /state-jobs/{slug}/ directly
+# (the real per-state hub) rather than /state/{slug}/, which no longer
+# exists on disk and would just cost readers a redirect hop.
 # Reuse build_listing_page: feed each state as a "job" whose title links out.
 _state_landing_jobs = [
     {'basic_details': {'job_title': f"{n} Government Jobs {YEAR}",
                        'organization_name': n,
                        'total_vacancies': str(c) if c else ''},
-     'source_url': f"/state/{s}/",
-     '_listing_url': f"/state/{s}/"}
+     'source_url': f"/state-jobs/{s}/",
+     '_listing_url': f"/state-jobs/{s}/"}
     for (n, s, c) in sorted(_state_landing_items)
 ]
 write(str(ROOT/'state'/'index.html'), build_listing_page(
