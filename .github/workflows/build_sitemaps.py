@@ -195,8 +195,12 @@ def main():
     # go stale and reintroduce legacy .html paths.
     write_urlset("sitemap-pages.xml", core, "monthly", "0.5")
 
-    # THE ONLY INDEX — references child urlsets ONLY (never another index)
-    children = ["sitemap.xml", "sitemap-pages.xml", "sitemap-sections.xml",
+    # THE ONLY INDEX — references child urlsets ONLY (never another index).
+    # sitemap.xml is still written to disk above (well-known path some tools
+    # probe directly) but deliberately excluded here: it and sitemap-pages.xml
+    # are built from the identical `core` URL list, so listing both submitted
+    # the same ~117 URLs to Google twice with conflicting priority/changefreq.
+    children = ["sitemap-pages.xml", "sitemap-sections.xml",
                 "sitemap-jobs.xml", "sitemap-categories.xml",
                 "sitemap-states.xml", "sitemap-districts.xml", "sitemap-education.xml"]
     write_index("sitemap-index.xml", children)

@@ -130,13 +130,11 @@ District-level pages for individual states also exist under `/district/`.
 
 Top Sarkari Jobs publishes thousands of individual recruitment pages under `/jobs/<slug>/`, updated daily. This file is a curated overview, not an exhaustive listing. For the complete, machine-readable index of every page, use the XML sitemaps:
 
-- [Sitemap Index](https://www.topsarkarijobs.com/sitemap.xml)
+- [Sitemap Index](https://www.topsarkarijobs.com/sitemap-index.xml)
 - [Job Postings](https://www.topsarkarijobs.com/sitemap-jobs.xml)
 - [States](https://www.topsarkarijobs.com/sitemap-states.xml)
 - [Categories](https://www.topsarkarijobs.com/sitemap-categories.xml)
 - [Sections](https://www.topsarkarijobs.com/sitemap-sections.xml)
-- [Results](https://www.topsarkarijobs.com/sitemap-results.xml)
-- [Admit Cards](https://www.topsarkarijobs.com/sitemap-admitcards.xml)
 - [Education](https://www.topsarkarijobs.com/sitemap-education.xml)
 - [Districts](https://www.topsarkarijobs.com/sitemap-districts.xml)
 - [Static Pages](https://www.topsarkarijobs.com/sitemap-pages.xml)
