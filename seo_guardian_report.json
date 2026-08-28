@@ -1,13 +1,106 @@
 {
-  "timestamp": "2026-08-28T11:55:06.392830+00:00",
-  "mode": "full-scan",
-  "dry_run": true,
-  "files_scanned": 11822,
-  "issues_found_by_check": {},
-  "issues_auto_fixed": 0,
-  "unfixable": [],
+  "timestamp": "2026-08-28T12:30:37.658715+00:00",
+  "mode": "changed-only",
+  "dry_run": false,
+  "files_scanned": 10163,
+  "issues_found_by_check": {
+    "lang_hreflang": 1170,
+    "ai_marker_integrity": 11,
+    "jobposting_schema": 63,
+    "sitemap_sync": 200
+  },
+  "issues_auto_fixed": 1430,
+  "unfixable": [
+    {
+      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
+    },
+    {
+      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
+    },
+    {
+      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
+    },
+    {
+      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 18 END)"
+    },
+    {
+      "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
+    },
+    {
+      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
+    }
+  ],
   "critical_unfixable": 0,
   "seo_clean": true,
-  "notes": [],
-  "duration_sec": 3.3
+  "notes": [
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
+    "build_sitemaps:   sitemap.xml                     121 urls [ok]"
+  ],
+  "duration_sec": 39.9
 }
