@@ -5396,16 +5396,41 @@ def build_detail_page(job_obj, slug, canon_url, breadcrumbs, badge_label='Govt J
                 _jp = f'{_org_s} {_yr}{_vac_s}'
             if len(_jp) < 15:
                 _jp = _clean_title or title[:_MAX]
+    # DUPLICATE-TITLE FIX: when the same posting is published once per
+    # district (e.g. "UP Anganwadi Recruitment 2026 - Apply Online for 108
+    # Anganwadi Worker Posts in Bhadohi District"), the distinguishing text
+    # sits at the END of the title -- a plain word-boundary cut to _MAX
+    # chars keeps only the identical common prefix ("UP Anganwadi
+    # Recruitment 2026 - Apply") across every district, so every posting
+    # collapsed to the same <title>. Extract a trailing "in <District>"
+    # phrase (or fall back to vacancy count, always distinct) BEFORE
+    # truncating and fold it into a protected suffix -- same technique
+    # used for the state-name suffix in generate_website.py -- so it
+    # survives the cut regardless of how long the base title is. Never
+    # touches the H1/body, which already carry the full text.
+    _disambig = ''
     if len(_jp) > _MAX:
-        _jp = smart_title_cut(_jp, _MAX)
+        _loc_m = re.search(r'\bin\s+([A-Z][A-Za-z.\s]{2,28}?)(?:\s+District)?\s*$', _jp)
+        if _loc_m:
+            _disambig = f' ({_loc_m.group(1).strip()})'
+        elif _vac_n:
+            _disambig = f' ({_vac_n} Posts)'
+    _base_budget = _MAX - len(_disambig)
+    if len(_jp) > _base_budget:
+        _jp = smart_title_cut(_jp, _base_budget)
+    _jp = _jp + _disambig
     title_tag = smart_title_cut(_jp + _BRAND, 60)
     # ── AI LAYER (Phase 5): prefer ai_title if present, else the fact-built title.
     # Additive + safe: if the AI field is null/missing, behaviour is exactly as before.
     _ai_title = safe(job_obj.get('ai_title', '') or '')
     if _ai_title:
         # Strip any brand suffix the AI may have baked in, then re-apply via
-        # the same _jp + _BRAND pattern so the FINAL <title> is always ≤60 chars.
+        # the same _jp + _BRAND pattern so the FINAL <title> is always ≤60
+        # chars WITHOUT cutting into the brand itself (reserve _MAX first,
+        # same fix as the fact-built path above).
         _ai_bare = re.sub(r'\s*\|?\s*Top Sarkari Jobs\s*$', '', _ai_title, flags=re.I).strip()
+        if len(_ai_bare) > _MAX:
+            _ai_bare = smart_title_cut(_ai_bare, _MAX)
         title_tag = smart_title_cut(_ai_bare + _BRAND, 60)
     short_info = sanitize_short_info(safe(bd.get('short_information','') or job_obj.get('jobs_info','') or job_obj.get('short_information','')))
     # Build meta description inline
