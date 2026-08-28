@@ -43,6 +43,35 @@ def _in_trees(rel):
     return any(rel.startswith(t) for t in _TREES)
 
 
+_ROBOTS_NOINDEX_RE = re.compile(
+    r'<meta\s+name="robots"\s+content="[^"]*noindex', re.I)
+_CANONICAL_RE = re.compile(
+    r'<link\s+rel="canonical"\s+href="([^"]+)"', re.I)
+
+
+def _should_be_sitemapped(fp, root, up):
+    """A page correctly has NO sitemap entry (not a bug to flag/fix) when it's
+    noindex, or when its own canonical points somewhere else entirely -- the
+    canonical target is what should be sitemapped, not this duplicate. Only
+    reads the first 4KB (head tags always land well within that) so this
+    stays cheap across thousands of files."""
+    try:
+        with open(fp, encoding="utf-8", errors="ignore") as f:
+            head = f.read(4096)
+    except Exception:
+        return True  # can't tell -- keep flagging, safer than silently hiding it
+    if _ROBOTS_NOINDEX_RE.search(head):
+        return False
+    m = _CANONICAL_RE.search(head)
+    if m:
+        canon = m.group(1).strip()
+        canon_path = canon[len(BASE_URL):] if canon.startswith(BASE_URL) else canon
+        canon_path = "/" + canon_path.split("#")[0].split("?")[0].strip("/") + "/"
+        if canon_path != up:
+            return False  # canonicalizes elsewhere -- that URL should be sitemapped, not this one
+    return True
+
+
 def _reachable_page_urls(root):
     """Collect page URLs ONLY from sitemaps Google actually reads: start from the
     submitted/pinged roots (sitemap-index.xml, sitemap.xml) and follow child
@@ -108,7 +137,7 @@ def detect_global(ctx):
         if not _in_trees(rel):
             continue
         up = _diskpath_to_urlpath(root, fp)
-        if up not in loc_paths:
+        if up not in loc_paths and _should_be_sitemapped(fp, root, up):
             issues.append(Issue(CHECK_ID, NON_CRITICAL,
                 f"page on disk not in any sitemap: {up}", fp,
                 fixable=True, meta={"side": "disk_orphan", "urlpath": up}))
