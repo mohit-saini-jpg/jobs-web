@@ -47,13 +47,19 @@
       },
       {
         "@type": "BreadcrumbList",
-        "@id": "https://www.topsarkarijobs.com/#breadcrumb",
+        "@id": "https://www.topsarkarijobs.com/privacy/#breadcrumb",
         "itemListElement": [
           {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
             "item": "https://www.topsarkarijobs.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Privacy Policy",
+            "item": "https://www.topsarkarijobs.com/privacy/"
           }
         ]
       },
@@ -115,6 +121,10 @@ html, body { overflow-x: hidden; max-width: 100%; }
     .container{max-width:1100px;margin:0 auto;padding:16px;}
     nav a{color:#fff;margin-right:12px;font-weight:bold;text-decoration:none;}
     nav a:hover{text-decoration:underline;}
+    .bc{font-size:.74rem;color:#64748b;padding:8px 10px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:#fff;border-bottom:1px solid #e2e8f0}
+    .bc a{color:#64748b;text-decoration:none}
+    .bc a:hover{text-decoration:underline}
+    .bc-sep{color:#d1d5db;font-size:.6rem}
     h2{margin-top:1.2rem;}
   
     /* ── BRAND LOGO FIX: prevent title truncation on all pages ── */
@@ -189,6 +199,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
     </div>
   </header>
   <main id="main-content" class="container">
+    <nav class="bc" aria-label="Breadcrumb"><a href="/">Home</a><span class="bc-sep">›</span><span aria-current="page">Privacy Policy</span></nav>
     <h2>Introduction</h2>
     <p>Top Sarkari Jobs respects your privacy. This policy explains what information we collect, how we use it and how we keep it secure.</p>
     <h2>Information We Collect</h2>
