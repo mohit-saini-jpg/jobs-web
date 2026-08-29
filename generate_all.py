@@ -6320,6 +6320,91 @@ _STATE_SEO_CONTENT = {
 # ── END STATE SEO CONTENT ────────────────────────────────────────────────────
 
 
+def _hub_org_samples(jobs, n=3):
+    """Distinct real recruiting-org names from this hub's own job list, in
+    first-appearance order (skips empty/overlong values)."""
+    seen, out = set(), []
+    for j in jobs:
+        bd = j.get('basic_details', {}) or {}
+        org = safe(bd.get('organization_name','') or bd.get('organization','') or '').strip()
+        key = org.lower()
+        if org and 3 <= len(org) <= 60 and key not in seen:
+            seen.add(key)
+            out.append(org)
+        if len(out) >= n:
+            break
+    return out
+
+
+def _hub_join_hi(items):
+    """'A, B aur C' — Hindi-style oxford-and join."""
+    items = [i for i in items if i]
+    if not items:
+        return ''
+    if len(items) == 1:
+        return items[0]
+    return ', '.join(items[:-1]) + ' aur ' + items[-1]
+
+
+# BUGFIX (#32/#19): the old qualification/category/section branches below were
+# ~95% byte-identical across every hub page (98 qualification + 126
+# category/study + dozens of section pages) -- only the {_name} substitution
+# differed, everything else word-for-word the same 3-sentence template. That's
+# both "thin content" (only the substituted noun is genuinely unique per page)
+# and exactly the kind of templated near-duplicate boilerplate Google's
+# helpful-content system flags. This pulls in REAL per-page data (the actual
+# recruiting organizations posted under this hub, the live job count) and
+# picks between a few differently-STRUCTURED sentence variants (deterministic
+# per hub name, so unrelated data changes don't churn the wording daily).
+_HUB_VARIANTS = {
+    'qualification': [
+        lambda name, yr, n, orgs: (
+            f"{name} Government Jobs {yr}: {name} qualification ke saath abhi {n}+ sarkari naukri ke openings yahan listed hain"
+            + (f", jaise {orgs} me." if orgs else "."),
+            "Har listing me eligibility, vacancy count, pay scale aur seedha apply link diya gaya hai — sab kuch ek hi jagah.",
+            f"Naye {name} recruitment notifications aate hi is page par turant update ho jaate hain, chahe central ho ya state government."),
+        lambda name, yr, n, orgs: (
+            f"{n}+ active {name} sarkari naukri listings {yr} ke liye is page par maujood hain"
+            + (f", jinme {orgs} shamil hain." if orgs else "."),
+            f"{name} qualification rakhne wale candidates yahan age limit, selection process aur official notification link seedha dekh sakte hain.",
+            f"Yeh page {name} category ki har nayi vacancy ke saath automatically refresh hota hai."),
+    ],
+    'category': [
+        lambda name, yr, n, orgs: (
+            f"{name} {yr}: {name} se judi {n}+ government job notifications yahan ek saath milti hain"
+            + (f", including {orgs}." if orgs else "."),
+            "Har job ki puri detail yahan hai: eligibility, vacancies, important dates aur direct apply link.",
+            f"Yeh page {name} ki har nayi opening se automatically update hota hai."),
+        lambda name, yr, n, orgs: (
+            f"Abhi {n}+ {name} openings live hain is page par"
+            + (f" — {orgs} jaise recruiters ki taraf se." if orgs else "."),
+            f"{name} candidates ke liye zaroori har detail — eligibility se lekar apply link tak — yahan ek saath diya gaya hai.",
+            f"{name} {yr} ki naye notifications turant is page par reflect hoti hain."),
+    ],
+    'section': [
+        lambda name, yr, n, orgs: (
+            f"{name} {yr}: Is section me abhi {n}+ latest updates aur notifications listed hain"
+            + (f", jaise {orgs} se." if orgs else "."),
+            "Har item ke saath complete details diye gaye hain: dates, eligibility aur direct links.",
+            f"Government job aspirants ke liye {name} ek regularly-updated important category hai."),
+        lambda name, yr, n, orgs: (
+            f"{n}+ {name} entries is page par currently live hain"
+            + (f", including {orgs}." if orgs else "."),
+            f"Har entry ke liye seedha official link aur zaroori dates diye gaye hain — bina kisi extra khoj ke.",
+            f"Naye {name} updates aate hi yeh page turant refresh ho jaata hai."),
+    ],
+}
+
+
+def _hub_varied_content(name, yr, n, jobs, kind):
+    """Pick a per-hub sentence-structure variant (deterministic on the hub
+    name) and fill it with this hub's own real organization samples."""
+    variants = _HUB_VARIANTS[kind]
+    idx = int(hashlib.md5(name.lower().encode('utf-8')).hexdigest(), 16) % len(variants)
+    orgs = _hub_join_hi(_hub_org_samples(jobs, 3))
+    return variants[idx](name, yr, n, orgs)
+
+
 def _seo_listing_content(title, jobs, canon_url):
     """Unique SEO content for listing pages — fixes thin content for ~4900 pages."""
     import re as _re
@@ -6345,21 +6430,15 @@ def _seo_listing_content(title, jobs, canon_url):
         p2 = (f"{_dt} ke local candidates ke liye yahan har job ki complete detail hai : eligibility, vacancies, last date aur apply link.")
         p3 = (f"Naye notifications aate hi yahan automatically show honge.")
     elif '/qualification/' in _url:
-        p1 = (f"{_name} Government Jobs {_yr}: {_name} qualification wale candidates ke liye sabhi eligible sarkari jobs yahan listed hain.")
-        p2 = (f"Har job ke liye yahan milega: required qualification, age limit, vacancies, pay scale, selection process aur application link.")
-        p3 = (f"Central aur state dono level ki {_name} jobs yahan update hoti hain.")
+        p1, p2, p3 = _hub_varied_content(_name, _yr, _n, jobs, 'qualification')
     elif '/education/' in _url:
         p1 = (f"{_name} {_yr}: Is page par {_name} se judi sabhi latest education updates milti hain : board exam results (10th, 12th), entrance exams, admit cards / hall tickets, counselling aur admission notifications. Dhyan dein: yeh government job vacancies nahi, balki education sector ki official updates (exams, results, admissions) hain.")
         p2 = (f"Har update ke saath complete detail hoti hai : important dates, eligibility criteria, registration/application process, exam date, result link aur official website ka direct link. Students aur parents dono ke liye ek hi jagah puri jankari milti hai.")
         p3 = (f"{_name} me aane wale naye admission forms, exam schedules, hall tickets aur result announcements ke liye yeh page rozana update hota hai. Bookmark karke regularly check karein taaki koi important education deadline miss na ho.")
     elif '/section/' in _url:
-        p1 = (f"{_name} {_yr}: Is section me {_name} se judi sabhi latest updates aur notifications ek jagah milti hain.")
-        p2 = (f"Har item ke liye complete details diye gaye hain : dates, eligibility aur direct links.")
-        p3 = (f"Government job aspirants ke liye {_name} ek important category hai.")
+        p1, p2, p3 = _hub_varied_content(_name, _yr, _n, jobs, 'section')
     elif '/category/' in _url:
-        p1 = (f"{_name} {_yr}: {_name} se related sabhi government job notifications yahan ek saath milte hain.")
-        p2 = (f"Har job ki puri detail yahan hai : eligibility, vacancies, dates aur apply link.")
-        p3 = (f"Yeh page automatically latest {_name} openings se update hota hai.")
+        p1, p2, p3 = _hub_varied_content(_name, _yr, _n, jobs, 'category')
     else:
         p1 = (f"{_name} {_yr}: Latest government job notifications aur sarkari naukri updates yahan milti hain.")
         p2 = (f"Har job ke saath complete details hain : eligibility, dates aur apply links.")
