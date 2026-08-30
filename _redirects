@@ -4995,7 +4995,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 /jobs/ceil-recruitment-2026-apply-online-for-dgm-officer-and-more-posts/  /  301
 /jobs/punjab-psssb-ada-recruitment-2026-notification-out-apply-online-for-170-assistan/  /  301
 /jobs/iitism-dhanbad-junior-research-fellow-recruitment-2026-apply-online-last-date-re/  /  301
-/jobs/iit-kanpur-project-manager-recruitment-2026-apply-online/  /  301
 /jobs/iim-trichy-library-information-assistant-recruitment-2026-apply-online-any-gradu/  /  301
 /jobs/tmc-technician-recruitment-2026-walkin/  /  301
 /jobs/up-police-sub-inspector-si-advt-no-032025-recruitment-2025-pet-admit-card-2026-f/  /  301
@@ -5816,22 +5815,22 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 /jobs/indian-coast-guard-driver-vacancy-2026-apply-now-f789cfb2d0/  /jobs/indian-coast-guard-engine-driver-recruitment-2026-apply-offline/  301
 /jobs/pau-junior-field-lab-helper-vacancy-2026-8th-pass-apply-now-ffa638515d/  /jobs/pau-junior-lab-field-helper-recruitment-2026-apply-offline/  301
 /jobs/airport-authority-of-india-aai-manager-junior-executive-recruitment-2026-apply-o/  /jobs/aai-junior-executive-recruitment-2026-apply-online-for-389-manager-junior-exec/  301
-/jobs/patna-high-court-phc-technical-assistant-ta-recruitment-2026/  /jobs/patna-high-court-assistant-recruitment-2026-notification-out-apply-online-for/  301
-/jobs/skau-kurukshetra-non-teaching-vacancy-2026-apply-for-staff-nurse-clerk-ayurvedic/  /jobs/skau-kurukshetra-non-teaching-recruitment-2026-apply-online-for-60-clerk-staff/  301
 /jobs/fatehabad-anganwadi-vacancy-2026-apply-for-anganwadi-worker-helper-posts/  /jobs/wcd-odisha-recruitment-2026-apply-online-for-anganwadi-worker-and-helper-posts/  301
 /jobs/sirsa-anganwadi-vacancy-2026-apply-for-anganwadi-worker-helper-posts/  /jobs/wcd-odisha-recruitment-2026-apply-online-for-anganwadi-worker-and-helper-posts/  301
 /jobs/rewari-anganwadi-vacancy-2026-apply-for-anganwadi-worker-helper-posts/  /jobs/hapur-up-anganwadi-recruitment-2026-apply-online-for-317-anganwadi-worker-help/  301
 /jobs/ncra-tifr-recruitment-2026-apply-online-for-clerk-driver-laboratory-assistant-se/  /jobs/ncra-tifr-non-acadamic-recruitment-2026-apply-online-for-clerk-security-guard/  301
-/jobs/sbi-bank-clerk-vacancy-2026-apply-online-for-1538-posts/  /jobs/sbi-clerk-junior-associate-recruitment-2026-notification-out-apply-online-for/  301
 /jobs/pune-income-tax-mts-ta-steno-online-form/  /jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/  301
 /jobs/railway-icf-apprentice-recruitment-2026-apply-online-for-1010-fitter-electrician/  /jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/  301
 /jobs/pune-income-tax-mts-ta-steno-online-form-6d27f6faf6/  /jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/  301
-/jobs/punjab-vidhan-sabha-group-d-bharti-2026-apply-for-chowkidar-safai-sewak-posts/  /jobs/punjab-vidhan-sabha-group-d-recruitment-2026-apply-online-for-chowkidar-sewada/  301
 /jobs/upsssc-veterinary-pharmacist-main-examination-2026-apply-online-for-1308-post/  /jobs/upsssc-veterinary-pharmacist-recruitment-2026-notification-out-apply-online-fo/  301
-/jobs/haryana-police-spo-vacancy-2026-apply-for-400-posts/  /jobs/haryana-police-spo-recruitment-2026-notification-out-walk-in-for-400-special-pol/  301
-/jobs/haryana-grp-spo-vacancy-2026-notification-of-158-special-police-officer/  /jobs/haryana-police-spo-recruitment-2026-notification-out-walk-in-for-400-special-pol/  301
 /jobs/bpsc-school-teacher-tre-4-online-form-2026/  /jobs/bpsc-tre-40-recruitment-2026-notification-out-32388-school-teacher-posts-apply/  301
 /jobs/bank-of-baroda-bob-local-bank-officer-lbo-recruitment-2026-apply-online-for-2482/  /jobs/bank-of-baroda-lbo-recruitment-2026-notification-out-apply-online-for-2482-loc/  301
 /jobs/aiims-delhi-field-worker-vacancy-2026-check-posts-and-how-to-apply/  /jobs/aiims-delhi-field-worker-recruitment-2026-apply-online/  301
 /jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/chitrakoot-up-anganwadi-recruitment-2026-apply-online-for-92-anganwadi-worker/  301
 /jobs/sahitya-akademi-vacancy-2026-apply-for-clerk-mts-driver-and-other-posts/  /jobs/sahitya-akademi-recruitment-2026-notification-out-apply-offline-for-30-clerk-m/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/india-post-gramin-dak-sevaks-gds-recruitment-schedule-ii-july-2026-apply-online/  /jobs/india-post-gds-recruitment-2026-apply-online-for-23757-bpm-abpm-dak-sevak-post/  301
+/jobs/punjab-haryana-high-court-driver-vacancy-2026-check-notification-apply-online/  /jobs/punjab-and-haryana-high-court-recruitment-2026-apply-online-for-56-driver-and/  301
+/jobs/ccs-hau-hisar-apprentice-vacancy-2026-apply-online-377-posts/  /jobs/ccs-hau-apprentice-recruitment-2026-apply-online-for-377-electrician-steno-and/  301
+/jobs/mpesb-1700-group-3-sub-engineer-online-form/  /jobs/mpesb-group-3-sub-engineer-recruitment-2026-apply-online-for-1700-draftsman-su/  301

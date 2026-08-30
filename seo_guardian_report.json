@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-08-30T02:45:54.282479+00:00",
+  "timestamp": "2026-08-30T03:20:30.662353+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9229,
+  "files_scanned": 9427,
   "issues_found_by_check": {
-    "jobposting_schema": 113,
+    "jobposting_schema": 117,
     "ai_marker_integrity": 11,
-    "sitemap_sync": 5
+    "expired_job": 4,
+    "sitemap_sync": 205
   },
-  "issues_auto_fixed": 64,
+  "issues_auto_fixed": 271,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -30,6 +31,12 @@
     },
     {
       "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/asc-centre-south-bangalore-group-c-recruitment-2026-apply-offline-for-31-firem/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
@@ -405,7 +412,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     120 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
   ],
-  "duration_sec": 35.9
+  "duration_sec": 30.6
 }
