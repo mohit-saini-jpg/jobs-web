@@ -1,15 +1,13 @@
 {
-  "timestamp": "2026-08-31T02:39:32.260814+00:00",
+  "timestamp": "2026-08-31T03:06:17.884379+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 9438,
   "issues_found_by_check": {
     "jobposting_schema": 118,
-    "ai_marker_integrity": 11,
-    "expired_job": 3,
-    "sitemap_sync": 3
+    "ai_marker_integrity": 11
   },
-  "issues_auto_fixed": 69,
+  "issues_auto_fixed": 63,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -411,8 +409,7 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e"
   ],
-  "duration_sec": 36.5
+  "duration_sec": 37.0
 }
