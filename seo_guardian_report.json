@@ -1,13 +1,15 @@
 {
-  "timestamp": "2026-08-31T03:06:17.884379+00:00",
+  "timestamp": "2026-08-31T04:53:05.457242+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9438,
+  "files_scanned": 9442,
   "issues_found_by_check": {
     "jobposting_schema": 118,
-    "ai_marker_integrity": 11
+    "ai_marker_integrity": 11,
+    "expired_job": 5,
+    "sitemap_sync": 4
   },
-  "issues_auto_fixed": 63,
+  "issues_auto_fixed": 72,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -259,7 +261,7 @@
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 20 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 21 END)"
     },
     {
       "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
@@ -409,7 +411,8 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e"
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
+    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
   ],
-  "duration_sec": 37.0
+  "duration_sec": 36.8
 }
