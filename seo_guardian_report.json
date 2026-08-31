@@ -1,75 +1,20 @@
 {
-  "timestamp": "2026-08-31T04:53:05.457242+00:00",
-  "mode": "changed-only",
+  "timestamp": "2026-08-31T08:54:02.460624+00:00",
+  "mode": "full-scan",
   "dry_run": false,
-  "files_scanned": 9442,
+  "files_scanned": 12042,
   "issues_found_by_check": {
-    "jobposting_schema": 118,
+    "jobposting_schema": 55,
     "ai_marker_integrity": 11,
-    "expired_job": 5,
-    "sitemap_sync": 4
+    "sitemap_sync": 203
   },
-  "issues_auto_fixed": 72,
+  "issues_auto_fixed": 3,
   "unfixable": [
     {
-      "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/aaiclas-assistant-recruitment-2026-apply-online-for-62-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walk-in/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
+      "file": "jobs/cmti-bengaluru-recruitment-2026-walk-in-interview-for-71-project-associate-assis/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/asc-centre-south-bangalore-group-c-recruitment-2026-apply-offline-for-31-firem/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/barc-scientific-assistant-recruitment-2026-6-para-medical-posts-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/beml-apprentices-recruitment-2026-notification-out-apply-online-for-1346-iti-g/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/bmc-shikshan-sevak-recruitment-2026-notification-out-apply-online-for-935-post/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/bmc-trade-apprentice-recruitment-2026-notification-out-walk-in-for-612-posts/index.html",
@@ -78,313 +23,7 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bpcl-non-management-recruitment-2026-last-date-extended-apply-online-for-154-t/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/bpcl-non-management-recruitment-2026-notification-out-apply-online-for-154-tec/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
-    },
-    {
-      "file": "jobs/cbsl-recruitment-2026-apply-online-for-10-assistant-manager-officer-junior-off/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/chennai-port-authority-deputy-chief-mechanical-engineer-recruitment-2026-apply/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/cmti-bengaluru-recruitment-2026-walk-in-interview-for-71-project-associate-assis/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/csl-ship-draftsman-trainee-recruitment-2026-apply-online-for-60-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/dcpu-tiruppur-recruitment-2026-apply-offline-for-supervisor-and-case-worker-po/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/drdo-ada-project-assistant-i-recruitment-2026-apply-online-for-111-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/drdo-cvrde-paid-internship-recruitment-2026-apply-offline-for-35-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/east-coast-railway-gdce-recruitment-2026-notification-out-apply-online-for-142/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Odisha/751001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/echs-ambala-recruitment-2026-apply-offline-for-100-deo-clerk-peon-and-more-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/echs-mathura-recruitment-2026-apply-offline-for-21-safaiwala-chowkidar-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/echs-recruitment-2026-apply-offline-for-medical-officer-dental-officer-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/epil-graduate-apprentice-recruitment-2026-2-vacancies-apply-by-5-august/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/gmdc-teacher-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
-    },
-    {
-      "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
-    },
-    {
-      "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/iim-sambalpur-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Odisha/751001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
-    },
-    {
-      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95-gr/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Andaman and Nicobar Islands/744101 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/istc-recruitment-2026-apply-online-for-09-lead-engineer-executive-and-more-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
-    },
-    {
-      "file": "jobs/kumaun-university-recruitment-2026-walkin-for-junior-research-fellow-project-a/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 21 END)"
-    },
-    {
-      "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
-    },
-    {
-      "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/ncra-tifr-non-acadamic-recruitment-2026-apply-online-for-clerk-security-guard/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
       "file": "jobs/nfdc-recruitment-2026-apply-online-for-15-assistant-senior-excecutive-and-more/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nhm-dhamtari-recruitment-2026-apply-walkin-for-38-laboratory-technician-staff/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/northeast-frontier-railway-sports-quota-recruitment-2026-27-apply-online-for-5/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nspcl-recruitment-2026-apply-online-for-17-sr-assistant-officer-sr-assistant-e/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nsti-kanpur-guest-faculties-recruitment-2026-notification-out-apply-offline/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
-    },
-    {
-      "file": "jobs/pune-pdcc-bank-peon-recruitment-2026-notification-out-apply-online-for-289-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/railway-icf-act-apprentice-recruitment-2026-notification-out-apply-online-for/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
-    },
-    {
-      "file": "jobs/ramanagara-district-court-recruitment-2026-apply-online-for-55-typist-peon-and/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/rcfl-mt-recruitment-2026-last-date-extended-apply-online-for-94-management-tra/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/rcfl-mt-recruitment-2026-notification-out-apply-online-for-94-management-train/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/rrc-ncr-apprentice-recruitment-2026-notification-out-apply-online-for-1853-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/sbc-visakhapatnam-group-c-recruitment-2026-apply-online-for-fire-engine-driver/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/svnirtar-recruitment-2026-apply-online-for-11-assistant-assistant-professor-an/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
-    },
-    {
-      "file": "jobs/tifr-recruitment-2026-apply-online-for-project-associate-project-assistant-pos/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -396,23 +35,1583 @@
       "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/tmb-so-recruitment-2026-notification-out-apply-online-for-specialist-officer-p/index.html",
+      "file": "jobs/dcpu-tiruppur-recruitment-2026-apply-offline-for-supervisor-and-case-worker-po/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/kumaun-university-recruitment-2026-walkin-for-junior-research-fellow-project-a/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nhm-dhamtari-recruitment-2026-apply-walkin-for-38-laboratory-technician-staff/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ncra-tifr-non-acadamic-recruitment-2026-apply-online-for-clerk-security-guard/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/barc-scientific-assistant-recruitment-2026-6-para-medical-posts-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-ambala-recruitment-2026-apply-offline-for-100-deo-clerk-peon-and-more-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ramanagara-district-court-recruitment-2026-apply-online-for-55-typist-peon-and/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/drdo-cvrde-paid-internship-recruitment-2026-apply-offline-for-35-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95-gr/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/svnirtar-recruitment-2026-apply-online-for-11-assistant-assistant-professor-an/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iim-sambalpur-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Odisha/751001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tifr-recruitment-2026-apply-online-for-project-associate-project-assistant-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
     },
     {
       "file": "jobs/tmc-actrec-engineer-recruitment-2026-walk-in/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/northeast-frontier-railway-sports-quota-recruitment-2026-27-apply-online-for-5/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
+    },
+    {
+      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
+    },
+    {
+      "file": "jobs/asc-centre-south-bangalore-group-c-recruitment-2026-apply-offline-for-31-firem/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/pune-pdcc-bank-peon-recruitment-2026-notification-out-apply-online-for-289-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rrc-ncr-apprentice-recruitment-2026-notification-out-apply-online-for-1853-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/cbsl-recruitment-2026-apply-online-for-10-assistant-manager-officer-junior-off/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rcfl-mt-recruitment-2026-notification-out-apply-online-for-94-management-train/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
+    },
+    {
+      "file": "jobs/istc-recruitment-2026-apply-online-for-09-lead-engineer-executive-and-more-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rcfl-mt-recruitment-2026-last-date-extended-apply-online-for-94-management-tra/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/gmdc-teacher-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/sbc-visakhapatnam-group-c-recruitment-2026-apply-online-for-fire-engine-driver/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/beml-apprentices-recruitment-2026-notification-out-apply-online-for-1346-iti-g/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bpcl-non-management-recruitment-2026-notification-out-apply-online-for-154-tec/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
+    },
+    {
+      "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 21 END)"
+    },
+    {
+      "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Andaman and Nicobar Islands/744101 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/chennai-port-authority-deputy-chief-mechanical-engineer-recruitment-2026-apply/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/railway-icf-act-apprentice-recruitment-2026-notification-out-apply-online-for/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bmc-shikshan-sevak-recruitment-2026-notification-out-apply-online-for-935-post/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bpcl-non-management-recruitment-2026-last-date-extended-apply-online-for-154-t/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walk-in/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tmb-so-recruitment-2026-notification-out-apply-online-for-specialist-officer-p/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-mathura-recruitment-2026-apply-offline-for-21-safaiwala-chowkidar-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/csl-ship-draftsman-trainee-recruitment-2026-apply-online-for-60-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/east-coast-railway-gdce-recruitment-2026-notification-out-apply-online-for-142/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Odisha/751001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/drdo-ada-project-assistant-i-recruitment-2026-apply-online-for-111-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/epil-graduate-apprentice-recruitment-2026-2-vacancies-apply-by-5-august/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nsti-kanpur-guest-faculties-recruitment-2026-notification-out-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-recruitment-2026-apply-offline-for-medical-officer-dental-officer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/aaiclas-assistant-recruitment-2026-apply-online-for-62-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nspcl-recruitment-2026-apply-online-for-17-sr-assistant-officer-sr-assistant-e/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "state/bihar/central-bank-of-india-apprentice-4500-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/central-bank-of-india-apprentice-4500-posts/"
+    },
+    {
+      "file": "state/bihar/niper-hajipur-civil-engineer-internal-auditor-and-more-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/niper-hajipur-civil-engineer-internal-auditor-and-more-5-posts/"
+    },
+    {
+      "file": "state/bihar/sainik-school-gopalganj-tgt-and-librarian-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/sainik-school-gopalganj-tgt-and-librarian-2-posts/"
+    },
+    {
+      "file": "state/bihar/btsc-food-analyst-11-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/btsc-food-analyst-11-posts/"
+    },
+    {
+      "file": "state/bihar/tmc-housekeeping-supervisor-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/tmc-housekeeping-supervisor-1-posts/"
+    },
+    {
+      "file": "state/bihar/atma-arwal-computer-operator-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/atma-arwal-computer-operator-1-posts/"
+    },
+    {
+      "file": "state/bihar/bpssc-assistant-sub-inspector-22-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/bpssc-assistant-sub-inspector-22-posts/"
+    },
+    {
+      "file": "state/bihar/siwan-district-court-temporary-attender-10-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/siwan-district-court-temporary-attender-10-posts/"
+    },
+    {
+      "file": "state/bihar/aiims-patna-head-and-coordinator-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/aiims-patna-head-and-coordinator-2-posts/"
+    },
+    {
+      "file": "state/bihar/bssa-doctor-yoga-instructor-and-more-17-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/bssa-doctor-yoga-instructor-and-more-17-posts/"
+    },
+    {
+      "file": "state/bihar/dcpu-banka-support-person-20-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-banka-support-person-20-posts/"
+    },
+    {
+      "file": "state/bihar/esic-model-hospital-phulwarisharif-specialists-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/esic-model-hospital-phulwarisharif-specialists-5-posts/"
+    },
+    {
+      "file": "state/bihar/icds-gaya-district-project-assistant-and-block-coordinator-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/icds-gaya-district-project-assistant-and-block-coordinator-3-posts/"
+    },
+    {
+      "file": "state/bihar/iim-bodh-gaya-non-faculty-positions-15-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/iim-bodh-gaya-non-faculty-positions-15-posts/"
+    },
+    {
+      "file": "state/bihar/dcpu-bhagalpur-cook-house-keeper-and-more-17-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-bhagalpur-cook-house-keeper-and-more-17-posts/"
+    },
+    {
+      "file": "state/bihar/dcpu-madhepura-support-person-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-madhepura-support-person-5-posts/"
+    },
+    {
+      "file": "state/bihar/dcpu-munger-support-person-10-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/bihar/dcpu-munger-support-person-10-posts/"
+    },
+    {
+      "file": "state/rajasthan/rpsc-ras-607-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rpsc-ras-607-posts/"
+    },
+    {
+      "file": "state/rajasthan/rpsc-assistant-prosecution-officer-371-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rpsc-assistant-prosecution-officer-371-posts/"
+    },
+    {
+      "file": "state/rajasthan/irctc-hospitality-monitor-92-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/irctc-hospitality-monitor-92-posts/"
+    },
+    {
+      "file": "state/rajasthan/icmr-nihr-project-research-scientist-ii-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/icmr-nihr-project-research-scientist-ii-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/nfsu-assistant-professor-6-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/nfsu-assistant-professor-6-posts/"
+    },
+    {
+      "file": "state/rajasthan/iim-udaipur-research-assistant-associate-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/iim-udaipur-research-assistant-associate-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/nia-jaipur-panchkula-professor-accountant-and-more-49-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/nia-jaipur-panchkula-professor-accountant-and-more-49-posts/"
+    },
+    {
+      "file": "state/rajasthan/icar-iiswc-young-professional-i-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/icar-iiswc-young-professional-i-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/csir-ceeri-technical-officer-and-technician-22-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/csir-ceeri-technical-officer-and-technician-22-posts/"
+    },
+    {
+      "file": "state/rajasthan/esic-specialist-senior-resident-and-more-13-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/esic-specialist-senior-resident-and-more-13-posts/"
+    },
+    {
+      "file": "state/rajasthan/rajsico-junior-assistant-and-junior-sales-assistant-9-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rajsico-junior-assistant-and-junior-sales-assistant-9-posts/"
+    },
+    {
+      "file": "state/rajasthan/iit-jodhpur-project-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/iit-jodhpur-project-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/isro-sac-apprentice/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/isro-sac-apprentice/"
+    },
+    {
+      "file": "state/rajasthan/icmr-nihr-project-technical-support-iii-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/icmr-nihr-project-technical-support-iii-2-posts/"
+    },
+    {
+      "file": "state/rajasthan/rssb-senior-computer-instructor-basic-computer-instructor-3951-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rssb-senior-computer-instructor-basic-computer-instructor-3951-posts/"
+    },
+    {
+      "file": "state/rajasthan/rpsc-1st-grade-special-teacher-121-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rpsc-1st-grade-special-teacher-121-posts/"
+    },
+    {
+      "file": "state/rajasthan/aiims-jodhpur-non-academic-junior-resident-32-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/aiims-jodhpur-non-academic-junior-resident-32-posts/"
+    },
+    {
+      "file": "state/rajasthan/kvk-churu-subject-matter-specialist-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/kvk-churu-subject-matter-specialist-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/aaiclas-assistant-62-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/aaiclas-assistant-62-posts/"
+    },
+    {
+      "file": "state/rajasthan/aiims-jodhpur-senior-resident-67-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/aiims-jodhpur-senior-resident-67-posts/"
+    },
+    {
+      "file": "state/rajasthan/rpsc-senior-scientific-officer-03-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/rpsc-senior-scientific-officer-03-posts/"
+    },
+    {
+      "file": "state/rajasthan/bits-pilani-junior-research-fellow-project-associate-1-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/bits-pilani-junior-research-fellow-project-associate-1-1-posts/"
+    },
+    {
+      "file": "state/rajasthan/aiims-jodhpur-post-doctoral-fellowship-38-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/rajasthan/aiims-jodhpur-post-doctoral-fellowship-38-posts/"
+    },
+    {
+      "file": "state/telangana/drdo-rci-paid-internships-160-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/drdo-rci-paid-internships-160-posts/"
+    },
+    {
+      "file": "state/telangana/csc-e-governance-services-indian-aadhaar-supervisor-operator-48-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/csc-e-governance-services-indian-aadhaar-supervisor-operator-48-posts/"
+    },
+    {
+      "file": "state/telangana/bric-niab-project-associate-ii-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/bric-niab-project-associate-ii-1-posts/"
+    },
+    {
+      "file": "state/telangana/aiims-bibinagar-faculty-posts-group-a-48-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/aiims-bibinagar-faculty-posts-group-a-48-posts/"
+    },
+    {
+      "file": "state/telangana/dgft-hyderabad-young-professional-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/dgft-hyderabad-young-professional-1-posts/"
+    },
+    {
+      "file": "state/telangana/iit-hyderabad-non-teaching-21-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/iit-hyderabad-non-teaching-21-posts/"
+    },
+    {
+      "file": "state/telangana/tgpsc-deputy-educational-officers-head-master-24-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/tgpsc-deputy-educational-officers-head-master-24-posts/"
+    },
+    {
+      "file": "state/telangana/dlsa-jangaon-deo-peon-and-more-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/dlsa-jangaon-deo-peon-and-more-5-posts/"
+    },
+    {
+      "file": "state/telangana/tgpsc-assistant-environmental-engineer-19-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/tgpsc-assistant-environmental-engineer-19-posts/"
+    },
+    {
+      "file": "state/telangana/svpnpa-staff-nurse-laboratory-technician-and-more-4-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/svpnpa-staff-nurse-laboratory-technician-and-more-4-posts/"
+    },
+    {
+      "file": "state/telangana/dlsa-siddipet-junior-assistant-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/dlsa-siddipet-junior-assistant-1-posts/"
+    },
+    {
+      "file": "state/telangana/hal-visiting-consultant-clinical-psychologist-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/hal-visiting-consultant-clinical-psychologist-3-posts/"
+    },
+    {
+      "file": "state/telangana/ecil-project-engineer-technical-officer-and-more-21-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/ecil-project-engineer-technical-officer-and-more-21-posts/"
+    },
+    {
+      "file": "state/telangana/pjtsau-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/pjtsau-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/telangana/niab-field-assistant-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/niab-field-assistant-1-posts/"
+    },
+    {
+      "file": "state/telangana/pjtau-research-associate-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/pjtau-research-associate-1-posts/"
+    },
+    {
+      "file": "state/telangana/dmho-medchal-malkajgiri-aarogya-mithras-26-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/dmho-medchal-malkajgiri-aarogya-mithras-26-posts/"
+    },
+    {
+      "file": "state/telangana/iit-hyderabad-research-associate-4-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/iit-hyderabad-research-associate-4-posts/"
+    },
+    {
+      "file": "state/telangana/college-of-defence-management-civilian-motor-driver-cook-mts-steno-gde-ii-8-post/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/college-of-defence-management-civilian-motor-driver-cook-mts-steno-gde-ii-8-post/"
+    },
+    {
+      "file": "state/telangana/niab-project-research-scientist-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/niab-project-research-scientist-1-posts/"
+    },
+    {
+      "file": "state/telangana/tgpsc-assistant-executive-engineer-222-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/tgpsc-assistant-executive-engineer-222-posts/"
+    },
+    {
+      "file": "state/telangana/nfc-general-duty-medical-officer-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/nfc-general-duty-medical-officer-5-posts/"
+    },
+    {
+      "file": "state/telangana/nit-warangal-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/nit-warangal-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/telangana/midhani-group-general-manager-general-manager-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/telangana/midhani-group-general-manager-general-manager-5-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/hsl-manager-dy-project-officer-and-more-34-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/hsl-manager-dy-project-officer-and-more-34-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/wcd-sri-satya-sai-anganwadi-worker-helper-230-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/wcd-sri-satya-sai-anganwadi-worker-helper-230-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/punjab-and-sind-bank-ai-engineers-manager-and-more-08-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/angrau-young-professionals-ii-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/angrau-young-professionals-ii-3-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/aiims-mangalagiri-research-scientist-and-laboratory-technician-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-research-scientist-and-laboratory-technician-2-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/dcil-fleet-personnel-trainees-45-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dcil-fleet-personnel-trainees-45-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/dchs-vizianagaram-civil-assistant-surgeon-11-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-vizianagaram-civil-assistant-surgeon-11-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/dsh-hospitals-kurnool-civil-assistant-surgeon-specialists-civil-assistant-surgeo/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dsh-hospitals-kurnool-civil-assistant-surgeon-specialists-civil-assistant-surgeo/"
+    },
+    {
+      "file": "state/andhra-pradesh/sainik-school-kalikiri-art-master-pti-cum-matron-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/sainik-school-kalikiri-art-master-pti-cum-matron-2-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/aiims-mangalagiri-senior-resident-senior-demonstrator-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-senior-resident-senior-demonstrator-3-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/secondary-health-hospital-krishna-civil-assistant-surgeon-specialist-civil-assis/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/secondary-health-hospital-krishna-civil-assistant-surgeon-specialist-civil-assis/"
+    },
+    {
+      "file": "state/andhra-pradesh/ap-power-sector-assistant-executive-engineer-629-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/ap-power-sector-assistant-executive-engineer-629-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/apmsrb-staff-nurse-pharmacist-and-more-529-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/apmsrb-staff-nurse-pharmacist-and-more-529-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/prakasam-district-civil-assistant-surgeon-specialists-and-general-23-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/prakasam-district-civil-assistant-surgeon-specialists-and-general-23-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/aiims-mangalagiri-doctor-social-worker-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aiims-mangalagiri-doctor-social-worker-2-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/dchs-chittoor-civil-assistant-surgeon-19-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-chittoor-civil-assistant-surgeon-19-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/nabfins-customer-service-officer/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/nabfins-customer-service-officer/"
+    },
+    {
+      "file": "state/andhra-pradesh/nalco-non-executive-268-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/nalco-non-executive-268-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/government-polytechnic-narpala-junior-assistant-lab-attender-office-subordinate/"
+    },
+    {
+      "file": "state/andhra-pradesh/dchs-kakinada-civil-asst-surgeon-general-and-specialists-34-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/dchs-kakinada-civil-asst-surgeon-general-and-specialists-34-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/konkan-railway-project-engineer-technician-and-more-36-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/konkan-railway-project-engineer-technician-and-more-36-posts/"
+    },
+    {
+      "file": "state/andhra-pradesh/aaiclas-assistant-62-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/andhra-pradesh/aaiclas-assistant-62-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/gonda-district-district-yoga-instructor-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/gonda-district-district-yoga-instructor-5-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/allahabad-university-controller-of-examination-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/allahabad-university-controller-of-examination-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/sgpgims-clinical-research-coordinator-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/sgpgims-clinical-research-coordinator-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/aiims-raebareli-registrar-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/aiims-raebareli-registrar-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/aiims-gorakhpur-non-academic-junior-resident-28-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/aiims-gorakhpur-non-academic-junior-resident-28-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/central-bank-of-india-apprentice-4500-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/central-bank-of-india-apprentice-4500-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-excise-constable-722-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-excise-constable-722-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/csc-e-governance-services-indian-aadhaar-supervisor-operator-48-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/csc-e-governance-services-indian-aadhaar-supervisor-operator-48-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/sonbhadra-district-court-special-judicial-magistrate-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/sonbhadra-district-court-special-judicial-magistrate-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dbeo-kushinagar-teaching-and-non-teaching-29-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dbeo-kushinagar-teaching-and-non-teaching-29-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dswo-etawah-subject-specialist-guest-faculty-21-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dswo-etawah-subject-specialist-guest-faculty-21-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/iim-lucknow-research-assistant-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/iim-lucknow-research-assistant-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-auditor-and-assistant-accountant-1829-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-auditor-and-assistant-accountant-1829-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dbeo-mirzapur-teaching-and-non-teaching-posts-29-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dbeo-mirzapur-teaching-and-non-teaching-posts-29-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-havaldar-instructor-209-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-havaldar-instructor-209-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/cari-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/cari-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/ipc-scientific-assistant-4-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/ipc-scientific-assistant-4-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/irctc-hospitality-monitor-92-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/irctc-hospitality-monitor-92-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/allahabad-high-court-ro-aro-and-computer-assistant-543-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/allahabad-high-court-ro-aro-and-computer-assistant-543-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-sugarcane-supervisor-1182-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-sugarcane-supervisor-1182-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/iit-kanpur-junior-assistant-assistant-executive-engineer-and-more-80-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/iit-kanpur-junior-assistant-assistant-executive-engineer-and-more-80-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dlsa-hathras-member-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dlsa-hathras-member-2-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-block-organizer-platoon-commander-295-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-block-organizer-platoon-commander-295-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/gims-record-keeper-store-keeper-33-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/gims-record-keeper-store-keeper-33-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/aiims-raebareli-assistant-controller-of-examination-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/aiims-raebareli-assistant-controller-of-examination-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upmscl-general-manager-pharmacist-and-more-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upmscl-general-manager-pharmacist-and-more-3-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/rnu-ddk-lucknow-news-reader-copy-editor-and-cg-operator/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/rnu-ddk-lucknow-news-reader-copy-editor-and-cg-operator/"
+    },
+    {
+      "file": "state/uttar-pradesh/dlsa-sitapur-stenographer-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dlsa-sitapur-stenographer-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/tmc-technician-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/tmc-technician-3-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/deendayal-research-institute-driver-steno-and-more-4-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/deendayal-research-institute-driver-steno-and-more-4-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/niper-raebareli-technical-assistant-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/niper-raebareli-technical-assistant-5-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/bhu-project-technical-support-and-project-technician-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/bhu-project-technical-support-and-project-technician-3-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-forest-guard-708-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-forest-guard-708-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/aiims-gorakhpur-child-psychologist-medical-officer-and-more-posts-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/aiims-gorakhpur-child-psychologist-medical-officer-and-more-posts-5-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/amethi-bc-sakhi-166-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/amethi-bc-sakhi-166-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/gliders-india-company-secretary-dgm-and-more-6-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/gliders-india-company-secretary-dgm-and-more-6-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/iit-kanpur-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/iit-kanpur-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/allahabad-high-court-research-associate/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/allahabad-high-court-research-associate/"
+    },
+    {
+      "file": "state/uttar-pradesh/cmo-kushinagar-medical-officer-female-doctor-17-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/cmo-kushinagar-medical-officer-female-doctor-17-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-combined-lower-subordinate-services-2516-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-combined-lower-subordinate-services-2516-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/allahabad-university-research-assistant-and-field-investigator-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/allahabad-university-research-assistant-and-field-investigator-2-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/allahabad-high-court-special-judicial-magistrate-7-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/allahabad-high-court-special-judicial-magistrate-7-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/mnnit-allahabad-project-scientist-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/mnnit-allahabad-project-scientist-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dmsrde-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dmsrde-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/sainik-school-jhansi-pgt-lab-assistant-and-more-4-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/sainik-school-jhansi-pgt-lab-assistant-and-more-4-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/hal-visiting-consultant-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/hal-visiting-consultant-2-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/iit-bhu-project-technical-support-iii-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/iit-bhu-project-technical-support-iii-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/dlsa-sitapur-para-legal-volunteer/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/dlsa-sitapur-para-legal-volunteer/"
+    },
+    {
+      "file": "state/uttar-pradesh/upsssc-fireman-170-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/upsssc-fireman-170-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/iit-kanpur-project-associate-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/iit-kanpur-project-associate-3-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/atal-awasiya-vidyalaya-muzaffarnagar-computer-teacher-pgt-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/atal-awasiya-vidyalaya-muzaffarnagar-computer-teacher-pgt-1-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/sgpgims-lucknow-technician-junior-engineer-and-more-47-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/sgpgims-lucknow-technician-junior-engineer-and-more-47-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/echs-meerut-medical-para-medical-non-medical-staff-45-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/echs-meerut-medical-para-medical-non-medical-staff-45-posts/"
+    },
+    {
+      "file": "state/uttar-pradesh/bedf-lab-analyst-subject-matter-specialist-7-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/uttar-pradesh/bedf-lab-analyst-subject-matter-specialist-7-posts/"
+    },
+    {
+      "file": "state/goa/nfsu-goa-assistant-professor-and-scientific-officer-7-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/goa/nfsu-goa-assistant-professor-and-scientific-officer-7-posts/"
+    },
+    {
+      "file": "state/goa/bits-pilani-junior-research-fellow/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/goa/bits-pilani-junior-research-fellow/"
+    },
+    {
+      "file": "state/goa/iit-goa-assistant-registrar-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/goa/iit-goa-assistant-registrar-1-posts/"
+    },
+    {
+      "file": "state/goa/nit-goa-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/goa/nit-goa-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/goa/goa-psc-various-posts-36-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/goa/goa-psc-various-posts-36-posts/"
+    },
+    {
+      "file": "state/karnataka/becil-senior-technical-assistant-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/becil-senior-technical-assistant-1-posts/"
+    },
+    {
+      "file": "state/karnataka/rri-personal-secretary-and-assistant-7-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/rri-personal-secretary-and-assistant-7-posts/"
+    },
+    {
+      "file": "state/karnataka/bel-deputy-manager-senior-engineer-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bel-deputy-manager-senior-engineer-2-posts/"
+    },
+    {
+      "file": "state/karnataka/rri-engineering-trainee-6-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/rri-engineering-trainee-6-posts/"
+    },
+    {
+      "file": "state/karnataka/jncasr-yrgcare-suniti-solomon-distinguished-faculty-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/jncasr-yrgcare-suniti-solomon-distinguished-faculty-fellow-1-posts/"
+    },
+    {
+      "file": "state/karnataka/bellary-dcc-bank-junior-assistant-driver-and-more-82-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bellary-dcc-bank-junior-assistant-driver-and-more-82-posts/"
+    },
+    {
+      "file": "state/karnataka/ucsl-apprentices-20-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/ucsl-apprentices-20-posts/"
+    },
+    {
+      "file": "state/karnataka/bsnl-junior-telecom-officer-100-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bsnl-junior-telecom-officer-100-posts/"
+    },
+    {
+      "file": "state/karnataka/nimhans-accountant-junior-secretarial-assistant-and-more-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/nimhans-accountant-junior-secretarial-assistant-and-more-3-posts/"
+    },
+    {
+      "file": "state/karnataka/cair-drdo-junior-research-fellow-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/cair-drdo-junior-research-fellow-1-posts/"
+    },
+    {
+      "file": "state/karnataka/kvafsu-professor-associate-professor-and-assistant-professor-96-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/kvafsu-professor-associate-professor-and-assistant-professor-96-posts/"
+    },
+    {
+      "file": "state/karnataka/bmrcl-deputy-chief-engineer-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bmrcl-deputy-chief-engineer-1-posts/"
+    },
+    {
+      "file": "state/karnataka/iit-dharwad-non-teaching-12-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/iit-dharwad-non-teaching-12-posts/"
+    },
+    {
+      "file": "state/karnataka/rri-research-assistant-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/rri-research-assistant-5-posts/"
+    },
+    {
+      "file": "state/karnataka/bmrcl-company-secretary-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bmrcl-company-secretary-1-posts/"
+    },
+    {
+      "file": "state/karnataka/isro-ursc-junior-research-fellow-17-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/isro-ursc-junior-research-fellow-17-posts/"
+    },
+    {
+      "file": "state/karnataka/csir-cftri-project-associate-i-12-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/csir-cftri-project-associate-i-12-posts/"
+    },
+    {
+      "file": "state/karnataka/iimb-manager-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/iimb-manager-1-posts/"
+    },
+    {
+      "file": "state/karnataka/hll-associate-manager-junior-manager-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/hll-associate-manager-junior-manager-2-posts/"
+    },
+    {
+      "file": "state/karnataka/csir-cftri-project-associate-project-assistant-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/csir-cftri-project-associate-project-assistant-2-posts/"
+    },
+    {
+      "file": "state/karnataka/nabfins-business-strategist/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/nabfins-business-strategist/"
+    },
+    {
+      "file": "state/karnataka/vijayapura-municipal-corporation-civil-servant-118-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/vijayapura-municipal-corporation-civil-servant-118-posts/"
+    },
+    {
+      "file": "state/karnataka/drdo-lrde-paid-internship-75-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/drdo-lrde-paid-internship-75-posts/"
+    },
+    {
+      "file": "state/karnataka/kpcl-assistant-legal-officer-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/kpcl-assistant-legal-officer-2-posts/"
+    },
+    {
+      "file": "state/karnataka/echs-officer-in-charge-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/echs-officer-in-charge-1-posts/"
+    },
+    {
+      "file": "state/karnataka/cdac-project-engineer-project-manager-and-more-951-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/cdac-project-engineer-project-manager-and-more-951-posts/"
+    },
+    {
+      "file": "state/karnataka/kea-agriculture-officer-assistant-agriculture-officer-945-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/kea-agriculture-officer-assistant-agriculture-officer-945-posts/"
+    },
+    {
+      "file": "state/karnataka/bel-senior-assistant-engineer-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bel-senior-assistant-engineer-1-posts/"
+    },
+    {
+      "file": "state/karnataka/rri-research-assistant-ra-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/rri-research-assistant-ra-2-posts/"
+    },
+    {
+      "file": "state/karnataka/iia-upper-division-clerk-05-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/iia-upper-division-clerk-05-posts/"
+    },
+    {
+      "file": "state/karnataka/ksp-civil-police-constable-3991-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/ksp-civil-police-constable-3991-posts/"
+    },
+    {
+      "file": "state/karnataka/eil-associate-engineer-41-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/eil-associate-engineer-41-posts/"
+    },
+    {
+      "file": "state/karnataka/kmf-gumul-junior-technician-assistant-manager-and-more-55-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/kmf-gumul-junior-technician-assistant-manager-and-more-55-posts/"
+    },
+    {
+      "file": "state/karnataka/hal-apprentices/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/hal-apprentices/"
+    },
+    {
+      "file": "state/karnataka/iisc-administrative-assistant-34-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/iisc-administrative-assistant-34-posts/"
+    },
+    {
+      "file": "state/karnataka/bel-jr-supervisor-security-havildar-security-14-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/bel-jr-supervisor-security-havildar-security-14-posts/"
+    },
+    {
+      "file": "state/karnataka/dhs-chikkaballapur-general-duty-medical-officer-11-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/dhs-chikkaballapur-general-duty-medical-officer-11-posts/"
+    },
+    {
+      "file": "state/karnataka/in-space-young-professional-10-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/in-space-young-professional-10-posts/"
+    },
+    {
+      "file": "state/karnataka/ucsl-assistant-general-manager-deputy-manager-5-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/ucsl-assistant-general-manager-deputy-manager-5-posts/"
+    },
+    {
+      "file": "state/karnataka/kslsa-bengaluru-driver-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/kslsa-bengaluru-driver-2-posts/"
+    },
+    {
+      "file": "state/karnataka/rri-director/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/rri-director/"
+    },
+    {
+      "file": "state/karnataka/csir-cftri-project-associate-i-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/csir-cftri-project-associate-i-1-posts/"
+    },
+    {
+      "file": "state/karnataka/hll-associate-manager-junior-manager-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/karnataka/hll-associate-manager-junior-manager-1-posts/"
+    },
+    {
+      "file": "state/arunachal-pradesh/rari-yoga-therapist-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/rari-yoga-therapist-1-posts/"
+    },
+    {
+      "file": "state/arunachal-pradesh/apssb-chsle-group-c-207-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/apssb-chsle-group-c-207-posts/"
+    },
+    {
+      "file": "state/arunachal-pradesh/echs-likabali-dental-officer-dental-ath-and-driver-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/echs-likabali-dental-officer-dental-ath-and-driver-3-posts/"
+    },
+    {
+      "file": "state/arunachal-pradesh/neiafmr-project-consultant-senior-project-consultant-1-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/arunachal-pradesh/neiafmr-project-consultant-senior-project-consultant-1-posts/"
+    },
+    {
+      "file": "state/delhi/hsl-manager-dy-project-officer-and-more-34-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/hsl-manager-dy-project-officer-and-more-34-posts/"
+    },
+    {
+      "file": "state/delhi/icar-iari-young-professional-ii-and-field-assistant-3-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/icar-iari-young-professional-ii-and-field-assistant-3-posts/"
+    },
+    {
+      "file": "state/delhi/jssh-faculty-and-specialist-gr-iii-25-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/jssh-faculty-and-specialist-gr-iii-25-posts/"
+    },
+    {
+      "file": "state/delhi/vmmc-safdarjung-hospital-senior-resident-179-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/vmmc-safdarjung-hospital-senior-resident-179-posts/"
+    },
+    {
+      "file": "state/delhi/aiims-delhi-senior-research-fellow-and-administrative-assistant-2-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/aiims-delhi-senior-research-fellow-and-administrative-assistant-2-posts/"
+    },
+    {
+      "file": "state/delhi/dsssb-assistant-trained-graduate-teacher-and-more-1979-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/dsssb-assistant-trained-graduate-teacher-and-more-1979-posts/"
+    },
+    {
+      "file": "state/delhi/lakshmibai-college-delhi-non-teaching-staff-24-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/lakshmibai-college-delhi-non-teaching-staff-24-posts/"
+    },
+    {
+      "file": "state/delhi/birac-officer-manager-and-more-15-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /state/delhi/birac-officer-manager-and-more-15-posts/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     115 urls [ok]"
   ],
-  "duration_sec": 36.8
+  "duration_sec": 31.6
 }
