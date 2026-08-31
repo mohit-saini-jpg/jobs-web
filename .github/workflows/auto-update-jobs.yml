@@ -146,6 +146,9 @@ jobs:
       - name: Build Vercel edge gone map from _gone_urls.txt (410 for removed pages)
         run: python3 build_gone_map.py
 
+      - name: Build hero-search index (small, disk-truth job title/slug/org index)
+        run: python3 build_search_index.py
+
       - name: Build homepage "Fresh & New" rotation feed (fast-indexing helper)
         run: python3 build_unindexed_feed.py
 
@@ -379,7 +382,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add version.json sw.js
-          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json 2>/dev/null || true
+          git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json search-index.json 2>/dev/null || true
           git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true

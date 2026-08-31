@@ -504,6 +504,36 @@
     // the Complete_Jobs parser actually runs and jobs get indexed.
     fileName = String(fileName || '').split('?')[0].split('/').pop();
 
+    /* ── search-index.json — pre-built, disk-truth job search index ──
+     * Built server-side by build_search_index.py directly from jobs-index.json
+     * (every key IS a verified /jobs/<slug>/ that exists on disk), so unlike
+     * the Complete_Jobs_Full_Data.json path below, the URL here needs no
+     * client-side guessing/resolution at all -- it can never point at the
+     * wrong job. Small (~1.5MB vs 26MB raw) so it loads in Phase 1, fast,
+     * instead of being gated behind the user typing 2+ characters. */
+    if (fileName === 'search-index.json') {
+      Object.keys(data).forEach(function(slug) {
+        var it = data[slug];
+        var title = String(it.t || '').trim();
+        if (!title) return;
+        extra.push({
+          title:         title,
+          slug:          '/jobs/' + slug + '/',
+          dept:          it.o || '',
+          postName:      '',
+          qual:          '',
+          state:         'All India',
+          cat:           it.c || 'Latest Jobs',
+          tags:          [title, it.o||'', it.c||'', 'sarkari job 2026'].join(' '),
+          lastDate:      it.d || '',
+          icon:          'fa-briefcase',
+          lastUpdated:   now,
+          sectionSource: 'Latest Jobs',
+          isJobDetail:   true,
+        });
+      });
+    }
+
     /* ── merged_sarkari_data.json ── */
     if (false && fileName === 'merged_sarkari_data_REMOVED') {
       var jobs = Array.isArray(data.jobs) ? data.jobs : [];
@@ -905,8 +935,10 @@
    * LOADER — Phase 1 fast, Phase 2 heavy
    * ══════════════════════════════════════════════════════════ */
   function loadJsonFiles() {
-    /* Phase 1: fast files */
-    var fastFiles = ['dailyupdates.json'];  // Only lightweight file in phase 1
+    /* Phase 1: fast files. search-index.json (~1.5MB) carries every real job
+     * title+slug — it's what makes job results appear instantly instead of
+     * waiting on the 26MB Complete_Jobs_Full_Data.json in Phase 2 below. */
+    var fastFiles = ['dailyupdates.json', '/search-index.json'];
 
     /* Always add category pages first — zero cost */
     mergeItems(CAT_PAGES.map(function(p) {
