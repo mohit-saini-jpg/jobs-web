@@ -16,6 +16,7 @@
 // (gone-map.js) is compiled from `_gone_urls.txt` by build_gone_map.py.
 
 import REDIRECTS from './redirect-map.js';
+import QUERY_REDIRECTS from './redirect-map-query.js';
 import GONE from './gone-map.js';
 
 // Legacy bare-state URL scheme: /{state}/{job}/ -> /state/{state}/{job}/
@@ -63,6 +64,28 @@ function redirect(origin, dest, search) {
   return Response.redirect(origin + to + (search || ''), 301);
 }
 
+// Mirrors build_redirect_map.py's query_key(): pathname + sorted 'k=v' pairs
+// joined by ';', order-independent so a Googlebot re-request with params in a
+// different order than they were originally crawled in still matches.
+function queryKey(pathname, searchParams) {
+  const pairs = [];
+  for (const [k, v] of searchParams) pairs.push(`${k}=${v}`);
+  pairs.sort();
+  return `${pathname}?${pairs.join(';')}`;
+}
+
+// job.html?slug=X has NO per-value _redirects rule (there are too many to
+// enumerate one by one, unlike view.html/category.html/state-jobs.html's
+// small enumerable value sets) -- mirrors job.html's own client-side
+// window.location.replace() cleanup exactly, just as a real, instant 301
+// instead of a redirect that depends on Googlebot successfully executing JS.
+function jobHtmlSlugTarget(searchParams) {
+  const raw = searchParams.get('slug') || searchParams.get('_slug') || '';
+  if (!raw) return null;
+  const cleaned = raw.replace(/^sr_[a-z_]+-/, '').replace(/-[0-9a-f]{6,8}$/, '');
+  return cleaned ? `/jobs/${encodeURIComponent(cleaned)}/` : null;
+}
+
 function gone() {
   return new Response('410 Gone — this page has been permanently removed.', {
     status: 410,
@@ -79,6 +102,24 @@ export default function middleware(request) {
   if (leak) {
     const dest = LEAK_TARGET[leak[1]];
     if (dest) return redirect(url.origin, dest, url.search);
+  }
+
+  // 0b) legacy query-string URLs (job.html?slug=, view.html?section=,
+  // category.html?group=, state-jobs.html?state=, state-job-detail.html?
+  // state=&slug=, education-detail.html?section=, education/<state>/?slug=)
+  // -- these .html files still exist on disk but only redirect client-side
+  // via window.location.replace(), which depends on Googlebot successfully
+  // rendering the page. A real GSC "Page indexing" export showed these
+  // patterns are a large share of the "Not found (404)" bucket. Query-string
+  // rules are never in REDIRECTS (build_redirect_map.py keeps them in a
+  // separate map since the lookup key must include the search string).
+  if (url.search) {
+    const qDest = QUERY_REDIRECTS[queryKey(p, url.searchParams)];
+    if (qDest && qDest !== p) return redirect(url.origin, qDest, '');
+    if (p === '/job.html') {
+      const jobDest = jobHtmlSlugTarget(url.searchParams);
+      if (jobDest) return redirect(url.origin, jobDest, '');
+    }
   }
 
   // 1) exact map lookup — try as-is, then toggle the trailing slash
