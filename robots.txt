@@ -5,15 +5,22 @@
 User-agent: *
 Allow: /
 
-# Block template/utility HTML files (clean URLs are indexed)
-Disallow: /job.html
-Disallow: /job.html?
-Disallow: /view.html
-Disallow: /view.html?
-Disallow: /state-jobs.html
-Disallow: /education-detail.html
-Disallow: /state-job-detail.html
-Disallow: /category.html
+# Block template/utility HTML files (clean URLs are indexed).
+# FIX (2026-08-31): the ?-suffixed variants of these (job.html?slug=,
+# view.html?section=, state-jobs.html?state=, education-detail.html?section=,
+# state-job-detail.html?state=&slug=, category.html?group=) are real
+# historical URLs Google has already crawled and indexed/linked -- they now
+# 301 to the correct live page via middleware.js (see build_redirect_map.py
+# and redirect-map-query.js), but a disallowed URL can never be re-crawled,
+# so Google could never discover that redirect and was stuck showing these
+# as permanent 404s. $ anchors each rule to the bare, param-less path only,
+# so the ?-suffixed URLs stay crawlable and the redirect can finally be seen.
+Disallow: /job.html$
+Disallow: /view.html$
+Disallow: /state-jobs.html$
+Disallow: /education-detail.html$
+Disallow: /state-job-detail.html$
+Disallow: /category.html$
 Disallow: /search.html?
 
 # Block raw JSON data files (Audit Fix: Issue 6.2)
