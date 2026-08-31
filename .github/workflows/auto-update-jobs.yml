@@ -395,7 +395,7 @@ jobs:
           # OLD map forever. Confirmed live: 130 redirects added for the GSC 404 fix were
           # 404-ing in production despite being correct in _redirects. This one line closes
           # that gap permanently.
-          git add redirect-map.js 2>/dev/null || true
+          git add redirect-map.js redirect-map-query.js 2>/dev/null || true
           # Same staging gap as redirect-map.js above, for the 410-Gone map:
           # build_gone_map.py regenerates gone-map.js every run (dropping any
           # path that got a real redirect or came back to life), so it must be
