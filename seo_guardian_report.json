@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-01T02:53:06.231018+00:00",
+  "timestamp": "2026-09-01T03:20:12.392288+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9442,
+  "files_scanned": 9513,
   "issues_found_by_check": {
-    "jobposting_schema": 118,
+    "jobposting_schema": 121,
     "ai_marker_integrity": 11,
-    "expired_job": 23,
-    "sitemap_sync": 3
+    "expired_job": 1,
+    "sitemap_sync": 73
   },
-  "issues_auto_fixed": 89,
+  "issues_auto_fixed": 139,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -184,6 +184,12 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
+    },
+    {
+      "file": "jobs/hpcl-ta-consultant-recruitment-2026-apply-online-for-24-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
@@ -412,7 +418,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     117 urls [ok]"
   ],
-  "duration_sec": 37.3
+  "duration_sec": 36.2
 }
