@@ -5825,7 +5825,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 /jobs/bank-of-baroda-bob-local-bank-officer-lbo-recruitment-2026-apply-online-for-2482/  /jobs/bank-of-baroda-lbo-recruitment-2026-notification-out-apply-online-for-2482-loc/  301
 /jobs/aiims-delhi-field-worker-vacancy-2026-check-posts-and-how-to-apply/  /jobs/aiims-delhi-field-worker-recruitment-2026-apply-online/  301
 /jobs/haryana-anganwadi-recruitment-2026-for-worker-helper-supervisor-posts/  /jobs/chitrakoot-up-anganwadi-recruitment-2026-apply-online-for-92-anganwadi-worker/  301
-/jobs/sahitya-akademi-vacancy-2026-apply-for-clerk-mts-driver-and-other-posts/  /jobs/sahitya-akademi-recruitment-2026-notification-out-apply-offline-for-30-clerk-m/  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/india-post-gramin-dak-sevaks-gds-recruitment-schedule-ii-july-2026-apply-online/  /jobs/india-post-gds-recruitment-2026-apply-online-for-23757-bpm-abpm-dak-sevak-post/  301
@@ -5835,3 +5834,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/uksssc-553-inter-level-posts-online-form-2026/  /jobs/uksssc-inter-level-group-c-recruitment-2026-notification-out-apply-online-for/  301
