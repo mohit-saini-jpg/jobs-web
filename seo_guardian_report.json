@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-03T02:19:44.461494+00:00",
+  "timestamp": "2026-09-03T02:44:51.604155+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9646,
+  "files_scanned": 9731,
   "issues_found_by_check": {
-    "jobposting_schema": 122,
+    "jobposting_schema": 126,
     "ai_marker_integrity": 11,
-    "expired_job": 3,
-    "sitemap_sync": 3
+    "sitemap_sync": 89
   },
-  "issues_auto_fixed": 72,
+  "issues_auto_fixed": 155,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -46,6 +45,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bel-deputy-engineer-recruitment-2026-notification-out-apply-online-for-14-post/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
@@ -118,6 +123,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/dc-solapur-aaple-sarkar-seva-kendra-recruitment-2026-apply-offline-for-592-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/dcpu-tiruppur-recruitment-2026-apply-offline-for-supervisor-and-case-worker-po/index.html",
@@ -276,6 +287,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
     },
     {
+      "file": "jobs/mecl-recruitment-2026-apply-online-for-122-technician-assistant-and-more-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -328,6 +345,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/punjab-remote-sensing-centre-recruitment-2026-apply-offline-for-clerk-lab-atte/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Punjab/141001 [L3]) — manual review"
     },
     {
       "file": "jobs/railway-icf-act-apprentice-recruitment-2026-notification-out-apply-online-for/index.html",
@@ -418,7 +441,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     118 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 36.9
+  "duration_sec": 33.6
 }
