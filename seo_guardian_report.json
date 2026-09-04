@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-04T02:15:19.816400+00:00",
+  "timestamp": "2026-09-04T02:48:59.486947+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9755,
+  "files_scanned": 9828,
   "issues_found_by_check": {
-    "jobposting_schema": 127,
+    "jobposting_schema": 128,
     "ai_marker_integrity": 11,
-    "expired_job": 5
+    "sitemap_sync": 75
   },
-  "issues_auto_fixed": 72,
+  "issues_auto_fixed": 141,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -126,6 +126,12 @@
     },
     {
       "file": "jobs/dc-solapur-aaple-sarkar-seva-kendra-recruitment-2026-apply-offline-for-592-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/dc-thane-aaple-sarkar-seva-kendra-recruitment-2026-apply-online-for-381-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -287,6 +293,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
     },
     {
+      "file": "jobs/mecl-non-executive-recruitment-2026-apply-online-for-122-technician-assistant/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/mecl-recruitment-2026-apply-online-for-122-technician-assistant-and-more-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -440,7 +452,8 @@
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
-    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e"
+    "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
+    "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 37.6
+  "duration_sec": 39.1
 }
