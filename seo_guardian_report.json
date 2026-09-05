@@ -1,16 +1,21 @@
 {
-  "timestamp": "2026-09-05T04:23:36.915880+00:00",
-  "mode": "changed-only",
+  "timestamp": "2026-09-05T10:58:36.361928+00:00",
+  "mode": "full-scan",
   "dry_run": false,
-  "files_scanned": 9910,
+  "files_scanned": 12509,
   "issues_found_by_check": {
-    "jobposting_schema": 132,
+    "jobposting_schema": 66,
     "ai_marker_integrity": 11,
-    "expired_job": 4,
-    "sitemap_sync": 8
+    "sitemap_sync": 200
   },
-  "issues_auto_fixed": 78,
+  "issues_auto_fixed": 0,
   "unfixable": [
+    {
+      "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
       "check": "jobposting_schema",
@@ -30,19 +35,61 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
+      "file": "jobs/iim-sambalpur-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Odisha/751001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-mathura-recruitment-2026-apply-offline-for-21-safaiwala-chowkidar-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/dc-thane-aaple-sarkar-seva-kendra-recruitment-2026-apply-online-for-381-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/csl-ship-draftsman-trainee-recruitment-2026-apply-online-for-60-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cmti-bengaluru-recruitment-2026-walk-in-interview-for-71-project-associate-assis/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/asc-centre-south-bangalore-group-c-recruitment-2026-apply-offline-for-31-firem/index.html",
+      "file": "jobs/mecl-non-executive-recruitment-2026-apply-online-for-122-technician-assistant/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/barc-scientific-assistant-recruitment-2026-6-para-medical-posts-apply-online/index.html",
+      "file": "jobs/hpcl-ta-consultant-recruitment-2026-apply-online-for-24-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-recruitment-2026-apply-offline-for-medical-officer-dental-officer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
+    },
+    {
+      "file": "jobs/rcfl-apprentice-recruitment-2026-notification-out-apply-online-for-326-graduat/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -54,16 +101,16 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/beml-apprentices-recruitment-2026-notification-out-apply-online-for-1346-iti-g/index.html",
+      "file": "jobs/drdo-cvrde-paid-internship-recruitment-2026-apply-offline-for-35-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tifr-recruitment-2026-apply-online-for-project-associate-project-assistant-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/bgssl-recruitment-2026-notification-out-apply-online-for-1949-apprentice-execu/index.html",
@@ -72,82 +119,40 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
+      "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bmc-shikshan-sevak-recruitment-2026-notification-out-apply-online-for-935-post/index.html",
+      "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bmc-trade-apprentice-recruitment-2026-notification-out-walk-in-for-612-posts/index.html",
+      "file": "jobs/sbc-visakhapatnam-group-c-recruitment-2026-apply-online-for-fire-engine-driver/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/bpcl-non-management-recruitment-2026-last-date-extended-apply-online-for-154-t/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/bpcl-non-management-recruitment-2026-notification-out-apply-online-for-154-tec/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
-    },
-    {
-      "file": "jobs/cbsl-recruitment-2026-apply-online-for-10-assistant-manager-officer-junior-off/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/chennai-port-authority-deputy-chief-mechanical-engineer-recruitment-2026-apply/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/cihts-faculty-recruitment-2026-apply-online-for-59-professor-associate-profess/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/cmti-bengaluru-recruitment-2026-walk-in-interview-for-71-project-associate-assis/index.html",
+      "file": "jobs/asc-centre-south-bangalore-group-c-recruitment-2026-apply-offline-for-31-firem/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/csl-ship-draftsman-trainee-recruitment-2026-apply-online-for-60-posts/index.html",
+      "file": "jobs/rrc-ncr-apprentice-recruitment-2026-notification-out-apply-online-for-1853-pos/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/dc-solapur-aaple-sarkar-seva-kendra-recruitment-2026-apply-offline-for-592-pos/index.html",
+      "file": "jobs/iocl-experienced-professionals-recruitment-2026-apply-online-for-production-ma/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/dc-thane-aaple-sarkar-seva-kendra-recruitment-2026-apply-online-for-381-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/dcpu-tiruppur-recruitment-2026-apply-offline-for-supervisor-and-case-worker-po/index.html",
@@ -156,16 +161,88 @@
       "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/northeast-frontier-railway-sports-quota-recruitment-2026-27-apply-online-for-5/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/kumaun-university-recruitment-2026-walkin-for-junior-research-fellow-project-a/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nhm-dhamtari-recruitment-2026-apply-walkin-for-38-laboratory-technician-staff/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/drdo-ada-project-assistant-i-recruitment-2026-apply-online-for-111-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/drdo-cvrde-paid-internship-recruitment-2026-apply-offline-for-35-posts/index.html",
+      "file": "jobs/tmc-actrec-engineer-recruitment-2026-walk-in/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tmb-so-recruitment-2026-notification-out-apply-online-for-specialist-officer-p/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/punjab-remote-sensing-centre-recruitment-2026-apply-offline-for-clerk-lab-atte/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Punjab/141001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/beml-apprentices-recruitment-2026-notification-out-apply-online-for-1346-iti-g/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cbse-board-class-10th-results-declared-class-12th-re-evaluation-verification-res/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 0 END)"
+    },
+    {
+      "file": "jobs/epil-graduate-apprentice-recruitment-2026-2-vacancies-apply-by-5-august/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bel-deputy-manager-senior-engineer-recruitment-2026-apply-offline/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
     },
     {
       "file": "jobs/east-coast-railway-gdce-recruitment-2026-notification-out-apply-online-for-142/index.html",
@@ -180,214 +257,10 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/echs-mathura-recruitment-2026-apply-offline-for-21-safaiwala-chowkidar-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/echs-recruitment-2026-apply-offline-for-medical-officer-dental-officer-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/epil-graduate-apprentice-recruitment-2026-2-vacancies-apply-by-5-august/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/gmdc-teacher-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
-    },
-    {
-      "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
-    },
-    {
-      "file": "jobs/hpcl-ta-consultant-recruitment-2026-apply-online-for-24-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/iim-sambalpur-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Odisha/751001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-notification-out-apply-online-fo/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/indian-air-force-mts-recruitment-2026-notification-out-apply-offline-for-multi/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
-    },
-    {
-      "file": "jobs/iocl-experienced-professionals-recruitment-2026-apply-online-for-production-ma/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Haryana/122001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95-gr/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Andaman and Nicobar Islands/744101 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/istc-recruitment-2026-apply-online-for-09-lead-engineer-executive-and-more-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
-    },
-    {
-      "file": "jobs/kumaun-university-recruitment-2026-walkin-for-junior-research-fellow-project-a/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 26 END)"
-    },
-    {
-      "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
-    },
-    {
-      "file": "jobs/mecl-non-executive-recruitment-2026-apply-online-for-122-technician-assistant/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/mecl-recruitment-2026-apply-online-for-122-technician-assistant-and-more-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/ncra-tifr-non-acadamic-recruitment-2026-apply-online-for-clerk-security-guard/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nfdc-recruitment-2026-apply-online-for-15-assistant-senior-excecutive-and-more/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nhm-dhamtari-recruitment-2026-apply-walkin-for-38-laboratory-technician-staff/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/northeast-frontier-railway-sports-quota-recruitment-2026-27-apply-online-for-5/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
-    },
-    {
       "file": "jobs/nspcl-recruitment-2026-apply-online-for-17-sr-assistant-officer-sr-assistant-e/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nsti-kanpur-guest-faculties-recruitment-2026-notification-out-apply-offline/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
-      "check": "ai_marker_integrity",
-      "severity": "non_critical",
-      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
-    },
-    {
-      "file": "jobs/pune-pdcc-bank-peon-recruitment-2026-notification-out-apply-online-for-289-pos/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/punjab-remote-sensing-centre-recruitment-2026-apply-offline-for-clerk-lab-atte/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Punjab/141001 [L3]) — manual review"
-    },
-    {
-      "file": "jobs/railway-icf-act-apprentice-recruitment-2026-notification-out-apply-online-for/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/rajasthan-van-mitra-vacancy-2026-80000-van-mitra-apply-now/index.html",
@@ -396,13 +269,133 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
     },
     {
+      "file": "jobs/chennai-port-authority-deputy-chief-mechanical-engineer-recruitment-2026-apply/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/ramanagara-district-court-recruitment-2026-apply-online-for-55-typist-peon-and/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/rcfl-apprentice-recruitment-2026-notification-out-apply-online-for-326-graduat/index.html",
+      "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 11 END)"
+    },
+    {
+      "file": "jobs/nfdc-recruitment-2026-apply-online-for-15-assistant-senior-excecutive-and-more/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95-gr/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 4 END)"
+    },
+    {
+      "file": "jobs/gmdc-teacher-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rcfl-mt-recruitment-2026-notification-out-apply-online-for-94-management-train/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bmc-shikshan-sevak-recruitment-2026-notification-out-apply-online-for-935-post/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/istc-recruitment-2026-apply-online-for-09-lead-engineer-executive-and-more-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cihts-faculty-recruitment-2026-apply-online-for-59-professor-associate-profess/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bmc-trade-apprentice-recruitment-2026-notification-out-walk-in-for-612-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/oil-india-limited-oil-recruitment-2026-for-contractual-data-assistant-medical-wa/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "orphan 'tsj-ai-enriched' marker (odd count 1)"
+    },
+    {
+      "file": "jobs/dc-solapur-aaple-sarkar-seva-kendra-recruitment-2026-apply-offline-for-592-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/railway-icf-act-apprentice-recruitment-2026-notification-out-apply-online-for/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/nsti-kanpur-guest-faculties-recruitment-2026-notification-out-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/gujarat-vidyapith-recruitment-2026-apply-online-for-archivist-engineer-and-mor/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/icsil-management-trainee-recruitment-2026-walkin/index.html",
+      "check": "ai_marker_integrity",
+      "severity": "non_critical",
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/tiss-recruitment-2026-apply-online-for-website-coordinator-research-assistant/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/mecl-recruitment-2026-apply-online-for-122-technician-assistant-and-more-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/pune-pdcc-bank-peon-recruitment-2026-notification-out-apply-online-for-289-pos/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -414,28 +407,58 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/rcfl-mt-recruitment-2026-notification-out-apply-online-for-94-management-train/index.html",
+      "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/barc-scientific-assistant-recruitment-2026-6-para-medical-posts-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/repco-bank-manager-recruitment-2026-apply-offline/index.html",
+      "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Andaman and Nicobar Islands/744101 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bpcl-non-management-recruitment-2026-notification-out-apply-online-for-154-tec/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ncra-tifr-non-acadamic-recruitment-2026-apply-online-for-clerk-security-guard/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cbsl-recruitment-2026-apply-online-for-10-assistant-manager-officer-junior-off/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iift-network-manager-recruitment-2026-apply-online/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
-      "file": "jobs/rrc-ncr-apprentice-recruitment-2026-notification-out-apply-online-for-1853-pos/index.html",
-      "check": "jobposting_schema",
+      "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
+      "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/sbc-visakhapatnam-group-c-recruitment-2026-apply-online-for-fire-engine-driver/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 26 END)"
     },
     {
       "file": "jobs/svnirtar-recruitment-2026-apply-online-for-11-assistant-assistant-professor-an/index.html",
@@ -444,41 +467,1217 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/tanuvas-enumerators-recruitment-2026-walkin/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
-    },
-    {
-      "file": "jobs/tifr-recruitment-2026-apply-online-for-project-associate-project-assistant-pos/index.html",
+      "file": "jobs/bpcl-non-management-recruitment-2026-last-date-extended-apply-online-for-154-t/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/tiss-recruitment-2026-apply-online-for-website-coordinator-research-assistant/index.html",
-      "check": "jobposting_schema",
+      "file": "jobs/iit-indore-veterinarian-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+      "reason": "page on disk not in any sitemap: /jobs/iit-indore-veterinarian-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/tmb-so-recruitment-2026-notification-out-apply-online-for-specialist-officer-p/index.html",
-      "check": "jobposting_schema",
+      "file": "jobs/iocl-officers-recruitment-2026-apply-online-for-engineers-quality-control-offi/index.html",
+      "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+      "reason": "page on disk not in any sitemap: /jobs/iocl-officers-recruitment-2026-apply-online-for-engineers-quality-control-offi/"
     },
     {
-      "file": "jobs/tmc-actrec-engineer-recruitment-2026-walk-in/index.html",
-      "check": "jobposting_schema",
+      "file": "jobs/chacha-nehru-bal-chikitsalaya-recruitment-2026-apply-offline-for-19-teaching-fac/index.html",
+      "check": "sitemap_sync",
       "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+      "reason": "page on disk not in any sitemap: /jobs/chacha-nehru-bal-chikitsalaya-recruitment-2026-apply-offline-for-19-teaching-fac/"
+    },
+    {
+      "file": "jobs/bvfcl-apprentice-recruitment-2026-apply-online-for-38-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bvfcl-apprentice-recruitment-2026-apply-online-for-38-posts/"
+    },
+    {
+      "file": "jobs/campa-an-recruitment-2026-apply-offline-for-forestry-expert-accountant-expert-po/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/campa-an-recruitment-2026-apply-offline-for-forestry-expert-accountant-expert-po/"
+    },
+    {
+      "file": "jobs/subordinate-courts-nilgiris-district-law-officer-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/subordinate-courts-nilgiris-district-law-officer-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/rajasthan-anganwadi-recruitment-2026-bharatpur-apply-offline-for-55-anganwadi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rajasthan-anganwadi-recruitment-2026-bharatpur-apply-offline-for-55-anganwadi/"
+    },
+    {
+      "file": "jobs/rnsb-apprentice-peon-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rnsb-apprentice-peon-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/iit-ism-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-ism-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/cuo-recruitment-2026-apply-online-for-research-assistant-field-investigator-po/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/cuo-recruitment-2026-apply-online-for-research-assistant-field-investigator-po/"
+    },
+    {
+      "file": "jobs/sail-young-professional-recruitment-2026-apply-online-for-23-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sail-young-professional-recruitment-2026-apply-online-for-23-posts/"
+    },
+    {
+      "file": "jobs/madurai-kamaraj-university-recruitment-2026-apply-offline-for-registrar-director/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/madurai-kamaraj-university-recruitment-2026-apply-offline-for-registrar-director/"
+    },
+    {
+      "file": "jobs/drdo-desidoc-apprentice-recruitment-2026-20-vacancies-open-for-library-science-c/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/drdo-desidoc-apprentice-recruitment-2026-20-vacancies-open-for-library-science-c/"
+    },
+    {
+      "file": "jobs/bits-pilani-phd-research-scholar-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bits-pilani-phd-research-scholar-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-mandi-senior-project-scientist-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-mandi-senior-project-scientist-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/csir-recruitment-2026-walkin-for-project-scientist-senior-project-associate-post/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csir-recruitment-2026-walkin-for-project-scientist-senior-project-associate-post/"
+    },
+    {
+      "file": "jobs/bits-pilani-junior-research-fellowproject-associate-1-recruitment-2026-apply-o/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bits-pilani-junior-research-fellowproject-associate-1-recruitment-2026-apply-o/"
+    },
+    {
+      "file": "jobs/iit-guwahati-recruitment-2026-apply-online-for-senior-technical-assistant-assi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-guwahati-recruitment-2026-apply-online-for-senior-technical-assistant-assi/"
+    },
+    {
+      "file": "jobs/iit-jammu-technical-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-jammu-technical-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-jammu-project-associate-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-jammu-project-associate-i-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/pau-junior-dtp-assistant-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pau-junior-dtp-assistant-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/echs-alwar-recruitment-2026-notification-out-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/echs-alwar-recruitment-2026-notification-out-apply-now/"
+    },
+    {
+      "file": "jobs/ccrum-179-group-a-b-c-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ccrum-179-group-a-b-c-posts/"
+    },
+    {
+      "file": "jobs/cmho-raigarh-recruitment-2026-apply-offline-for-dresser-pharmacist-and-more-post/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/cmho-raigarh-recruitment-2026-apply-offline-for-dresser-pharmacist-and-more-post/"
+    },
+    {
+      "file": "jobs/bmrcl-deputy-general-manager-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bmrcl-deputy-general-manager-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/panipat-health-department-volunteer-vacancy-2026-free-application-form-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/panipat-health-department-volunteer-vacancy-2026-free-application-form-apply-now/"
+    },
+    {
+      "file": "jobs/one-stop-centre-attur-recruitment-2026-apply-offline-for-case-worker-and-secur/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/one-stop-centre-attur-recruitment-2026-apply-offline-for-case-worker-and-secur/"
+    },
+    {
+      "file": "jobs/sri-venkateswara-college-delhi-junior-assistant-cum-caretaker-recruitment-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sri-venkateswara-college-delhi-junior-assistant-cum-caretaker-recruitment-2026/"
+    },
+    {
+      "file": "jobs/nhm-thiruvananthapuram-general-duty-attendant-recruitment-2026-apply-online-fo/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nhm-thiruvananthapuram-general-duty-attendant-recruitment-2026-apply-online-fo/"
+    },
+    {
+      "file": "jobs/kea-surveyor-recruitment-2026-last-date-extended-apply-online-for-750-bhoomapa/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/kea-surveyor-recruitment-2026-last-date-extended-apply-online-for-750-bhoomapa/"
+    },
+    {
+      "file": "jobs/dcpu-krishnagiri-assistant-cum-data-entry-operator-recruitment-2026-apply-offlin/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dcpu-krishnagiri-assistant-cum-data-entry-operator-recruitment-2026-apply-offlin/"
+    },
+    {
+      "file": "jobs/surat-municipal-corporation-smc-recruitment-2026-120-vacancies-apply-online-by-0/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/surat-municipal-corporation-smc-recruitment-2026-120-vacancies-apply-online-by-0/"
+    },
+    {
+      "file": "jobs/iit-gandhinagar-project-manager-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-gandhinagar-project-manager-i-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/jal-shakti-vibhag-nerwa-circle-recruitment-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/jal-shakti-vibhag-nerwa-circle-recruitment-2026/"
+    },
+    {
+      "file": "jobs/nii-research-associate-isrf-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nii-research-associate-isrf-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/svnit-deputy-director-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/svnit-deputy-director-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/nit-delhi-recruitment-2026-apply-online-for-junior-research-fellow-and-project/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-delhi-recruitment-2026-apply-online-for-junior-research-fellow-and-project/"
+    },
+    {
+      "file": "jobs/telangana-anganwadi-recruitment-2026-apply-online-for-178-anganwadi-teacher-he/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/telangana-anganwadi-recruitment-2026-apply-online-for-178-anganwadi-teacher-he/"
+    },
+    {
+      "file": "jobs/niab-project-research-scientist-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/niab-project-research-scientist-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/karnataka-high-court-data-entry-assistant-recruitment-2026-apply-online-for-28/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/karnataka-high-court-data-entry-assistant-recruitment-2026-apply-online-for-28/"
+    },
+    {
+      "file": "jobs/madhya-pradesh-mppsc-assistant-professor-recruitment-2025-apply-online-for-148-p/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/madhya-pradesh-mppsc-assistant-professor-recruitment-2025-apply-online-for-148-p/"
+    },
+    {
+      "file": "jobs/upsssc-auditor-asst-accountant-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/upsssc-auditor-asst-accountant-online-form/"
+    },
+    {
+      "file": "jobs/join-indian-army-short-service-commission-ssc-technical-non-technical-recruitmen/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/join-indian-army-short-service-commission-ssc-technical-non-technical-recruitmen/"
+    },
+    {
+      "file": "jobs/central-university-of-kerala-recruitment-2026-apply-online-for-laboratory-assi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/central-university-of-kerala-recruitment-2026-apply-online-for-laboratory-assi/"
+    },
+    {
+      "file": "jobs/daic-financial-adviser-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/daic-financial-adviser-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/iim-amritsar-faculty-recruitment-2026-apply-online-for-professor-associate-profe/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iim-amritsar-faculty-recruitment-2026-apply-online-for-professor-associate-profe/"
+    },
+    {
+      "file": "jobs/rites-professionals-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rites-professionals-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/industry-40-innovation-centre-director-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/industry-40-innovation-centre-director-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-ism-dhanbad-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-ism-dhanbad-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/bpssc-assistant-sub-inspector-recruitment-2026-apply-online-for-22-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bpssc-assistant-sub-inspector-recruitment-2026-apply-online-for-22-posts/"
+    },
+    {
+      "file": "jobs/rajasthan-state-eligibility-test-set-2026-61d8dd510c/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rajasthan-state-eligibility-test-set-2026-61d8dd510c/"
+    },
+    {
+      "file": "jobs/echs-recruitment-2026-apply-offline-for-dental-officer-and-pharmacist-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/echs-recruitment-2026-apply-offline-for-dental-officer-and-pharmacist-posts/"
+    },
+    {
+      "file": "jobs/hll-recruitment-2026-apply-online-for-associate-manager-junior-manager-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hll-recruitment-2026-apply-online-for-associate-manager-junior-manager-posts/"
+    },
+    {
+      "file": "jobs/epi-graduate-apprentice-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/epi-graduate-apprentice-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/rites-recruitment-2026-apply-online-for-manager-and-engineer-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rites-recruitment-2026-apply-online-for-manager-and-engineer-posts/"
+    },
+    {
+      "file": "jobs/rhfl-chief-manager-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rhfl-chief-manager-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/up-anganwadi-recruitment-2026-apply-online-for-166-anganwadi-worker-posts-in-b/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/up-anganwadi-recruitment-2026-apply-online-for-166-anganwadi-worker-posts-in-b/"
+    },
+    {
+      "file": "jobs/gsssb-additional-assistant-engineer-mechanical-recruitment-2026-110-posts-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/gsssb-additional-assistant-engineer-mechanical-recruitment-2026-110-posts-apply/"
+    },
+    {
+      "file": "jobs/mns-staff-nurse-recruitment-2026-apply-online-for-220-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mns-staff-nurse-recruitment-2026-apply-online-for-220-posts/"
+    },
+    {
+      "file": "jobs/nit-raipur-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-raipur-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/csir-neeri-project-associate-ii-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csir-neeri-project-associate-ii-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/icar-iari-recruitment-2026-apply-online-for-young-professional-ii-and-field-assi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/icar-iari-recruitment-2026-apply-online-for-young-professional-ii-and-field-assi/"
+    },
+    {
+      "file": "jobs/mgu-recruitment-2026-apply-online-for-research-assistant-and-field-investigato/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mgu-recruitment-2026-apply-online-for-research-assistant-and-field-investigato/"
+    },
+    {
+      "file": "jobs/rbi-site-engineer-recruitment-2026-notification-out-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rbi-site-engineer-recruitment-2026-notification-out-apply-online/"
+    },
+    {
+      "file": "jobs/nit-trichy-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-trichy-project-associate-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-mandi-chief-executive-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-mandi-chief-executive-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/sastra-project-associate-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sastra-project-associate-i-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/vssc-authorised-medical-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/vssc-authorised-medical-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nit-agartala-recruitment-2026-apply-online-for-research-assistant-technical-as/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-agartala-recruitment-2026-apply-online-for-research-assistant-technical-as/"
+    },
+    {
+      "file": "jobs/iit-kanpur-project-engineer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-kanpur-project-engineer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-bhubaneswar-assistant-executive-engineer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-bhubaneswar-assistant-executive-engineer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/hppsc-scientific-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hppsc-scientific-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/ari-pune-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ari-pune-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/government-children-s-home-kanchipuram-counselor-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/government-children-s-home-kanchipuram-counselor-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/ambala-tubewell-operator-recruitment-2026-notification-out-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ambala-tubewell-operator-recruitment-2026-notification-out-apply-now/"
+    },
+    {
+      "file": "jobs/iit-ropar-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-ropar-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/sainik-school-korukonda-tgt-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sainik-school-korukonda-tgt-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/icar-iari-vacancy-2026-check-eligibility-how-to-apply/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/icar-iari-vacancy-2026-check-eligibility-how-to-apply/"
+    },
+    {
+      "file": "jobs/csir-cftri-project-associate-ii-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csir-cftri-project-associate-ii-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/icsil-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/icsil-project-associate-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/dhs-salem-recruitment-2026-apply-offline-for-18-deo-staff-nurse-and-more-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dhs-salem-recruitment-2026-apply-offline-for-18-deo-staff-nurse-and-more-posts/"
+    },
+    {
+      "file": "jobs/panipat-tubewell-operator-vacancy-2026-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/panipat-tubewell-operator-vacancy-2026-apply-now/"
+    },
+    {
+      "file": "jobs/rgu-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rgu-project-associate-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/irel-director-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/irel-director-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-guwahati-biodesign-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-guwahati-biodesign-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/jal-shakti-vibhag-thanakalan-circle-recruitment-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/jal-shakti-vibhag-thanakalan-circle-recruitment-2026/"
+    },
+    {
+      "file": "jobs/pau-research-associate-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/pau-research-associate-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/tmc-housekeeping-supervisor-recruitment-2026-notification-out/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tmc-housekeeping-supervisor-recruitment-2026-notification-out/"
+    },
+    {
+      "file": "jobs/brtc-chichpalli-recruitment-2026-walk-in-interview-for-21-posts-apply-by-27-july/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/brtc-chichpalli-recruitment-2026-walk-in-interview-for-21-posts-apply-by-27-july/"
+    },
+    {
+      "file": "jobs/tripura-university-guest-faculty-recruitment-2026-apply-online-for-97-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tripura-university-guest-faculty-recruitment-2026-apply-online-for-97-posts/"
+    },
+    {
+      "file": "jobs/district-and-subordinate-court-tiruvallur-law-officer-recruitment-2026-apply-off/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/district-and-subordinate-court-tiruvallur-law-officer-recruitment-2026-apply-off/"
+    },
+    {
+      "file": "jobs/oav-gudari-warden-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/oav-gudari-warden-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/gacl-recruitment-2026-apply-online-for-assistant-engineer-officer-and-more-pos/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/gacl-recruitment-2026-apply-online-for-assistant-engineer-officer-and-more-pos/"
+    },
+    {
+      "file": "jobs/nit-uttarakhand-temporary-faculty-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-uttarakhand-temporary-faculty-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nit-meghalaya-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-meghalaya-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-roorkee-research-associate-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-roorkee-research-associate-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/haryana-roadways-kaithal-apprentice-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-roadways-kaithal-apprentice-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/svnit-research-personnel-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/svnit-research-personnel-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/hssc-cet-group-d-registration-form-2026-vacancy-regarding-notice/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hssc-cet-group-d-registration-form-2026-vacancy-regarding-notice/"
+    },
+    {
+      "file": "jobs/up-upsssc-preliminary-examination-test-pet-2026-apply-online-form-2026/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/up-upsssc-preliminary-examination-test-pet-2026-apply-online-form-2026/"
+    },
+    {
+      "file": "jobs/aiims-kalyani-faculty-recruitment-2026-apply-online-for-34-professor-assistant/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-faculty-recruitment-2026-apply-online-for-34-professor-assistant/"
+    },
+    {
+      "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-project-research-scientist-resea/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-research-scientist-resea/"
+    },
+    {
+      "file": "jobs/ongc-graduate-trainee-recruitment-2026-notification-out-for-52-geologists-engine/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ongc-graduate-trainee-recruitment-2026-notification-out-for-52-geologists-engine/"
+    },
+    {
+      "file": "jobs/ihmcl-chief-information-security-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ihmcl-chief-information-security-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-iii-pr/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-iii-pr/"
+    },
+    {
+      "file": "jobs/bank-of-baroda-corporate-and-institutional-credit-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bank-of-baroda-corporate-and-institutional-credit-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nabfins-business-strategist-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nabfins-business-strategist-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/mecl-executive-trainee-recruitment-2026-notification-out-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mecl-executive-trainee-recruitment-2026-notification-out-apply-online/"
+    },
+    {
+      "file": "jobs/army-law-college-pune-principal-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/army-law-college-pune-principal-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/nit-hamirpur-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-hamirpur-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nhm-mp-recruitment-2026-apply-online-for-senior-public-health-consultant-hub-e/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nhm-mp-recruitment-2026-apply-online-for-senior-public-health-consultant-hub-e/"
+    },
+    {
+      "file": "jobs/rites-assistant-manager-recruitment-2026-apply-online-for-24-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rites-assistant-manager-recruitment-2026-apply-online-for-24-posts/"
+    },
+    {
+      "file": "jobs/nii-senior-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nii-senior-project-associate-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/ggsmch-project-technical-support-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ggsmch-project-technical-support-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/csir-immt-recruitment-2026-apply-online-for-34-project-associate-jrf-project-ass/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csir-immt-recruitment-2026-apply-online-for-34-project-associate-jrf-project-ass/"
+    },
+    {
+      "file": "jobs/cmho-bemetara-recruitment-2026-apply-offline-for-52-support-staff-pharmacists/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/cmho-bemetara-recruitment-2026-apply-offline-for-52-support-staff-pharmacists/"
+    },
+    {
+      "file": "jobs/icgeb-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/icgeb-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-jhajjar-project-technical-staff-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-jhajjar-project-technical-staff-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/dcpu-chengalpattu-recruitment-2026-apply-offline-for-protection-officer-commun/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dcpu-chengalpattu-recruitment-2026-apply-offline-for-protection-officer-commun/"
+    },
+    {
+      "file": "jobs/iiitdm-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iiitdm-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/gurdaspur-court-driver-vacancy-2026-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/gurdaspur-court-driver-vacancy-2026-apply-now/"
+    },
+    {
+      "file": "jobs/bharathidasan-university-guest-lecturer-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/bharathidasan-university-guest-lecturer-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/rajasthan-staff-selection-board-rssb-common-eligibility-test-cet-graduate-level/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rajasthan-staff-selection-board-rssb-common-eligibility-test-cet-graduate-level/"
+    },
+    {
+      "file": "jobs/kannur-university-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/kannur-university-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nfdc-senior-executive-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nfdc-senior-executive-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/osc-guntur-recruitment-2026-apply-offline-for-case-worker-multi-purpose-staff/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/osc-guntur-recruitment-2026-apply-offline-for-case-worker-multi-purpose-staff/"
+    },
+    {
+      "file": "jobs/dhgv-sagar-junior-research-fellow-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dhgv-sagar-junior-research-fellow-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/andrew-yule-company-management-trainee-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/andrew-yule-company-management-trainee-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/isro-recruitment-2026-242-assistant-udc-jpa-and-stenographer-vacancies/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/isro-recruitment-2026-242-assistant-udc-jpa-and-stenographer-vacancies/"
+    },
+    {
+      "file": "jobs/ncrtc-recruitment-2026-apply-online-for-senior-deputy-general-manager-and-assi/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ncrtc-recruitment-2026-apply-online-for-senior-deputy-general-manager-and-assi/"
+    },
+    {
+      "file": "jobs/rpsc-1st-grade-special-teacher-recruitment-2026-notification-out-apply-online-fo/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rpsc-1st-grade-special-teacher-recruitment-2026-notification-out-apply-online-fo/"
+    },
+    {
+      "file": "jobs/csir-igib-mts-recruitment-2026-notification-out-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csir-igib-mts-recruitment-2026-notification-out-apply-online/"
+    },
+    {
+      "file": "jobs/hppsc-physiotherapist-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hppsc-physiotherapist-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/isro-assistant-udc-jpa-steno-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/isro-assistant-udc-jpa-steno-online-form/"
+    },
+    {
+      "file": "jobs/iim-ahmedabad-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iim-ahmedabad-recruitment-2026-apply-online-for-post-doctoral-research-associa/"
+    },
+    {
+      "file": "jobs/indian-army-68th-sscw-technical-recruitment-2026-notification-out-apply-online-f/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/indian-army-68th-sscw-technical-recruitment-2026-notification-out-apply-online-f/"
+    },
+    {
+      "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/"
+    },
+    {
+      "file": "jobs/telangana-anganwadi-recruitment-2026-apply-online-for-878-anganwadi-helper-aya/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/telangana-anganwadi-recruitment-2026-apply-online-for-878-anganwadi-helper-aya/"
+    },
+    {
+      "file": "jobs/nvs-jaipur-hostel-superintendent-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nvs-jaipur-hostel-superintendent-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/dhsgsu-project-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/dhsgsu-project-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/fact-data-processing-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/fact-data-processing-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/nvcfl-advisor-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nvcfl-advisor-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/etawah-up-anganwadi-worker-recruitment-2026-apply-online-for-102-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/etawah-up-anganwadi-worker-recruitment-2026-apply-online-for-102-posts/"
+    },
+    {
+      "file": "jobs/aycl-asst-officer-dy-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aycl-asst-officer-dy-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/mahatransco-electrician-apprentice-recruitment-2026-apply-online-for-26-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mahatransco-electrician-apprentice-recruitment-2026-apply-online-for-26-posts/"
+    },
+    {
+      "file": "jobs/gkv-haridwar-teaching-and-non-teaching-recruitment-2026-apply-online-for-assis/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/gkv-haridwar-teaching-and-non-teaching-recruitment-2026-apply-online-for-assis/"
+    },
+    {
+      "file": "jobs/mpesb-mp-nursing-officer-sister-tutor-recruitment-2026-download-answer-key/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mpesb-mp-nursing-officer-sister-tutor-recruitment-2026-download-answer-key/"
+    },
+    {
+      "file": "jobs/haryana-staff-selection-commission-hssc-102-common-eligibility-test-cet-for-grou/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/haryana-staff-selection-commission-hssc-102-common-eligibility-test-cet-for-grou/"
+    },
+    {
+      "file": "jobs/indian-red-cross-society-haryana-recruitment-2026-apply-for-clerk-accounts-clerk/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/indian-red-cross-society-haryana-recruitment-2026-apply-for-clerk-accounts-clerk/"
+    },
+    {
+      "file": "jobs/aecs-hyderabad-teaching-recruitment-2026-apply-offline-for-tgt-balvatika-teach/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aecs-hyderabad-teaching-recruitment-2026-apply-offline-for-tgt-balvatika-teach/"
+    },
+    {
+      "file": "jobs/nit-agartala-junior-research-fellow-or-project-associate-recruitment-2026-appl/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-agartala-junior-research-fellow-or-project-associate-recruitment-2026-appl/"
+    },
+    {
+      "file": "jobs/iit-ism-dhanbad-field-investigator-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-ism-dhanbad-field-investigator-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iuac-recruitment-2026-apply-online-for-scientist-c-junior-engineer-c-library-ass/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iuac-recruitment-2026-apply-online-for-scientist-c-junior-engineer-c-library-ass/"
+    },
+    {
+      "file": "jobs/rari-yoga-therapist-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rari-yoga-therapist-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/cmd-suchitwa-mission-young-professional-recruitment-2026-apply-online-for-22-p/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/cmd-suchitwa-mission-young-professional-recruitment-2026-apply-online-for-22-p/"
+    },
+    {
+      "file": "jobs/aai-medical-consultant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aai-medical-consultant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iocl-panipat-apprentice-recruitment-2026-apply-online-for-1450-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iocl-panipat-apprentice-recruitment-2026-apply-online-for-1450-posts/"
+    },
+    {
+      "file": "jobs/igntu-company-secretary-cs-firm-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/igntu-company-secretary-cs-firm-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/karnataka-police-ksp-armed-police-constable-recruitment-2026-notification-out-ap/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/karnataka-police-ksp-armed-police-constable-recruitment-2026-notification-out-ap/"
+    },
+    {
+      "file": "jobs/jharkhand-jssc-jilcce-recruitment-2026-notification-out-apply-online-for-326-h/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/jharkhand-jssc-jilcce-recruitment-2026-notification-out-apply-online-for-326-h/"
+    },
+    {
+      "file": "jobs/gsssb-radiotherapy-technician-recruitment-2026-apply-online-for-19-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/gsssb-radiotherapy-technician-recruitment-2026-apply-online-for-19-posts/"
+    },
+    {
+      "file": "jobs/ccrum-various-post-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ccrum-various-post-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/rvunl-recruitment-2026-apply-online-for-2005-junior-engineer-junior-accountant/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/rvunl-recruitment-2026-apply-online-for-2005-junior-engineer-junior-accountant/"
+    },
+    {
+      "file": "jobs/cug-recruitment-2026-apply-online-for-research-assistant-field-investigators-p/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/cug-recruitment-2026-apply-online-for-research-assistant-field-investigators-p/"
+    },
+    {
+      "file": "jobs/jncasr-rd-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/jncasr-rd-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/faridabad-health-department-volunteer-vacancy-2026-free-application-form-apply-n/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/faridabad-health-department-volunteer-vacancy-2026-free-application-form-apply-n/"
+    },
+    {
+      "file": "jobs/hnbgu-field-worker-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/hnbgu-field-worker-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/iit-hyderabad-science-communication-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-hyderabad-science-communication-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/"
+    },
+    {
+      "file": "jobs/iit-bhu-recruitment-2026-apply-online-for-project-engineer-and-project-busines/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-bhu-recruitment-2026-apply-online-for-project-engineer-and-project-busines/"
+    },
+    {
+      "file": "jobs/iit-hyderabad-research-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-hyderabad-research-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/mizoram-psc-junior-accounts-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mizoram-psc-junior-accounts-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/imh-kilpauk-recruitment-2026-apply-offline-for-27-deo-office-assistant-and-mor/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/imh-kilpauk-recruitment-2026-apply-offline-for-27-deo-office-assistant-and-mor/"
+    },
+    {
+      "file": "jobs/csmcri-functional-area-expert-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/csmcri-functional-area-expert-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/sundargarh-district-court-recruitment-2026-apply-offline-for-19-junior-typist/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sundargarh-district-court-recruitment-2026-apply-offline-for-19-junior-typist/"
+    },
+    {
+      "file": "jobs/tnsrlm-tirunelveli-district-technical-assistant-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tnsrlm-tirunelveli-district-technical-assistant-recruitment-2026-apply-offline/"
+    },
+    {
+      "file": "jobs/up-anganwadi-recruitment-2026-apply-online-for-760-anganwadi-worker-helper-pos/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/up-anganwadi-recruitment-2026-apply-online-for-760-anganwadi-worker-helper-pos/"
+    },
+    {
+      "file": "jobs/an-union-territory-health-mission-recruitment-2026-apply-offline-for-cold-chai/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/an-union-territory-health-mission-recruitment-2026-apply-offline-for-cold-chai/"
+    },
+    {
+      "file": "jobs/tiss-medical-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tiss-medical-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/ssc-jsa-ldc-dopt-ldce-recruitment-2026-apply-online-for-49-junior-secretariat/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ssc-jsa-ldc-dopt-ldce-recruitment-2026-apply-online-for-49-junior-secretariat/"
+    },
+    {
+      "file": "jobs/sindhudurg-dcc-bank-peon-recruitment-2026-apply-online-for-32-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/sindhudurg-dcc-bank-peon-recruitment-2026-apply-online-for-32-posts/"
+    },
+    {
+      "file": "jobs/tanuvas-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/tanuvas-project-associate-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/ntpc-national-thermal-power-corporation-assistant-chemist-trainee-recruitment-20/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/ntpc-national-thermal-power-corporation-assistant-chemist-trainee-recruitment-20/"
+    },
+    {
+      "file": "jobs/maharera-junior-legal-consultant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/maharera-junior-legal-consultant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/psssb-craft-instructor-vacancy-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/psssb-craft-instructor-vacancy-2026-apply-online/"
+    },
+    {
+      "file": "jobs/irel-executive-recruitment-2026-last-date-extended-apply-online-for-73-technic/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/irel-executive-recruitment-2026-last-date-extended-apply-online-for-73-technic/"
+    },
+    {
+      "file": "jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/navodaya-vidyalaya-samiti-jnv-nvs-class-vi-6th-admissions-2027-28-apply-online-f/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/navodaya-vidyalaya-samiti-jnv-nvs-class-vi-6th-admissions-2027-28-apply-online-f/"
+    },
+    {
+      "file": "jobs/uttar-pradesh-up-atal-awasiya-vidyalaya-samiti-special-educator-special-teacher/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/uttar-pradesh-up-atal-awasiya-vidyalaya-samiti-special-educator-special-teacher/"
+    },
+    {
+      "file": "jobs/manit-bhopal-assistant-professor-recruitment-2026-apply-online-for-31-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/manit-bhopal-assistant-professor-recruitment-2026-apply-online-for-31-posts/"
+    },
+    {
+      "file": "jobs/vnsgu-temporary-assistant-professor-recruitment-2026-apply-online-for-12-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/vnsgu-temporary-assistant-professor-recruitment-2026-apply-online-for-12-posts/"
+    },
+    {
+      "file": "jobs/kamrup-gaon-pradhan-recruitment-2026-55-vacancies-eligibility-salary-application/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/kamrup-gaon-pradhan-recruitment-2026-55-vacancies-eligibility-salary-application/"
+    },
+    {
+      "file": "jobs/iit-roorkee-recruitment-2026-apply-online-for-junior-research-fellow-and-senio/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/iit-roorkee-recruitment-2026-apply-online-for-junior-research-fellow-and-senio/"
+    },
+    {
+      "file": "jobs/secl-tele-comradio-mechanic-ts-recruitment-2026-apply-online-for-65-posts/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/secl-tele-comradio-mechanic-ts-recruitment-2026-apply-online-for-65-posts/"
+    },
+    {
+      "file": "jobs/delhi-university-recruitment-2026-apply-online-for-13-research-assistant-field/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/delhi-university-recruitment-2026-apply-online-for-13-research-assistant-field/"
+    },
+    {
+      "file": "jobs/nit-jamshedpur-adhoc-faculty-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/nit-jamshedpur-adhoc-faculty-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/income-tax-mpcg-canteen-attendant-recruitment-2026-notification-out-apply-onli/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/income-tax-mpcg-canteen-attendant-recruitment-2026-notification-out-apply-onli/"
+    },
+    {
+      "file": "jobs/apmsrb-recruitment-2026-529-vacancies-for-staff-nurse-pharmacist-multi-rehabilit/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/apmsrb-recruitment-2026-529-vacancies-for-staff-nurse-pharmacist-multi-rehabilit/"
+    },
+    {
+      "file": "jobs/mpeda-young-professional-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/mpeda-young-professional-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap.xml                     119 urls [ok]"
+    "build_sitemaps:   sitemap.xml                     115 urls [ok]"
   ],
-  "duration_sec": 39.8
+  "duration_sec": 41.2
 }
