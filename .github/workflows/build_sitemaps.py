@@ -3,7 +3,8 @@
 build_sitemaps.py  —  C5 FIX
 Rebuilds all sitemaps from the real folder tree so they are never empty/circular.
 - sitemap-index.xml  : the ONLY <sitemapindex> (lists child urlsets, never another index)
-- sitemap.xml        : converted to a real urlset of core pages (no longer a second index)
+- sitemap-pages.xml  : the real urlset of core pages (sitemap.xml removed 2026-09-05 — dead
+                       duplicate of this file, never referenced by the index or robots.txt)
 - child sitemaps     : populated from actual directories that contain index.html
 Run from repo root:  python3 scripts/build_sitemaps.py
 """
@@ -222,7 +223,11 @@ def main():
     # Qualification (extra hub, fold into sections file if desired) -> own optional file
     qual_urls = urls_from_dir("qualification")
 
-    # Core static pages -> sitemap.xml is now a REAL urlset (no longer a 2nd index)
+    # Core static pages -> sitemap-pages.xml is the REAL urlset (sitemap.xml
+    # used to duplicate this exact same list; removed 2026-09-05 -- it was
+    # never a child of sitemap-index.xml or referenced anywhere else in the
+    # codebase, so it was pure dead weight sitting on disk, not something
+    # Google ever actually crawled).
     core = [f"{BASE}/"]
     # "search" deliberately excluded: search/index.html is noindex + disallowed
     # in robots.txt (it's the live search UI, not indexable content) -- listing
@@ -235,17 +240,12 @@ def main():
         if os.path.isdir(d) and has_index(d):
             core.append(f"{BASE}/{p}/")
     core += qual_urls
-    counts["sitemap.xml"] = write_urlset("sitemap.xml", core, "daily", "0.9")
 
     # sitemap-pages.xml — ALWAYS regenerate from clean core URLs so it can never
     # go stale and reintroduce legacy .html paths.
-    write_urlset("sitemap-pages.xml", core, "monthly", "0.5")
+    counts["sitemap-pages.xml"] = write_urlset("sitemap-pages.xml", core, "monthly", "0.5")
 
     # THE ONLY INDEX — references child urlsets ONLY (never another index).
-    # sitemap.xml is still written to disk above (well-known path some tools
-    # probe directly) but deliberately excluded here: it and sitemap-pages.xml
-    # are built from the identical `core` URL list, so listing both submitted
-    # the same ~117 URLs to Google twice with conflicting priority/changefreq.
     # sitemap-jobs-new.xml deliberately FIRST: the freshest pages get seen first.
     children = ["sitemap-jobs-new.xml", "sitemap-pages.xml", "sitemap-sections.xml",
                 "sitemap-jobs.xml", "sitemap-categories.xml",

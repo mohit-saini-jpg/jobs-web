@@ -396,7 +396,8 @@ jobs:
 
           git add version.json sw.js
           git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json search-index.json 2>/dev/null || true
-          git add data/ sitemap-jobs.xml sitemap-jobs-new.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+          git add data/ sitemap-jobs.xml sitemap-jobs-new.xml sitemap-index.xml 2>/dev/null || true
+          git rm -q --ignore-unmatch sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add sitemap-categories.xml sitemap-states.xml sitemap-education.xml sitemap-districts.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
@@ -485,9 +486,16 @@ jobs:
         if: env.SEO_CLEAN == 'true'
         continue-on-error: true
         run: |
-          curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
+          # FIX (2026-09-05): this was pinging sitemap.xml -- a static 115-URL
+          # dead-weight duplicate of sitemap-pages.xml that was never a child
+          # of sitemap-index.xml (the one actually submitted in Search
+          # Console). Every daily ping was telling Google to go re-check a
+          # tiny, redundant sitemap instead of the real one covering all
+          # ~9,000 URLs (jobs, states, education, districts, categories...).
+          # sitemap.xml generation has been removed; ping the real index.
+          curl -s "https://www.google.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
             -o /dev/null -w "Google: %{http_code}\n" || true
-          curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap.xml" \
+          curl -s "https://www.bing.com/ping?sitemap=https://www.topsarkarijobs.com/sitemap-index.xml" \
             -o /dev/null -w "Bing:   %{http_code}\n" || true
 
       # ── STEP 12: IndexNow ping (GATED by SEO Guardian) ────────────
