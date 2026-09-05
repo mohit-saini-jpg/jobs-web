@@ -383,7 +383,7 @@ jobs:
 
           git add version.json sw.js
           git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json search-index.json 2>/dev/null || true
-          git add data/ sitemap-jobs.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
+          git add data/ sitemap-jobs.xml sitemap-jobs-new.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
           git add _redirects 2>/dev/null || true

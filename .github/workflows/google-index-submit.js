@@ -87,6 +87,15 @@ const DAILY_CAP = 200;
 const STATE_FILE = path.join(process.cwd(), 'data', 'google_index_state.json');
 const JOBS_DIR   = path.join(process.cwd(), 'jobs');
 
+// INDEXING FIX (2026-09-05): Google's Indexing API terms allow it ONLY for
+// pages carrying JobPosting (or BroadcastEvent) structured data. The hub /
+// section pages below carry neither — submitting them daily was (a) ~9 of the
+// 200/day quota spent on pages that are already indexed and reached via
+// sitemap + internal links anyway, and (b) a terms-of-service risk that could
+// get the API disabled for the site, which would be catastrophic for a jobs
+// site that depends on it. Flip to true only if you accept that risk.
+const SUBMIT_HUB_PAGES = false;
+
 // Hub / section pages: their listings change every day, so re-submitting them
 // once per day (dedup handles multiple runs) is legitimate and useful.
 const HUB_PAGES = [
@@ -320,6 +329,25 @@ try {
   }
 } catch (e) { /* _redirects missing — cross-check simply skipped */ }
 
+// INDEXING FIX (2026-09-05): never spend the scarce 200/day quota on a job
+// whose application window has already closed. The backlog loop walks every
+// jobs/ dir alphabetically, so before this it was burning the day's leftover
+// budget on "aaagh-delhi-..." expired postings while genuinely live, never-
+// submitted jobs waited. The page's own JobPosting validThrough is the truth.
+const VT_RE = /"validThrough"\s*:\s*"(\d{4}-\d{2}-\d{2})/;
+function jobIsExpired(slug) {
+  try {
+    const fd = fs.openSync(path.join(JOBS_DIR, slug, 'index.html'), 'r');
+    const buf = Buffer.alloc(40000);
+    const n = fs.readSync(fd, buf, 0, 40000, 0);
+    fs.closeSync(fd);
+    const m = buf.toString('utf8', 0, n).match(VT_RE);
+    return !!(m && m[1] < todayIST());
+  } catch (e) {
+    return false;
+  }
+}
+
 function urlIsRealPage(url) {
   try {
     const u = new URL(url);
@@ -340,18 +368,19 @@ function collectCandidates(state) {
   const doneSlugs      = new Set(state.done_slugs);
   const out = [];
   const seen = new Set();
-  let skippedBroken = 0;
+  let skippedBroken = 0, skippedExpired = 0;
   // slug is set only for /jobs/ URLs (backlog tracking); hub pages have none.
   // kind: 'hub' | 'new' | 'backlog' — for accurate log counts only.
   const add = (url, slug, kind) => {
     if (!url || seen.has(url) || submittedToday.has(url)) return;
     if (!urlIsRealPage(url)) { skippedBroken++; return; }
+    if (slug && jobIsExpired(slug)) { skippedExpired++; return; }
     seen.add(url);
     out.push({ url, slug: slug || null, kind });
   };
 
-  // 1. Hub / section pages (daily) — always eligible once per day.
-  HUB_PAGES.forEach((u) => add(u, null, 'hub'));
+  // 1. Hub / section pages (daily) — see SUBMIT_HUB_PAGES.
+  if (SUBMIT_HUB_PAGES) HUB_PAGES.forEach((u) => add(u, null, 'hub'));
 
   // 2. NEW job pages — newest first.
   for (const url of readNewestJobUrls()) add(url, slugFromJobUrl(url), 'new');

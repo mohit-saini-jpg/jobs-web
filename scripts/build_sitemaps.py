@@ -9,7 +9,7 @@ Run from repo root:  python3 scripts/build_sitemaps.py
 """
 import os
 import re
-from datetime import date
+from datetime import date, timedelta
 
 # ROOT = repo root. Works whether this script lives in scripts/ or .github/workflows/
 # because the workflow always runs it from the repo root (CWD).
@@ -49,6 +49,41 @@ def _lastmod_for(url):
         pass
     return TODAY
 
+# INDEXING FIX (2026-09-05): a small, fresh-only jobs sitemap. GSC showed
+# ~11.8K "not indexed" vs ~850 indexed, with ZERO new pages indexed in 30+
+# days — Google is crawl-budget-throttling this site. sitemap-jobs.xml asks it
+# to crawl ~8.4K job URLs of which ~43% are already expired. This second,
+# tiny sitemap lists only jobs first seen in the last FRESH_DAYS days and is
+# put FIRST in sitemap-index.xml, so the newest pages are discovered and
+# crawled ahead of everything else (the standard news/jobs-site technique).
+FRESH_DAYS = 14
+
+def _fresh_job_urls(job_urls):
+    cutoff = (date.today() - timedelta(days=FRESH_DAYS)).isoformat()
+    out = []
+    for u in job_urls:
+        slug = u.rstrip("/").rsplit("/", 1)[-1]
+        d = str(_JOB_LASTMOD.get(slug) or "")[:10]
+        if d and d >= cutoff:
+            out.append(u)
+    return out
+
+# INDEXING FIX (2026-09-05): expired jobs stay live on the site (they keep
+# their organic traffic + show an "Applications Closed" banner) but are no
+# longer advertised in the sitemap — every expired URL in the sitemap is
+# crawl budget taken away from a live one.
+_VT_RE = re.compile(r'"validThrough"\s*:\s*"(\d{4}-\d{2}-\d{2})')
+
+def _is_expired_job(index_path):
+    """True if the page's JobPosting validThrough date is in the past."""
+    try:
+        with open(index_path, encoding="utf-8", errors="ignore") as f:
+            head = f.read(40000)
+        m = _VT_RE.search(head)
+        return bool(m and m.group(1) < TODAY)
+    except Exception:
+        return False
+
 def has_index(p):
     return os.path.isfile(os.path.join(p, "index.html"))
 
@@ -63,7 +98,8 @@ def _is_noindex(index_path):
     except Exception:
         return False
 
-def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False):
+def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False,
+                  exclude_expired=False):
     """Collect clean URLs for every subdir containing index.html under rel_root."""
     out = []
     base_dir = os.path.join(ROOT, rel_root)
@@ -75,14 +111,16 @@ def urls_from_dir(rel_root, changefreq="weekly", priority="0.7", recursive=False
                 rel = os.path.relpath(dp, ROOT).replace(os.sep, "/")
                 if rel == rel_root:  # skip the hub root itself here; added separately
                     continue
-                if _is_noindex(os.path.join(dp, "index.html")):
+                ip = os.path.join(dp, "index.html")
+                if _is_noindex(ip) or (exclude_expired and _is_expired_job(ip)):
                     continue
                 out.append(f"{BASE}/{rel}/")
     else:
         for name in sorted(os.listdir(base_dir)):
             d = os.path.join(base_dir, name)
             if os.path.isdir(d) and has_index(d):
-                if _is_noindex(os.path.join(d, "index.html")):
+                ip = os.path.join(d, "index.html")
+                if _is_noindex(ip) or (exclude_expired and _is_expired_job(ip)):
                     continue
                 out.append(f"{BASE}/{rel_root}/{name}/")
     return out
@@ -122,9 +160,12 @@ def write_index(path, children):
 def main():
     counts = {}
 
-    # Jobs
+    # Jobs — live (non-expired) only; see _is_expired_job / _fresh_job_urls.
+    job_urls = urls_from_dir("jobs", exclude_expired=True)
     counts["sitemap-jobs.xml"] = write_urlset(
-        "sitemap-jobs.xml", urls_from_dir("jobs"), "weekly", "0.8")
+        "sitemap-jobs.xml", job_urls, "weekly", "0.8")
+    counts["sitemap-jobs-new.xml"] = write_urlset(
+        "sitemap-jobs-new.xml", _fresh_job_urls(job_urls), "daily", "0.9")
 
     # States: state-jobs/<slug>/ is the only real hub URL (state/<slug>/ hub
     # duplicates were removed 2026-08-28 -- vercel.json 301s that path to
@@ -184,7 +225,8 @@ def main():
     # probe directly) but deliberately excluded here: it and sitemap-pages.xml
     # are built from the identical `core` URL list, so listing both submitted
     # the same ~117 URLs to Google twice with conflicting priority/changefreq.
-    children = ["sitemap-pages.xml", "sitemap-sections.xml",
+    # sitemap-jobs-new.xml deliberately FIRST: the freshest pages get seen first.
+    children = ["sitemap-jobs-new.xml", "sitemap-pages.xml", "sitemap-sections.xml",
                 "sitemap-jobs.xml", "sitemap-categories.xml",
                 "sitemap-states.xml", "sitemap-education.xml",
                 "sitemap-districts.xml"]
