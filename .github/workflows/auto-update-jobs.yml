@@ -152,6 +152,19 @@ jobs:
       - name: Build homepage "Fresh & New" rotation feed (fast-indexing helper)
         run: python3 build_unindexed_feed.py
 
+      # INDEXING FIX (2026-09-05): this daily pipeline staged sitemap-jobs.xml
+      # etc. for commit (see the git add step below) but never actually
+      # regenerated them — only the two workflow_dispatch-only (manual)
+      # workflows (generate-static-pages.yml, delete-old-pages.yml) called
+      # build_sitemaps.py. So the sitemap was frozen between manual runs:
+      # newly-expired jobs never left it and newly-published jobs never
+      # entered it automatically. This makes the rebuild part of every daily
+      # run — excludes expired jobs (validThrough in the past) from
+      # sitemap-jobs.xml and refreshes sitemap-jobs-new.xml (last 14 days,
+      # listed first in sitemap-index.xml).
+      - name: 🗺️ Rebuild sitemaps (exclude expired jobs, refresh fresh-jobs sitemap)
+        run: python3 scripts/build_sitemaps.py
+
       - name: Fix AI duplication in built pages
         run: python3 scripts/fix_ai_duplication.py --apply
 
@@ -385,6 +398,7 @@ jobs:
           git add jobs/ state/ education/ category/ jobs-index.json sections-index.json chat-search-index.json search-index.json 2>/dev/null || true
           git add data/ sitemap-jobs.xml sitemap-jobs-new.xml sitemap-index.xml sitemap.xml 2>/dev/null || true
           git add sitemap-sections.xml sitemap-pages.xml 2>/dev/null || true
+          git add sitemap-categories.xml sitemap-states.xml sitemap-education.xml sitemap-districts.xml 2>/dev/null || true
           git add -u '*.html' 2>/dev/null || true
           git add _redirects 2>/dev/null || true
           # ROOT CAUSE FIX (2026-07-18): build_redirect_map.py (step above) regenerates
