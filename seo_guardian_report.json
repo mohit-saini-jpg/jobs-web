@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-05T02:15:46.258836+00:00",
+  "timestamp": "2026-09-05T02:44:07.114899+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9831,
+  "files_scanned": 9902,
   "issues_found_by_check": {
-    "jobposting_schema": 128,
-    "expired_job": 11,
+    "jobposting_schema": 132,
     "ai_marker_integrity": 11,
-    "sitemap_sync": 4
+    "sitemap_sync": 71
   },
-  "issues_auto_fixed": 81,
+  "issues_auto_fixed": 137,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -66,6 +65,12 @@
       "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/bgssl-recruitment-2026-notification-out-apply-online-for-1949-apprentice-execu/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -112,6 +117,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cihts-faculty-recruitment-2026-apply-online-for-59-professor-associate-profess/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/cmti-bengaluru-recruitment-2026-walk-in-interview-for-71-project-associate-assis/index.html",
@@ -252,6 +263,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 3 END)"
     },
     {
+      "file": "jobs/iocl-experienced-professionals-recruitment-2026-apply-online-for-production-ma/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/isro-istrac-apprentices-recruitment-2026-notification-out-apply-online-for-95-gr/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -384,6 +401,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/rcfl-apprentice-recruitment-2026-notification-out-apply-online-for-326-graduat/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/rcfl-mt-recruitment-2026-last-date-extended-apply-online-for-94-management-tra/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -456,5 +479,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap.xml                     119 urls [ok]"
   ],
-  "duration_sec": 37.3
+  "duration_sec": 39.1
 }
