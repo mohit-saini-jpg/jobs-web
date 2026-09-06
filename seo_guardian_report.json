@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-06T02:11:15.957847+00:00",
+  "timestamp": "2026-09-06T02:47:31.432953+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9910,
+  "files_scanned": 9957,
   "issues_found_by_check": {
-    "jobposting_schema": 132,
+    "jobposting_schema": 133,
     "ai_marker_integrity": 11,
-    "expired_job": 3,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 69,
+  "issues_auto_fixed": 67,
   "unfixable": [
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
@@ -1002,12 +1001,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-nurse-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1186,12 +1179,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-scientist-d-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/aiims-delhi-senior-project-assistant-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-project-assistant-recruitment-2026-apply-online/"
     },
     {
       "file": "jobs/aiims-delhi-senior-project-associate-recruitment-2025-apply-online/index.html",
@@ -1672,6 +1659,18 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-nursing-officer-norcet-11-online-form/"
+    },
+    {
+      "file": "jobs/aiims-nursing-officer-recruitment-2026-phase-11th-apply-online-form/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-nursing-officer-recruitment-2026-phase-11th-apply-online-form/"
+    },
+    {
+      "file": "jobs/aiims-patna-project-technical-support-1-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-patna-project-technical-support-1-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
@@ -1680,5 +1679,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
   ],
-  "duration_sec": 47.3
+  "duration_sec": 39.8
 }
