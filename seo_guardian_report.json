@@ -1,16 +1,21 @@
 {
-  "timestamp": "2026-09-08T02:20:09.739164+00:00",
+  "timestamp": "2026-09-08T02:52:25.952585+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 9965,
+  "files_scanned": 10065,
   "issues_found_by_check": {
-    "expired_job": 19,
-    "jobposting_schema": 133,
+    "jobposting_schema": 138,
     "ai_marker_integrity": 11,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 86,
+  "issues_auto_fixed": 68,
   "unfixable": [
+    {
+      "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
     {
       "file": "jobs/aai-nscbi-airport-apprentice-recruitment-2026-notification-out-apply-online-fo/index.html",
       "check": "jobposting_schema",
@@ -198,6 +203,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/gliders-india-recruitment-2026-apply-online-for-dgm-senior-manager-manager-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/gmdc-teacher-recruitment-2026-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -324,6 +335,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/nandyal-anganwadi-recruitment-2026-apply-offline-for-70-anganwadi-worker-helpe/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/ncra-recruitment-2026-apply-offline-for-22-library-trainee-administrative-trai/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -438,6 +455,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/sbi-group-ciso-recruitment-2026-apply-online-for-chief-information-security-of/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/svnirtar-recruitment-2026-apply-online-for-11-assistant-assistant-professor-an/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -484,12 +507,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aadhaar-supervisor-recruitment-2026-notification-out-apply-online-for-348-post/"
-    },
-    {
-      "file": "jobs/aadhaar-supervisor-recruitment-2026-notification-out-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aadhaar-supervisor-recruitment-2026-notification-out-apply-online/"
     },
     {
       "file": "jobs/aadhaar-supervisoroperator-recruitment-2026-apply-before-july-20-for-district-le/index.html",
@@ -1672,6 +1689,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-nagpur-recruitment-2026-apply-online-for-medical-physicist-nuclear-medicin/"
+    },
+    {
+      "file": "jobs/aiims-nagpur-recruitment-2026-apply-online-for-project-research-scientisti-pro/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-nagpur-recruitment-2026-apply-online-for-project-research-scientisti-pro/"
     }
   ],
   "critical_unfixable": 0,
@@ -1680,5 +1703,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
   ],
-  "duration_sec": 40.5
+  "duration_sec": 38.8
 }
