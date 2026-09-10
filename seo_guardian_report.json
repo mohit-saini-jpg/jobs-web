@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-09-10T02:59:18.466575+00:00",
+  "timestamp": "2026-09-10T03:50:27.879482+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 10091,
+  "files_scanned": 10099,
   "issues_found_by_check": {
     "jobposting_schema": 138,
     "ai_marker_integrity": 11,
+    "expired_job": 5,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 68,
+  "issues_auto_fixed": 73,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -314,7 +315,7 @@
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 30 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 31 END)"
     },
     {
       "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
@@ -1703,5 +1704,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
   ],
-  "duration_sec": 49.7
+  "duration_sec": 40.6
 }
