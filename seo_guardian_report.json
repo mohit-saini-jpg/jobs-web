@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-11T02:18:06.353364+00:00",
+  "timestamp": "2026-09-11T02:45:43.157831+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 10099,
+  "files_scanned": 10362,
   "issues_found_by_check": {
-    "jobposting_schema": 138,
-    "expired_job": 13,
+    "jobposting_schema": 149,
     "ai_marker_integrity": 11,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 81,
+  "issues_auto_fixed": 74,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -54,6 +53,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/bel-apprentice-recruitment-2026-notification-out-apply-online-for-38-diploma-t/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/bel-deputy-engineer-recruitment-2026-notification-out-apply-online-for-14-post/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -64,6 +69,12 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/bel-senior-engineer-recruitment-2026-apply-online-for-12-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/beml-apprentices-recruitment-2026-notification-out-apply-online-for-1346-iti-g/index.html",
@@ -127,6 +138,12 @@
     },
     {
       "file": "jobs/cihts-faculty-recruitment-2026-apply-online-for-59-professor-associate-profess/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/cihts-teaching-recruitment-2026-apply-online-for-59-assistant-professor-associ/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
@@ -250,6 +267,12 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
+    },
+    {
+      "file": "jobs/iim-mumbai-non-teaching-recruitment-2026-apply-online-for-21-junior-assistant/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iim-sambalpur-recruitment-2026-apply-online-for-post-doctoral-research-associa/index.html",
@@ -498,6 +521,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/up-anganwadi-recruitment-2026-apply-online-for-171-anganwadi-helper-in-bareill/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/aadhaar-supervisor-recruitment-2026-apply-online-for-316-posts-across-multiple/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -736,12 +765,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/agriculture-department-haveri-recruitment-2026-apply-offline-for-btm-atm-posts/"
-    },
-    {
-      "file": "jobs/aiahl-medical-officer-recruitment-2026-apply-offline/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiahl-medical-officer-recruitment-2026-apply-offline/"
     },
     {
       "file": "jobs/aiahl-recruitment-2026-apply-online-for-chairman-managing-director-posts/index.html",
@@ -1696,13 +1719,19 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-nagpur-data-entry-operator-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-nagpur-medical-officer-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-nagpur-medical-officer-recruitment-2026-apply-offline/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 41.6
+  "duration_sec": 50.9
 }
