@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-12T02:25:09.271573+00:00",
+  "timestamp": "2026-09-12T03:00:15.467264+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 10379,
+  "files_scanned": 10459,
   "issues_found_by_check": {
-    "jobposting_schema": 149,
+    "jobposting_schema": 150,
     "ai_marker_integrity": 11,
-    "expired_job": 9,
+    "expired_job": 2,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 83,
+  "issues_auto_fixed": 76,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -88,6 +88,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/blw-sports-quota-recruitment-2026-notification-pdf-apply-online-for-25-sportsp/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/bmc-cooper-hospital-recruitment-2026-apply-offline-for-115-wireman-sweeper-and/index.html",
@@ -1338,12 +1344,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-project-associate-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/aiims-delhi-senior-research-fellow-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-research-fellow-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-staff-nurse-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1560,6 +1560,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-recruitment-2026-walkin-for-project-technical-support-iii-projec/"
     },
     {
+      "file": "jobs/aiims-jodhpur-research-associate-recruitment-2026-walkin/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-research-associate-recruitment-2026-walkin/"
+    },
+    {
       "file": "jobs/aiims-jodhpur-senior-resident-recruitment-2026-notification-out-apply-online-for/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1732,7 +1738,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
   ],
-  "duration_sec": 41.3
+  "duration_sec": 42.6
 }
