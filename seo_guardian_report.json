@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-24T02:29:04.108797+00:00",
+  "timestamp": "2026-09-24T02:58:26.061711+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 11194,
+  "files_scanned": 11296,
   "issues_found_by_check": {
-    "jobposting_schema": 175,
-    "expired_job": 6,
+    "jobposting_schema": 180,
     "ai_marker_integrity": 13,
+    "expired_job": 1,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 94,
+  "issues_auto_fixed": 92,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -28,6 +28,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/abhyudaya-bank-recruitment-2026-apply-online-for-manager-credit-officer-and-mo/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walk-in/index.html",
@@ -376,6 +382,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/konkan-railway-recruitment-2026-apply-offline-for-66-assistant-loco-pilot-and/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/ksrlps-recruitment-2026-apply-online-for-08-cluster-supervisor-district-manage/index.html",
@@ -1452,12 +1464,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-scientist-b-project-research-scientist-i-non-medical-recruitment-202/"
     },
     {
-      "file": "jobs/aiims-delhi-scientist-d-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-scientist-d-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-senior-consultant-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1810,6 +1816,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-scientist-laboratory-technicia/"
+    },
+    {
+      "file": "jobs/aiims-kalyani-tutor-clinical-instructor-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-tutor-clinical-instructor-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
@@ -1818,5 +1830,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
   ],
-  "duration_sec": 34.9
+  "duration_sec": 45.8
 }
