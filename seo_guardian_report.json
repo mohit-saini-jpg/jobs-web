@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-25T02:46:05.952764+00:00",
+  "timestamp": "2026-09-25T03:13:25.443625+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 11305,
+  "files_scanned": 11387,
   "issues_found_by_check": {
-    "jobposting_schema": 180,
+    "jobposting_schema": 184,
     "ai_marker_integrity": 13,
-    "expired_job": 7,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 98,
+  "issues_auto_fixed": 93,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -552,6 +551,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/rnsb-jr-executive-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/rrc-ncr-apprentice-recruitment-2026-notification-out-apply-online-for-1853-pos/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -565,6 +570,12 @@
     },
     {
       "file": "jobs/sbi-group-ciso-recruitment-2026-apply-online-for-chief-information-security-of/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/sidbi-specialist-recruitment-2026-apply-online-for-assistant-communication-off/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -1308,12 +1319,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-technical-support-recruitment-2026-apply-offline/"
     },
     {
-      "file": "jobs/aiims-delhi-project-technical-support-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-technical-support-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-pts-iii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1822,13 +1827,19 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-tutor-clinical-instructor-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-lab-technician-recruitment-2026-apply-offline/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-lab-technician-recruitment-2026-apply-offline/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               119 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 42.2
+  "duration_sec": 46.8
 }
