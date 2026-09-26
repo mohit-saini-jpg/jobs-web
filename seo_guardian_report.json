@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-25T10:53:02.078642+00:00",
+  "timestamp": "2026-09-26T02:48:37.931844+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 11396,
   "issues_found_by_check": {
     "jobposting_schema": 184,
+    "expired_job": 13,
     "ai_marker_integrity": 13,
-    "expired_job": 7,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 100,
+  "issues_auto_fixed": 106,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1164,6 +1164,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-administrative-assistant-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/aiims-delhi-clinical-research-coordinator-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-clinical-research-coordinator-recruitment-2026-apply-online/"
+    },
+    {
       "file": "jobs/aiims-delhi-data-entry-operator-recruitment-2026-apply-offline/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1218,6 +1224,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-multi-tasking-staff-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/aiims-delhi-nursing-officerproject-technical-support-recruitment-2026-apply-on/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-nursing-officerproject-technical-support-recruitment-2026-apply-on/"
+    },
+    {
       "file": "jobs/aiims-delhi-project-assistant-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1252,6 +1264,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-nurse-iii-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-delhi-project-nurse-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-nurse-recruitment-2026-apply-online/"
     },
     {
       "file": "jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/index.html",
@@ -1596,6 +1614,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-gorakhpur-programme-support-associate-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/aiims-gorakhpur-project-research-scientist-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-gorakhpur-project-research-scientist-i-recruitment-2026-apply-online/"
+    },
+    {
       "file": "jobs/aiims-gorakhpur-project-research-scientist-i-recruitment-2026-walkin/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1810,30 +1834,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-project-technical-support-iii/"
-    },
-    {
-      "file": "jobs/aiims-kalyani-recruitment-2026-apply-online-for-project-technical-support-offi/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-project-technical-support-offi/"
-    },
-    {
-      "file": "jobs/aiims-kalyani-recruitment-2026-apply-online-for-scientist-laboratory-technicia/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-scientist-laboratory-technicia/"
-    },
-    {
-      "file": "jobs/aiims-kalyani-tutor-clinical-instructor-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-tutor-clinical-instructor-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/aiims-lab-technician-recruitment-2026-apply-offline/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-lab-technician-recruitment-2026-apply-offline/"
     }
   ],
   "critical_unfixable": 0,
@@ -1842,5 +1842,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 73.8
+  "duration_sec": 53.5
 }
