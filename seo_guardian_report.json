@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-26T02:48:37.931844+00:00",
+  "timestamp": "2026-09-26T03:20:21.539455+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 11396,
   "issues_found_by_check": {
     "jobposting_schema": 184,
-    "expired_job": 13,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 106,
+  "issues_auto_fixed": 93,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1842,5 +1841,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 53.5
+  "duration_sec": 48.4
 }
