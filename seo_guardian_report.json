@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-26T08:29:52.906032+00:00",
+  "timestamp": "2026-09-27T02:50:07.699199+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 11399,
   "issues_found_by_check": {
     "jobposting_schema": 184,
     "ai_marker_integrity": 13,
-    "expired_job": 8,
+    "expired_job": 3,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 101,
+  "issues_auto_fixed": 96,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -742,6 +742,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aai-recruitment-2026-notification-out-for-389-manager-junior-executive-posts-app/"
+    },
+    {
+      "file": "jobs/aakash-college-hisar-recruitment-2026-apply-now/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aakash-college-hisar-recruitment-2026-apply-now/"
     },
     {
       "file": "jobs/aam-gonda-yoga-instructor-recruitment-2026-apply-offline/index.html",
@@ -1828,12 +1834,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-51-senior-resident-senior-demo/"
-    },
-    {
-      "file": "jobs/aiims-kalyani-recruitment-2026-apply-online-for-project-technical-support-iii/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-recruitment-2026-apply-online-for-project-technical-support-iii/"
     }
   ],
   "critical_unfixable": 0,
@@ -1842,5 +1842,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 47.2
+  "duration_sec": 46.3
 }
