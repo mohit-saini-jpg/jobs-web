@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-29T03:32:26.987077+00:00",
+  "timestamp": "2026-09-29T04:01:35.023968+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 11554,
+  "files_scanned": 11658,
   "issues_found_by_check": {
-    "jobposting_schema": 188,
+    "jobposting_schema": 189,
     "ai_marker_integrity": 13,
-    "expired_job": 12,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 107,
+  "issues_auto_fixed": 96,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1542,12 +1541,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-project-associate-recruitment-2025-apply-online/"
     },
     {
-      "file": "jobs/aiims-delhi-senior-project-associate-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-project-associate-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-senior-research-fellow-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1690,12 +1683,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-assistant-professor-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-project-associate-i-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-project-associate-i-recruitment-2026-apply-online/"
     },
     {
       "file": "jobs/aiims-guwahati-project-associate-ijunior-research-fellow-recruitment-2026-appl/index.html",
@@ -1846,6 +1833,18 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-junior-research-fellow-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-kalyani-junior-resident-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-junior-resident-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-kalyani-office-helper-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-kalyani-office-helper-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
@@ -1854,5 +1853,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               120 urls [ok]"
   ],
-  "duration_sec": 40.6
+  "duration_sec": 48.9
 }
