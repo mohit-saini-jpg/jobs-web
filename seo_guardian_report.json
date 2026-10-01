@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-10-01T10:18:21.381786+00:00",
+  "timestamp": "2026-10-01T15:01:49.109879+00:00",
   "mode": "full-scan",
   "dry_run": false,
   "files_scanned": 14481,
   "issues_found_by_check": {
     "jobposting_schema": 93,
     "ai_marker_integrity": 13,
-    "sitemap_sync": 206
+    "sitemap_sync": 200
   },
-  "issues_auto_fixed": 6,
+  "issues_auto_fixed": 0,
   "unfixable": [
     {
       "file": "jobs/iim-mumbai-non-teaching-recruitment-2026-apply-online-for-21-junior-assistant/index.html",
@@ -1853,5 +1853,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               115 urls [ok]"
   ],
-  "duration_sec": 46.1
+  "duration_sec": 53.1
 }
