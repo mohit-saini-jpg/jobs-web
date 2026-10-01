@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-01T03:23:38.747865+00:00",
+  "timestamp": "2026-10-01T03:49:55.953000+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 11747,
+  "files_scanned": 11871,
   "issues_found_by_check": {
-    "expired_job": 28,
-    "jobposting_schema": 191,
+    "jobposting_schema": 192,
     "ai_marker_integrity": 13,
+    "expired_job": 2,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 125,
+  "issues_auto_fixed": 101,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -562,12 +562,6 @@
       "check": "ai_marker_integrity",
       "severity": "non_critical",
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
-    },
-    {
-      "file": "jobs/rites-recruitment-2026-apply-online-for-assistant-manager-senior-manager-posts/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/rnsb-jr-executive-recruitment-2026-apply-online/index.html",
@@ -1350,12 +1344,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-nurse-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1852,6 +1840,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-recruitment-2026-walkin-for-data-entry-operator-research-assista/"
+    },
+    {
+      "file": "jobs/aiims-jodhpur-recruitment-2026-walkin-for-project-technical-support-iii-projec/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-recruitment-2026-walkin-for-project-technical-support-iii-projec/"
     }
   ],
   "critical_unfixable": 0,
@@ -1860,5 +1854,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               121 urls [ok]"
   ],
-  "duration_sec": 42.9
+  "duration_sec": 47.9
 }
