@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-10-02T03:24:30.247291+00:00",
+  "timestamp": "2026-10-02T03:50:19.020339+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 11884,
+  "files_scanned": 11960,
   "issues_found_by_check": {
-    "jobposting_schema": 192,
-    "expired_job": 9,
+    "jobposting_schema": 193,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 108,
+  "issues_auto_fixed": 99,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -574,6 +573,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rrc-north-western-railway-act-apprentice-recruitment-2026-notification-out-app/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/sbc-visakhapatnam-group-c-recruitment-2026-apply-online-for-fire-engine-driver/index.html",
@@ -1518,12 +1523,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-posts/"
     },
     {
-      "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-projec/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-projec/"
-    },
-    {
       "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-research-assistant-field-investi/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1846,13 +1845,19 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walkin/"
+    },
+    {
+      "file": "jobs/aiims-jodhpur-recruitment-2026-apply-online-for-project-research-scientist-i-p/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-jodhpur-recruitment-2026-apply-online-for-project-research-scientist-i-p/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               121 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               123 urls [ok]"
   ],
-  "duration_sec": 49.7
+  "duration_sec": 49.6
 }
