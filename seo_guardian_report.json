@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-10-04T04:03:45.358340+00:00",
+  "timestamp": "2026-10-04T04:47:01.889109+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 12016,
+  "files_scanned": 12018,
   "issues_found_by_check": {
     "jobposting_schema": 193,
+    "expired_job": 7,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 99,
+  "issues_auto_fixed": 106,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -296,7 +297,7 @@
       "file": "jobs/haryana-open-fresh-10th-12th-online-form/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 15 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 16 END)"
     },
     {
       "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
@@ -428,7 +429,7 @@
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 51 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 52 END)"
     },
     {
       "file": "jobs/mdu-mercy-special-chance-online-form-2026/index.html",
@@ -1859,5 +1860,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               124 urls [ok]"
   ],
-  "duration_sec": 48.6
+  "duration_sec": 49.9
 }
