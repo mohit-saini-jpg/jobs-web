@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-07T03:35:25.623578+00:00",
+  "timestamp": "2026-10-07T03:58:25.112957+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 12018,
+  "files_scanned": 12234,
   "issues_found_by_check": {
-    "jobposting_schema": 193,
-    "expired_job": 10,
+    "jobposting_schema": 206,
     "ai_marker_integrity": 13,
+    "expired_job": 3,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 109,
+  "issues_auto_fixed": 108,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -40,6 +40,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/alrari-yoga-therapist-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/asc-centre-south-bangalore-civilian-recruitment-2026-apply-offline-for-62-fire/index.html",
@@ -192,6 +198,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/csir-neeri-project-associate-i-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/csl-ship-draftsman-trainee-recruitment-2026-apply-online-for-60-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -244,6 +256,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/echs-recruitment-2026-apply-offline-for-23-deo-peon-clerk-and-more-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Himachal Pradesh/171001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/echs-recruitment-2026-apply-offline-for-medical-officer-dental-officer-and-mor/index.html",
@@ -336,6 +354,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
+      "file": "jobs/iim-lucknow-research-associate-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/iim-mumbai-non-teaching-recruitment-2026-apply-online-for-21-junior-assistant/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -352,6 +376,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-madras-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-last-date-extended-apply-online/index.html",
@@ -400,6 +430,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/kerala-university-recruitment-2026-apply-offline-for-resident-cook-kitchen-hel/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Kerala/695001 [L3]) — manual review"
     },
     {
       "file": "jobs/konkan-railway-recruitment-2026-apply-offline-for-66-assistant-loco-pilot-and/index.html",
@@ -538,6 +574,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/ratnagiri-district-mahsul-sevak-recruitment-2026-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/rcfl-apprentice-recruitment-2026-notification-out-apply-online-for-326-graduat/index.html",
@@ -1858,7 +1900,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               124 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 52.2
+  "duration_sec": 30.5
 }
