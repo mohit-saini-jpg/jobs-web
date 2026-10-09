@@ -5892,3 +5892,7 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/supreme-court-of-india-sci-junior-court-assistant-jca-recruitment-2026-exam-for/  /jobs/supreme-court-junior-court-assistant-recruitment-2026-notification-out-apply-o/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/mp-high-court-stenographer-grade-ii-stenographer-grade-iii-assistant-grade-iii-r/  /jobs/mphc-recruitment-2026-notification-out-apply-online-for-418-stenographer-grade/  301
+/jobs/panipat-anganwadi-vacancy-2026-apply-for-anganwadi-worker-helper-posts/  /jobs/wcd-odisha-recruitment-2026-apply-online-for-anganwadi-worker-and-helper-posts/  301
