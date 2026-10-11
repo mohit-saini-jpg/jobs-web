@@ -1,17 +1,17 @@
 {
-  "scraped_at": "2026-10-10 12:32:31",
-  "total": 300,
+  "scraped_at": "2026-10-11 09:17:35",
+  "total": 302,
   "summary": {
     "sarkariresultshine_offline_jobs_top30": 30,
     "sarkariresultshine_latest_jobs_top100": 100,
     "sarkariresult_categories": {
       "SR_Answer_Key": 20,
-      "SR_Latest_Jobs": 75,
+      "SR_Admit_Card": 25,
       "SR_Result": 25,
-      "SR_Admit_Card": 25
+      "SR_Latest_Jobs": 75
     },
     "sarkariresult_total": 145,
-    "upcoming_jobs": 16,
+    "upcoming_jobs": 18,
     "state_jobs_active": 0,
     "central_jobs_active": 0,
     "admissions_active": 9
@@ -23,10 +23,141 @@
     "SR_Answer_Key": 20,
     "OFFLINE_FORM": 30,
     "LATEST_JOBS NEW": 100,
-    "UPCOMING_JOBS": 16,
+    "UPCOMING_JOBS": 18,
     "ADMISSIONS": 9
   },
   "jobs": [
+    {
+      "category": "SR_Latest_Jobs",
+      "title": "Delhi DSSSB Sweeper / Safai Karamchari & Chowkidar Post Advt. No. 05/2026 Recruitment 2026 Apply Online for 25 Post",
+      "postDate": "10/10/2026",
+      "organization": "DSSSB",
+      "totalPost": "25",
+      "shortInfo": "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari & Chowkidar Post Exam 2026 Notification. Those candidates who are interested in this Delhi DSSSB Sweeper / Safai Karamchari & Chowkidar Post Exam can Apply Online from 13/10/2026 to 11/11/2026. Read the notification for Delhi DSSSB Advt. No. 05/2026 Sweeper / Safai Karamchari & Chowkidar Post Exam, eligibility, Document Required, age limit, How to Apply and all other information",
+      "importantDates": {
+        "applicationBegin": "13/10/2026",
+        "lastDateApplyOnline": "11/11/2026",
+        "lastDatePayFee": "11/11/2026",
+        "examDate": "As per Schedule",
+        "admitCardDate": "Before Exam"
+      },
+      "applicationFee": {
+        "general": "100",
+        "sc": "0",
+        "female": "0",
+        "paymentMode": "Online / Offline",
+        "scStPh": "0",
+        "generalFemale": "0"
+      },
+      "ageLimit": {
+        "minAge": "18",
+        "maxAge": "27",
+        "ageAsOnDate": "01/06/2026"
+      },
+      "vacancyDetails": [
+        {
+          "postName": "Sweeper / Safai Karamchari (District and Sessions Courts)",
+          "totalPost": "10",
+          "eligibility": "Matriculation pass or equivalent from a recognized board.",
+          "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total : 25 Post"
+        },
+        {
+          "postName": "Chowkidar (District and Sessions Courts)",
+          "totalPost": "15",
+          "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total : 25 Post"
+        },
+        {
+          "postName": "Sweeper / Safai Karamchari",
+          "totalPost": "10",
+          "categoryWise": {
+            "UR": "05",
+            "OBC": "02",
+            "EWS": "01",
+            "SC": "01",
+            "ST": "01"
+          },
+          "tableHeading": "DSSSB Advt. No. 05/2026 : Category Wise Vacancy Details"
+        },
+        {
+          "postName": "Chowkidar",
+          "totalPost": "15",
+          "categoryWise": {
+            "UR": "07",
+            "OBC": "04",
+            "EWS": "01",
+            "SC": "02",
+            "ST": "01"
+          },
+          "tableHeading": "DSSSB Advt. No. 05/2026 : Category Wise Vacancy Details"
+        }
+      ],
+      "textSections": [
+        {
+          "section": "How to Fill DSSSB Various Post Advt. No. 05/2026 Online Form 2026",
+          "content": "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in DSSSB Various Post in Delhi Advt. No. 05/2026 Exam Online Form 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+        }
+      ],
+      "importantLinks": [
+        {
+          "label": "Apply Online",
+          "url": "https://dsssbonline.nic.in/"
+        },
+        {
+          "label": "Download Notification",
+          "url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/final_advt_05_2026.pdf"
+        },
+        {
+          "label": "Official Website",
+          "url": "https://dsssb.delhi.gov.in/"
+        }
+      ],
+      "additionalData": {
+        "howToApply": [
+          "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026",
+          "Candidate Read the Notification Before Apply the Recruitment Application Form in DSSSB Various Post in Delhi Advt. No. 05/2026 Exam Online Form 2026",
+          "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+          "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+          "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+          "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+          "Take A Print Out of Final Submitted Form",
+          "admit card, answer key, and result"
+        ]
+      },
+      "faq": [
+        {
+          "question": "When did the Delhi DSSSB Various Post Advt. No. 05/2026 Online Application Process Start?",
+          "answer": "The online application process started on 13/10/2026."
+        },
+        {
+          "question": "What is the Exam Date for Delhi DSSSB Various Post Advt. No. 05/2026 Recruitment 2026?",
+          "answer": "The Examination will be conducted in As per Schedule."
+        },
+        {
+          "question": "Where can I find the syllabus for the Delhi DSSSB Various Post Advt. No. 05/2026 Examination 2026?",
+          "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+        },
+        {
+          "question": "What is the last date to apply online for Delhi DSSSB Various Post Advt. No. 05/2026 Recruitment 2026?",
+          "answer": "The last date to apply online is 11/11/2026."
+        },
+        {
+          "question": "What is the last date to pay the application fee?",
+          "answer": "Candidates can pay the application fee up to 11/11/2026."
+        }
+      ],
+      "meta": {
+        "sourceUrl": "https://www.sarkariresult.com/2026/delhi-dsssb-sweeper-05-2026/",
+        "scrapedAt": "2026-10-11T09:17:42",
+        "pageTitle": "Delhi DSSSB Sweeper / Safai Karamchari , Chowkidar Post Online Form 2026",
+        "detectedCategory": "SR_Latest_Jobs",
+        "categoryOverridden": false,
+        "publishedTime": "2026-10-10T21:44:59+05:30",
+        "modifiedTime": "2026-10-10T21:53:22+05:30",
+        "articleSection": "2026",
+        "homepageSerial": 1
+      },
+      "_last_checked": "2026-10-11T03:47:42+00:00"
+    },
     {
       "category": "SR_Latest_Jobs",
       "title": "DAV Staff Recruitment 2026 Apply Online for Teaching and Non Teaching Post",
@@ -155,16 +286,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/dav-staff-teaching-non-teaching-oct26/",
-        "scrapedAt": "2026-10-10T12:32:40",
+        "scrapedAt": "2026-10-11T09:17:43",
         "pageTitle": "DAV Public School Staff Various Post Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-09T09:35:54+05:30",
         "modifiedTime": "2026-10-09T09:35:56+05:30",
         "articleSection": "2026",
-        "homepageSerial": 1
+        "homepageSerial": 2
       },
-      "_last_checked": "2026-10-10T07:02:40+00:00"
+      "_last_checked": "2026-10-11T03:47:43+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -254,16 +385,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/railway/nta-ugc-net-december2026/",
-        "scrapedAt": "2026-10-10T12:32:41",
+        "scrapedAt": "2026-10-11T09:17:43",
         "pageTitle": "NTA UGC NET December 2026 Online Form",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-08T22:07:09+05:30",
         "modifiedTime": "2026-10-08T22:12:17+05:30",
         "articleSection": "Railway",
-        "homepageSerial": 2
+        "homepageSerial": 3
       },
-      "_last_checked": "2026-10-10T07:02:41+00:00"
+      "_last_checked": "2026-10-11T03:47:43+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -350,16 +481,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/railway/nta-csir-ugc-net-dec2026/",
-        "scrapedAt": "2026-10-10T12:32:42",
+        "scrapedAt": "2026-10-11T09:17:43",
         "pageTitle": "NTA CSIR UGC NET December 2026 Online Form",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-10T08:27:06+05:30",
         "modifiedTime": "2026-10-10T08:27:08+05:30",
         "articleSection": "Railway",
-        "homepageSerial": 3
+        "homepageSerial": 4
       },
-      "_last_checked": "2026-10-10T07:02:42+00:00"
+      "_last_checked": "2026-10-11T03:47:43+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -482,16 +613,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/army-tgc-145-sep26/",
-        "scrapedAt": "2026-10-10T12:32:43",
+        "scrapedAt": "2026-10-11T09:17:44",
         "pageTitle": "Army TGC 145 Online Form 2026 for July 2027 Batch",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-28T18:13:23+05:30",
         "modifiedTime": "2026-10-07T21:18:15+05:30",
         "articleSection": "2026",
-        "homepageSerial": 4
+        "homepageSerial": 5
       },
-      "_last_checked": "2026-10-10T07:02:43+00:00"
+      "_last_checked": "2026-10-11T03:47:44+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -801,16 +932,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/railway/railway-rrb-ntpc-ug-level-07-2026/",
-        "scrapedAt": "2026-10-10T12:32:43",
+        "scrapedAt": "2026-10-11T09:17:44",
         "pageTitle": "Railway RRB NTPC 10+2 Under Graduate Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T20:55:08+05:30",
         "modifiedTime": "2026-10-07T20:57:58+05:30",
         "articleSection": "Railway",
-        "homepageSerial": 5
+        "homepageSerial": 6
       },
-      "_last_checked": "2026-10-10T07:02:43+00:00"
+      "_last_checked": "2026-10-11T03:47:44+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1029,16 +1160,16 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/up-anganwadi-worker/",
-        "scrapedAt": "2026-10-10T12:32:44",
+        "scrapedAt": "2026-10-11T09:17:45",
         "pageTitle": "UP Anganwadi Bharti Worker Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T19:57:23+05:30",
         "modifiedTime": "2026-10-07T19:57:26+05:30",
         "articleSection": "2026",
-        "homepageSerial": 6
+        "homepageSerial": 7
       },
-      "_last_checked": "2026-10-10T07:02:44+00:00"
+      "_last_checked": "2026-10-11T03:47:45+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1277,16 +1408,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/rrb-ntpc-graduate-cen-06-2026/",
-        "scrapedAt": "2026-10-10T12:32:45",
+        "scrapedAt": "2026-10-11T09:17:45",
         "pageTitle": "Railway RRB NTPC Graduate Level Online Form 2026 for 3548 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T20:24:44+05:30",
         "modifiedTime": "2026-10-07T20:24:47+05:30",
         "articleSection": "2026",
-        "homepageSerial": 7
+        "homepageSerial": 8
       },
-      "_last_checked": "2026-10-10T07:02:45+00:00"
+      "_last_checked": "2026-10-11T03:47:45+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1424,16 +1555,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/nicl-ao-oct2026/",
-        "scrapedAt": "2026-10-10T12:32:45",
+        "scrapedAt": "2026-10-11T09:17:45",
         "pageTitle": "National Insurance NICL Administrative Officers AO Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T18:30:49+05:30",
         "modifiedTime": "2026-10-07T18:30:51+05:30",
         "articleSection": "2026",
-        "homepageSerial": 8
+        "homepageSerial": 9
       },
-      "_last_checked": "2026-10-10T07:02:45+00:00"
+      "_last_checked": "2026-10-11T03:47:45+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1560,16 +1691,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/mpesb-mpp-constable-driver-oct26/",
-        "scrapedAt": "2026-10-10T12:32:46",
+        "scrapedAt": "2026-10-11T09:17:46",
         "pageTitle": "MPESB MP Police Constable Driver Online Form 2026 for 1000 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T16:37:09+05:30",
         "modifiedTime": "2026-10-07T16:37:11+05:30",
         "articleSection": "2026",
-        "homepageSerial": 9
+        "homepageSerial": 10
       },
-      "_last_checked": "2026-10-10T07:02:46+00:00"
+      "_last_checked": "2026-10-11T03:47:46+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1660,16 +1791,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/sci-junior-court-assistant-sep26/",
-        "scrapedAt": "2026-10-10T12:32:47",
+        "scrapedAt": "2026-10-11T09:17:46",
         "pageTitle": "Supreme Court of India Junior Court Assistant Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T20:50:20+05:30",
         "modifiedTime": "2026-10-07T20:50:23+05:30",
         "articleSection": "2026",
-        "homepageSerial": 10
+        "homepageSerial": 11
       },
-      "_last_checked": "2026-10-10T07:02:47+00:00"
+      "_last_checked": "2026-10-11T03:47:46+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -1965,16 +2096,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upessc-assistant-professor-04-2026/",
-        "scrapedAt": "2026-10-10T12:32:47",
+        "scrapedAt": "2026-10-11T09:17:47",
         "pageTitle": "UPESSC UP Assistant Professor Online Form 2026 for 1936 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-18T17:14:22+05:30",
         "modifiedTime": "2026-09-18T17:14:24+05:30",
         "articleSection": "2026",
-        "homepageSerial": 11
+        "homepageSerial": 12
       },
-      "_last_checked": "2026-10-10T07:02:47+00:00"
+      "_last_checked": "2026-10-11T03:47:47+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -2100,16 +2231,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-primary-teacher-05-2026/",
-        "scrapedAt": "2026-10-10T12:32:49",
+        "scrapedAt": "2026-10-11T09:17:48",
         "pageTitle": "UPESSC UP Assistant Teacher Primary Online Form 2026 for 12405 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-17T01:00:27+05:30",
         "modifiedTime": "2026-09-17T01:23:29+05:30",
         "articleSection": "2026",
-        "homepageSerial": 12
+        "homepageSerial": 13
       },
-      "_last_checked": "2026-10-10T07:02:49+00:00"
+      "_last_checked": "2026-10-11T03:47:48+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -2847,16 +2978,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-pgt-teacher-sept26/",
-        "scrapedAt": "2026-10-10T12:32:49",
+        "scrapedAt": "2026-10-11T09:17:48",
         "pageTitle": "UPESSC UP PGT Teacher Online Form 2026 for 2607 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-02T07:25:29+05:30",
         "modifiedTime": "2026-10-02T07:25:32+05:30",
         "articleSection": "2026",
-        "homepageSerial": 13
+        "homepageSerial": 14
       },
-      "_last_checked": "2026-10-10T07:02:49+00:00"
+      "_last_checked": "2026-10-11T03:47:48+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3151,16 +3282,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/bihar/bpsc-tre-4-2026/",
-        "scrapedAt": "2026-10-10T12:32:51",
+        "scrapedAt": "2026-10-11T09:17:49",
         "pageTitle": "Bihar BPSC School Teacher TRE 4 Online Form 2026 for 33320 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T20:46:05+05:30",
         "modifiedTime": "2026-10-07T20:46:08+05:30",
         "articleSection": "Bihar",
-        "homepageSerial": 14
+        "homepageSerial": 15
       },
-      "_last_checked": "2026-10-10T07:02:51+00:00"
+      "_last_checked": "2026-10-11T03:47:49+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3561,16 +3692,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/mpesb-mp-police-constable-gd-sep26/",
-        "scrapedAt": "2026-10-10T12:32:52",
+        "scrapedAt": "2026-10-11T09:17:49",
         "pageTitle": "MPESB MP Police Constable GD Correction / Edit Form 2026 for 7500 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T09:27:30+05:30",
         "modifiedTime": "2026-10-07T09:27:32+05:30",
         "articleSection": "2026",
-        "homepageSerial": 17
+        "homepageSerial": 18
       },
-      "_last_checked": "2026-10-10T07:02:52+00:00"
+      "_last_checked": "2026-10-11T03:47:49+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3659,16 +3790,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/up-special-tet-exam/",
-        "scrapedAt": "2026-10-10T12:32:53",
+        "scrapedAt": "2026-10-11T09:17:50",
         "pageTitle": "UPESSC UP Special TET Online Correction / Edit Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T09:03:33+05:30",
         "modifiedTime": "2026-10-07T09:03:37+05:30",
         "articleSection": "2026",
-        "homepageSerial": 18
+        "homepageSerial": 19
       },
-      "_last_checked": "2026-10-10T07:02:53+00:00"
+      "_last_checked": "2026-10-11T03:47:50+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -3910,16 +4041,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/coast-guard-navik-gd-db-cgpet-01-2027/",
-        "scrapedAt": "2026-10-10T12:32:53",
+        "scrapedAt": "2026-10-11T09:17:50",
         "pageTitle": "Indian Coast Guard Navik / Yantrik CGEPT Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T10:58:19+05:30",
         "modifiedTime": "2026-10-07T10:58:21+05:30",
         "articleSection": "2026",
-        "homepageSerial": 19
+        "homepageSerial": 20
       },
-      "_last_checked": "2026-10-10T07:02:53+00:00"
+      "_last_checked": "2026-10-11T03:47:50+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4081,16 +4212,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/mphc-stenographer-grade-ii-666-exam/",
-        "scrapedAt": "2026-10-10T12:32:54",
+        "scrapedAt": "2026-10-11T09:17:51",
         "pageTitle": "MP High Court MPHC Stenographer and AG III Online Form 2026 for 418 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-09T16:41:35+05:30",
         "modifiedTime": "2026-10-09T16:41:38+05:30",
         "articleSection": "2026",
-        "homepageSerial": 20
+        "homepageSerial": 21
       },
-      "_last_checked": "2026-10-10T07:02:54+00:00"
+      "_last_checked": "2026-10-11T03:47:51+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4239,16 +4370,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/dsssb-various-post-oct26/",
-        "scrapedAt": "2026-10-10T12:32:55",
+        "scrapedAt": "2026-10-11T09:17:51",
         "pageTitle": "Delhi DSSSB Various Post Online Form 2026 Advt. No. 04/2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T16:51:54+05:30",
         "modifiedTime": "2026-10-07T16:51:55+05:30",
         "articleSection": "2026",
-        "homepageSerial": 21
+        "homepageSerial": 22
       },
-      "_last_checked": "2026-10-10T07:02:55+00:00"
+      "_last_checked": "2026-10-11T03:47:51+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4342,16 +4473,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-teaching-oct26/",
-        "scrapedAt": "2026-10-10T12:32:56",
+        "scrapedAt": "2026-10-11T09:17:51",
         "pageTitle": "CSJMU Kanpur Teaching Post Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-05T11:20:57+05:30",
         "modifiedTime": "2026-10-05T11:20:59+05:30",
         "articleSection": "2026",
-        "homepageSerial": 22
+        "homepageSerial": 23
       },
-      "_last_checked": "2026-10-10T07:02:56+00:00"
+      "_last_checked": "2026-10-11T03:47:51+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4461,16 +4592,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/nwr-rrc-jaipur-apprentices-04-2026/",
-        "scrapedAt": "2026-10-10T12:32:57",
+        "scrapedAt": "2026-10-11T09:17:52",
         "pageTitle": "RRC Jaipur NWR Apprentices Online Form 2026 for 2008 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-07T19:45:00+05:30",
         "modifiedTime": "2026-10-07T19:45:03+05:30",
         "articleSection": "2026",
-        "homepageSerial": 23
+        "homepageSerial": 24
       },
-      "_last_checked": "2026-10-10T07:02:57+00:00"
+      "_last_checked": "2026-10-11T03:47:52+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4689,16 +4820,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/blet-september26/",
-        "scrapedAt": "2026-10-10T12:32:58",
+        "scrapedAt": "2026-10-11T09:17:52",
         "pageTitle": "Bihar Library Eligibility Test BLET Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-05T13:33:59+05:30",
         "modifiedTime": "2026-10-05T13:34:01+05:30",
         "articleSection": "2026",
-        "homepageSerial": 25
+        "homepageSerial": 26
       },
-      "_last_checked": "2026-10-10T07:02:58+00:00"
+      "_last_checked": "2026-10-11T03:47:52+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4806,16 +4937,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/canara-bank-apprentices-sep26/",
-        "scrapedAt": "2026-10-10T12:32:58",
+        "scrapedAt": "2026-10-11T09:17:52",
         "pageTitle": "Canara Bank Apprentice Online Form 2026 for 3500 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-05T13:42:08+05:30",
         "modifiedTime": "2026-10-05T13:42:10+05:30",
         "articleSection": "2026",
-        "homepageSerial": 26
+        "homepageSerial": 27
       },
-      "_last_checked": "2026-10-10T07:02:58+00:00"
+      "_last_checked": "2026-10-11T03:47:52+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -4939,16 +5070,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-23-exam-2026/",
-        "scrapedAt": "2026-10-10T12:32:59",
+        "scrapedAt": "2026-10-11T09:17:53",
         "pageTitle": "UPSSSC Physical Instructor and Other Post Online Form 2026 for 412 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-01T00:52:03+05:30",
         "modifiedTime": "2026-10-01T09:48:41+05:30",
         "articleSection": "2026",
-        "homepageSerial": 27
+        "homepageSerial": 28
       },
-      "_last_checked": "2026-10-10T07:02:59+00:00"
+      "_last_checked": "2026-10-11T03:47:53+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -5211,16 +5342,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-sports-22-exam-2026/",
-        "scrapedAt": "2026-10-10T12:33:00",
+        "scrapedAt": "2026-10-11T09:17:53",
         "pageTitle": "UPSSSC Sports Directorate Online Form 2026 for 108 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-01T00:58:23+05:30",
         "modifiedTime": "2026-10-01T17:48:06+05:30",
         "articleSection": "2026",
-        "homepageSerial": 28
+        "homepageSerial": 29
       },
-      "_last_checked": "2026-10-10T07:03:00+00:00"
+      "_last_checked": "2026-10-11T03:47:53+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -5624,16 +5755,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/up-anganwadi-helper-june26/",
-        "scrapedAt": "2026-10-10T12:33:01",
+        "scrapedAt": "2026-10-11T09:17:54",
         "pageTitle": "UP Anganwadi Helper Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-30T12:56:22+05:30",
         "modifiedTime": "2026-09-30T12:56:26+05:30",
         "articleSection": "2026",
-        "homepageSerial": 29
+        "homepageSerial": 30
       },
-      "_last_checked": "2026-10-10T07:03:01+00:00"
+      "_last_checked": "2026-10-11T03:47:54+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -6175,16 +6306,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/rajasthan-sanitation-worker-jul26/",
-        "scrapedAt": "2026-10-10T12:33:02",
+        "scrapedAt": "2026-10-11T09:17:54",
         "pageTitle": "Rajasthan Safai Karamchari Online Form 2026 for 24752 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-30T11:05:12+05:30",
         "modifiedTime": "2026-09-30T11:05:16+05:30",
         "articleSection": "2026",
-        "homepageSerial": 30
+        "homepageSerial": 31
       },
-      "_last_checked": "2026-10-10T07:03:03+00:00"
+      "_last_checked": "2026-10-11T03:47:55+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -6314,16 +6445,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/jharkhand-jssc-para-teacher-july26/",
-        "scrapedAt": "2026-10-10T12:33:04",
+        "scrapedAt": "2026-10-11T09:17:55",
         "pageTitle": "Jharkhand JSSC Para Teacher Online Form 2026 for 6101 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-10T08:14:05+05:30",
         "modifiedTime": "2026-10-10T08:14:08+05:30",
         "articleSection": "2026",
-        "homepageSerial": 31
+        "homepageSerial": 32
       },
-      "_last_checked": "2026-10-10T07:03:04+00:00"
+      "_last_checked": "2026-10-11T03:47:55+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -6526,16 +6657,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/assam-rifles-rally-sep26/",
-        "scrapedAt": "2026-10-10T12:33:05",
+        "scrapedAt": "2026-10-11T09:17:55",
         "pageTitle": "Assam Rifles Rally Recruitment Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-10-06T13:38:42+05:30",
         "modifiedTime": "2026-10-06T13:38:43+05:30",
         "articleSection": "2026",
-        "homepageSerial": 32
+        "homepageSerial": 33
       },
-      "_last_checked": "2026-10-10T07:03:05+00:00"
+      "_last_checked": "2026-10-11T03:47:55+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -6664,16 +6795,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/itbp-head-constable-motor-mechanic/",
-        "scrapedAt": "2026-10-10T12:33:06",
+        "scrapedAt": "2026-10-11T09:17:56",
         "pageTitle": "ITBP Head Constable Online Form 2026 for 37 Post",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
         "publishedTime": "2026-09-30T16:56:41+05:30",
         "modifiedTime": "2026-09-30T16:56:43+05:30",
         "articleSection": "2026",
-        "homepageSerial": 33
+        "homepageSerial": 34
       },
-      "_last_checked": "2026-10-10T07:03:06+00:00"
+      "_last_checked": "2026-10-11T03:47:56+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -6830,122 +6961,6 @@
         "homepageSerial": 22
       },
       "_last_checked": "2026-10-06T08:20:18+00:00"
-    },
-    {
-      "category": "SR_Latest_Jobs",
-      "title": "Bihar BTSC Touring Veterinary Officer Recruitment 2026 Apply Online for 787 Post",
-      "postDate": "25/09/2026",
-      "organization": "BTSC",
-      "totalPost": "787",
-      "shortInfo": "Bihar Technical Service Commission (BTSC) has released the notification for the recruitment of Touring Veterinary Officer Exam 2026. Those Candidates Are Interested to the Following Bihar BTSC Touring Veterinary Officer Exam 2026 Vacancy Can Apply Online from 24/09/2026 to 23/10/2026. See the advertisement for information related to age limit, syllabus, Department wise post, selection procedure, pay scale in Bihar BTSC Touring Veterinary Officer Recruitment 2026",
-      "importantDates": {
-        "applicationBegin": "24/09/2026",
-        "lastDateApplyOnline": "23/10/2026",
-        "lastDatePayFee": "23/10/2026",
-        "examDate": "As Per Schedule",
-        "admitCardDate": "As Per Schedule"
-      },
-      "applicationFee": {
-        "general": "100",
-        "sc": "100",
-        "female": "100",
-        "paymentMode": "Online / Offline",
-        "generalBcOtherState": "100",
-        "scStPh": "100",
-        "femaleCandidateBiharDom": "100"
-      },
-      "ageLimit": {
-        "minAge": "21",
-        "maxAge": "37",
-        "ageAsOnDate": "01/08/2026"
-      },
-      "vacancyDetails": [
-        {
-          "postName": "BTSC Touring Veterinary Officer",
-          "totalPost": "787",
-          "eligibility": "A Bachelor of Veterinary Science (B.V.Sc.) or Bachelor of Veterinary Science & Animal Husbandry (B.V.Sc. & A.H.) degree from a university recognized by the Veterinary Council of India (VCI) is mandatory. The candidate must be permanently registered with the Bihar Veterinary Council. More Eligibility Details Read the Notification",
-          "tableHeading": "BTSC Touring Veterinary Officer Recruitment 2026 : Vacancy Details Total : 787 Post"
-        },
-        {
-          "postName": "BTSC Touring Veterinary Officer",
-          "categoryWise": {
-            "UR": "228",
-            "EWS": "55",
-            "EBC": "195",
-            "BC": "78",
-            "BC Female": "11",
-            "SC": "207",
-            "ST": "13"
-          },
-          "tableHeading": "BTSC Touring Veterinary Officer Notification 2026 : Category Wise Vacancy Details"
-        }
-      ],
-      "textSections": [
-        {
-          "section": "How to Fill Bihar BTSC Touring Veterinary Officer Exam Online Form 2026",
-          "content": "Bihar Technical Service Commission BTSC Are Issued Touring Veterinary Officer Examination 2026. Notification and Invited Online Application Form for the BTSC Touring Veterinary Officer Recruitment 2026 Candidate Can Apply Online for 24/09/2026 to 23/10/2026. | Candidate Read the Notification Before Apply the BTSC Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-        }
-      ],
-      "importantLinks": [
-        {
-          "label": "Apply Online",
-          "url": "https://btsc.pariksha.nic.in/Agencies.aspx?KZhCrm9B4QPkl0gO2rAMuw=="
-        },
-        {
-          "label": "Download Notification",
-          "url": "https://jobjhalak.com/wp-content/uploads/2026/09/BTSC-Touring-Veterinary-Officer-Notification-2026.pdf"
-        },
-        {
-          "label": "Official Website",
-          "url": "https://btsc.bihar.gov.in/"
-        }
-      ],
-      "additionalData": {
-        "howToApply": [
-          "Bihar Technical Service Commission BTSC Are Issued Touring Veterinary Officer Examination 2026. Notification and Invited Online Application Form for the BTSC Touring Veterinary Officer Recruitment 2026 Candidate Can Apply Online for 24/09/2026 to 23/10/2026",
-          "Candidate Read the Notification Before Apply the BTSC Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
-          "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-          "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-          "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-          "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-          "Take A Print Out of Final Submitted Form",
-          "admit card, answer key, and result"
-        ]
-      },
-      "faq": [
-        {
-          "question": "When did the BTSC Touring Veterinary Officer Online Application Process Start?",
-          "answer": "The online application process started on 24 September 2026."
-        },
-        {
-          "question": "What is the Exam Date for BTSC Touring Veterinary Officer Recruitment 2026 ?",
-          "answer": "The Examination will be conducted in As Per Schedule ."
-        },
-        {
-          "question": "Where can I find the syllabus for the BTSC Touring Veterinary Officer Examination 2026?",
-          "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-        },
-        {
-          "question": "What is the last date to apply online for BTSC Touring Veterinary Officer Recruitment 2026 ?",
-          "answer": "The last date to apply online is 23 October 2026."
-        },
-        {
-          "question": "What is the last date to pay the application fee?",
-          "answer": "Candidates can pay the application fee up to 23 October 2026."
-        }
-      ],
-      "meta": {
-        "sourceUrl": "https://www.sarkariresult.com/2026/btsc-touring-veterinary-sep26/",
-        "scrapedAt": "2026-10-10T12:33:06",
-        "pageTitle": "Bihar BTSC Touring Veterinary Officer Online form 2026",
-        "detectedCategory": "SR_Latest_Jobs",
-        "categoryOverridden": false,
-        "publishedTime": "2026-09-25T18:21:34+05:30",
-        "modifiedTime": "2026-09-25T18:21:37+05:30",
-        "articleSection": "2026",
-        "homepageSerial": 35
-      },
-      "_last_checked": "2026-10-10T07:03:06+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -7199,7 +7214,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-super-tet-2026/",
-        "scrapedAt": "2026-10-10T12:33:09",
+        "scrapedAt": "2026-10-11T09:17:57",
         "pageTitle": "UPESSC UP Super TET Assistant Teacher Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -7208,7 +7223,7 @@
         "articleSection": "2026",
         "homepageSerial": 39
       },
-      "_last_checked": "2026-10-10T07:03:09+00:00"
+      "_last_checked": "2026-10-11T03:47:57+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -7840,7 +7855,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upessc-uptgt-uppgt-syllabus/",
-        "scrapedAt": "2026-10-10T12:33:11",
+        "scrapedAt": "2026-10-11T09:17:58",
         "pageTitle": "UPESSC UP TGT",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -7849,7 +7864,7 @@
         "articleSection": "2026",
         "homepageSerial": 43
       },
-      "_last_checked": "2026-10-10T07:03:11+00:00"
+      "_last_checked": "2026-10-11T03:47:58+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -8088,7 +8103,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/clat-admission-jul26/",
-        "scrapedAt": "2026-10-10T12:33:13",
+        "scrapedAt": "2026-10-11T09:17:59",
         "pageTitle": "CLAT 2027 Admission Online Form",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -8097,7 +8112,7 @@
         "articleSection": "2026",
         "homepageSerial": 45
       },
-      "_last_checked": "2026-10-10T07:03:13+00:00"
+      "_last_checked": "2026-10-11T03:47:59+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -8410,7 +8425,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-graduate-level-july26/",
-        "scrapedAt": "2026-10-10T12:33:13",
+        "scrapedAt": "2026-10-11T09:17:59",
         "pageTitle": "Rajasthan RSSB Graduate Level CET Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -8419,7 +8434,7 @@
         "articleSection": "2026",
         "homepageSerial": 48
       },
-      "_last_checked": "2026-10-10T07:03:13+00:00"
+      "_last_checked": "2026-10-11T03:47:59+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -8606,7 +8621,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-june26/",
-        "scrapedAt": "2026-10-10T12:33:15",
+        "scrapedAt": "2026-10-11T09:17:59",
         "pageTitle": "Rajasthan RSSB 10+2 Senior Secondary Level CET Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -8615,7 +8630,7 @@
         "articleSection": "2026",
         "homepageSerial": 50
       },
-      "_last_checked": "2026-10-10T07:03:15+00:00"
+      "_last_checked": "2026-10-11T03:47:59+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -9504,7 +9519,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2027/gate-2027/",
-        "scrapedAt": "2026-10-10T12:33:16",
+        "scrapedAt": "2026-10-11T09:18:00",
         "pageTitle": "IIT GATE 2027 Online Form",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -9513,7 +9528,7 @@
         "articleSection": "2027",
         "homepageSerial": 58
       },
-      "_last_checked": "2026-10-10T07:03:16+00:00"
+      "_last_checked": "2026-10-11T03:48:00+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -9602,7 +9617,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2027/iit-jam-august26/",
-        "scrapedAt": "2026-10-10T12:33:17",
+        "scrapedAt": "2026-10-11T09:18:00",
         "pageTitle": "IIT JAM 2027 Online Form",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -9611,7 +9626,7 @@
         "articleSection": "2027",
         "homepageSerial": 59
       },
-      "_last_checked": "2026-10-10T07:03:17+00:00"
+      "_last_checked": "2026-10-11T03:48:00+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -9784,7 +9799,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/uprtou-ph-d-entrance-exam-sep26/",
-        "scrapedAt": "2026-10-10T12:33:21",
+        "scrapedAt": "2026-10-11T09:18:01",
         "pageTitle": "UPRTOU Ph.D Entrance Exam Admission Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -9793,7 +9808,7 @@
         "articleSection": "2026",
         "homepageSerial": 60
       },
-      "_last_checked": "2026-10-10T07:03:21+00:00"
+      "_last_checked": "2026-10-11T03:48:01+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -9920,7 +9935,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/up-scholarship-postmatric-jul26/",
-        "scrapedAt": "2026-10-10T12:33:21",
+        "scrapedAt": "2026-10-11T09:18:01",
         "pageTitle": "UP Scholarship Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -9929,7 +9944,7 @@
         "articleSection": "2026",
         "homepageSerial": 61
       },
-      "_last_checked": "2026-10-10T07:03:21+00:00"
+      "_last_checked": "2026-10-11T03:48:01+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -10037,7 +10052,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/iim-cat-jul26/",
-        "scrapedAt": "2026-10-10T12:33:22",
+        "scrapedAt": "2026-10-11T09:18:01",
         "pageTitle": "IIM CAT Admission Online Form 2026 Date Extended",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -10046,7 +10061,7 @@
         "articleSection": "2026",
         "homepageSerial": 62
       },
-      "_last_checked": "2026-10-10T07:03:22+00:00"
+      "_last_checked": "2026-10-11T03:48:01+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -10155,7 +10170,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/nta-rimcee-class-8th-sep26/",
-        "scrapedAt": "2026-10-10T12:33:23",
+        "scrapedAt": "2026-10-11T09:18:02",
         "pageTitle": "NTA RIMCEE 2027 Class 8th Admissions Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -10164,7 +10179,7 @@
         "articleSection": "2026",
         "homepageSerial": 64
       },
-      "_last_checked": "2026-10-10T07:03:23+00:00"
+      "_last_checked": "2026-10-11T03:48:02+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -10339,7 +10354,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/aibe-22nd-august26/",
-        "scrapedAt": "2026-10-10T12:33:24",
+        "scrapedAt": "2026-10-11T09:18:03",
         "pageTitle": "All India Bar Exam AIBE 22nd XXII Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -10348,7 +10363,7 @@
         "articleSection": "2026",
         "homepageSerial": 66
       },
-      "_last_checked": "2026-10-10T07:03:24+00:00"
+      "_last_checked": "2026-10-11T03:48:03+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -10554,7 +10569,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/nvs-class-6th-admission-july26/",
-        "scrapedAt": "2026-10-10T12:33:25",
+        "scrapedAt": "2026-10-11T09:18:03",
         "pageTitle": "Jawahar Navodaya Vidyalaya JNV NVS Class 6th Admission Online Form 2027",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -10563,7 +10578,7 @@
         "articleSection": "2026",
         "homepageSerial": 68
       },
-      "_last_checked": "2026-10-10T07:03:25+00:00"
+      "_last_checked": "2026-10-11T03:48:03+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -11651,7 +11666,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-degree-sep26/",
-        "scrapedAt": "2026-10-10T12:33:27",
+        "scrapedAt": "2026-10-11T09:18:04",
         "pageTitle": "CSJMU Kanpur Degree, Provisional & Migration Certificate Online Form 2026",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -11660,7 +11675,7 @@
         "articleSection": "2026",
         "homepageSerial": 76
       },
-      "_last_checked": "2026-10-10T07:03:27+00:00"
+      "_last_checked": "2026-10-11T03:48:04+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -11720,7 +11735,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/ccsu-meerut-provisional-certificate/",
-        "scrapedAt": "2026-10-10T12:33:28",
+        "scrapedAt": "2026-10-11T09:18:04",
         "pageTitle": "CCSU Meerut University Provisional & Migration Certificate Download",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -11729,7 +11744,7 @@
         "articleSection": "2026",
         "homepageSerial": 77
       },
-      "_last_checked": "2026-10-10T07:03:28+00:00"
+      "_last_checked": "2026-10-11T03:48:04+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -11794,7 +11809,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/prsu-prayagraj-provisional-aug26/",
-        "scrapedAt": "2026-10-10T12:33:29",
+        "scrapedAt": "2026-10-11T09:18:04",
         "pageTitle": "PRSU Prayagraj University Provisional & Migration Certificate Download",
         "detectedCategory": "SR_Latest_Jobs",
         "categoryOverridden": false,
@@ -11803,7 +11818,7 @@
         "articleSection": "2026",
         "homepageSerial": 78
       },
-      "_last_checked": "2026-10-10T07:03:29+00:00"
+      "_last_checked": "2026-10-11T03:48:04+00:00"
     },
     {
       "category": "SR_Latest_Jobs",
@@ -16489,7 +16504,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/rrb-section-controller-03-2026/",
-        "scrapedAt": "2026-10-10T12:33:36",
+        "scrapedAt": "2026-10-11T09:17:38",
         "pageTitle": "Railway RRB Section Controller Admit Card 2026",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -16499,7 +16514,7 @@
         "homepageSerial": 2
       },
       "admitCardUrl": "https://qa-efmprd.digialm.com//EForms/configuredHtml/33128/102721/yTOWT6zoDJDKpLRfP3/login.html",
-      "_last_checked": "2026-10-10T07:03:36+00:00"
+      "_last_checked": "2026-10-11T03:47:38+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -16618,7 +16633,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/skau-non-teaching-post-july26/",
-        "scrapedAt": "2026-10-10T12:33:37",
+        "scrapedAt": "2026-10-11T09:17:38",
         "pageTitle": "SKAU Kurukshetra Non Teaching Clerk Admit Card 2026",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -16628,7 +16643,7 @@
         "homepageSerial": 3
       },
       "admitCardUrl": "https://skau.eapplynow.com/Pages/AdmitCard01Login7.aspx",
-      "_last_checked": "2026-10-10T07:03:37+00:00"
+      "_last_checked": "2026-10-11T03:47:38+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -17369,7 +17384,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/railway-rrb-junior-engineer-cen-04-2026/",
-        "scrapedAt": "2026-10-10T12:33:37",
+        "scrapedAt": "2026-10-11T09:17:39",
         "pageTitle": "Railway RRB Junior Engineer JE Application Status 2026 for 4029 Post",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -17378,7 +17393,7 @@
         "articleSection": "2026",
         "homepageSerial": 5
       },
-      "_last_checked": "2026-10-10T07:03:37+00:00"
+      "_last_checked": "2026-10-11T03:47:39+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -17473,7 +17488,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/railway/rrb-technician-cen-02-2026/",
-        "scrapedAt": "2026-10-10T12:33:39",
+        "scrapedAt": "2026-10-11T09:17:39",
         "pageTitle": "Railway RRB Technician CEN 02/2026 Admit Card 2026 for 6557 Post",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -17483,7 +17498,7 @@
         "homepageSerial": 6
       },
       "admitCardUrl": "https://rrb.digialm.com/EForms/configuredHtml/33128/102593/W0Bq2R5HxK9c3BqWQc/login.html",
-      "_last_checked": "2026-10-10T07:03:39+00:00"
+      "_last_checked": "2026-10-11T03:47:39+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -17592,7 +17607,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/ibps-clerk-16th-august26/",
-        "scrapedAt": "2026-10-10T12:33:40",
+        "scrapedAt": "2026-10-11T09:17:39",
         "pageTitle": "IBPS Clerk 16th Admit Card 2026",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -17602,7 +17617,7 @@
         "homepageSerial": 7
       },
       "admitCardUrl": "https://ibpsreg.ibps.in/csaxvijul26/oecla_sep26/login.php?appid=948c445571d2f4e9f8749da0111eee4b",
-      "_last_checked": "2026-10-10T07:03:41+00:00"
+      "_last_checked": "2026-10-11T03:47:39+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -17701,16 +17716,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/ssc-chsl-2026-sep/",
-        "scrapedAt": "2026-10-06T13:50:03",
+        "scrapedAt": "2026-10-11T09:17:40",
         "pageTitle": "SSC 10+2 CHSL Online Form 2026 for 2536 Post",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
         "publishedTime": "2026-10-01T18:24:29+05:30",
         "modifiedTime": "2026-10-01T18:24:31+05:30",
         "articleSection": "2026",
-        "homepageSerial": 6
+        "homepageSerial": 8
       },
-      "_last_checked": "2026-10-06T08:20:03+00:00"
+      "_last_checked": "2026-10-11T03:47:40+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -17900,7 +17915,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/ssc-cpo-si-capf-2026/",
-        "scrapedAt": "2026-10-10T12:33:42",
+        "scrapedAt": "2026-10-11T09:17:40",
         "pageTitle": "SSC CPO SI CAPF Exam Date 2026 for 1871 Post",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -17909,7 +17924,7 @@
         "articleSection": "2026",
         "homepageSerial": 9
       },
-      "_last_checked": "2026-10-10T07:03:42+00:00"
+      "_last_checked": "2026-10-11T03:47:40+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -18068,7 +18083,7 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/ssc-junior-engineer-2026/",
-        "scrapedAt": "2026-10-10T12:33:43",
+        "scrapedAt": "2026-10-11T09:17:41",
         "pageTitle": "SSC Junior Engineer JE Exam Date 2026 for 1748 Post",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -18077,7 +18092,7 @@
         "articleSection": "2026",
         "homepageSerial": 10
       },
-      "_last_checked": "2026-10-10T07:03:43+00:00"
+      "_last_checked": "2026-10-11T03:47:41+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -18762,7 +18777,7 @@
       },
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-cgl-2026/",
-        "scrapedAt": "2026-10-10T12:33:44",
+        "scrapedAt": "2026-10-11T09:17:41",
         "pageTitle": "SSC Combined Graduate Level CGL Exam City / Admit Card 2026",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
@@ -18772,7 +18787,7 @@
         "homepageSerial": 14
       },
       "admitCardUrl": "https://ssc.gov.in/login",
-      "_last_checked": "2026-10-10T07:03:44+00:00"
+      "_last_checked": "2026-10-11T03:47:41+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -19266,16 +19281,16 @@
       ],
       "meta": {
         "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-pet-exam-jun26/",
-        "scrapedAt": "2026-10-06T13:50:05",
+        "scrapedAt": "2026-10-11T09:17:41",
         "pageTitle": "UPSSSC PET 2026 Exam Schedule",
         "detectedCategory": "SR_Admit_Card",
         "categoryOverridden": false,
         "publishedTime": "2026-09-25T16:11:21+05:30",
         "modifiedTime": "2026-09-25T16:11:23+05:30",
         "articleSection": "2026",
-        "homepageSerial": 15
+        "homepageSerial": 17
       },
-      "_last_checked": "2026-10-06T08:20:05+00:00"
+      "_last_checked": "2026-10-11T03:47:41+00:00"
     },
     {
       "category": "SR_Admit_Card",
@@ -51928,6 +51943,1170 @@
     },
     {
       "category": "UPCOMING_JOBS",
+      "title": "APSSB 217 Group C Vacancy Online Form 2026",
+      "slug": "apssb-217-group-c-vacancy-online-form-2026",
+      "_scraped_from": "",
+      "advt_no": "06/2026",
+      "department": "APSSB",
+      "post_name": "Form Mode",
+      "total_vacancy": "217",
+      "last_date": "2026-11-05",
+      "application_start": "2026-10-09",
+      "exam_date": "2026-11-29",
+      "interview_date": "",
+      "result_date": "",
+      "admit_card_date": "",
+      "age_limit": "05/11/2026 The Age Relaxation Extra as per Rules",
+      "salary": "",
+      "qualification": "Job Type",
+      "selection_process": "Written Exam, PET / PST / Skill Test (Post Wise), Medical Examination, Document Verification",
+      "application_mode": "",
+      "fee_general": "",
+      "fee_obc": "",
+      "fee_sc_st": "",
+      "fee_female": "",
+      "fee_payment_mode": "Online Mode",
+      "job_location": "",
+      "status": "active",
+      "important_links": {
+        "full_notification": "https://apssb.nic.in/upload/files/RECINS001/Advt_NMTE2026_20261009_184101.pdf",
+        "official_website": "https://apssb.nic.in/Index/institute_home"
+      },
+      "vacancy_details": [
+        {
+          "form_mode": "Online Form",
+          "job_state": "Arunachal Pra.",
+          "total_posts": "217 Posts",
+          "job_type": "Permanent"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Overview",
+          "content": [
+            {
+              "type": "paragraph",
+              "text": "APSSB Non-Ministerial Technical Examination 2026 : Get complete details about APSSB Group C Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Form Mode",
+                    "links": []
+                  },
+                  {
+                    "text": "Job State",
+                    "links": []
+                  },
+                  {
+                    "text": "Total Posts",
+                    "links": []
+                  },
+                  {
+                    "text": "Job Type",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Online Form",
+                    "links": []
+                  },
+                  {
+                    "text": "Arunachal Pra.",
+                    "links": []
+                  },
+                  {
+                    "text": "217 Posts",
+                    "links": []
+                  },
+                  {
+                    "text": "Permanent",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Arunachal Pradesh Staff Selection Board (APSSB) Non-Ministerial Technical Examination 2026 Advt. No. : 06/2026 Short Details of Notification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Important Dates",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Notification Out : 09/10/2026 Starting Date : 21/10/2026 Last Date : 05/11/2026 05:00 PM Exam Date : 29/11/2026 (Tentative) PET / PST Start Date : 19/01/2027 (Tentative) Skill Test Start Date : 28/01/2027 (Tentative) Competency Test Date (ANM) : 28/01/2027 (Tentative)",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Application Fees",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "For All Candidates : 200/- Payment Mode : Online Mode",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Age Limit Details",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Head Constable (Driver) : 18-32 Years Constable (MT) Driver : 18-22 Years For All Other Posts : 18-35 Years The Age Limit as on : 05/11/2026 The Age Relaxation Extra as per Rules.",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Selection Process",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Written Exam PET / PST / Skill Test (Post Wise) Medical Examination Document Verification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Post Wise Qualification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Auxiliary Nurse Midwives (ANM) : 02 Years ANM Course Certificate and Registration with the Arunachal Pradesh Nursing Council as a Registered ANM. Laboratory Technician : 12th Passed with Science and Diploma in Medical Laboratory Technology (DMLT). Pharmacist : 12th Passed with Science and D.Pharm and registration with the Arunachal Pradesh Pharmacy Council or Indian Pharmacy Council. ECG Technician : 12th Passed with Science and Diploma in ECG Technology. Dental Technician : 12th Passed with Science and Diploma in Dental Mechanic/Technician from a DCI-recognised institute, and registration with the Arunachal Pradesh State Dental Council or Dental Council of India. Health Assistant Jr. : 12th Passed with 02 Years Health Assistant Training Course. Head Constable Driver : 10th Class Passed and HMV Driving License. Driver LMV : 10th Class Passed and LMV Driving License, 03 Years Experience. Driver HMV : 10th Class Passed and LMV Driving License, 03 Years Experience. Constable (MT) Driver : 10th Class Passed and LMV / HMV Driving License.",
+                    "links": []
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Important Dates",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Notification Out : 09/10/2026",
+                "Starting Date : 21/10/2026",
+                "Last Date : 05/11/2026 05:00 PM",
+                "Exam Date : 29/11/2026 (Tentative)",
+                "PET / PST Start Date : 19/01/2027 (Tentative)",
+                "Skill Test Start Date : 28/01/2027 (Tentative)",
+                "Competency Test Date (ANM) : 28/01/2027 (Tentative)"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Application Fees",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "For All Candidates : 200/",
+                "Payment Mode : Online Mode"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Age Limit Details",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Head Constable (Driver) : 18-32 Years",
+                "Constable (MT) Driver : 18-22 Years",
+                "For All Other Posts : 18-35 Years",
+                "The Age Limit as on : 05/11/2026",
+                "The Age Relaxation Extra as per Rules."
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Selection Process",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Written Exam",
+                "PET / PST / Skill Test (Post Wise)",
+                "Medical Examination",
+                "Document Verification"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Post Wise Qualification",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Auxiliary Nurse Midwives (ANM) : 02 Years ANM Course Certificate and Registration with the Arunachal Pradesh Nursing Council as a Registered ANM.",
+                "Laboratory Technician : 12th Passed with Science and Diploma in Medical Laboratory Technology (DMLT).",
+                "Pharmacist : 12th Passed with Science and D.Pharm and registration with the Arunachal Pradesh Pharmacy Council or Indian Pharmacy Council.",
+                "ECG Technician : 12th Passed with Science and Diploma in ECG Technology.",
+                "Dental Technician : 12th Passed with Science and Diploma in Dental Mechanic/Technician from a DCI-recognised institute, and registration with the Arunachal Pradesh State Dental Council or Dental Council of India.",
+                "Health Assistant Jr. : 12th Passed with 02 Years Health Assistant Training Course.",
+                "Head Constable Driver : 10th Class Passed and HMV Driving License.",
+                "Driver LMV : 10th Class Passed and LMV Driving License, 03 Years Experience.",
+                "Driver HMV : 10th Class Passed and LMV Driving License, 03 Years Experience.",
+                "Constable (MT) Driver : 10th Class Passed and LMV / HMV Driving License."
+              ]
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Post Wise Vacancies",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Code",
+                    "links": []
+                  },
+                  {
+                    "text": "Post Name",
+                    "links": []
+                  },
+                  {
+                    "text": "Department",
+                    "links": []
+                  },
+                  {
+                    "text": "APST",
+                    "links": []
+                  },
+                  {
+                    "text": "UR",
+                    "links": []
+                  },
+                  {
+                    "text": "Total",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "25/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Auxiliary Nurse Midwives (ANM)",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "61",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "61",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "26/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Laboratory Technician",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "06",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  },
+                  {
+                    "text": "07",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "27/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Pharmacist (Allopathy)",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "28/26",
+                    "links": []
+                  },
+                  {
+                    "text": "ECG Technician",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "09",
+                    "links": []
+                  },
+                  {
+                    "text": "02",
+                    "links": []
+                  },
+                  {
+                    "text": "11",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "29/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Dental Technician",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "20",
+                    "links": []
+                  },
+                  {
+                    "text": "03",
+                    "links": []
+                  },
+                  {
+                    "text": "23",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "30/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Assistant Jr.",
+                    "links": []
+                  },
+                  {
+                    "text": "Health Services",
+                    "links": []
+                  },
+                  {
+                    "text": "16",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "16",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "31/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Head Constable Driver",
+                    "links": []
+                  },
+                  {
+                    "text": "Fire and Emergency Services",
+                    "links": []
+                  },
+                  {
+                    "text": "15",
+                    "links": []
+                  },
+                  {
+                    "text": "03",
+                    "links": []
+                  },
+                  {
+                    "text": "18",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "32/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Driver (LMV)",
+                    "links": []
+                  },
+                  {
+                    "text": "Multiple Departments (Check Notice)",
+                    "links": []
+                  },
+                  {
+                    "text": "10",
+                    "links": []
+                  },
+                  {
+                    "text": "04",
+                    "links": []
+                  },
+                  {
+                    "text": "14",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "33/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Driver (HMV)",
+                    "links": []
+                  },
+                  {
+                    "text": "Higher & Technical Education, Fire and Emergency Services",
+                    "links": []
+                  },
+                  {
+                    "text": "07",
+                    "links": []
+                  },
+                  {
+                    "text": "02",
+                    "links": []
+                  },
+                  {
+                    "text": "09",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "34/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Constable (MT) Driver (IRBn)",
+                    "links": []
+                  },
+                  {
+                    "text": "PHQ",
+                    "links": []
+                  },
+                  {
+                    "text": "25",
+                    "links": []
+                  },
+                  {
+                    "text": "06",
+                    "links": []
+                  },
+                  {
+                    "text": "31",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "35/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Constable (MT) Driver (Civil Police)",
+                    "links": []
+                  },
+                  {
+                    "text": "PHQ",
+                    "links": []
+                  },
+                  {
+                    "text": "19",
+                    "links": []
+                  },
+                  {
+                    "text": "05",
+                    "links": []
+                  },
+                  {
+                    "text": "24",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "36/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Field Publicity Assistant",
+                    "links": []
+                  },
+                  {
+                    "text": "IPR",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "37/26",
+                    "links": []
+                  },
+                  {
+                    "text": "Publicity Assistant",
+                    "links": []
+                  },
+                  {
+                    "text": "IPR",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "01",
+                    "links": []
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Post Wise Vacancies",
+          "content": [
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Important Related Links",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Source Title",
+                    "links": []
+                  },
+                  {
+                    "text": "Issue Date",
+                    "links": []
+                  },
+                  {
+                    "text": "Source Link",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Fill Online Form",
+                    "links": []
+                  },
+                  {
+                    "text": "21/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Coming Soon",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Full Notification",
+                    "links": []
+                  },
+                  {
+                    "text": "09/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Download",
+                    "links": [
+                      {
+                        "text": "Download",
+                        "url": "https://apssb.nic.in/upload/files/RECINS001/Advt_NMTE2026_20261009_184101.pdf"
+                      }
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "text": "Official Website",
+                    "links": []
+                  },
+                  {
+                    "text": "09/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Visit Now",
+                    "links": [
+                      {
+                        "text": "Visit Now",
+                        "url": "https://apssb.nic.in/Index/institute_home"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "extra_fields": {
+        "for_all_candidates": "200/",
+        "head_constable_driver": "18-32",
+        "years_constable_mt_driver": "18-22",
+        "years_for_all_other_posts": "18-35",
+        "auxiliary_nurse_midwives_anm": "02 Years ANM Course Certificate and Registration with the Arunachal Pradesh Nursing Coun",
+        "cil_as_a_registered_anm_laboratory_technician": "12th Passed with Science and Diploma in Me",
+        "dical_laboratory_technology_dmlt_pharmacist": "12th Passed with Science and D.Pharm and registration with the Arunachal Pradesh Pharmacy Coun",
+        "cil_or_indian_pharmacy_council_ecg_technician": "12th Passed with Science an",
+        "d_diploma_in_ecg_technology_dental_technician": "12th Passed with Science and Diploma in Dental Mechanic/Technician from a DCI-recognised institute, and registration with the Arunachal Pradesh State Dental Council or",
+        "dental_council_of_india_health_assistant_jr": "12th Passed with 02 Years Health As",
+        "ass_passed_and_hmv_driving_license_driver_lmv": "10th Class Passed and LMV Driving License, 03",
+        "years_experience_driver_hmv": "10th Class Passed and LMV Driving License, 03",
+        "years_experience_constable_mt_driver": "10th Class Passed and LMV / HMV Driving License",
+        "constable_mt_driver": "18-22 Years",
+        "for_all_other_posts": "18-35 Years",
+        "laboratory_technician": "12th Passed with Science and Diploma in Medical Laboratory Technology (DMLT).",
+        "pharmacist": "12th Passed with Science and D.Pharm and registration with the Arunachal Pradesh Pharmacy Council or Indian Pharmacy Council.",
+        "ecg_technician": "12th Passed with Science and Diploma in ECG Technology.",
+        "dental_technician": "12th Passed with Science and Diploma in Dental Mechanic/Technician from a DCI-recognised institute, and registration with the Arunachal Pradesh State Dental Council or Dental Council of India.",
+        "health_assistant_jr": "12th Passed with 02 Years Health Assistant Training Course.",
+        "driver_lmv": "10th Class Passed and LMV Driving License, 03 Years Experience.",
+        "driver_hmv": "10th Class Passed and LMV Driving License, 03 Years Experience."
+      },
+      "sequence": 1,
+      "_last_checked": "2026-10-11T03:48:05+00:00"
+    },
+    {
+      "category": "UPCOMING_JOBS",
+      "title": "OPSC Assistant Executive Engineer Online Form",
+      "slug": "opsc-assistant-executive-engineer-online-form",
+      "_scraped_from": "",
+      "advt_no": "13/2026-27",
+      "department": "OPSC Assistant Executive Engineer",
+      "post_name": "Assistant Executive Engineer (Civil)",
+      "total_vacancy": "758",
+      "last_date": "2026-11-11",
+      "application_start": "2026-10-09",
+      "exam_date": "",
+      "interview_date": "",
+      "result_date": "",
+      "admit_card_date": "",
+      "age_limit": "21-42",
+      "salary": "Level-12, Cell-1 of the pay matrix (ORSP Rules, 2017) with DA and other allowances",
+      "qualification": "Degree in Civil / Mechanical Engineering and GATE 2024 / 2025 / 2026 Score.",
+      "selection_process": "Shortlisting Based on GATE Score, Document Verification, Personal Interview, Medical Examination",
+      "application_mode": "",
+      "fee_general": "",
+      "fee_obc": "",
+      "fee_sc_st": "",
+      "fee_female": "",
+      "fee_payment_mode": "",
+      "job_location": "",
+      "status": "active",
+      "important_links": {
+        "official_website": "https://opsc.gov.in/Public/OPSC/Default.aspx"
+      },
+      "vacancy_details": [
+        {
+          "form_mode": "Online Form",
+          "job_state": "Odisha",
+          "total_posts": "758 Posts",
+          "job_type": "Permanent"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Overview",
+          "content": [
+            {
+              "type": "paragraph",
+              "text": "OPSC Assistant Executive Engineer Recruitment 2026 : Get complete details about OPSC Assistant Executive Engineer Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, admit card, result, and more."
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Form Mode",
+                    "links": []
+                  },
+                  {
+                    "text": "Job State",
+                    "links": []
+                  },
+                  {
+                    "text": "Total Posts",
+                    "links": []
+                  },
+                  {
+                    "text": "Job Type",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Online Form",
+                    "links": []
+                  },
+                  {
+                    "text": "Odisha",
+                    "links": []
+                  },
+                  {
+                    "text": "758 Posts",
+                    "links": []
+                  },
+                  {
+                    "text": "Permanent",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Odisha Public Service Commission (OPSC) Assistant Executive Engineer Recruitment 2026 Advt. No. : 13/2026-27 Short Details of Notification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Important Dates",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Notification Out : 09/10/2026 Starting Date : 22/10/2026 Last Date : 11/11/2026 05:00 PM Document Verification Date : 1st Week December 2026 (Tentative)",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Application Fees",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "No Fees For All Candidates",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Age Limit Details",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Age Limit : 21-42 Years Age Limit as on : 01/01/2026 The Age Relaxation Extra as per Rules.",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Selection Process",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Shortlisting Based on GATE Score Document Verification Personal Interview Medical Examination",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Pay Scale Details",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Pay Scale : Level-12, Cell-1 of the pay matrix (ORSP Rules, 2017) with DA and other allowances",
+                    "links": []
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Important Dates",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Notification Out : 09/10/2026",
+                "Starting Date : 22/10/2026",
+                "Last Date : 11/11/2026 05:00 PM",
+                "Document Verification Date : 1st Week December 2026 (Tentative)"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Application Fees",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "No Fees For All Candidates"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Age Limit Details",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Age Limit : 21-42 Years",
+                "Age Limit as on : 01/01/2026",
+                "The Age Relaxation Extra as per Rules."
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Selection Process",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Shortlisting Based on GATE Score",
+                "Document Verification",
+                "Personal Interview",
+                "Medical Examination"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Pay Scale Details",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Pay Scale : Level-12, Cell-1 of the pay matrix (ORSP Rules, 2017) with DA and other allowances"
+              ]
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Total Post & Qualification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Post Name",
+                    "links": []
+                  },
+                  {
+                    "text": "Total Post",
+                    "links": []
+                  },
+                  {
+                    "text": "Qualification",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Assistant Executive Engineer (Civil)",
+                    "links": []
+                  },
+                  {
+                    "text": "750",
+                    "links": []
+                  },
+                  {
+                    "text": "Degree in Civil / Mechanical Engineering and GATE 2024 / 2025 / 2026 Score.",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Assistant Executive Engineer (Mechanical)",
+                    "links": []
+                  },
+                  {
+                    "text": "08",
+                    "links": []
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Total Post & Qualification",
+          "content": [
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Category Wise Vacancies",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Post Name",
+                    "links": []
+                  },
+                  {
+                    "text": "Gen",
+                    "links": []
+                  },
+                  {
+                    "text": "SCBC",
+                    "links": []
+                  },
+                  {
+                    "text": "SC",
+                    "links": []
+                  },
+                  {
+                    "text": "ST",
+                    "links": []
+                  },
+                  {
+                    "text": "Total",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "AEE (Civil)",
+                    "links": []
+                  },
+                  {
+                    "text": "374",
+                    "links": []
+                  },
+                  {
+                    "text": "61",
+                    "links": []
+                  },
+                  {
+                    "text": "83",
+                    "links": []
+                  },
+                  {
+                    "text": "232",
+                    "links": []
+                  },
+                  {
+                    "text": "750",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "AEE (Mechanical)",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "00",
+                    "links": []
+                  },
+                  {
+                    "text": "02",
+                    "links": []
+                  },
+                  {
+                    "text": "06",
+                    "links": []
+                  },
+                  {
+                    "text": "08",
+                    "links": []
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Category Wise Vacancies",
+          "content": [
+            {
+              "type": "table",
+              "rows": [
+                [
+                  {
+                    "text": "Important Related Links",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Source Title",
+                    "links": []
+                  },
+                  {
+                    "text": "Issue Date",
+                    "links": []
+                  },
+                  {
+                    "text": "Source Link",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Fill Online Form",
+                    "links": []
+                  },
+                  {
+                    "text": "22/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Coming Soon",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Full Notification",
+                    "links": []
+                  },
+                  {
+                    "text": "09/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Download",
+                    "links": []
+                  }
+                ],
+                [
+                  {
+                    "text": "Official Website",
+                    "links": []
+                  },
+                  {
+                    "text": "09/10/2026",
+                    "links": []
+                  },
+                  {
+                    "text": "Visit Now",
+                    "links": [
+                      {
+                        "text": "Visit Now",
+                        "url": "https://opsc.gov.in/Public/OPSC/Default.aspx"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "extra_fields": {
+        "assistant_executive_engineer_mechanical": "08"
+      },
+      "sequence": 2,
+      "_last_checked": "2026-10-11T03:48:06+00:00"
+    },
+    {
+      "category": "UPCOMING_JOBS",
       "title": "DSSSB 05/2026 Sweeper, Chowkidar Online Form",
       "slug": "dsssb-052026-sweeper-chowkidar-online-form",
       "_scraped_from": "",
@@ -52585,8 +53764,8 @@
         "ur_ews_category": "50%",
         "marks_obc_delhi_sc_st_ph_esm": "45% Marks"
       },
-      "sequence": 1,
-      "_last_checked": "2026-10-10T07:03:49+00:00"
+      "sequence": 3,
+      "_last_checked": "2026-10-11T03:48:06+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -53098,8 +54277,8 @@
         "correction_date": "Upto 03/11/2026",
         "exam_start": "From 04/01/2027"
       },
-      "sequence": 3,
-      "_last_checked": "2026-10-10T07:03:56+00:00"
+      "sequence": 5,
+      "_last_checked": "2026-10-11T03:48:07+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -53452,8 +54631,8 @@
         "born_between": "02/01/2008 To 01/01/2011",
         "pay_level": "Level-10 (Rs. 56100/-)"
       },
-      "sequence": 4,
-      "_last_checked": "2026-10-10T07:03:57+00:00"
+      "sequence": 6,
+      "_last_checked": "2026-10-11T03:48:08+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -53858,8 +55037,8 @@
         "correction_date": "28-30 November 2026",
         "technician_grade_ii_mechanical": "All India / State Vocational Certificate in Fitter Trade and 02 Years Experience Certificate in Related Work."
       },
-      "sequence": 5,
-      "_last_checked": "2026-10-10T07:03:58+00:00"
+      "sequence": 7,
+      "_last_checked": "2026-10-11T03:48:08+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -54327,8 +55506,8 @@
         "unreserved": "600/",
         "sc_st_ews": "500/"
       },
-      "sequence": 6,
-      "_last_checked": "2026-10-10T07:04:00+00:00"
+      "sequence": 8,
+      "_last_checked": "2026-10-11T03:48:09+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -54887,8 +56066,8 @@
         "negative_marking": "1/3",
         "rd_time_duration": "90 Minutes"
       },
-      "sequence": 7,
-      "_last_checked": "2026-10-10T07:04:00+00:00"
+      "sequence": 9,
+      "_last_checked": "2026-10-11T03:48:09+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -55540,8 +56719,8 @@
       "extra_fields": {
         "for_all_candidates": "100/"
       },
-      "sequence": 9,
-      "_last_checked": "2026-10-10T07:04:02+00:00"
+      "sequence": 11,
+      "_last_checked": "2026-10-11T03:48:10+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -56115,8 +57294,8 @@
         "correction_date": "12-14 November 2026",
         "all_females": "0/- (Nil)"
       },
-      "sequence": 10,
-      "_last_checked": "2026-10-10T07:04:03+00:00"
+      "sequence": 12,
+      "_last_checked": "2026-10-11T03:48:11+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -56562,8 +57741,8 @@
         "nil_all_females": "0/- (",
         "all_females": "0/- (Nil)"
       },
-      "sequence": 11,
-      "_last_checked": "2026-10-10T07:04:04+00:00"
+      "sequence": 13,
+      "_last_checked": "2026-10-11T03:48:11+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -57290,8 +58469,8 @@
         "correction_date": "Upto 13/11/2026",
         "exercise_trainer": "Level-06 (Rs. 35400-112400/-)"
       },
-      "sequence": 12,
-      "_last_checked": "2026-10-10T07:04:05+00:00"
+      "sequence": 14,
+      "_last_checked": "2026-10-11T03:48:12+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -57884,8 +59063,8 @@
         "lifesaver": "10th Passed with 03 Years Practical Experience as Lifesaver and UPSSSC PET 2025 Score Card.",
         "groundsman": "10th Passed with Practical Experience in Preparing Sports Courts / Grounds and UPSSSC PET 2025 Score Card."
       },
-      "sequence": 13,
-      "_last_checked": "2026-10-10T07:04:05+00:00"
+      "sequence": 15,
+      "_last_checked": "2026-10-11T03:48:12+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -58395,8 +59574,8 @@
         "sports_coach_female": "Bachelors / Master’s Degree in Physical Education and Diploma in Sports Coaching.",
         "junior_library_assistant": "Bachelor’s Degree in Library Science/ Library & Information Science with Knowledg"
       },
-      "sequence": 14,
-      "_last_checked": "2026-10-10T07:04:06+00:00"
+      "sequence": 16,
+      "_last_checked": "2026-10-11T03:48:12+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -59027,8 +60206,8 @@
         "for_sc_ph_of_haryana": "55% (82",
         "marks_for_other_candidates": "60% (90 Marks)"
       },
-      "sequence": 15,
-      "_last_checked": "2026-10-10T07:04:07+00:00"
+      "sequence": 17,
+      "_last_checked": "2026-10-11T03:48:13+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -59551,8 +60730,8 @@
         "get_mining": "B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score.",
         "get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
       },
-      "sequence": 16,
-      "_last_checked": "2026-10-10T07:04:08+00:00"
+      "sequence": 18,
+      "_last_checked": "2026-10-11T03:48:14+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -59992,8 +61171,8 @@
         "stenographer": "Pay Grade (5200-20200) GP- 2400 (Rs 25500-81100)",
         "receptionist": "Pay Band (5200-20200) GP- 2800 (Rs 29200-92300)"
       },
-      "sequence": 17,
-      "_last_checked": "2026-10-10T07:04:08+00:00"
+      "sequence": 19,
+      "_last_checked": "2026-10-11T03:48:14+00:00"
     },
     {
       "category": "UPCOMING_JOBS",
@@ -60384,8 +61563,8 @@
         "gen_obc_ews": "Avail. Soon",
         "sc_st_ph": "Avail. Soon"
       },
-      "sequence": 18,
-      "_last_checked": "2026-10-10T07:04:09+00:00"
+      "sequence": 20,
+      "_last_checked": "2026-10-11T03:48:15+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -60750,7 +61929,7 @@
         "practical_subject_fees_for_class_12th": "160/"
       },
       "sequence": 1,
-      "_last_checked": "2026-10-10T07:04:10+00:00"
+      "_last_checked": "2026-10-11T03:48:16+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -61060,7 +62239,7 @@
         "class_12th_additional_subject_fees": "400/"
       },
       "sequence": 2,
-      "_last_checked": "2026-10-10T07:04:11+00:00"
+      "_last_checked": "2026-10-11T03:48:16+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -61496,7 +62675,7 @@
         "for_class_ix": "13-16 Years"
       },
       "sequence": 6,
-      "_last_checked": "2026-10-10T07:04:14+00:00"
+      "_last_checked": "2026-10-11T03:48:19+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -61851,7 +63030,7 @@
       ],
       "extra_fields": {},
       "sequence": 7,
-      "_last_checked": "2026-10-10T07:04:15+00:00"
+      "_last_checked": "2026-10-11T03:48:19+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -62159,7 +63338,7 @@
         "iit_roorkee_zone": "Ambala, Dehradun, Ghaziabad, Haldwani, Jalandhar-Phagwara, Kangra, Meerut, Mohali-Chandigarh, Moradabad, NOIDA, Patiala, Roorkee, Shimla-Solan."
       },
       "sequence": 9,
-      "_last_checked": "2026-10-10T07:04:16+00:00"
+      "_last_checked": "2026-10-11T03:48:20+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -62440,7 +63619,7 @@
         "all_india_bar_examination_aibe_xxii": "Bachelor Degree in Law (LLB)"
       },
       "sequence": 13,
-      "_last_checked": "2026-10-10T07:04:19+00:00"
+      "_last_checked": "2026-10-11T03:48:23+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -63039,7 +64218,7 @@
         "rpnlup_prayagraj": "IIULER, Goa"
       },
       "sequence": 15,
-      "_last_checked": "2026-10-10T07:04:21+00:00"
+      "_last_checked": "2026-10-11T03:48:25+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -63843,7 +65022,7 @@
         "not_declared_11": "59 PM"
       },
       "sequence": 28,
-      "_last_checked": "2026-10-10T07:04:33+00:00"
+      "_last_checked": "2026-10-11T03:48:34+00:00"
     },
     {
       "category": "ADMISSIONS",
@@ -63879,7 +65058,7 @@
       "sections": [],
       "extra_fields": {},
       "sequence": 29,
-      "_last_checked": "2026-10-10T07:04:34+00:00"
+      "_last_checked": "2026-10-11T03:48:34+00:00"
     }
   ]
 }
