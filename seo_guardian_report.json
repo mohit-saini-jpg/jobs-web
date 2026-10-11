@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-11T03:11:46.274899+00:00",
+  "timestamp": "2026-10-11T03:38:01.791569+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 12548,
+  "files_scanned": 12759,
   "issues_found_by_check": {
-    "jobposting_schema": 264,
-    "expired_job": 8,
+    "jobposting_schema": 296,
     "ai_marker_integrity": 13,
+    "expired_job": 4,
     "sitemap_sync": 200
   },
   "issues_auto_fixed": 112,
@@ -42,7 +42,25 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/actrec-medical-officer-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/actrec-project-nurse-iii-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walk-in/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/aiims-jodhpur-research-assistant-recruitment-2026-walk-in/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
@@ -52,6 +70,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/aiims-nagpur-recruitment-2026-apply-online-for-3-project-research-scientist-i-pr/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/alrari-yoga-therapist-recruitment-2026-walkin/index.html",
@@ -73,12 +97,6 @@
     },
     {
       "file": "jobs/angrau-teaching-associate-recruitment-2026-walk-in/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/angrau-teaching-associate-recruitment-2026-walkin/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
@@ -124,6 +142,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bbau-young-professional-ii-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/becil-supervisor-recruitment-2026-apply-online-for-10-posts/index.html",
@@ -234,6 +258,18 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/chennai-port-authority-executive-engineer-recruitment-2026-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/chennai-port-authority-senior-deputy-chief-medical-officer-recruitment-2026-appl/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/cihts-faculty-recruitment-2026-apply-online-for-59-professor-associate-profess/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -250,6 +286,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/concor-general-manager-senior-general-manager-recruitment-2026-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/cpri-recruitment-2026-notification-out-apply-online-for-110-assistant-mts-and/index.html",
@@ -342,6 +384,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/east-central-railway-sr-section-engineer-recruitment-2026-apply-online-for-11-po/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/east-coast-railway-gdce-recruitment-2026-notification-out-apply-online-for-142/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -420,6 +468,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Telangana/500001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/geu-facilitator-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/gipe-pune-economic-assistant-recruitment-2026-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -472,6 +526,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/hll-quality-assurance-officer-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/hpcl-ta-consultant-recruitment-2026-apply-online-for-24-posts/index.html",
@@ -546,10 +606,28 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/iips-chief-research-officer-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/iit-bhu-varanasi-recruitment-2026-apply-online-for-8-project-assistant-jrf-and-m/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-delhi-consultant-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Delhi/110001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/iit-gandhinagar-project-engineer-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iit-gandhinagar-recruitment-2026-apply-online-for-junior-research-fellow-and-r/index.html",
@@ -570,7 +648,25 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Jharkhand/834001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/iit-ism-dhanbad-senior-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Jharkhand/834001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/iit-madras-project-associate-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-madras-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-madras-project-technician-recruitment-2026-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
@@ -660,10 +756,34 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/iwai-section-officer-recruitment-2026-apply-offline/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/jipmer-recruitment-2026-apply-online-for-5-project-research-scientist-project-te/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Puducherry/605001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/kamdhenu-university-recruitment-2026-walkin-for-teaching-associate-senior-resear/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/kau-guest-lecturer-recruitment-2026-walk-in/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/kau-gym-instructor-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/kerala-university-recruitment-2026-apply-offline-for-resident-cook-kitchen-hel/index.html",
@@ -694,6 +814,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Karnataka/560001 [L3]) — manual review"
+    },
+    {
+      "file": "jobs/kudsit-recruitment-2026-apply-online-for-senior-technology-architect-senior-qa-a/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/kumaun-university-recruitment-2026-walkin-for-junior-research-fellow-project-a/index.html",
@@ -768,6 +894,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/neigrihms-laboratory-technician-recruitment-2026-walk-in/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Meghalaya/793001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/nfdc-recruitment-2026-apply-online-for-15-assistant-senior-excecutive-and-more/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -778,6 +910,18 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nit-kurukshetra-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nit-rourkela-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/nmpa-senior-deputy-secretary-recruitment-2026-apply-online/index.html",
@@ -906,6 +1050,18 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/rites-individual-consultant-recruitment-2026-apply-online-for-27-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Bihar/800001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rnsb-apprentice-peon-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/rnsb-jr-executive-recruitment-2026-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -954,10 +1110,22 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/shipping-corporation-of-india-amo-recruitment-2026-apply-online-for-4-assistant/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/sidbi-specialist-recruitment-2026-apply-online-for-assistant-communication-off/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/smp-smp-dy-personnel-officer-recruitment-2026-apply-offline-for-3-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/sndt-womens-university-assistant-hostel-superintendent-recruitment-2026-apply-of/index.html",
@@ -1228,12 +1396,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/abmp-consultant-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/abv-iiitm-gwalior-junior-research-fellow-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/abv-iiitm-gwalior-junior-research-fellow-recruitment-2026-apply-online/"
     },
     {
       "file": "jobs/abv-iiitm-gwalior-non-faculty-recruitment-2026-apply-offline-for-10-junior-super/index.html",
@@ -2076,12 +2238,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-staff-nurse-equivalent-to-project-nurse-iii-recruitment-2026-apply/"
     },
     {
-      "file": "jobs/aiims-delhi-staff-nurse-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-staff-nurse-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-staff-nurse-vacancy-2026-notification-out/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -2248,13 +2404,25 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-online-for-project-nurse-senior-research/"
+    },
+    {
+      "file": "jobs/aiims-guwahati-research-assistant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-research-assistant-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-guwahati-scientist-c-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-scientist-c-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 52.5
+  "duration_sec": 58.7
 }

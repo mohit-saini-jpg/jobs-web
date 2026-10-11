@@ -5901,3 +5901,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/dsssb-delhi-district-courts-vacancy-2026-apply-for-641-posts-of-process-server-p/  /jobs/dsssb-delhi-district-courts-recruitment-2026-notification-out-apply-online-for/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/isro-iprc-vacancy-2026-apply-online-for-22-technical-assistant-technician-b-cook/  /jobs/isro-iprc-recruitment-2026-notification-out-apply-online-for-22-fireman-techni/  301
