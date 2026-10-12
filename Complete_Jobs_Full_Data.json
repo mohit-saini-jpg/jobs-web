@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-10-12 03:58:47",
+  "generated_at": "2026-10-12 06:46:34",
   "sources": {
     "freejobalert_categories": 0,
-    "sarkari_data": 297,
+    "sarkari_data": 295,
     "education_jobs": 1309,
     "state_jobs": 0,
     "freejobalert_unified": 1156
   },
-  "total_records": 1606,
+  "total_records": 1604,
   "freejobalert_categories": {},
   "sarkari_data": {
-    "scraped_at": "2026-10-11 09:17:35",
-    "total": 302,
+    "scraped_at": "2026-10-12 11:00:04",
+    "total": 300,
     "summary": {
       "sarkariresultshine_offline_jobs_top30": 30,
       "sarkariresultshine_latest_jobs_top100": 100,
       "sarkariresult_categories": {
+        "SR_Latest_Jobs": 75,
         "SR_Answer_Key": 20,
         "SR_Admit_Card": 25,
-        "SR_Result": 25,
-        "SR_Latest_Jobs": 75
+        "SR_Result": 25
       },
       "sarkariresult_total": 145,
-      "upcoming_jobs": 18,
+      "upcoming_jobs": 16,
       "state_jobs_active": 0,
       "central_jobs_active": 0,
       "admissions_active": 9
@@ -34,17 +34,17 @@
       "SR_Answer_Key": 20,
       "OFFLINE_FORM": 30,
       "LATEST_JOBS NEW": 100,
-      "UPCOMING_JOBS": 18,
+      "UPCOMING_JOBS": 16,
       "ADMISSIONS": 9
     },
     "jobs": [
       {
         "category": "SR_Latest_Jobs",
-        "title": "Delhi DSSSB Sweeper / Safai Karamchari & Chowkidar Post Advt. No. 05/2026 Recruitment 2026 Apply Online for 25 Post",
+        "title": "Delhi DSSSB Sweeper / Safai Karamchari and Chowkidar Advt. No. 05/2026 Recruitment 2026 Apply Online",
         "postDate": "10/10/2026",
         "organization": "DSSSB",
         "totalPost": "25",
-        "shortInfo": "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari & Chowkidar Post Exam 2026 Notification. Those candidates who are interested in this Delhi DSSSB Sweeper / Safai Karamchari & Chowkidar Post Exam can Apply Online from 13/10/2026 to 11/11/2026. Read the notification for Delhi DSSSB Advt. No. 05/2026 Sweeper / Safai Karamchari & Chowkidar Post Exam, eligibility, Document Required, age limit, How to Apply and all other information",
+        "shortInfo": "Delhi Subordinate Service Selection Board (DSSSB) has released Various Post Exam 2026 Notification. Those candidates who are interested in this Delhi DSSSB Various Post Exam can Apply Online from 13/10/2026 to 11/11/2026. Read the notification for Delhi DSSSB Advt. No. 05/2026 Various Post Exam, eligibility, Document Required, age limit, How to Apply and all other information",
         "importantDates": {
           "applicationBegin": "13/10/2026",
           "lastDateApplyOnline": "11/11/2026",
@@ -67,18 +67,18 @@
         },
         "vacancyDetails": [
           {
-            "postName": "Sweeper / Safai Karamchari (District and Sessions Courts)",
+            "postName": "Sweeper/Safai karamchari",
             "totalPost": "10",
             "eligibility": "Matriculation pass or equivalent from a recognized board.",
-            "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total : 25 Post"
+            "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total 25 Post"
           },
           {
-            "postName": "Chowkidar (District and Sessions Courts)",
+            "postName": "Chowkidar",
             "totalPost": "15",
-            "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total : 25 Post"
+            "tableHeading": "DSSSB Various Post Recruitment 2026 : Vacancy Details Total 25 Post"
           },
           {
-            "postName": "Sweeper / Safai Karamchari",
+            "postName": "Sweeper/Safai karamchari",
             "totalPost": "10",
             "categoryWise": {
               "UR": "05",
@@ -105,7 +105,7 @@
         "textSections": [
           {
             "section": "How to Fill DSSSB Various Post Advt. No. 05/2026 Online Form 2026",
-            "content": "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in DSSSB Various Post in Delhi Advt. No. 05/2026 Exam Online Form 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+            "content": "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari and Chowkidar Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in DSSSB Various Post in Delhi Advt. No. 05/2026 Exam Online Form 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
           }
         ],
         "importantLinks": [
@@ -115,7 +115,7 @@
           },
           {
             "label": "Download Notification",
-            "url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/final_advt_05_2026.pdf"
+            "url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/final_advt_05_2026_1.pdf"
           },
           {
             "label": "Official Website",
@@ -124,7 +124,7 @@
         ],
         "additionalData": {
           "howToApply": [
-            "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026",
+            "Delhi Subordinate Service Selection Board (DSSSB) has released Sweeper / Safai Karamchari and Chowkidar Post Recruitment 05/2026 Exam. Candidate Can Apply Between 13/10/2026 to 11/11/2026",
             "Candidate Read the Notification Before Apply the Recruitment Application Form in DSSSB Various Post in Delhi Advt. No. 05/2026 Exam Online Form 2026",
             "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
             "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
@@ -136,11 +136,11 @@
         },
         "faq": [
           {
-            "question": "When did the Delhi DSSSB Various Post Advt. No. 05/2026 Online Application Process Start?",
+            "question": "When did the Delhi DSSSB Sweeper / Safai Karamchari and Chowkida Advt. No. 05/2026 Online Application Process Start?",
             "answer": "The online application process started on 13/10/2026."
           },
           {
-            "question": "What is the Exam Date for Delhi DSSSB Various Post Advt. No. 05/2026 Recruitment 2026?",
+            "question": "What is the Exam Date for Delhi DSSSB Sweeper / Safai Karamchari and Chowkida Advt. No. 05/2026 Recruitment 2026?",
             "answer": "The Examination will be conducted in As per Schedule."
           },
           {
@@ -148,7 +148,7 @@
             "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
           },
           {
-            "question": "What is the last date to apply online for Delhi DSSSB Various Post Advt. No. 05/2026 Recruitment 2026?",
+            "question": "What is the last date to apply online for Delhi DSSSB Sweeper / Safai Karamchari and Chowkida Advt. No. 05/2026 Recruitment 2026?",
             "answer": "The last date to apply online is 11/11/2026."
           },
           {
@@ -157,17 +157,17 @@
           }
         ],
         "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/delhi-dsssb-sweeper-05-2026/",
-          "scrapedAt": "2026-10-11T09:17:42",
-          "pageTitle": "Delhi DSSSB Sweeper / Safai Karamchari , Chowkidar Post Online Form 2026",
+          "sourceUrl": "https://www.sarkariresult.com/2026/delhi-dsssb-advt-no-05-2026/",
+          "scrapedAt": "2026-10-12T11:00:10",
+          "pageTitle": "Delhi DSSSB Sweeper / Safai Karamchari and Chowkida Online Form 2026 Advt. No. 05/2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
-          "publishedTime": "2026-10-10T21:44:59+05:30",
-          "modifiedTime": "2026-10-10T21:53:22+05:30",
+          "publishedTime": "2026-10-10T20:57:44+05:30",
+          "modifiedTime": "2026-10-10T20:57:47+05:30",
           "articleSection": "2026",
           "homepageSerial": 1
         },
-        "_last_checked": "2026-10-11T03:47:42+00:00"
+        "_last_checked": "2026-10-12T05:30:10+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -297,7 +297,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/dav-staff-teaching-non-teaching-oct26/",
-          "scrapedAt": "2026-10-11T09:17:43",
+          "scrapedAt": "2026-10-12T11:00:10",
           "pageTitle": "DAV Public School Staff Various Post Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -306,7 +306,7 @@
           "articleSection": "2026",
           "homepageSerial": 2
         },
-        "_last_checked": "2026-10-11T03:47:43+00:00"
+        "_last_checked": "2026-10-12T05:30:10+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -396,7 +396,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/nta-ugc-net-december2026/",
-          "scrapedAt": "2026-10-11T09:17:43",
+          "scrapedAt": "2026-10-12T11:00:11",
           "pageTitle": "NTA UGC NET December 2026 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -405,7 +405,7 @@
           "articleSection": "Railway",
           "homepageSerial": 3
         },
-        "_last_checked": "2026-10-11T03:47:43+00:00"
+        "_last_checked": "2026-10-12T05:30:11+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -492,7 +492,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/nta-csir-ugc-net-dec2026/",
-          "scrapedAt": "2026-10-11T09:17:43",
+          "scrapedAt": "2026-10-12T11:00:12",
           "pageTitle": "NTA CSIR UGC NET December 2026 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -501,7 +501,7 @@
           "articleSection": "Railway",
           "homepageSerial": 4
         },
-        "_last_checked": "2026-10-11T03:47:43+00:00"
+        "_last_checked": "2026-10-12T05:30:12+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -624,7 +624,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/army-tgc-145-sep26/",
-          "scrapedAt": "2026-10-11T09:17:44",
+          "scrapedAt": "2026-10-12T11:00:13",
           "pageTitle": "Army TGC 145 Online Form 2026 for July 2027 Batch",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -633,7 +633,7 @@
           "articleSection": "2026",
           "homepageSerial": 5
         },
-        "_last_checked": "2026-10-11T03:47:44+00:00"
+        "_last_checked": "2026-10-12T05:30:13+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -943,7 +943,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/railway-rrb-ntpc-ug-level-07-2026/",
-          "scrapedAt": "2026-10-11T09:17:44",
+          "scrapedAt": "2026-10-12T11:00:14",
           "pageTitle": "Railway RRB NTPC 10+2 Under Graduate Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -952,7 +952,7 @@
           "articleSection": "Railway",
           "homepageSerial": 6
         },
-        "_last_checked": "2026-10-11T03:47:44+00:00"
+        "_last_checked": "2026-10-12T05:30:14+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1171,7 +1171,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-anganwadi-worker/",
-          "scrapedAt": "2026-10-11T09:17:45",
+          "scrapedAt": "2026-10-12T11:00:15",
           "pageTitle": "UP Anganwadi Bharti Worker Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1180,7 +1180,7 @@
           "articleSection": "2026",
           "homepageSerial": 7
         },
-        "_last_checked": "2026-10-11T03:47:45+00:00"
+        "_last_checked": "2026-10-12T05:30:15+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1419,7 +1419,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rrb-ntpc-graduate-cen-06-2026/",
-          "scrapedAt": "2026-10-11T09:17:45",
+          "scrapedAt": "2026-10-12T11:00:16",
           "pageTitle": "Railway RRB NTPC Graduate Level Online Form 2026 for 3548 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1428,7 +1428,7 @@
           "articleSection": "2026",
           "homepageSerial": 8
         },
-        "_last_checked": "2026-10-11T03:47:45+00:00"
+        "_last_checked": "2026-10-12T05:30:16+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1566,7 +1566,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nicl-ao-oct2026/",
-          "scrapedAt": "2026-10-11T09:17:45",
+          "scrapedAt": "2026-10-12T11:00:16",
           "pageTitle": "National Insurance NICL Administrative Officers AO Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1575,7 +1575,7 @@
           "articleSection": "2026",
           "homepageSerial": 9
         },
-        "_last_checked": "2026-10-11T03:47:45+00:00"
+        "_last_checked": "2026-10-12T05:30:16+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1702,7 +1702,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/mpesb-mpp-constable-driver-oct26/",
-          "scrapedAt": "2026-10-11T09:17:46",
+          "scrapedAt": "2026-10-12T11:00:17",
           "pageTitle": "MPESB MP Police Constable Driver Online Form 2026 for 1000 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1711,7 +1711,7 @@
           "articleSection": "2026",
           "homepageSerial": 10
         },
-        "_last_checked": "2026-10-11T03:47:46+00:00"
+        "_last_checked": "2026-10-12T05:30:17+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1802,7 +1802,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/sci-junior-court-assistant-sep26/",
-          "scrapedAt": "2026-10-11T09:17:46",
+          "scrapedAt": "2026-10-12T11:00:18",
           "pageTitle": "Supreme Court of India Junior Court Assistant Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1811,7 +1811,7 @@
           "articleSection": "2026",
           "homepageSerial": 11
         },
-        "_last_checked": "2026-10-11T03:47:46+00:00"
+        "_last_checked": "2026-10-12T05:30:18+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2107,7 +2107,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-assistant-professor-04-2026/",
-          "scrapedAt": "2026-10-11T09:17:47",
+          "scrapedAt": "2026-10-12T11:00:18",
           "pageTitle": "UPESSC UP Assistant Professor Online Form 2026 for 1936 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2116,7 +2116,7 @@
           "articleSection": "2026",
           "homepageSerial": 12
         },
-        "_last_checked": "2026-10-11T03:47:47+00:00"
+        "_last_checked": "2026-10-12T05:30:18+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2242,7 +2242,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-primary-teacher-05-2026/",
-          "scrapedAt": "2026-10-11T09:17:48",
+          "scrapedAt": "2026-10-12T11:00:20",
           "pageTitle": "UPESSC UP Assistant Teacher Primary Online Form 2026 for 12405 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2251,7 +2251,7 @@
           "articleSection": "2026",
           "homepageSerial": 13
         },
-        "_last_checked": "2026-10-11T03:47:48+00:00"
+        "_last_checked": "2026-10-12T05:30:20+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2989,7 +2989,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-pgt-teacher-sept26/",
-          "scrapedAt": "2026-10-11T09:17:48",
+          "scrapedAt": "2026-10-12T11:00:21",
           "pageTitle": "UPESSC UP PGT Teacher Online Form 2026 for 2607 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2998,7 +2998,7 @@
           "articleSection": "2026",
           "homepageSerial": 14
         },
-        "_last_checked": "2026-10-11T03:47:48+00:00"
+        "_last_checked": "2026-10-12T05:30:21+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3293,7 +3293,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/bihar/bpsc-tre-4-2026/",
-          "scrapedAt": "2026-10-11T09:17:49",
+          "scrapedAt": "2026-10-12T11:00:22",
           "pageTitle": "Bihar BPSC School Teacher TRE 4 Online Form 2026 for 33320 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3302,7 +3302,7 @@
           "articleSection": "Bihar",
           "homepageSerial": 15
         },
-        "_last_checked": "2026-10-11T03:47:49+00:00"
+        "_last_checked": "2026-10-12T05:30:22+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3401,16 +3401,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ssc-chsl-2026-sep/",
-          "scrapedAt": "2026-10-10T12:32:51",
+          "scrapedAt": "2026-10-12T11:00:22",
           "pageTitle": "SSC 10+2 CHSL Online Form 2026 for 2536 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-10-01T18:24:29+05:30",
           "modifiedTime": "2026-10-01T18:24:31+05:30",
           "articleSection": "2026",
-          "homepageSerial": 15
+          "homepageSerial": 16
         },
-        "_last_checked": "2026-10-10T07:02:51+00:00"
+        "_last_checked": "2026-10-12T05:30:22+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3703,7 +3703,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/mpesb-mp-police-constable-gd-sep26/",
-          "scrapedAt": "2026-10-11T09:17:49",
+          "scrapedAt": "2026-10-12T11:00:23",
           "pageTitle": "MPESB MP Police Constable GD Correction / Edit Form 2026 for 7500 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3712,7 +3712,7 @@
           "articleSection": "2026",
           "homepageSerial": 18
         },
-        "_last_checked": "2026-10-11T03:47:49+00:00"
+        "_last_checked": "2026-10-12T05:30:23+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3801,7 +3801,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-special-tet-exam/",
-          "scrapedAt": "2026-10-11T09:17:50",
+          "scrapedAt": "2026-10-12T11:00:24",
           "pageTitle": "UPESSC UP Special TET Online Correction / Edit Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3810,7 +3810,7 @@
           "articleSection": "2026",
           "homepageSerial": 19
         },
-        "_last_checked": "2026-10-11T03:47:50+00:00"
+        "_last_checked": "2026-10-12T05:30:24+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4052,7 +4052,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/coast-guard-navik-gd-db-cgpet-01-2027/",
-          "scrapedAt": "2026-10-11T09:17:50",
+          "scrapedAt": "2026-10-12T11:00:25",
           "pageTitle": "Indian Coast Guard Navik / Yantrik CGEPT Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4061,7 +4061,7 @@
           "articleSection": "2026",
           "homepageSerial": 20
         },
-        "_last_checked": "2026-10-11T03:47:50+00:00"
+        "_last_checked": "2026-10-12T05:30:25+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4223,7 +4223,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/mphc-stenographer-grade-ii-666-exam/",
-          "scrapedAt": "2026-10-11T09:17:51",
+          "scrapedAt": "2026-10-12T11:00:25",
           "pageTitle": "MP High Court MPHC Stenographer and AG III Online Form 2026 for 418 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4232,7 +4232,7 @@
           "articleSection": "2026",
           "homepageSerial": 21
         },
-        "_last_checked": "2026-10-11T03:47:51+00:00"
+        "_last_checked": "2026-10-12T05:30:25+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4381,7 +4381,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/dsssb-various-post-oct26/",
-          "scrapedAt": "2026-10-11T09:17:51",
+          "scrapedAt": "2026-10-12T11:00:26",
           "pageTitle": "Delhi DSSSB Various Post Online Form 2026 Advt. No. 04/2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4390,7 +4390,7 @@
           "articleSection": "2026",
           "homepageSerial": 22
         },
-        "_last_checked": "2026-10-11T03:47:51+00:00"
+        "_last_checked": "2026-10-12T05:30:26+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4484,7 +4484,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-teaching-oct26/",
-          "scrapedAt": "2026-10-11T09:17:51",
+          "scrapedAt": "2026-10-12T11:00:27",
           "pageTitle": "CSJMU Kanpur Teaching Post Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4493,7 +4493,7 @@
           "articleSection": "2026",
           "homepageSerial": 23
         },
-        "_last_checked": "2026-10-11T03:47:51+00:00"
+        "_last_checked": "2026-10-12T05:30:27+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4603,7 +4603,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nwr-rrc-jaipur-apprentices-04-2026/",
-          "scrapedAt": "2026-10-11T09:17:52",
+          "scrapedAt": "2026-10-12T11:00:28",
           "pageTitle": "RRC Jaipur NWR Apprentices Online Form 2026 for 2008 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4612,7 +4612,7 @@
           "articleSection": "2026",
           "homepageSerial": 24
         },
-        "_last_checked": "2026-10-11T03:47:52+00:00"
+        "_last_checked": "2026-10-12T05:30:28+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4831,7 +4831,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/blet-september26/",
-          "scrapedAt": "2026-10-11T09:17:52",
+          "scrapedAt": "2026-10-12T11:00:28",
           "pageTitle": "Bihar Library Eligibility Test BLET Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4840,7 +4840,7 @@
           "articleSection": "2026",
           "homepageSerial": 26
         },
-        "_last_checked": "2026-10-11T03:47:52+00:00"
+        "_last_checked": "2026-10-12T05:30:28+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4948,7 +4948,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/canara-bank-apprentices-sep26/",
-          "scrapedAt": "2026-10-11T09:17:52",
+          "scrapedAt": "2026-10-12T11:00:29",
           "pageTitle": "Canara Bank Apprentice Online Form 2026 for 3500 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4957,7 +4957,7 @@
           "articleSection": "2026",
           "homepageSerial": 27
         },
-        "_last_checked": "2026-10-11T03:47:52+00:00"
+        "_last_checked": "2026-10-12T05:30:29+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5081,7 +5081,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-23-exam-2026/",
-          "scrapedAt": "2026-10-11T09:17:53",
+          "scrapedAt": "2026-10-12T11:00:30",
           "pageTitle": "UPSSSC Physical Instructor and Other Post Online Form 2026 for 412 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5090,7 +5090,7 @@
           "articleSection": "2026",
           "homepageSerial": 28
         },
-        "_last_checked": "2026-10-11T03:47:53+00:00"
+        "_last_checked": "2026-10-12T05:30:30+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5353,7 +5353,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-sports-22-exam-2026/",
-          "scrapedAt": "2026-10-11T09:17:53",
+          "scrapedAt": "2026-10-12T11:00:31",
           "pageTitle": "UPSSSC Sports Directorate Online Form 2026 for 108 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5362,7 +5362,7 @@
           "articleSection": "2026",
           "homepageSerial": 29
         },
-        "_last_checked": "2026-10-11T03:47:53+00:00"
+        "_last_checked": "2026-10-12T05:30:31+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5766,7 +5766,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-anganwadi-helper-june26/",
-          "scrapedAt": "2026-10-11T09:17:54",
+          "scrapedAt": "2026-10-12T11:00:31",
           "pageTitle": "UP Anganwadi Helper Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5775,7 +5775,7 @@
           "articleSection": "2026",
           "homepageSerial": 30
         },
-        "_last_checked": "2026-10-11T03:47:54+00:00"
+        "_last_checked": "2026-10-12T05:30:31+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6317,7 +6317,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rajasthan-sanitation-worker-jul26/",
-          "scrapedAt": "2026-10-11T09:17:54",
+          "scrapedAt": "2026-10-12T11:00:32",
           "pageTitle": "Rajasthan Safai Karamchari Online Form 2026 for 24752 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6326,7 +6326,7 @@
           "articleSection": "2026",
           "homepageSerial": 31
         },
-        "_last_checked": "2026-10-11T03:47:55+00:00"
+        "_last_checked": "2026-10-12T05:30:33+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6456,7 +6456,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/jharkhand-jssc-para-teacher-july26/",
-          "scrapedAt": "2026-10-11T09:17:55",
+          "scrapedAt": "2026-10-12T11:00:34",
           "pageTitle": "Jharkhand JSSC Para Teacher Online Form 2026 for 6101 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6465,7 +6465,7 @@
           "articleSection": "2026",
           "homepageSerial": 32
         },
-        "_last_checked": "2026-10-11T03:47:55+00:00"
+        "_last_checked": "2026-10-12T05:30:34+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6668,7 +6668,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/assam-rifles-rally-sep26/",
-          "scrapedAt": "2026-10-11T09:17:55",
+          "scrapedAt": "2026-10-12T11:00:35",
           "pageTitle": "Assam Rifles Rally Recruitment Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6677,7 +6677,7 @@
           "articleSection": "2026",
           "homepageSerial": 33
         },
-        "_last_checked": "2026-10-11T03:47:55+00:00"
+        "_last_checked": "2026-10-12T05:30:35+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6806,7 +6806,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/itbp-head-constable-motor-mechanic/",
-          "scrapedAt": "2026-10-11T09:17:56",
+          "scrapedAt": "2026-10-12T11:00:36",
           "pageTitle": "ITBP Head Constable Online Form 2026 for 37 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6815,7 +6815,7 @@
           "articleSection": "2026",
           "homepageSerial": 34
         },
-        "_last_checked": "2026-10-11T03:47:56+00:00"
+        "_last_checked": "2026-10-12T05:30:36+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -7225,7 +7225,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-super-tet-2026/",
-          "scrapedAt": "2026-10-11T09:17:57",
+          "scrapedAt": "2026-10-12T11:00:39",
           "pageTitle": "UPESSC UP Super TET Assistant Teacher Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -7234,7 +7234,7 @@
           "articleSection": "2026",
           "homepageSerial": 39
         },
-        "_last_checked": "2026-10-11T03:47:57+00:00"
+        "_last_checked": "2026-10-12T05:30:39+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -7866,7 +7866,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-uptgt-uppgt-syllabus/",
-          "scrapedAt": "2026-10-11T09:17:58",
+          "scrapedAt": "2026-10-12T11:00:39",
           "pageTitle": "UPESSC UP TGT",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -7875,7 +7875,7 @@
           "articleSection": "2026",
           "homepageSerial": 43
         },
-        "_last_checked": "2026-10-11T03:47:58+00:00"
+        "_last_checked": "2026-10-12T05:30:39+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -7985,7 +7985,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-pet-exam-jun26/",
-          "scrapedAt": "2026-10-10T12:33:12",
+          "scrapedAt": "2026-10-12T11:00:40",
           "pageTitle": "UPSSSC PET 2026 Exam Schedule",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -7994,7 +7994,7 @@
           "articleSection": "2026",
           "homepageSerial": 44
         },
-        "_last_checked": "2026-10-10T07:03:12+00:00"
+        "_last_checked": "2026-10-12T05:30:40+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8114,7 +8114,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/clat-admission-jul26/",
-          "scrapedAt": "2026-10-11T09:17:59",
+          "scrapedAt": "2026-10-12T11:00:41",
           "pageTitle": "CLAT 2027 Admission Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -8123,7 +8123,7 @@
           "articleSection": "2026",
           "homepageSerial": 45
         },
-        "_last_checked": "2026-10-11T03:47:59+00:00"
+        "_last_checked": "2026-10-12T05:30:41+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8436,7 +8436,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-graduate-level-july26/",
-          "scrapedAt": "2026-10-11T09:17:59",
+          "scrapedAt": "2026-10-12T11:00:41",
           "pageTitle": "Rajasthan RSSB Graduate Level CET Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -8445,7 +8445,7 @@
           "articleSection": "2026",
           "homepageSerial": 48
         },
-        "_last_checked": "2026-10-11T03:47:59+00:00"
+        "_last_checked": "2026-10-12T05:30:41+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8632,7 +8632,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-june26/",
-          "scrapedAt": "2026-10-11T09:17:59",
+          "scrapedAt": "2026-10-12T11:00:42",
           "pageTitle": "Rajasthan RSSB 10+2 Senior Secondary Level CET Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -8641,7 +8641,7 @@
           "articleSection": "2026",
           "homepageSerial": 50
         },
-        "_last_checked": "2026-10-11T03:47:59+00:00"
+        "_last_checked": "2026-10-12T05:30:42+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9530,7 +9530,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/gate-2027/",
-          "scrapedAt": "2026-10-11T09:18:00",
+          "scrapedAt": "2026-10-12T11:00:43",
           "pageTitle": "IIT GATE 2027 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -9539,7 +9539,7 @@
           "articleSection": "2027",
           "homepageSerial": 58
         },
-        "_last_checked": "2026-10-11T03:48:00+00:00"
+        "_last_checked": "2026-10-12T05:30:43+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9628,7 +9628,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/iit-jam-august26/",
-          "scrapedAt": "2026-10-11T09:18:00",
+          "scrapedAt": "2026-10-12T11:00:44",
           "pageTitle": "IIT JAM 2027 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -9637,7 +9637,7 @@
           "articleSection": "2027",
           "homepageSerial": 59
         },
-        "_last_checked": "2026-10-11T03:48:00+00:00"
+        "_last_checked": "2026-10-12T05:30:44+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9810,7 +9810,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/uprtou-ph-d-entrance-exam-sep26/",
-          "scrapedAt": "2026-10-11T09:18:01",
+          "scrapedAt": "2026-10-12T11:00:46",
           "pageTitle": "UPRTOU Ph.D Entrance Exam Admission Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -9819,7 +9819,7 @@
           "articleSection": "2026",
           "homepageSerial": 60
         },
-        "_last_checked": "2026-10-11T03:48:01+00:00"
+        "_last_checked": "2026-10-12T05:30:46+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9946,7 +9946,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-scholarship-postmatric-jul26/",
-          "scrapedAt": "2026-10-11T09:18:01",
+          "scrapedAt": "2026-10-12T11:00:46",
           "pageTitle": "UP Scholarship Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -9955,7 +9955,7 @@
           "articleSection": "2026",
           "homepageSerial": 61
         },
-        "_last_checked": "2026-10-11T03:48:01+00:00"
+        "_last_checked": "2026-10-12T05:30:46+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10063,7 +10063,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/iim-cat-jul26/",
-          "scrapedAt": "2026-10-11T09:18:01",
+          "scrapedAt": "2026-10-12T11:00:47",
           "pageTitle": "IIM CAT Admission Online Form 2026 Date Extended",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -10072,7 +10072,7 @@
           "articleSection": "2026",
           "homepageSerial": 62
         },
-        "_last_checked": "2026-10-11T03:48:01+00:00"
+        "_last_checked": "2026-10-12T05:30:47+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10181,7 +10181,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nta-rimcee-class-8th-sep26/",
-          "scrapedAt": "2026-10-11T09:18:02",
+          "scrapedAt": "2026-10-12T11:00:48",
           "pageTitle": "NTA RIMCEE 2027 Class 8th Admissions Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -10190,7 +10190,7 @@
           "articleSection": "2026",
           "homepageSerial": 64
         },
-        "_last_checked": "2026-10-11T03:48:02+00:00"
+        "_last_checked": "2026-10-12T05:30:48+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10365,7 +10365,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/aibe-22nd-august26/",
-          "scrapedAt": "2026-10-11T09:18:03",
+          "scrapedAt": "2026-10-12T11:00:49",
           "pageTitle": "All India Bar Exam AIBE 22nd XXII Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -10374,7 +10374,7 @@
           "articleSection": "2026",
           "homepageSerial": 66
         },
-        "_last_checked": "2026-10-11T03:48:03+00:00"
+        "_last_checked": "2026-10-12T05:30:49+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10580,7 +10580,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nvs-class-6th-admission-july26/",
-          "scrapedAt": "2026-10-11T09:18:03",
+          "scrapedAt": "2026-10-12T11:00:49",
           "pageTitle": "Jawahar Navodaya Vidyalaya JNV NVS Class 6th Admission Online Form 2027",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -10589,7 +10589,7 @@
           "articleSection": "2026",
           "homepageSerial": 68
         },
-        "_last_checked": "2026-10-11T03:48:03+00:00"
+        "_last_checked": "2026-10-12T05:30:50+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -11677,7 +11677,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-degree-sep26/",
-          "scrapedAt": "2026-10-11T09:18:04",
+          "scrapedAt": "2026-10-12T11:00:51",
           "pageTitle": "CSJMU Kanpur Degree, Provisional & Migration Certificate Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -11686,7 +11686,7 @@
           "articleSection": "2026",
           "homepageSerial": 76
         },
-        "_last_checked": "2026-10-11T03:48:04+00:00"
+        "_last_checked": "2026-10-12T05:30:51+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -11746,7 +11746,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ccsu-meerut-provisional-certificate/",
-          "scrapedAt": "2026-10-11T09:18:04",
+          "scrapedAt": "2026-10-12T11:00:51",
           "pageTitle": "CCSU Meerut University Provisional & Migration Certificate Download",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -11755,7 +11755,7 @@
           "articleSection": "2026",
           "homepageSerial": 77
         },
-        "_last_checked": "2026-10-11T03:48:04+00:00"
+        "_last_checked": "2026-10-12T05:30:51+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -11820,7 +11820,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/prsu-prayagraj-provisional-aug26/",
-          "scrapedAt": "2026-10-11T09:18:04",
+          "scrapedAt": "2026-10-12T11:00:52",
           "pageTitle": "PRSU Prayagraj University Provisional & Migration Certificate Download",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -11829,7 +11829,7 @@
           "articleSection": "2026",
           "homepageSerial": 78
         },
-        "_last_checked": "2026-10-11T03:48:04+00:00"
+        "_last_checked": "2026-10-12T05:30:52+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -16515,7 +16515,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rrb-section-controller-03-2026/",
-          "scrapedAt": "2026-10-11T09:17:38",
+          "scrapedAt": "2026-10-12T11:00:53",
           "pageTitle": "Railway RRB Section Controller Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -16525,7 +16525,7 @@
           "homepageSerial": 2
         },
         "admitCardUrl": "https://qa-efmprd.digialm.com//EForms/configuredHtml/33128/102721/yTOWT6zoDJDKpLRfP3/login.html",
-        "_last_checked": "2026-10-11T03:47:38+00:00"
+        "_last_checked": "2026-10-12T05:30:53+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -16644,7 +16644,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/skau-non-teaching-post-july26/",
-          "scrapedAt": "2026-10-11T09:17:38",
+          "scrapedAt": "2026-10-12T11:00:53",
           "pageTitle": "SKAU Kurukshetra Non Teaching Clerk Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -16654,7 +16654,7 @@
           "homepageSerial": 3
         },
         "admitCardUrl": "https://skau.eapplynow.com/Pages/AdmitCard01Login7.aspx",
-        "_last_checked": "2026-10-11T03:47:38+00:00"
+        "_last_checked": "2026-10-12T05:30:53+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17395,7 +17395,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/railway-rrb-junior-engineer-cen-04-2026/",
-          "scrapedAt": "2026-10-11T09:17:39",
+          "scrapedAt": "2026-10-12T11:00:54",
           "pageTitle": "Railway RRB Junior Engineer JE Application Status 2026 for 4029 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17404,7 +17404,7 @@
           "articleSection": "2026",
           "homepageSerial": 5
         },
-        "_last_checked": "2026-10-11T03:47:39+00:00"
+        "_last_checked": "2026-10-12T05:30:54+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17499,7 +17499,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/rrb-technician-cen-02-2026/",
-          "scrapedAt": "2026-10-11T09:17:39",
+          "scrapedAt": "2026-10-12T11:00:55",
           "pageTitle": "Railway RRB Technician CEN 02/2026 Admit Card 2026 for 6557 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17509,7 +17509,7 @@
           "homepageSerial": 6
         },
         "admitCardUrl": "https://rrb.digialm.com/EForms/configuredHtml/33128/102593/W0Bq2R5HxK9c3BqWQc/login.html",
-        "_last_checked": "2026-10-11T03:47:39+00:00"
+        "_last_checked": "2026-10-12T05:30:55+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17618,7 +17618,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ibps-clerk-16th-august26/",
-          "scrapedAt": "2026-10-11T09:17:39",
+          "scrapedAt": "2026-10-12T11:00:56",
           "pageTitle": "IBPS Clerk 16th Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17628,7 +17628,7 @@
           "homepageSerial": 7
         },
         "admitCardUrl": "https://ibpsreg.ibps.in/csaxvijul26/oecla_sep26/login.php?appid=948c445571d2f4e9f8749da0111eee4b",
-        "_last_checked": "2026-10-11T03:47:39+00:00"
+        "_last_checked": "2026-10-12T05:30:56+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17818,7 +17818,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ssc-cpo-si-capf-2026/",
-          "scrapedAt": "2026-10-11T09:17:40",
+          "scrapedAt": "2026-10-12T11:00:57",
           "pageTitle": "SSC CPO SI CAPF Exam Date 2026 for 1871 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17827,7 +17827,7 @@
           "articleSection": "2026",
           "homepageSerial": 9
         },
-        "_last_checked": "2026-10-11T03:47:40+00:00"
+        "_last_checked": "2026-10-12T05:30:57+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17986,7 +17986,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ssc-junior-engineer-2026/",
-          "scrapedAt": "2026-10-11T09:17:41",
+          "scrapedAt": "2026-10-12T11:00:58",
           "pageTitle": "SSC Junior Engineer JE Exam Date 2026 for 1748 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17995,7 +17995,7 @@
           "articleSection": "2026",
           "homepageSerial": 10
         },
-        "_last_checked": "2026-10-11T03:47:41+00:00"
+        "_last_checked": "2026-10-12T05:30:58+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -18680,7 +18680,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-cgl-2026/",
-          "scrapedAt": "2026-10-11T09:17:41",
+          "scrapedAt": "2026-10-12T11:00:59",
           "pageTitle": "SSC Combined Graduate Level CGL Exam City / Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -18690,7 +18690,7 @@
           "homepageSerial": 14
         },
         "admitCardUrl": "https://ssc.gov.in/login",
-        "_last_checked": "2026-10-11T03:47:41+00:00"
+        "_last_checked": "2026-10-12T05:30:59+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -51932,7 +51932,7 @@
           "driver_hmv": "10th Class Passed and LMV Driving License, 03 Years Experience."
         },
         "sequence": 1,
-        "_last_checked": "2026-10-11T03:48:05+00:00"
+        "_last_checked": "2026-10-12T05:31:01+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -52377,7 +52377,7 @@
           "assistant_executive_engineer_mechanical": "08"
         },
         "sequence": 2,
-        "_last_checked": "2026-10-11T03:48:06+00:00"
+        "_last_checked": "2026-10-12T05:31:02+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53039,7 +53039,7 @@
           "marks_obc_delhi_sc_st_ph_esm": "45% Marks"
         },
         "sequence": 3,
-        "_last_checked": "2026-10-11T03:48:06+00:00"
+        "_last_checked": "2026-10-12T05:31:02+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53551,8 +53551,8 @@
           "correction_date": "Upto 03/11/2026",
           "exam_start": "From 04/01/2027"
         },
-        "sequence": 5,
-        "_last_checked": "2026-10-11T03:48:07+00:00"
+        "sequence": 4,
+        "_last_checked": "2026-10-12T05:31:03+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53905,8 +53905,8 @@
           "born_between": "02/01/2008 To 01/01/2011",
           "pay_level": "Level-10 (Rs. 56100/-)"
         },
-        "sequence": 6,
-        "_last_checked": "2026-10-11T03:48:08+00:00"
+        "sequence": 5,
+        "_last_checked": "2026-10-12T05:31:03+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54311,8 +54311,8 @@
           "correction_date": "28-30 November 2026",
           "technician_grade_ii_mechanical": "All India / State Vocational Certificate in Fitter Trade and 02 Years Experience Certificate in Related Work."
         },
-        "sequence": 7,
-        "_last_checked": "2026-10-11T03:48:08+00:00"
+        "sequence": 6,
+        "_last_checked": "2026-10-12T05:31:04+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54780,8 +54780,8 @@
           "unreserved": "600/",
           "sc_st_ews": "500/"
         },
-        "sequence": 8,
-        "_last_checked": "2026-10-11T03:48:09+00:00"
+        "sequence": 7,
+        "_last_checked": "2026-10-12T05:31:05+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -55340,1236 +55340,8 @@
           "negative_marking": "1/3",
           "rd_time_duration": "90 Minutes"
         },
-        "sequence": 9,
-        "_last_checked": "2026-10-11T03:48:09+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
-        "title": "Jharkhand 772 Home Guard Post Online Form",
-        "slug": "jharkhand-772-home-guard-post-online-form",
-        "_scraped_from": "",
-        "advt_no": "01/2026",
-        "department": "Jharkhand",
-        "post_name": "Home Guard (Rural)",
-        "total_vacancy": "772",
-        "last_date": "2026-10-26",
-        "application_start": "2026-09-12",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "19-40",
-        "salary": "",
-        "qualification": "7th Class Passed",
-        "selection_process": "PET & PST Test, Hindi Writing Test, Medical Examination, Document Verification",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "full_notification": "https://cdn.s3waas.gov.in/s3559cb990c9dffd8675f6bc2186971dc2/uploads/2026/09/17892090931452.pdf",
-          "official_website": "https://deoghar.nic.in/"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Online Form",
-            "job_location": "Deoghar (JH)",
-            "total_posts": "772 Posts",
-            "job_type": "Temporary"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "Jharkhand Home Guard Recruitment 2026 : Get complete details about Jharkhand Home Guard Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, admit card, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Location",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "Deoghar (JH)",
-                      "links": []
-                    },
-                    {
-                      "text": "772 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Temporary",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Jharkhand Griha Raksha Vahini (JGRV), Deoghar Home Guard (Grih Rakshak) Recruitment 2026 Advt. No. : 01/2026 Short Details of Notification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Notification Out : 12/09/2026 Starting Date : 11/10/2026 Last Date : 26/10/2026 05:00 PM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "For All Candidates : 100/- Payment Mode : Online Mode",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 19-40 Years Age Limit as on : 01/01/2026 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "PET & PST Test Hindi Writing Test Medical Examination Document Verification",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Notification Out : 12/09/2026",
-                  "Starting Date : 11/10/2026",
-                  "Last Date : 26/10/2026 05:00 PM"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "For All Candidates : 100/",
-                  "Payment Mode : Online Mode"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 19-40 Years",
-                  "Age Limit as on : 01/01/2026",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "PET & PST Test",
-                  "Hindi Writing Test",
-                  "Medical Examination",
-                  "Document Verification"
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Total Post & Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Home Guard (Rural)",
-                      "links": []
-                    },
-                    {
-                      "text": "635",
-                      "links": []
-                    },
-                    {
-                      "text": "7th Class Passed",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Home Guard (Urban)",
-                      "links": []
-                    },
-                    {
-                      "text": "137",
-                      "links": []
-                    },
-                    {
-                      "text": "10th Class Passed",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Total Post & Qualification",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Home Guard (Rural) Vacancy Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Block",
-                      "links": []
-                    },
-                    {
-                      "text": "Male",
-                      "links": []
-                    },
-                    {
-                      "text": "Female",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Deoghar Sadar",
-                      "links": []
-                    },
-                    {
-                      "text": "32",
-                      "links": []
-                    },
-                    {
-                      "text": "32",
-                      "links": []
-                    },
-                    {
-                      "text": "64",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Mohanpur",
-                      "links": []
-                    },
-                    {
-                      "text": "39",
-                      "links": []
-                    },
-                    {
-                      "text": "39",
-                      "links": []
-                    },
-                    {
-                      "text": "78",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Karon",
-                      "links": []
-                    },
-                    {
-                      "text": "33",
-                      "links": []
-                    },
-                    {
-                      "text": "32",
-                      "links": []
-                    },
-                    {
-                      "text": "65",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Palojori",
-                      "links": []
-                    },
-                    {
-                      "text": "23",
-                      "links": []
-                    },
-                    {
-                      "text": "24",
-                      "links": []
-                    },
-                    {
-                      "text": "47",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Sarath",
-                      "links": []
-                    },
-                    {
-                      "text": "28",
-                      "links": []
-                    },
-                    {
-                      "text": "28",
-                      "links": []
-                    },
-                    {
-                      "text": "56",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Margomunda",
-                      "links": []
-                    },
-                    {
-                      "text": "49",
-                      "links": []
-                    },
-                    {
-                      "text": "49",
-                      "links": []
-                    },
-                    {
-                      "text": "98",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Sarwan",
-                      "links": []
-                    },
-                    {
-                      "text": "25",
-                      "links": []
-                    },
-                    {
-                      "text": "26",
-                      "links": []
-                    },
-                    {
-                      "text": "51",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Senarayadhari",
-                      "links": []
-                    },
-                    {
-                      "text": "52",
-                      "links": []
-                    },
-                    {
-                      "text": "52",
-                      "links": []
-                    },
-                    {
-                      "text": "104",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Devipur",
-                      "links": []
-                    },
-                    {
-                      "text": "16",
-                      "links": []
-                    },
-                    {
-                      "text": "15",
-                      "links": []
-                    },
-                    {
-                      "text": "31",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Madhupur Rural",
-                      "links": []
-                    },
-                    {
-                      "text": "21",
-                      "links": []
-                    },
-                    {
-                      "text": "20",
-                      "links": []
-                    },
-                    {
-                      "text": "41",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Grand Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "318",
-                      "links": []
-                    },
-                    {
-                      "text": "317",
-                      "links": []
-                    },
-                    {
-                      "text": "635",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Home Guard (Rural) Vacancy Details",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Home Guard (Urban) Vacancy Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Urban Area",
-                      "links": []
-                    },
-                    {
-                      "text": "Male",
-                      "links": []
-                    },
-                    {
-                      "text": "Female",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Deoghar Urban",
-                      "links": []
-                    },
-                    {
-                      "text": "41",
-                      "links": []
-                    },
-                    {
-                      "text": "41",
-                      "links": []
-                    },
-                    {
-                      "text": "82",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Madhupur Urban",
-                      "links": []
-                    },
-                    {
-                      "text": "27",
-                      "links": []
-                    },
-                    {
-                      "text": "28",
-                      "links": []
-                    },
-                    {
-                      "text": "55",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Grand Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "68",
-                      "links": []
-                    },
-                    {
-                      "text": "69",
-                      "links": []
-                    },
-                    {
-                      "text": "137",
-                      "links": []
-                    }
-                  ]
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "12/09/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "11/09/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": [
-                        {
-                          "text": "Download",
-                          "url": "https://cdn.s3waas.gov.in/s3559cb990c9dffd8675f6bc2186971dc2/uploads/2026/09/17892090931452.pdf"
-                        }
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "11/09/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://deoghar.nic.in/"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "for_all_candidates": "100/"
-        },
-        "sequence": 11,
-        "_last_checked": "2026-10-11T03:48:10+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
-        "title": "CRPF 521 Constable, HC (Sports) Online Form",
-        "slug": "crpf-521-constable-hc-sports-online-form",
-        "_scraped_from": "",
-        "advt_no": "",
-        "department": "CRPF",
-        "post_name": "Constable (GD)",
-        "total_vacancy": "521",
-        "last_date": "2026-11-11",
-        "application_start": "2026-09-22",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "18-23",
-        "salary": "",
-        "qualification": "10th Passed, Sports Certificate.",
-        "selection_process": "Document Verification, Physical Standard Test, Sports Trial Test, Medical Examination",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "official_website": "https://rect.crpf.gov.in/"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Online Form",
-            "job_state": "All India",
-            "total_posts": "521 Posts",
-            "job_type": "Read Notice"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "CRPF Sports Quota Recruitment 2026 : Get complete details about CRPF Constable, HC (Sports) Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job State",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "All India",
-                      "links": []
-                    },
-                    {
-                      "text": "521 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Read Notice",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Central Reserve Police Force (CRPF) Constable & Head Constable Vacancy 2026 Short Details of Advertisement Notification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Notification Out : 22/09/2026 Starting Date : 12/10/2026 Last Date : 11/11/2026 11:59 PM Correction Date : 12-14 November 2026",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Gen / OBC / EWS : 100/- SC / ST / ESM : 0/- (Nil) All Females : 0/- (Nil) Payment Mode : Online Mode",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 18-23 Years Age Limit as on : 01/08/2026 Born Between : 02/08/2003 To 01/08/2008 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Document Verification Physical Standard Test Sports Trial Test Medical Examination",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Pay Scale Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Constable (GD) : Level-03 (Rs. 21,700-69,100/-) Head Constable (GD) : Level-04 (Rs. 25,500-81,100/-)",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Notification Out : 22/09/2026",
-                  "Starting Date : 12/10/2026",
-                  "Last Date : 11/11/2026 11:59 PM",
-                  "Correction Date : 12-14 November 2026"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Gen / OBC / EWS : 100/",
-                  "SC / ST / ESM : 0/- (Nil)",
-                  "All Females : 0/- (Nil)",
-                  "Payment Mode : Online Mode"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 18-23 Years",
-                  "Age Limit as on : 01/08/2026",
-                  "Born Between : 02/08/2003 To 01/08/2008",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Document Verification",
-                  "Physical Standard Test",
-                  "Sports Trial Test",
-                  "Medical Examination"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Pay Scale Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Constable (GD) : Level-03 (Rs. 21,700-69,100/-)",
-                  "Head Constable (GD) : Level-04 (Rs. 25,500-81,100/-)"
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Total Post & Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Constable (GD)",
-                      "links": []
-                    },
-                    {
-                      "text": "339",
-                      "links": []
-                    },
-                    {
-                      "text": "10th Passed, Sports Certificate.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Head Constable (GD)",
-                      "links": []
-                    },
-                    {
-                      "text": "182",
-                      "links": []
-                    },
-                    {
-                      "text": "12th Passed, Sports Certificate.",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Total Post & Qualification",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Gender Wise Vacancies",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    },
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Constable (Male)",
-                      "links": []
-                    },
-                    {
-                      "text": "258",
-                      "links": []
-                    },
-                    {
-                      "text": "Constable (Female)",
-                      "links": []
-                    },
-                    {
-                      "text": "81",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Head Constable (Male)",
-                      "links": []
-                    },
-                    {
-                      "text": "150",
-                      "links": []
-                    },
-                    {
-                      "text": "Head Constable (Female)",
-                      "links": []
-                    },
-                    {
-                      "text": "32",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Gender Wise Vacancies",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Physical Eligibility (PST)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Type",
-                      "links": []
-                    },
-                    {
-                      "text": "Category",
-                      "links": []
-                    },
-                    {
-                      "text": "Male",
-                      "links": []
-                    },
-                    {
-                      "text": "Female",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Height",
-                      "links": []
-                    },
-                    {
-                      "text": "General / OBC / SC",
-                      "links": []
-                    },
-                    {
-                      "text": "170 CM",
-                      "links": []
-                    },
-                    {
-                      "text": "157 CM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "ST",
-                      "links": []
-                    },
-                    {
-                      "text": "162.5 CM",
-                      "links": []
-                    },
-                    {
-                      "text": "150 CM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Hill Area Candidates",
-                      "links": []
-                    },
-                    {
-                      "text": "165 CM",
-                      "links": []
-                    },
-                    {
-                      "text": "155 CM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Chest",
-                      "links": []
-                    },
-                    {
-                      "text": "General / OBC / SC",
-                      "links": []
-                    },
-                    {
-                      "text": "80-85 CM",
-                      "links": []
-                    },
-                    {
-                      "text": "Not Applicable",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "ST",
-                      "links": []
-                    },
-                    {
-                      "text": "76-81 CM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Hill Area Candidates",
-                      "links": []
-                    },
-                    {
-                      "text": "78-83 CM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Weight",
-                      "links": []
-                    },
-                    {
-                      "text": "All Category",
-                      "links": []
-                    },
-                    {
-                      "text": "Proportionate to height and age",
-                      "links": []
-                    },
-                    {
-                      "text": "Proportionate to height and age",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Physical Eligibility (PST)",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "12/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "22/09/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "22/09/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://rect.crpf.gov.in/"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "pm_correction_date": "12-14 November 2026",
-          "gen_obc_ews": "100/",
-          "sc_st_esm": "0/- (",
-          "nil_all_females": "0/- (",
-          "born_between": "02/08/2003 To 01/08/2008 The Age Relaxation Extra as per Rules",
-          "constable_gd": "Level-03 (Rs. 21,700-69,100/-)",
-          "head_constable_gd": "Level-04 (Rs. 25,500-81,100/-)",
-          "hill_area_candidates": "78-83 CM",
-          "correction_date": "12-14 November 2026",
-          "all_females": "0/- (Nil)"
-        },
-        "sequence": 12,
-        "_last_checked": "2026-10-11T03:48:11+00:00"
+        "sequence": 8,
+        "_last_checked": "2026-10-12T05:31:06+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57015,8 +55787,8 @@
           "nil_all_females": "0/- (",
           "all_females": "0/- (Nil)"
         },
-        "sequence": 13,
-        "_last_checked": "2026-10-11T03:48:11+00:00"
+        "sequence": 10,
+        "_last_checked": "2026-10-12T05:31:07+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57743,8 +56515,8 @@
           "correction_date": "Upto 13/11/2026",
           "exercise_trainer": "Level-06 (Rs. 35400-112400/-)"
         },
-        "sequence": 14,
-        "_last_checked": "2026-10-11T03:48:12+00:00"
+        "sequence": 11,
+        "_last_checked": "2026-10-12T05:31:08+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58337,8 +57109,8 @@
           "lifesaver": "10th Passed with 03 Years Practical Experience as Lifesaver and UPSSSC PET 2025 Score Card.",
           "groundsman": "10th Passed with Practical Experience in Preparing Sports Courts / Grounds and UPSSSC PET 2025 Score Card."
         },
-        "sequence": 15,
-        "_last_checked": "2026-10-11T03:48:12+00:00"
+        "sequence": 12,
+        "_last_checked": "2026-10-12T05:31:09+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58848,8 +57620,8 @@
           "sports_coach_female": "Bachelors / Master’s Degree in Physical Education and Diploma in Sports Coaching.",
           "junior_library_assistant": "Bachelor’s Degree in Library Science/ Library & Information Science with Knowledg"
         },
-        "sequence": 16,
-        "_last_checked": "2026-10-11T03:48:12+00:00"
+        "sequence": 13,
+        "_last_checked": "2026-10-12T05:31:10+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59480,8 +58252,8 @@
           "for_sc_ph_of_haryana": "55% (82",
           "marks_for_other_candidates": "60% (90 Marks)"
         },
-        "sequence": 17,
-        "_last_checked": "2026-10-11T03:48:13+00:00"
+        "sequence": 14,
+        "_last_checked": "2026-10-12T05:31:10+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59491,7 +58263,7 @@
         "advt_no": "10/2026",
         "department": "NLC Graduate Executive Trainee",
         "post_name": "Form Mode",
-        "total_vacancy": "145",
+        "total_vacancy": "143",
         "last_date": "Coming Soon",
         "application_start": "2026-09-24",
         "exam_date": "",
@@ -59511,13 +58283,14 @@
         "job_location": "",
         "status": "active",
         "important_links": {
+          "corrigendum_notice": "https://www.nlcindia.in/nlcilapi/cmp/static/downloadfile/92126",
           "official_website": "https://www.nlcindia.in/website/en/careers/jobs/currentopenings.html"
         },
         "vacancy_details": [
           {
             "form_mode": "Online Form",
             "job_state": "Avail. Soon",
-            "total_posts": "145 Posts",
+            "total_posts": "143 Posts",
             "job_type": "Avail. Soon"
           }
         ],
@@ -59560,7 +58333,7 @@
                       "links": []
                     },
                     {
-                      "text": "145 Posts",
+                      "text": "143 Posts",
                       "links": []
                     },
                     {
@@ -59845,32 +58618,6 @@
                   ],
                   [
                     {
-                      "text": "Computer",
-                      "links": []
-                    },
-                    {
-                      "text": "00",
-                      "links": []
-                    },
-                    {
-                      "text": "00",
-                      "links": []
-                    },
-                    {
-                      "text": "02",
-                      "links": []
-                    },
-                    {
-                      "text": "00",
-                      "links": []
-                    },
-                    {
-                      "text": "02",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
                       "text": "Total",
                       "links": []
                     },
@@ -59891,7 +58638,7 @@
                       "links": []
                     },
                     {
-                      "text": "145",
+                      "text": "143",
                       "links": []
                     }
                   ]
@@ -59955,6 +58702,25 @@
                   ],
                   [
                     {
+                      "text": "Corrigendum Notice",
+                      "links": []
+                    },
+                    {
+                      "text": "11/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": [
+                        {
+                          "text": "Download",
+                          "url": "https://www.nlcindia.in/nlcilapi/cmp/static/downloadfile/92126"
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    {
                       "text": "Short Notification",
                       "links": []
                     },
@@ -60004,8 +58770,8 @@
           "get_mining": "B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score.",
           "get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
         },
-        "sequence": 18,
-        "_last_checked": "2026-10-11T03:48:14+00:00"
+        "sequence": 15,
+        "_last_checked": "2026-10-12T05:31:11+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -60445,8 +59211,8 @@
           "stenographer": "Pay Grade (5200-20200) GP- 2400 (Rs 25500-81100)",
           "receptionist": "Pay Band (5200-20200) GP- 2800 (Rs 29200-92300)"
         },
-        "sequence": 19,
-        "_last_checked": "2026-10-11T03:48:14+00:00"
+        "sequence": 16,
+        "_last_checked": "2026-10-12T05:31:13+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -60837,8 +59603,8 @@
           "gen_obc_ews": "Avail. Soon",
           "sc_st_ph": "Avail. Soon"
         },
-        "sequence": 20,
-        "_last_checked": "2026-10-11T03:48:15+00:00"
+        "sequence": 17,
+        "_last_checked": "2026-10-12T05:31:14+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61203,7 +59969,7 @@
           "practical_subject_fees_for_class_12th": "160/"
         },
         "sequence": 1,
-        "_last_checked": "2026-10-11T03:48:16+00:00"
+        "_last_checked": "2026-10-12T05:31:15+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61513,7 +60279,7 @@
           "class_12th_additional_subject_fees": "400/"
         },
         "sequence": 2,
-        "_last_checked": "2026-10-11T03:48:16+00:00"
+        "_last_checked": "2026-10-12T05:31:16+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61949,7 +60715,7 @@
           "for_class_ix": "13-16 Years"
         },
         "sequence": 6,
-        "_last_checked": "2026-10-11T03:48:19+00:00"
+        "_last_checked": "2026-10-12T05:31:18+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62304,7 +61070,7 @@
         ],
         "extra_fields": {},
         "sequence": 7,
-        "_last_checked": "2026-10-11T03:48:19+00:00"
+        "_last_checked": "2026-10-12T05:31:19+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62612,7 +61378,7 @@
           "iit_roorkee_zone": "Ambala, Dehradun, Ghaziabad, Haldwani, Jalandhar-Phagwara, Kangra, Meerut, Mohali-Chandigarh, Moradabad, NOIDA, Patiala, Roorkee, Shimla-Solan."
         },
         "sequence": 9,
-        "_last_checked": "2026-10-11T03:48:20+00:00"
+        "_last_checked": "2026-10-12T05:31:21+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62893,7 +61659,7 @@
           "all_india_bar_examination_aibe_xxii": "Bachelor Degree in Law (LLB)"
         },
         "sequence": 13,
-        "_last_checked": "2026-10-11T03:48:23+00:00"
+        "_last_checked": "2026-10-12T05:31:25+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -63492,7 +62258,7 @@
           "rpnlup_prayagraj": "IIULER, Goa"
         },
         "sequence": 15,
-        "_last_checked": "2026-10-11T03:48:25+00:00"
+        "_last_checked": "2026-10-12T05:31:28+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -64296,7 +63062,7 @@
           "not_declared_11": "59 PM"
         },
         "sequence": 28,
-        "_last_checked": "2026-10-11T03:48:34+00:00"
+        "_last_checked": "2026-10-12T05:31:42+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -64332,7 +63098,7 @@
         "sections": [],
         "extra_fields": {},
         "sequence": 29,
-        "_last_checked": "2026-10-11T03:48:34+00:00"
+        "_last_checked": "2026-10-12T05:31:43+00:00"
       }
     ]
   },
@@ -797915,10 +796681,10 @@
   "scraper_errors": {},
   "sync_stats": {
     "run_type": "incremental",
-    "last_updated": "education_jobs",
-    "added": 0,
-    "removed": 0,
-    "unchanged": 1309,
-    "synced_at": "2026-10-12 03:58:47"
+    "last_updated": "sarkari_data",
+    "added": 1,
+    "removed": 3,
+    "unchanged": 294,
+    "synced_at": "2026-10-12 06:46:34"
   }
 }
