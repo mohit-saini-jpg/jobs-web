@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-12 03:57:18",
+  "generated_at": "2026-10-12 03:58:47",
   "sources": {
     "freejobalert_categories": 0,
     "sarkari_data": 297,
@@ -797915,10 +797915,10 @@
   "scraper_errors": {},
   "sync_stats": {
     "run_type": "incremental",
-    "last_updated": "freejobalert_unified",
+    "last_updated": "education_jobs",
     "added": 0,
-    "removed": 29,
-    "unchanged": 1156,
-    "synced_at": "2026-10-12 03:57:18"
+    "removed": 0,
+    "unchanged": 1309,
+    "synced_at": "2026-10-12 03:58:47"
   }
 }
