@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-10-14T02:56:34.269374+00:00",
+  "timestamp": "2026-10-14T03:26:12.005872+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 12763,
+  "files_scanned": 12983,
   "issues_found_by_check": {
-    "jobposting_schema": 296,
+    "jobposting_schema": 300,
     "ai_marker_integrity": 13,
-    "expired_job": 19,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 127,
+  "issues_auto_fixed": 112,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1740,12 +1739,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-guest-faculty-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/aiims-bhubaneswar-project-associate-i-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-project-associate-i-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-bhubaneswar-project-research-scientist-i-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1774,12 +1767,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-recruitment-2026-apply-offline-for-61-group-a-b-and-c-posts/"
-    },
-    {
-      "file": "jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-project-research-scientist/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-project-research-scientist/"
     },
     {
       "file": "jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-research-assistant-laborat/index.html",
@@ -2416,6 +2403,18 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-a/"
+    },
+    {
+      "file": "jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-p/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-p/"
+    },
+    {
+      "file": "jobs/aiims-guwahati-recruitment-2026-apply-online-for-project-nurse-i-project-techn/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-online-for-project-nurse-i-project-techn/"
     }
   ],
   "critical_unfixable": 0,
@@ -2424,5 +2423,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 49.1
+  "duration_sec": 41.9
 }
