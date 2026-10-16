@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-10-15T13:34:22.967243+00:00",
+  "timestamp": "2026-10-16T02:31:32.487446+00:00",
   "mode": "changed-only",
   "dry_run": false,
   "files_scanned": 13007,
   "issues_found_by_check": {
     "jobposting_schema": 300,
+    "expired_job": 34,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 112,
+  "issues_auto_fixed": 146,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1487,6 +1488,18 @@
       "reason": "page on disk not in any sitemap: /jobs/actrec-emergency-medicine-physician-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/actrec-medical-officer-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/actrec-medical-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/actrec-project-research-scientist-i-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/actrec-project-research-scientist-i-recruitment-2026-apply-online/"
+    },
+    {
       "file": "jobs/actrec-recruitment-2026-apply-online-for-medical-physicist-scientific-officer/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1667,6 +1680,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-bhopal-program-support-associate-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/aiims-bhopal-project-associate-ii-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-bhopal-project-associate-ii-recruitment-2026-apply-online/"
+    },
+    {
       "file": "jobs/aiims-bhopal-project-technical-support-ii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -1767,6 +1786,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-recruitment-2026-apply-offline-for-61-group-a-b-and-c-posts/"
+    },
+    {
+      "file": "jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-guest-faculty-guest-counse/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-guest-faculty-guest-counse/"
     },
     {
       "file": "jobs/aiims-bhubaneswar-recruitment-2026-apply-online-for-research-assistant-laborat/index.html",
@@ -1973,6 +1998,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/"
     },
     {
+      "file": "jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/"
+    },
+    {
       "file": "jobs/aiims-delhi-project-research-scientist-iii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -2139,6 +2170,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-posts/"
+    },
+    {
+      "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-projec/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-technical-support-projec/"
     },
     {
       "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-research-assistant-field-investi/index.html",
@@ -2309,6 +2346,12 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-deoghar-recruitment-2026-apply-offline-for-scientist-field-investigator/"
     },
     {
+      "file": "jobs/aiims-deoghar-recruitment-2026-apply-online-for-69-professor-assistant-profess/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-deoghar-recruitment-2026-apply-online-for-69-professor-assistant-profess/"
+    },
+    {
       "file": "jobs/aiims-deoghar-recruitment-2026-apply-online-for-health-economist-scientist-c-p/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -2319,6 +2362,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-deoghar-recruitment-2026-apply-online-for-lab-technician-scientist-and-m/"
+    },
+    {
+      "file": "jobs/aiims-deoghar-research-associate-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-deoghar-research-associate-recruitment-2026-apply-online/"
     },
     {
       "file": "jobs/aiims-gorakhpur-data-entry-operator-recruitment-2026-apply-online/index.html",
@@ -2367,54 +2416,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-gorakhpur-recruitment-2026-apply-offline-for-child-psychologist-medical-of/"
-    },
-    {
-      "file": "jobs/aiims-gorakhpur-recruitment-2026-walkin-for-project-research-scientist-project/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-gorakhpur-recruitment-2026-walkin-for-project-research-scientist-project/"
-    },
-    {
-      "file": "jobs/aiims-gorakhpur-senior-resident-recruitment-2026-apply-online-for-42-posts/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-gorakhpur-senior-resident-recruitment-2026-apply-online-for-42-posts/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-assistant-professor-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-assistant-professor-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-project-associate-i-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-project-associate-i-recruitment-2026-apply-online/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-project-associate-ijunior-research-fellow-recruitment-2026-appl/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-project-associate-ijunior-research-fellow-recruitment-2026-appl/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-a/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-a/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-p/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-offline-for-project-research-scientist-p/"
-    },
-    {
-      "file": "jobs/aiims-guwahati-recruitment-2026-apply-online-for-project-nurse-i-project-techn/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-guwahati-recruitment-2026-apply-online-for-project-nurse-i-project-techn/"
     }
   ],
   "critical_unfixable": 0,
@@ -2423,5 +2424,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 54.0
+  "duration_sec": 55.3
 }
