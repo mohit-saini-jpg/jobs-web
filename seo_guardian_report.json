@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-10-18T02:53:11.387163+00:00",
+  "timestamp": "2026-10-18T03:51:56.239625+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 13400,
+  "files_scanned": 13406,
   "issues_found_by_check": {
     "jobposting_schema": 307,
     "ai_marker_integrity": 13,
+    "expired_job": 12,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 120,
+  "issues_auto_fixed": 132,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -512,7 +513,7 @@
       "file": "jobs/haryana-open-fresh-10th-12th-online-form/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
-      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 22 END)"
+      "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 23 END)"
     },
     {
       "file": "jobs/haryana-pg-admission-online-form-2026/index.html",
@@ -2417,5 +2418,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               128 urls [ok]"
   ],
-  "duration_sec": 56.5
+  "duration_sec": 60.2
 }
