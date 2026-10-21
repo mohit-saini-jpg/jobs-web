@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-10-21T02:45:29.604533+00:00",
+  "timestamp": "2026-10-21T03:12:57.432296+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 13425,
+  "files_scanned": 13490,
   "issues_found_by_check": {
     "jobposting_schema": 306,
-    "expired_job": 21,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 140,
+  "issues_auto_fixed": 119,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -696,6 +695,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttarakhand/248001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/iitgn-gynaecologist-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/income-tax-pune-sports-quota-recruitment-2026-last-date-extended-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -910,12 +915,6 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nit-kurukshetra-junior-research-fellow-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/nmpa-senior-deputy-secretary-recruitment-2026-apply-online/index.html",
@@ -2416,7 +2415,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               128 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 56.9
+  "duration_sec": 45.7
 }
