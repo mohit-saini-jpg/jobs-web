@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-10-22T02:43:35.212413+00:00",
+  "timestamp": "2026-10-22T03:33:46.975742+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 13490,
+  "files_scanned": 13601,
   "issues_found_by_check": {
-    "jobposting_schema": 305,
-    "expired_job": 33,
+    "jobposting_schema": 308,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 151,
+  "issues_auto_fixed": 115,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -438,6 +437,18 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/esic-medical-college-hospital-faridabad-teaching-faculty-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/esic-medical-college-hospital-varanasi-recruitment-2026-walkin-for-79-teaching-f/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/esic-medical-college-kolkata-recruitment-2026-walkin-for-24-professor-associat/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -840,6 +851,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/macs-ari-scientist-c-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/mdu-dde-ug-pg-admission-online-form-2026/index.html",
       "check": "ai_marker_integrity",
       "severity": "non_critical",
@@ -952,6 +969,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/pcimh-recruitment-2026-apply-online-for-20-mts-office-assistant-and-more-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/pdkv-recruitment-2026-walk-in-for-research-associates-assistant-research-associa/index.html",
@@ -1069,6 +1092,12 @@
     },
     {
       "file": "jobs/rrc-north-western-railway-act-apprentice-recruitment-2026-notification-out-app/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/rrc-north-western-railway-act-apprentice-recruitment-2026-notification-out-apply/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
@@ -1192,6 +1221,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tmc-senior-resident-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/tmc-technician-recruitment-2026-walk-in/index.html",
@@ -2416,7 +2451,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               128 urls [ok]"
   ],
-  "duration_sec": 57.4
+  "duration_sec": 50.0
 }
