@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-10-23 03:32:39",
+  "generated_at": "2026-10-23 04:43:42",
   "sources": {
     "freejobalert_categories": 0,
-    "sarkari_data": 299,
+    "sarkari_data": 298,
     "education_jobs": 1310,
     "state_jobs": 0,
     "freejobalert_unified": 1142
   },
-  "total_records": 1609,
+  "total_records": 1608,
   "freejobalert_categories": {},
   "sarkari_data": {
-    "scraped_at": "2026-10-22 15:07:53",
+    "scraped_at": "2026-10-23 10:10:40",
     "total": 301,
     "summary": {
       "sarkariresultshine_offline_jobs_top30": 30,
       "sarkariresultshine_latest_jobs_top100": 100,
       "sarkariresult_categories": {
-        "SR_Answer_Key": 20,
         "SR_Latest_Jobs": 76,
         "SR_Result": 25,
+        "SR_Answer_Key": 20,
         "SR_Admit_Card": 25
       },
       "sarkariresult_total": 146,
@@ -38,6 +38,125 @@
       "ADMISSIONS": 8
     },
     "jobs": [
+      {
+        "category": "SR_Latest_Jobs",
+        "title": "Indian Railway NWR Region RRC Jaipur Act Apprentices Notification 2026 Apply Online for 2008 Post",
+        "postDate": "07/10/2026",
+        "organization": "NWR",
+        "totalPost": "2008",
+        "shortInfo": "North Western Railway NWR Railway Recruitment Cell RRC NWR Jaipur Region has released the detailed notification of Act Apprentices 2008 posts whose advertisement 2026. Candidates who have placed in various Act Apprentices posts in RRC Jaipur NWR Region information of notification. Interested eligible candidates can apply online from 07 October 2026 to 06 November 2026. In this Railway Jaipur Recruitment 2026, read the advertisement of Railway Jaipur Apprentices for eligibility, trade information, category wise post details, selection procedure, pay scale, training time and other information",
+        "importantDates": {
+          "applicationBegin": "Soon",
+          "lastDateApplyOnline": "06/11/2026",
+          "lastDatePayFee": "06/11/2026",
+          "examDate": "06/11/2026"
+        },
+        "applicationFee": {
+          "general": "100",
+          "sc": "0",
+          "female": "0",
+          "paymentMode": "E Challan / Debit Card / Credit Card / Net Banking",
+          "genObcEws": "100",
+          "scStPh": "0",
+          "allCategoryFemale": "0"
+        },
+        "ageLimit": {
+          "minAge": "15",
+          "maxAge": "24",
+          "ageAsOnDate": "06/11/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "RRC NWR Jaipur Various Trade Apprentices",
+            "totalPost": "2008",
+            "eligibility": "Class 10 High School / Matric with ITI Certificate in Related Trade. for Trade Wise Eligibility Details Read the Notification.",
+            "tableHeading": "Railway NWR Jaipur Apprentice 2026 : Vacancy Details Total : 2008 Post"
+          },
+          {
+            "postName": "RRC NWR Jaipur Apprentices",
+            "totalPost": "2008",
+            "categoryWise": {
+              "UR": "845",
+              "OBC": "543",
+              "EWS": "182",
+              "SC": "295",
+              "ST": "143"
+            },
+            "tableHeading": "Railway NWR Jaipur Apprentices 2026: Category Wise Vacancy Details"
+          }
+        ],
+        "eligibilitySection": [
+          {
+            "heading": "RRC NWR Jaipur Apprentice Eligibility 2026",
+            "items": [
+              "RRC NWR Jaipur Apprentice Eligibility 2026"
+            ]
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Railway RRC NWR Jaipur Apprentices Online Form 2026",
+            "content": "North Western Railway, Railway Recruitment Cell RRC North Western Railway NWR Jaipur Act. Apprentices Notification 2026 Recruitment for Trade Apprentice Post Candidate Can Apply Between 07/10/2026 to 06/11/2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in RRC North Western Railway NWR Jaipur Apprentice Recruitment 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Apply Online",
+            "url": "https://www.rrcjaipur.in/"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/10/1005_12061494.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "North Western Railway, Railway Recruitment Cell RRC North Western Railway NWR Jaipur Act. Apprentices Notification 2026 Recruitment for Trade Apprentice Post Candidate Can Apply Between 07/10/2026 to 06/11/2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in RRC North Western Railway NWR Jaipur Apprentice Recruitment 2026",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ],
+          "soon": "Application Begin"
+        },
+        "faq": [
+          {
+            "question": "When did the RRC North Western Railway NWR Jaipur Apprentice Online Application Process Start?",
+            "answer": "The online application process started on 07 October 2026."
+          },
+          {
+            "question": "How many vacancies are available in RRC North Western Railway NWR Jaipur Apprentice Recruitment ?",
+            "answer": "According to the notification issued by RRC North Western Railway NWR Jaipur Apprentice, there are 2008 Post for North Western Railway Apprentice Job."
+          },
+          {
+            "question": "What is the Salary RRC North Western Railway NWR Jaipur Apprentice 2026 ?",
+            "answer": "The detailed salary and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for RRC North Western Railway NWR Jaipur Apprentice ?",
+            "answer": "The last date to apply online is 06 November 2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 06 November 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/nwr-rrc-jaipur-apprentices-04-2026/",
+          "scrapedAt": "2026-10-22T15:08:54",
+          "pageTitle": "RRC Jaipur NWR Apprentices Online Form 2026 for 2008 Post",
+          "detectedCategory": "SR_Latest_Jobs",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-07T19:45:00+05:30",
+          "modifiedTime": "2026-10-07T19:45:03+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 32
+        },
+        "_last_checked": "2026-10-22T09:38:54+00:00"
+      },
       {
         "category": "SR_Latest_Jobs",
         "title": "BHEL Artisan Various Trade Recruitment 2026 for 660 Post Apply Online",
@@ -5558,125 +5677,6 @@
           "homepageSerial": 31
         },
         "_last_checked": "2026-10-22T09:38:46+00:00"
-      },
-      {
-        "category": "SR_Latest_Jobs",
-        "title": "Indian Railway NWR Region RRC Jaipur Act Apprentices Notification 2026 Apply Online for 2008 Post",
-        "postDate": "07/10/2026",
-        "organization": "NWR",
-        "totalPost": "2008",
-        "shortInfo": "North Western Railway NWR Railway Recruitment Cell RRC NWR Jaipur Region has released the detailed notification of Act Apprentices 2008 posts whose advertisement 2026. Candidates who have placed in various Act Apprentices posts in RRC Jaipur NWR Region information of notification. Interested eligible candidates can apply online from 07 October 2026 to 06 November 2026. In this Railway Jaipur Recruitment 2026, read the advertisement of Railway Jaipur Apprentices for eligibility, trade information, category wise post details, selection procedure, pay scale, training time and other information",
-        "importantDates": {
-          "applicationBegin": "Soon",
-          "lastDateApplyOnline": "06/11/2026",
-          "lastDatePayFee": "06/11/2026",
-          "examDate": "06/11/2026"
-        },
-        "applicationFee": {
-          "general": "100",
-          "sc": "0",
-          "female": "0",
-          "paymentMode": "E Challan / Debit Card / Credit Card / Net Banking",
-          "genObcEws": "100",
-          "scStPh": "0",
-          "allCategoryFemale": "0"
-        },
-        "ageLimit": {
-          "minAge": "15",
-          "maxAge": "24",
-          "ageAsOnDate": "06/11/2026"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "RRC NWR Jaipur Various Trade Apprentices",
-            "totalPost": "2008",
-            "eligibility": "Class 10 High School / Matric with ITI Certificate in Related Trade. for Trade Wise Eligibility Details Read the Notification.",
-            "tableHeading": "Railway NWR Jaipur Apprentice 2026 : Vacancy Details Total : 2008 Post"
-          },
-          {
-            "postName": "RRC NWR Jaipur Apprentices",
-            "totalPost": "2008",
-            "categoryWise": {
-              "UR": "845",
-              "OBC": "543",
-              "EWS": "182",
-              "SC": "295",
-              "ST": "143"
-            },
-            "tableHeading": "Railway NWR Jaipur Apprentices 2026: Category Wise Vacancy Details"
-          }
-        ],
-        "eligibilitySection": [
-          {
-            "heading": "RRC NWR Jaipur Apprentice Eligibility 2026",
-            "items": [
-              "RRC NWR Jaipur Apprentice Eligibility 2026"
-            ]
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Railway RRC NWR Jaipur Apprentices Online Form 2026",
-            "content": "North Western Railway, Railway Recruitment Cell RRC North Western Railway NWR Jaipur Act. Apprentices Notification 2026 Recruitment for Trade Apprentice Post Candidate Can Apply Between 07/10/2026 to 06/11/2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in RRC North Western Railway NWR Jaipur Apprentice Recruitment 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Apply Online",
-            "url": "https://www.rrcjaipur.in/"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/10/1005_12061494.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "North Western Railway, Railway Recruitment Cell RRC North Western Railway NWR Jaipur Act. Apprentices Notification 2026 Recruitment for Trade Apprentice Post Candidate Can Apply Between 07/10/2026 to 06/11/2026",
-            "Candidate Read the Notification Before Apply the Recruitment Application Form in RRC North Western Railway NWR Jaipur Apprentice Recruitment 2026",
-            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ],
-          "soon": "Application Begin"
-        },
-        "faq": [
-          {
-            "question": "When did the RRC North Western Railway NWR Jaipur Apprentice Online Application Process Start?",
-            "answer": "The online application process started on 07 October 2026."
-          },
-          {
-            "question": "How many vacancies are available in RRC North Western Railway NWR Jaipur Apprentice Recruitment ?",
-            "answer": "According to the notification issued by RRC North Western Railway NWR Jaipur Apprentice, there are 2008 Post for North Western Railway Apprentice Job."
-          },
-          {
-            "question": "What is the Salary RRC North Western Railway NWR Jaipur Apprentice 2026 ?",
-            "answer": "The detailed salary and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-          },
-          {
-            "question": "What is the last date to apply online for RRC North Western Railway NWR Jaipur Apprentice ?",
-            "answer": "The last date to apply online is 06 November 2026."
-          },
-          {
-            "question": "What is the last date to pay the application fee?",
-            "answer": "Candidates can pay the application fee up to 06 November 2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/nwr-rrc-jaipur-apprentices-04-2026/",
-          "scrapedAt": "2026-10-22T15:08:54",
-          "pageTitle": "RRC Jaipur NWR Apprentices Online Form 2026 for 2008 Post",
-          "detectedCategory": "SR_Latest_Jobs",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-07T19:45:00+05:30",
-          "modifiedTime": "2026-10-07T19:45:03+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 32
-        },
-        "_last_checked": "2026-10-22T09:38:54+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -11723,6 +11723,217 @@
       },
       {
         "category": "SR_Result",
+        "title": "IBPS Specialist Officer (IT, Marketing, Law & Other Post) XVI (16th) Recruitment 2026 Pre Result",
+        "postDate": "15/10/2026",
+        "organization": "IBPS",
+        "totalPost": "1035",
+        "shortInfo": "Institute of Banking Personal Selection (IBPS) has released the Recruitment of Common Recruitment Specialist Officer SO in IT Officer, Agriculture Field Officer, Marketing Officer, Law Officer, Rajbasha Adhikari and Other Post in Participating Banks IBPS SO 16th Notification. Any candidate who is interested in this IBPS Specialist Officer SO XVI recruitment 2026 and fulfills the eligibility can Apply Online from 01/07/2026 to 26/07/2026. For recruitment eligibility, age limit, Post wise Eligibility, selection procedure, syllabus and all other information read the advertisement and then apply",
+        "importantDates": {
+          "applicationBegin": "01/07/2026",
+          "lastDateApplyOnline": "26/07/2026",
+          "lastDatePayFee": "26/07/2026",
+          "examDate": "August 2026",
+          "admitCardDate": "20/08/2026",
+          "resultDate": "15 October 2026"
+        },
+        "applicationFee": {
+          "general": "850",
+          "sc": "175",
+          "paymentMode": "Online / Offline",
+          "generalEwsObc": "850",
+          "scStPh": "175"
+        },
+        "ageLimit": {
+          "minAge": "20",
+          "maxAge": "30",
+          "ageAsOnDate": "01/07/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "IT Officer Scale I",
+            "totalPost": "376",
+            "eligibility": "Bachelor Degree with B Level Certificate OR Engineering Degree Computer Science/ Computer Applications/ Information Technology / Electronics / Electronics & Telecommunications/Electronics & Communication/ Electronics & Instrumentation. OR Master Degree.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Agriculture Field Officer (AFO) Scale I",
+            "totalPost": "370",
+            "eligibility": "Bachelor Degree in Engineering with Agriculture OR Equivalent Subject.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Rajbasha Adhikari",
+            "totalPost": "94",
+            "eligibility": "Master Degree in Hindi with English as a Subject in Degree Level. OR Master Degree in Sanskrit with Hindi and English as a Subject in Degree Level.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Law Officer Scale I",
+            "totalPost": "125",
+            "eligibility": "Bachelor Degree in Law 3 Year OR 5 Year. Enrolled with Bar Council.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "HR / Personal Officer Scale I",
+            "totalPost": "60",
+            "eligibility": "Master Degree / PG Diploma in Personnel Management / Industrial Relations/ HR / HRD/ Social Work / Labour Law.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Marketing Officer (MO) Scale I",
+            "totalPost": "10",
+            "eligibility": "Master Degree / PG Diploma in Marketing / PGDBA / PGDBM/ PGPM/ PGDM",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "IT Officer",
+            "totalPost": "376",
+            "categoryWise": {
+              "UR": "152",
+              "OBC": "104",
+              "EWS": "34",
+              "SC": "29"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Agriculture Field Officer (AFO)",
+            "totalPost": "370",
+            "categoryWise": {
+              "UR": "152",
+              "OBC": "100",
+              "EWS": "36",
+              "SC": "27"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Rajbasha Adhikari",
+            "totalPost": "94",
+            "categoryWise": {
+              "UR": "46",
+              "OBC": "21",
+              "EWS": "08",
+              "SC": "07"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Law Officer",
+            "totalPost": "125",
+            "categoryWise": {
+              "UR": "59",
+              "OBC": "32",
+              "EWS": "11",
+              "SC": "07"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "HR / Personal Officer",
+            "totalPost": "60",
+            "categoryWise": {
+              "UR": "60",
+              "OBC": "15",
+              "EWS": "06",
+              "SC": "03"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Marketing Officer (MO)",
+            "totalPost": "10",
+            "categoryWise": {
+              "UR": "05",
+              "OBC": "01",
+              "EWS": "0",
+              "SC": "01"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill IBPS Specialist Officer-XVI Recruitment Online Form 2026",
+            "content": "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026. | Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Pre Result",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/presta_oct26/login.php?appid=f8a5692529ba20a12e158903a42a917c"
+          },
+          {
+            "label": "Download Admit Card",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/oecla_aug26/login.php?appid=b4efe9284e9d84a16019c7ca6ca9547b"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/"
+          },
+          {
+            "label": "Download Vacancy Increase Notice",
+            "url": "https://www.ibps.in/wp-content/uploads/Annexure-I_Updated_As-on-20.07.2026.pdf"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://www.ibps.in/"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026",
+            "Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ]
+        },
+        "faq": [
+          {
+            "question": "When did the IBPS Specialist Officer-XVI Online Application Process Start?",
+            "answer": "The online application process started on 01 July 2026."
+          },
+          {
+            "question": "What is the Exam Date for IBPS Specialist Officer-XVI 2026?",
+            "answer": "The Examination will be conducted in August 2026."
+          },
+          {
+            "question": "Where can I find the syllabus for the IBPS Specialist Officer-XVI Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for IBPS Specialist Officer-XVI?",
+            "answer": "The last date to apply online is 26 July 2026.."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 26 July 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/ibps-so-16th-june26/",
+          "scrapedAt": "2026-10-16T09:19:19",
+          "pageTitle": "IBPS Specialist Officer SO SPL 16th Pre Result 2026",
+          "detectedCategory": "SR_Result",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-15T18:18:09+05:30",
+          "modifiedTime": "2026-10-15T18:18:12+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 1
+        },
+        "resultUrl": "https://ibpsreg.ibps.in/crpspxvimy26/presta_oct26/login.php?appid=f8a5692529ba20a12e158903a42a917c",
+        "_last_checked": "2026-10-16T03:49:19+00:00"
+      },
+      {
+        "category": "SR_Result",
         "title": "UPSC Combined Defence Service CDS II Recruitment 2026 Result",
         "postDate": "19/10/2026",
         "organization": "UPSC",
@@ -12198,217 +12409,6 @@
         },
         "resultUrl": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagnQ0/TjMEfCjHNjHdrEpv0R",
         "_last_checked": "2026-09-19T07:10:46+00:00"
-      },
-      {
-        "category": "SR_Result",
-        "title": "IBPS Specialist Officer (IT, Marketing, Law & Other Post) XVI (16th) Recruitment 2026 Pre Result",
-        "postDate": "15/10/2026",
-        "organization": "IBPS",
-        "totalPost": "1035",
-        "shortInfo": "Institute of Banking Personal Selection (IBPS) has released the Recruitment of Common Recruitment Specialist Officer SO in IT Officer, Agriculture Field Officer, Marketing Officer, Law Officer, Rajbasha Adhikari and Other Post in Participating Banks IBPS SO 16th Notification. Any candidate who is interested in this IBPS Specialist Officer SO XVI recruitment 2026 and fulfills the eligibility can Apply Online from 01/07/2026 to 26/07/2026. For recruitment eligibility, age limit, Post wise Eligibility, selection procedure, syllabus and all other information read the advertisement and then apply",
-        "importantDates": {
-          "applicationBegin": "01/07/2026",
-          "lastDateApplyOnline": "26/07/2026",
-          "lastDatePayFee": "26/07/2026",
-          "examDate": "August 2026",
-          "admitCardDate": "20/08/2026",
-          "resultDate": "15 October 2026"
-        },
-        "applicationFee": {
-          "general": "850",
-          "sc": "175",
-          "paymentMode": "Online / Offline",
-          "generalEwsObc": "850",
-          "scStPh": "175"
-        },
-        "ageLimit": {
-          "minAge": "20",
-          "maxAge": "30",
-          "ageAsOnDate": "01/07/2026"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "IT Officer Scale I",
-            "totalPost": "376",
-            "eligibility": "Bachelor Degree with B Level Certificate OR Engineering Degree Computer Science/ Computer Applications/ Information Technology / Electronics / Electronics & Telecommunications/Electronics & Communication/ Electronics & Instrumentation. OR Master Degree.",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "Agriculture Field Officer (AFO) Scale I",
-            "totalPost": "370",
-            "eligibility": "Bachelor Degree in Engineering with Agriculture OR Equivalent Subject.",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "Rajbasha Adhikari",
-            "totalPost": "94",
-            "eligibility": "Master Degree in Hindi with English as a Subject in Degree Level. OR Master Degree in Sanskrit with Hindi and English as a Subject in Degree Level.",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "Law Officer Scale I",
-            "totalPost": "125",
-            "eligibility": "Bachelor Degree in Law 3 Year OR 5 Year. Enrolled with Bar Council.",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "HR / Personal Officer Scale I",
-            "totalPost": "60",
-            "eligibility": "Master Degree / PG Diploma in Personnel Management / Industrial Relations/ HR / HRD/ Social Work / Labour Law.",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "Marketing Officer (MO) Scale I",
-            "totalPost": "10",
-            "eligibility": "Master Degree / PG Diploma in Marketing / PGDBA / PGDBM/ PGPM/ PGDM",
-            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
-          },
-          {
-            "postName": "IT Officer",
-            "totalPost": "376",
-            "categoryWise": {
-              "UR": "152",
-              "OBC": "104",
-              "EWS": "34",
-              "SC": "29"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          },
-          {
-            "postName": "Agriculture Field Officer (AFO)",
-            "totalPost": "370",
-            "categoryWise": {
-              "UR": "152",
-              "OBC": "100",
-              "EWS": "36",
-              "SC": "27"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          },
-          {
-            "postName": "Rajbasha Adhikari",
-            "totalPost": "94",
-            "categoryWise": {
-              "UR": "46",
-              "OBC": "21",
-              "EWS": "08",
-              "SC": "07"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          },
-          {
-            "postName": "Law Officer",
-            "totalPost": "125",
-            "categoryWise": {
-              "UR": "59",
-              "OBC": "32",
-              "EWS": "11",
-              "SC": "07"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          },
-          {
-            "postName": "HR / Personal Officer",
-            "totalPost": "60",
-            "categoryWise": {
-              "UR": "60",
-              "OBC": "15",
-              "EWS": "06",
-              "SC": "03"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          },
-          {
-            "postName": "Marketing Officer (MO)",
-            "totalPost": "10",
-            "categoryWise": {
-              "UR": "05",
-              "OBC": "01",
-              "EWS": "0",
-              "SC": "01"
-            },
-            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill IBPS Specialist Officer-XVI Recruitment Online Form 2026",
-            "content": "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026. | Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Pre Result",
-            "url": "https://ibpsreg.ibps.in/crpspxvimy26/presta_oct26/login.php?appid=f8a5692529ba20a12e158903a42a917c"
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://ibpsreg.ibps.in/crpspxvimy26/oecla_aug26/login.php?appid=b4efe9284e9d84a16019c7ca6ca9547b"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://ibpsreg.ibps.in/crpspxvimy26/"
-          },
-          {
-            "label": "Download Vacancy Increase Notice",
-            "url": "https://www.ibps.in/wp-content/uploads/Annexure-I_Updated_As-on-20.07.2026.pdf"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://www.ibps.in/"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026",
-            "Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
-            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ]
-        },
-        "faq": [
-          {
-            "question": "When did the IBPS Specialist Officer-XVI Online Application Process Start?",
-            "answer": "The online application process started on 01 July 2026."
-          },
-          {
-            "question": "What is the Exam Date for IBPS Specialist Officer-XVI 2026?",
-            "answer": "The Examination will be conducted in August 2026."
-          },
-          {
-            "question": "Where can I find the syllabus for the IBPS Specialist Officer-XVI Examination?",
-            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-          },
-          {
-            "question": "What is the last date to apply online for IBPS Specialist Officer-XVI?",
-            "answer": "The last date to apply online is 26 July 2026.."
-          },
-          {
-            "question": "What is the last date to pay the application fee?",
-            "answer": "Candidates can pay the application fee up to 26 July 2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/ibps-so-16th-june26/",
-          "scrapedAt": "2026-10-16T09:19:19",
-          "pageTitle": "IBPS Specialist Officer SO SPL 16th Pre Result 2026",
-          "detectedCategory": "SR_Result",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-15T18:18:09+05:30",
-          "modifiedTime": "2026-10-15T18:18:12+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 1
-        },
-        "resultUrl": "https://ibpsreg.ibps.in/crpspxvimy26/presta_oct26/login.php?appid=f8a5692529ba20a12e158903a42a917c",
-        "_last_checked": "2026-10-16T03:49:19+00:00"
       },
       {
         "category": "SR_Result",
@@ -15965,6 +15965,351 @@
       },
       {
         "category": "SR_Admit_Card",
+        "title": "National Insurance NICL Assistant Recruitment 2026 Pre Result, Phase II Mains Admit Card 2026",
+        "postDate": "22/10/2026",
+        "organization": "NICL",
+        "totalPost": "500",
+        "shortInfo": "National Insurance Company Limited (NICL) has released Assistant Recruitment Notification 2026 Those candidates who are Enrolled in this NICL Assistant Exam can Download Admit Card. Read the NICL Assistant Post notification 2026 for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information",
+        "importantDates": {
+          "applicationBegin": "18/07/2026",
+          "lastDateApplyOnline": "07/08/2026",
+          "examDate": "27/08/2026",
+          "admitCardDate": "20/08/2026",
+          "lastDatePayFee": "07/08/2026",
+          "resultDate": "08/10/2026"
+        },
+        "applicationFee": {
+          "general": "850",
+          "sc": "0",
+          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
+          "scStPh": "0"
+        },
+        "ageLimit": {
+          "minAge": "21",
+          "maxAge": "30",
+          "ageAsOnDate": "01/07/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Assistant",
+            "totalPost": "500",
+            "eligibility": "Bachelor in Any Stream from Any Recognized University in India. More Eligibility Details Read the Notification",
+            "tableHeading": "National Insurance Assistant Recruitment 2026 : Vacancy Details Total : 500 Post"
+          },
+          {
+            "postName": "Assistant",
+            "totalPost": "500",
+            "categoryWise": {
+              "UR": "255",
+              "OBC": "104",
+              "EWS": "38",
+              "SC": "67",
+              "ST": "36"
+            },
+            "tableHeading": "National Insurance NICL Assistant Exam 2026 : Category Wise Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill National Insurance NICL Assistant Online Form 2026",
+            "content": "National Insurance Company Ltd (NICL) Invited For New Application for Assistant 500 Post Recruitment 2026 Candidate Can Apply Online 18 July 2026 to 07 August 2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in NICL Assistant Latest Govt. Post Recruitment 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Phase II Mains Admit Card",
+            "url": "https://ibpsreg.ibps.in/nicljul26/oecla_sep26/login.php?appid=1005dd3fef2776d12dc0eb1dd2d5c320"
+          },
+          {
+            "label": "Download Pre Result",
+            "url": "https://nationalinsurance.nic.co.in/sites/default/files/2026-10/List%20of%20Roll%20Numbers%20of%20Provisionally%20Shortlisted%20Candidates.pdf"
+          },
+          {
+            "label": "Download Admit Card",
+            "url": "https://ibpsreg.ibps.in/nicljul26/oecla_aug26/login.php?appid=a926805370094a107b2689a5bce28ba4"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://ibpsreg.ibps.in/nicljul26/"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://nationalinsurance.nic.co.in/"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/07/NICL_ASSISTANT_SarkariResult.Com_Recuritment_Advertisment-2026-27.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "National Insurance Company Ltd (NICL) Invited For New Application for Assistant 500 Post Recruitment 2026 Candidate Can Apply Online 18 July 2026 to 07 August 2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in NICL Assistant Latest Govt. Post Recruitment 2026",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ]
+        },
+        "faq": [
+          {
+            "question": "When did the National Insurance NICL Assistant Online Application Process Start?",
+            "answer": "The online application process started on 18 July 2026."
+          },
+          {
+            "question": "What is the Exam Date for National Insurance NICL Assistant 2026?",
+            "answer": "The Phase-I & II Examination will be conducted in 27 August to 30 October 2026."
+          },
+          {
+            "question": "Where can I find the syllabus for the National Insurance NICL Assistant Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for National Insurance NICL Assistant Recruitment 2026?",
+            "answer": "The last date to apply online is 07 August 2026.."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 07 August 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/nicl-assistant-july26/",
+          "scrapedAt": "2026-10-23T10:10:46",
+          "pageTitle": "National Insurance NICL Assistant Mains Admit Card 2026 for 500 Post",
+          "detectedCategory": "SR_Admit_Card",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-22T18:35:58+05:30",
+          "modifiedTime": "2026-10-22T18:36:00+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 1
+        },
+        "admitCardUrl": "https://ibpsreg.ibps.in/nicljul26/oecla_sep26/login.php?appid=1005dd3fef2776d12dc0eb1dd2d5c320",
+        "_last_checked": "2026-10-23T04:40:46+00:00"
+      },
+      {
+        "category": "SR_Admit_Card",
+        "title": "IBPS Specialist Officer (IT, Marketing, Law & Other Post) XVI (16th) Recruitment 2026, Pre Score Card, Mains Admit Card",
+        "postDate": "22/10/2026",
+        "organization": "IBPS",
+        "totalPost": "1035",
+        "shortInfo": "Institute of Banking Personal Selection (IBPS) has released the Recruitment of Common Recruitment Specialist Officer SO in IT Officer, Agriculture Field Officer, Marketing Officer, Law Officer, Rajbasha Adhikari and Other Post in Participating Banks IBPS SO 16th Notification. Any candidate who is interested in this IBPS Specialist Officer SO XVI recruitment 2026 and fulfills the eligibility can Apply Online from 01/07/2026 to 26/07/2026. For recruitment eligibility, age limit, Post wise Eligibility, selection procedure, syllabus and all other information read the advertisement and then apply",
+        "importantDates": {
+          "applicationBegin": "01/07/2026",
+          "lastDateApplyOnline": "26/07/2026",
+          "lastDatePayFee": "26/07/2026",
+          "examDate": "August 2026",
+          "admitCardDate": "20/08/2026",
+          "resultDate": "15 October 2026"
+        },
+        "applicationFee": {
+          "general": "850",
+          "sc": "175",
+          "paymentMode": "Online / Offline",
+          "generalEwsObc": "850",
+          "scStPh": "175"
+        },
+        "ageLimit": {
+          "minAge": "20",
+          "maxAge": "30",
+          "ageAsOnDate": "01/07/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "IT Officer Scale I",
+            "totalPost": "376",
+            "eligibility": "Bachelor Degree with B Level Certificate OR Engineering Degree Computer Science/ Computer Applications/ Information Technology / Electronics / Electronics & Telecommunications/Electronics & Communication/ Electronics & Instrumentation. OR Master Degree.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Agriculture Field Officer (AFO) Scale I",
+            "totalPost": "370",
+            "eligibility": "Bachelor Degree in Engineering with Agriculture OR Equivalent Subject.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Rajbasha Adhikari",
+            "totalPost": "94",
+            "eligibility": "Master Degree in Hindi with English as a Subject in Degree Level. OR Master Degree in Sanskrit with Hindi and English as a Subject in Degree Level.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Law Officer Scale I",
+            "totalPost": "125",
+            "eligibility": "Bachelor Degree in Law 3 Year OR 5 Year. Enrolled with Bar Council.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "HR / Personal Officer Scale I",
+            "totalPost": "60",
+            "eligibility": "Master Degree / PG Diploma in Personnel Management / Industrial Relations/ HR / HRD/ Social Work / Labour Law.",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "Marketing Officer (MO) Scale I",
+            "totalPost": "10",
+            "eligibility": "Master Degree / PG Diploma in Marketing / PGDBA / PGDBM/ PGPM/ PGDM",
+            "tableHeading": "IBPS Specialist Officer SO 16th Recruitment 2026 : Vacancy Details Total : 1035 Post"
+          },
+          {
+            "postName": "IT Officer",
+            "totalPost": "376",
+            "categoryWise": {
+              "UR": "152",
+              "OBC": "104",
+              "EWS": "34",
+              "SC": "29"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Agriculture Field Officer (AFO)",
+            "totalPost": "370",
+            "categoryWise": {
+              "UR": "152",
+              "OBC": "100",
+              "EWS": "36",
+              "SC": "27"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Rajbasha Adhikari",
+            "totalPost": "94",
+            "categoryWise": {
+              "UR": "46",
+              "OBC": "21",
+              "EWS": "08",
+              "SC": "07"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Law Officer",
+            "totalPost": "125",
+            "categoryWise": {
+              "UR": "59",
+              "OBC": "32",
+              "EWS": "11",
+              "SC": "07"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "HR / Personal Officer",
+            "totalPost": "60",
+            "categoryWise": {
+              "UR": "60",
+              "OBC": "15",
+              "EWS": "06",
+              "SC": "03"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Marketing Officer (MO)",
+            "totalPost": "10",
+            "categoryWise": {
+              "UR": "05",
+              "OBC": "01",
+              "EWS": "0",
+              "SC": "01"
+            },
+            "tableHeading": "IBPS Specialist Officer-XVI Recruitment 2026 : Category Wise Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill IBPS Specialist Officer-XVI Recruitment Online Form 2026",
+            "content": "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026. | Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Mains Admit Card",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/oecla_oct26/login.php?appid=dfac30f9e85bd1986fb4190e0ef49a00"
+          },
+          {
+            "label": "Download Pre Score Card",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/lscda_oct26/login.php?appid=e7af49a3266e94e74537ed705fb4c8b9"
+          },
+          {
+            "label": "Download Pre Result",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/presta_oct26/login.php?appid=f8a5692529ba20a12e158903a42a917c"
+          },
+          {
+            "label": "Download Admit Card",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/oecla_aug26/login.php?appid=b4efe9284e9d84a16019c7ca6ca9547b"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://ibpsreg.ibps.in/crpspxvimy26/"
+          },
+          {
+            "label": "Download Vacancy Increase Notice",
+            "url": "https://www.ibps.in/wp-content/uploads/Annexure-I_Updated_As-on-20.07.2026.pdf"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://www.ibps.in/"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Institute of Banking and Personal Selection IBPS Are Issued Specialist Officer-XVI Examination 2026. Notification and Invited Online Application Form for the Specialist Officer-XVI Recruitment 2026 Candidate Can Apply Online for 01/07/2026 to 26/07/2026",
+            "Candidate Read the Notification Before Apply the IBPS SO Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ]
+        },
+        "faq": [
+          {
+            "question": "When did the IBPS Specialist Officer-XVI Online Application Process Start?",
+            "answer": "The online application process started on 01 July 2026."
+          },
+          {
+            "question": "What is the Exam Date for IBPS Specialist Officer-XVI 2026?",
+            "answer": "The Examination will be conducted in 01 November 2026."
+          },
+          {
+            "question": "Where can I find the syllabus for the IBPS Specialist Officer-XVI Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for IBPS Specialist Officer-XVI?",
+            "answer": "The last date to apply online is 26 July 2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 26 July 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/ibps-so-16th-june26/",
+          "scrapedAt": "2026-10-23T10:10:47",
+          "pageTitle": "IBPS Specialist Officer SO SPL 16th Mains Admit Card 2026",
+          "detectedCategory": "SR_Admit_Card",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-22T17:53:34+05:30",
+          "modifiedTime": "2026-10-22T17:53:37+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 2
+        },
+        "admitCardUrl": "https://ibpsreg.ibps.in/crpspxvimy26/oecla_oct26/login.php?appid=dfac30f9e85bd1986fb4190e0ef49a00",
+        "_last_checked": "2026-10-23T04:40:47+00:00"
+      },
+      {
+        "category": "SR_Admit_Card",
         "title": "Madhya Pradesh State Service Exam Assistant District Prosecution Officer Recruitment 2026 Admit Card for 107 Post",
         "postDate": "21/10/2026",
         "organization": "MPPSC",
@@ -17264,125 +17609,6 @@
         },
         "admitCardUrl": "https://rrb.digialm.com//EForms/configuredHtml/33244/102815/9hhNyUtYzKG0WENxBk/login.html",
         "_last_checked": "2026-10-22T09:39:16+00:00"
-      },
-      {
-        "category": "SR_Admit_Card",
-        "title": "UP UPSSSC Preliminary Examination Test PET 2026 : New Exam Schedule",
-        "postDate": "25/09/2026",
-        "organization": "UPSSSC",
-        "shortInfo": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) has released Soon Preliminary Examination Test PET Examination Recruitment Notification. Those candidates who are Enrolled in this UPSSSC Preliminary Examination Test PET 2026 can Download Exam Date. Read the notification for UP Preliminary Examination Test PET eligibility, Exam information, Vacancy procedure and all other information",
-        "importantDates": {
-          "applicationBegin": "03/08/2026",
-          "lastDateApplyOnline": "07/09/2026",
-          "lastDatePayFee": "07/09/2026",
-          "formCorrectionDate": "08/09/2026",
-          "examDate": "25,30 October 2026 & 01 November 2026",
-          "admitCardDate": "Before Exam",
-          "resultDate": "As per Schedule",
-          "examCityDate": "Before Exam"
-        },
-        "applicationFee": {
-          "general": "185",
-          "sc": "95",
-          "ph": "25",
-          "paymentMode": "Upi / Debit Card / Credit Card / Net Banking",
-          "generalUrObcEws": "185"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "40",
-          "ageAsOnDate": "01/07/2026"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Pre Examination Test UPSSSC PET 2026 Score Card Valid : 3 Years",
-            "eligibility": "Minimum Class 10 High School Exam in Any Recognized Board OR Any Higher Qualification in Any Recognized University in India. For More Details Read the Notification.",
-            "tableHeading": "UPSSSC PET Exam 2026 : Eligibility Details"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill UPSSSC PET Exam Online Form 2026",
-            "content": "UPSSSC Preliminary Examination Test PET Examination 2026. Candidate can apply online from 03 August 2026 to 07 September 2026. | UPSSSC PET 2026 Score Card Valid : 3 Years. | Candidate Read the Notification Before Apply the Examination Application Form in UPSSSC Preliminary Examination Test PET Examination 2026. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download New Exam Notice",
-            "url": "https://upsssc.gov.in//ViewPdf.aspx?NJbKyTiDxAqQnRYKCqojRTHwngIdnR5KGQXPSU/8zc0="
-          },
-          {
-            "label": "Download Exam Schedule",
-            "url": "https://upsssc.gov.in/ViewPdf.aspx?PA/fJh/lxObOB7cITC5EX8On43KGKg8R7nLWBSVT5Kg="
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://upsssc.gov.in//AllNotifications.aspx"
-          },
-          {
-            "label": "Download Date Extended Notice",
-            "url": "https://upsssc.gov.in//ViewPdf.aspx?LJ0+xev5beONonuJqHYqzalkDoiHjXjUT+IVyXzTJGE="
-          },
-          {
-            "label": "Official Website",
-            "url": "https://upsssc.gov.in/"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/07/upsssc-Pet_2026.pdf"
-          },
-          {
-            "label": "Download Syllabus",
-            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/08/UPSSSC_PET_Syllabus-1-compressed.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "UPSSSC Preliminary Examination Test PET Examination 2026. Candidate can apply online from 03 August 2026 to 07 September 2026",
-            "UPSSSC PET 2026 Score Card Valid : 3 Years",
-            "Candidate Read the Notification Before Apply the Examination Application Form in UPSSSC Preliminary Examination Test PET Examination 2026",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ]
-        },
-        "faq": [
-          {
-            "question": "UPSSSC Preliminary Examination Test PET Examination Online Form 2026 Start Date?",
-            "answer": "The online application process started on 03/08/2026."
-          },
-          {
-            "question": "UPSSSC Preliminary Examination Test PET Examination Exam Date?",
-            "answer": "The Examination will be conducted in 25,30 October 2026 & 01 November 2026"
-          },
-          {
-            "question": "Where can I find the syllabus for the UPSSSC Preliminary Examination Test PET 2026 Examination?",
-            "answer": "The detailed syllabus and examination scheme for the UPSSSC Preliminary Examination Test PET Examination are available in the official notification. Candidates are advised to read the notification carefully for complete syllabus details."
-          },
-          {
-            "question": "UPSSSC Preliminary Examination Test PET Examination Last Date?",
-            "answer": "The last date to apply online is 07/09/2026.."
-          },
-          {
-            "question": "What is the last date to Pay application fee Details?",
-            "answer": "Candidates can pay the application fee up to 07/09/2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-pet-exam-jun26/",
-          "scrapedAt": "2026-10-11T09:17:41",
-          "pageTitle": "UPSSSC PET 2026 Exam Schedule",
-          "detectedCategory": "SR_Admit_Card",
-          "categoryOverridden": false,
-          "publishedTime": "2026-09-25T16:11:21+05:30",
-          "modifiedTime": "2026-09-25T16:11:23+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 17
-        },
-        "_last_checked": "2026-10-11T03:47:41+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -19933,248 +20159,6 @@
         },
         "admitCardUrl": "https://cdn.digialm.com/EForms/configuredHtml/33131/97738/login.html",
         "_last_checked": "2026-09-30T09:55:18+00:00"
-      },
-      {
-        "category": "SR_Admit_Card",
-        "title": "UPPSC Assistant Town Planner ATP Recruitment 2025 : Pre Result, District Information Slip (Exam City) 2026",
-        "postDate": "28/09/2026",
-        "organization": "UPPSC",
-        "totalPost": "08",
-        "shortInfo": "Uttar Pradesh Public Service Commission UPPSC has released the ATP Examination 2025 Notification. Those candidates who are Enrolled in this UPPSC Assistant Town Planner Recruitment 2025 Exam can Download Result. Read the notification for UPPSC 2025 Exam, eligibility, Subject Details information, Document Required, age limit, How to Apply and all other information",
-        "importantDates": {
-          "applicationBegin": "03/11/2025",
-          "lastDateApplyOnline": "03/12/2025",
-          "lastDatePayFee": "03/12/2025",
-          "formCorrectionDate": "10/12/2025",
-          "examDate": "07/07/2026",
-          "admitCardDate": "29/07/2026",
-          "answerKeyDate": "09/07/2026",
-          "resultDate": "09/09/2026",
-          "examCityDate": "28/09/2026"
-        },
-        "applicationFee": {
-          "general": "125",
-          "sc": "65",
-          "ph": "25",
-          "paymentMode": "Debit Card / Credit Card / Net Banking / E Challan / Online",
-          "phCandidates": "25"
-        },
-        "ageLimit": {
-          "minAge": "21",
-          "maxAge": "40",
-          "ageAsOnDate": "01/07/2025"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Assistant Town Planner",
-            "totalPost": "08",
-            "eligibility": "Bachelor Degree OR PG Diploma in T & C Planning from any recognized institution. OR Associate Membership of any of the following institutions. (A) Institute of planners (India). (B) American institute of town planners. (C) Institute of Town Planners (London). OR Qualifications equivalent for membership of institute of Town planners (India) or London or America. For More Eligibility Details Read the Notification",
-            "tableHeading": "UPPSC Asst Town Planner Recruitment 2025 : Vacancy Details Total : 08 Post"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to UPPSC Assistant Town Planner Online Form 2025",
-            "content": "Uttar Pradesh Public Service Commission UPPSC Are Issued Assistant Town Planner Recruitment Notification 2025 and Invited Online Application Form for the UPPSC | Uttar Pradesh Public Service Commission Uttar Pradesh Public Service Commission UPPSC Are Issued Assistant Town Planner Recruitment Notification 2025 and Invited Online Application Form for the UPPSC 2025 Recruitment . Candidate Can Apply Between 03/11/2025 to 03/12/2025 | Candidate Read the Notification Before Apply the Recruitment Application Form in UPPSC Apply Online for Pre 2025 . | Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | Take A Print Out of Final Submitted Form.For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Check Mains Exam City Details",
-            "url": "https://uppsc.up.nic.in/CandidatePages/Advertismentwise_DownloadDocument.aspx?inptprmtr=dc"
-          },
-          {
-            "label": "Download Result",
-            "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBaglFjifabMvCvfvuznPEhL/S"
-          },
-          {
-            "label": "Download Answer Key",
-            "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBaglVdAQBMoJOOPb99KWSrhsK"
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://uppsc.up.nic.in/CandidatePages/Advertismentwise_DownloadDocument.aspx?inptprmtr=ac"
-          },
-          {
-            "label": "Download Admit Card Notice",
-            "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagloISrijFpWKLnXqg7fe2pF"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx"
-          },
-          {
-            "label": "For OTR Registration",
-            "url": "https://otr.pariksha.nic.in/"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://uppsc.up.nic.in/OuterPages/View_Enclosure.aspx?ID=747&flag=E&FID=911"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://uppsc.up.nic.in/"
-          },
-          {
-            "label": "Question Paper with Answer Key",
-            "url": "https://doc.sarkariresults.org.in/UPPSC_ATP_Pre_QuestionPaper_with_AnswerKey_SarkariResult_Com.pdf"
-          },
-          {
-            "label": "Hindi",
-            "url": "https://uppsc.up.nic.in/OuterPages/View_Enclosure.aspx?ID=747&flag=H&FID=910"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Uttar Pradesh Public Service Commission UPPSC Are Issued Assistant Town Planner Recruitment Notification 2025 and Invited Online Application Form for the UPPSC",
-            "Uttar Pradesh Public Service Commission Uttar Pradesh Public Service Commission UPPSC Are Issued Assistant Town Planner Recruitment Notification 2025 and Invited Online Application Form for the UPPSC 2025 Recruitment . Candidate Can Apply Between 03/11/2025 to 03/12/2025",
-            "Candidate Read the Notification Before Apply the Recruitment Application Form in UPPSC Apply Online for Pre 2025",
-            "Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "Take A Print Out of Final Submitted Form. admit card, answer key, and result"
-          ]
-        },
-        "faq": [
-          {
-            "question": "When did the UPPSC Assistant Town Planner ATP Recruitment 2025, Online Application Process Start?",
-            "answer": "The online application process started on 03/11/2025."
-          },
-          {
-            "question": "What is the Exam Date for UPPSC Assistant Town Planner ATP Recruitment 2025,?",
-            "answer": "The Exam will be conducted in 07/07/2026."
-          },
-          {
-            "question": "Where can I find the syllabus for the UPPSC Assistant Town Planner ATP Examination?",
-            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-          },
-          {
-            "question": "What is the last date to apply online for UPPSC Assistant Town Planner ATP Recruitment 2025?",
-            "answer": "The last date to apply online is 03/12/2025."
-          },
-          {
-            "question": "What is the last date to pay the application fee?",
-            "answer": "Candidates can pay the application fee up to 03/12/2025."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/uppsc-atp-november25/",
-          "scrapedAt": "2026-09-29T09:24:48",
-          "pageTitle": "UPPSC Assistant Town Planner ATP 2025 Mains Exam City Details 2026",
-          "detectedCategory": "SR_Admit_Card",
-          "categoryOverridden": false,
-          "publishedTime": "2026-09-28T17:52:26+05:30",
-          "modifiedTime": "2026-09-28T17:52:30+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 1
-        },
-        "admitCardUrl": "https://uppsc.up.nic.in/CandidatePages/Advertismentwise_DownloadDocument.aspx?inptprmtr=ac",
-        "_last_checked": "2026-09-29T03:54:48+00:00"
-      },
-      {
-        "category": "SR_Admit_Card",
-        "title": "Chhattisgarh State Eligibility Test SET Admit Card 2026",
-        "postDate": "28/09/2026",
-        "organization": "SET",
-        "shortInfo": "Chhattisgarh Vyapam has released Chhattisgarh State Eligibility Test SET Online Form 2026. Those candidates who are interested in this Chhattisgarh State Eligibility Test SET Online Form can apply online from 23 July 2026 to 17 August 2026. Read the notification for Chhattisgarh State Eligibility Test SET Notification eligibility, post information, selection procedure, Details, age limit, pay scale and all other information",
-        "importantDates": {
-          "applicationBegin": "23/07/2026",
-          "lastDateApplyOnline": "17/08/2026",
-          "lastDatePayFee": "17/08/2026",
-          "formCorrectionDate": "18-20 August 2026",
-          "examDate": "04/10/2026",
-          "admitCardDate": "28/09/2026"
-        },
-        "applicationFee": {
-          "general": "300",
-          "obc": "250",
-          "sc": "200",
-          "paymentMode": "Debit Card / Credit Card / Net Banking",
-          "sGeneralOtherState": "300",
-          "scStPh": "200"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Chhattisgarh State Eligibility Test SET",
-            "subjects": "Hindi, English, Political Science, Economics, Sociology, History, Geography, Physical Science, Mathematics Science, Chemical Science, Life Science, Computer Science and Application, Commerce, Law Sanskrit, Psychology, Physical Education, Library and Information Science, Home Science, Earth, Atmospheric, Ocean and Planetary Sciences, Anthropology, Music, Performing Arts – Dance, Drama, Theatre, Fine Arts and Sculpture, Yoga, Public Administration, Defence and Strategic Studies, Philosophy, Management, Mass Communication & Journalism",
-            "eligibility": "Master Degree Related Subject with 55% Marks . Reserve Category : 50% Marks. More Details Read the Notification.",
-            "tableHeading": "Chhattisgarh State Eligibility Test SET Exam 2026 : Eligibility Details"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill Chhattisgarh State Eligibility Test SET Online Form 2026",
-            "content": "Chhattisgarh Vyapam has Released the Chhattisgarh State Eligibility Test SET Online Form 2026 Notification. Candidate Can Apply Between 23 July 2026 to 17 August 2026. | Candidate Read the Notification Before Apply the Examination Application Form in Chhattisgarh State Eligibility Test SET Online 2026. | Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Examination Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Admit Card",
-            "url": "https://vyapamprofile.cgstate.gov.in/online/"
-          },
-          {
-            "label": "Download Admit Card Notice",
-            "url": "https://vyapamcg.cgstate.gov.in/uploads/pdfs/db6e35f9-6c55-4b88-b2a1-6416fcdc9f66_3874.pdf"
-          },
-          {
-            "label": "Download Revised Exam Notice",
-            "url": "https://vyapamcg.cgstate.gov.in/uploads/pdfs/21ea5781-7f00-4b58-a244-de75c67f5293.pdf"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://vyapamcg.cgstate.gov.in/uploads/pdfs/0830c27d-51d4-4419-b316-4d99bc40f007.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://vyapamcg.cgstate.gov.in/"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Chhattisgarh Vyapam has Released the Chhattisgarh State Eligibility Test SET Online Form 2026 Notification. Candidate Can Apply Between 23 July 2026 to 17 August 2026",
-            "Candidate Read the Notification Before Apply the Examination Application Form in Chhattisgarh State Eligibility Test SET Online 2026",
-            "Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Examination Form – Photo, Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ]
-        },
-        "faq": [
-          {
-            "question": "Chhattisgarh State Eligibility Test SET Online Form Start Date?",
-            "answer": "The online application process started on 23 July 2026."
-          },
-          {
-            "question": "Chhattisgarh State Eligibility Test SET Exam Date?",
-            "answer": "The Examination will be conducted in 04 October 2026."
-          },
-          {
-            "question": "Where can I find the syllabus for the Chhattisgarh State Eligibility Test SET Examination?",
-            "answer": "The detailed syllabus and examination scheme for the Chhattisgarh State Eligibility Test SET Examination are available in the official notification. Candidates are advised to read the notification carefully for complete syllabus details."
-          },
-          {
-            "question": "Chhattisgarh State Eligibility Test SET Examination Last Date?",
-            "answer": "The last date to apply online is 17 August 2026."
-          },
-          {
-            "question": "What is the last date to Update application fee Details?",
-            "answer": "Candidates can pay the application fee up to 17 August 2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/chhattisgarh-set-jul26/",
-          "scrapedAt": "2026-10-06T13:50:04",
-          "pageTitle": "Chhattisgarh State Eligibility Test SET Admit Card 2026",
-          "detectedCategory": "SR_Admit_Card",
-          "categoryOverridden": false,
-          "publishedTime": "2026-09-28T12:27:47+05:30",
-          "modifiedTime": "2026-09-28T12:27:51+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 11
-        },
-        "admitCardUrl": "https://vyapamprofile.cgstate.gov.in/online/",
-        "_last_checked": "2026-10-06T08:20:04+00:00"
       },
       {
         "category": "SR_Answer_Key",
@@ -52022,6 +52006,530 @@
       },
       {
         "category": "UPCOMING_JOBS",
+        "title": "Mumbai DGMA 30 MSA Vacancy Online Form",
+        "slug": "mumbai-dgma-30-msa-vacancy-online-form",
+        "_scraped_from": "",
+        "advt_no": "PER-DGS-1/2026",
+        "department": "Mumbai DGMA",
+        "post_name": "Management Support Associate (MSA)",
+        "total_vacancy": "30",
+        "last_date": "2026-11-12",
+        "application_start": "2026-10-23",
+        "exam_date": "",
+        "interview_date": "",
+        "result_date": "",
+        "admit_card_date": "",
+        "age_limit": "18-35",
+        "salary": "",
+        "qualification": "Any Graduate and Computer Knowledge and English Typing : 35 wpm",
+        "selection_process": "Computer Based Test (CBT), Typing Skill Test, Document Verification, Interview / Functional Proficiency Assessment",
+        "application_mode": "",
+        "fee_general": "",
+        "fee_obc": "",
+        "fee_sc_st": "",
+        "fee_female": "",
+        "fee_payment_mode": "",
+        "job_location": "",
+        "status": "active",
+        "important_links": {
+          "official_website": "https://dgma.gov.in/personnel-branch/vacancy"
+        },
+        "vacancy_details": [
+          {
+            "form_mode": "Online Form",
+            "job_location": "Mumbai (MH)",
+            "total_posts": "30 Posts",
+            "job_type": "Contractual"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Overview",
+            "content": [
+              {
+                "type": "paragraph",
+                "text": "DGMA Management Support Associate Vacancy 2026 : Get complete details about DGMA Management Support Associate (MSA) Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Form Mode",
+                      "links": []
+                    },
+                    {
+                      "text": "Job Location",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Job Type",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "Mumbai (MH)",
+                      "links": []
+                    },
+                    {
+                      "text": "30 Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Contractual",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Directorate General of Maritime Administration, Mumbai Management Support Associate (MSA) Vacancy 2026 Advt. No. : PER-DGS-1/2026 Short Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Important Dates",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Short Notice Out : 21/10/2026 Full Notification : 22/10/2026 Starting Date : 23/10/2026 Last Date : 12/11/2026 11:59 PM Correction Date : 15/11/2026",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Application Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "No Fees For All Candidates",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit : 18-35 Years Age Limit as on : 23/10/2026 The Age Relaxation Extra as per Rules.",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Selection Process",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Computer Based Test (CBT) Typing Skill Test Document Verification Interview / Functional Proficiency Assessment",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Monthly Salary",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Consolidated Remuneration of Rs. 75,000/- Per Month (Inclusive of All Mandatory Deductions Such as EPF, ESI, TDS, Prof. Tax Etc.)",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Examination Cities",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "The Examination Center Shall be Solely Within the Greater Mumbai Metropolitan, Thane & Navi Mumbai Region.",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Important Dates",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Short Notice Out : 21/10/2026",
+                  "Full Notification : 22/10/2026",
+                  "Starting Date : 23/10/2026",
+                  "Last Date : 12/11/2026 11:59 PM",
+                  "Correction Date : 15/11/2026"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Application Fees",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "No Fees For All Candidates"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Age Limit Details",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Age Limit : 18-35 Years",
+                  "Age Limit as on : 23/10/2026",
+                  "The Age Relaxation Extra as per Rules."
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Selection Process",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Computer Based Test (CBT)",
+                  "Typing Skill Test",
+                  "Document Verification",
+                  "Interview / Functional Proficiency Assessment"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Monthly Salary",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Consolidated Remuneration of Rs. 75,000/- Per Month (Inclusive of All Mandatory Deductions Such as EPF, ESI, TDS, Prof. Tax Etc.)"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Examination Cities",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "The Examination Center Shall be Solely Within the Greater Mumbai Metropolitan, Thane & Navi Mumbai Region."
+                ]
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Total Post & Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Post Name",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Post",
+                      "links": []
+                    },
+                    {
+                      "text": "Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Management Support Associate (MSA)",
+                      "links": []
+                    },
+                    {
+                      "text": "30",
+                      "links": []
+                    },
+                    {
+                      "text": "Any Graduate and Computer Knowledge and English Typing : 35 wpm",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Total Post & Qualification",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "CBT Exam Pattern",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Negative Marking : No",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Part",
+                      "links": []
+                    },
+                    {
+                      "text": "Subject",
+                      "links": []
+                    },
+                    {
+                      "text": "Questions",
+                      "links": []
+                    },
+                    {
+                      "text": "Marks",
+                      "links": []
+                    },
+                    {
+                      "text": "Duration",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "I",
+                      "links": []
+                    },
+                    {
+                      "text": "English Language and Comprehension",
+                      "links": []
+                    },
+                    {
+                      "text": "25",
+                      "links": []
+                    },
+                    {
+                      "text": "50",
+                      "links": []
+                    },
+                    {
+                      "text": "90 Minutes",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "II",
+                      "links": []
+                    },
+                    {
+                      "text": "General Intelligence andReasoning",
+                      "links": []
+                    },
+                    {
+                      "text": "25",
+                      "links": []
+                    },
+                    {
+                      "text": "50",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "III",
+                      "links": []
+                    },
+                    {
+                      "text": "Quantitative Aptitude",
+                      "links": []
+                    },
+                    {
+                      "text": "25",
+                      "links": []
+                    },
+                    {
+                      "text": "50",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "IV",
+                      "links": []
+                    },
+                    {
+                      "text": "General and Digital Awareness",
+                      "links": []
+                    },
+                    {
+                      "text": "25",
+                      "links": []
+                    },
+                    {
+                      "text": "50",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Total",
+                      "links": []
+                    },
+                    {
+                      "text": "All Four Sections",
+                      "links": []
+                    },
+                    {
+                      "text": "100",
+                      "links": []
+                    },
+                    {
+                      "text": "200",
+                      "links": []
+                    },
+                    {
+                      "text": "90 Mins",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "CBT Exam Pattern",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Important Related Links",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Source Title",
+                      "links": []
+                    },
+                    {
+                      "text": "Issue Date",
+                      "links": []
+                    },
+                    {
+                      "text": "Source Link",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fill Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "23/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Coming Soon",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Full Notification",
+                      "links": []
+                    },
+                    {
+                      "text": "22/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Short Notification",
+                      "links": []
+                    },
+                    {
+                      "text": "21/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Official Website",
+                      "links": []
+                    },
+                    {
+                      "text": "21/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Visit Now",
+                      "links": [
+                        {
+                          "text": "Visit Now",
+                          "url": "https://dgma.gov.in/personnel-branch/vacancy"
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "extra_fields": {
+          "short_notice_out": "21/10/2026",
+          "full_notification": "22/10/2026",
+          "pm_correction_date": "15/11/2026",
+          "correction_date": "15/11/2026"
+        },
+        "sequence": 1,
+        "_last_checked": "2026-10-23T04:40:50+00:00"
+      },
+      {
+        "category": "UPCOMING_JOBS",
         "title": "SCL Technician, Tech. Asst, AO, Jr. PA Online Form",
         "slug": "scl-technician-tech-asst-ao-jr-pa-online-form",
         "_scraped_from": "",
@@ -52191,7 +52699,7 @@
                   ],
                   [
                     {
-                      "text": "Administrative Officer : Graduation Degree and 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (HR / Personnel Management) with 02 Years Experience. Accounts Officer : Graduation Degree with 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (Finance) with 02 Years Experience. Purchase & Stores Officer : Graduation Degree with 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (Material Management) with 02 Years Experience. Junior Personal Assistant : 12th Passed and Stenography Speed (Dictation : 10 Minutes @ 80 wpm & Transcription : 50 Minutes (English), 65 Minutes (Hindi) on Computer Only) Technical Assistant : First Class 03-Year Diploma in Relevant Engineering with 2 Years Experience. Technician ‘B’ : 10th Passed and ITI (NCVT) in Relevant Trade with 2 Years Experience. For More Post Wise / Trade Wise Qualification Details Read the Full Notification.",
+                      "text": "Administrative Officer : Graduation Degree and 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (HR / Personnel Management) with 02 Years Experience. Accounts Officer : Graduation Degree with 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (Finance) with 02 Years Experience. Purchase & Stores Officer : Graduation Degree with 10 Years Experience OR PG Degree with 05 Years Experience OR MBA (Material Management) with 02 Years Experience. Junior Personal Assistant : 12th Passed and Stenography Speed (Dictation : 10 Minutes @ 80 wpm & Transcription : 50 Minutes (English), 65 Minutes (Hindi) on Computer Only) Technical Assistant : First Class 03-Year Diploma in Relevant Engineering with 2 Years Experience. Technician ‘B’ : 10th Passed and ITI (NCVT) in Relevant Trade with 2 Years Experience. For More Post / Trade Wise Details Read the Full Notification.",
                       "links": []
                     }
                   ]
@@ -52303,7 +52811,7 @@
                   "Junior Personal Assistant : 12th Passed and Stenography Speed (Dictation : 10 Minutes @ 80 wpm & Transcription : 50 Minutes (English), 65 Minutes (Hindi) on Computer Only)",
                   "Technical Assistant : First Class 03-Year Diploma in Relevant Engineering with 2 Years Experience.",
                   "Technician ‘B’ : 10th Passed and ITI (NCVT) in Relevant Trade with 2 Years Experience.",
-                  "For More Post Wise / Trade Wise Qualification Details Read the Full Notification."
+                  "For More Post / Trade Wise Details Read the Full Notification."
                 ]
               },
               {
@@ -52499,15 +53007,15 @@
           "years_experience_junior_personal_assistant": "12",
           "th_passed_and_stenography_speed_dictation": "10 Minutes @ 80",
           "wpm_transcription": "50 Minutes (English), 65 Minutes (",
-          "hindi_on_computer_only_technical_assistant": "First Class 03-Year Diploma in Relevant Engineering with 2 Years Experience. Technician ‘B’ : 10th Passed and ITI (NCVT) in Relevant Trade with 2 Years Experience. For More Post Wise / Trade Wise Qualification Details Read the Full Notification",
+          "hindi_on_computer_only_technical_assistant": "First Class 03-Year Diploma in Relevant Engineering with 2 Years Experience. Technician ‘B’ : 10th Passed and ITI (NCVT) in Relevant Trade with 2 Years Experience. For More Post / Trade Wise Details Read the Full Notification",
           "refund_terms": "The Application Fee will be Refunded to All Female, SC, ST, PH, and ESM Candidates who Appear for the CBT Exam (Processing Fees Rs. 600/- Non Refundable).",
           "accounts_officer": "Max. 35 Years",
           "purchase_stores_officer": "Max. 35 Years",
           "junior_personal_assistant": "Max. 25 Years",
           "technical_assistant": "18-30 Years"
         },
-        "sequence": 1,
-        "_last_checked": "2026-10-22T09:39:24+00:00"
+        "sequence": 2,
+        "_last_checked": "2026-10-23T04:40:51+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -52933,8 +53441,8 @@
           "sports_certificate_havaldar": "10th Class Passed, Sports Certificate",
           "havaldar": "Level-01 (Rs. 18000-56900/-)"
         },
-        "sequence": 2,
-        "_last_checked": "2026-10-22T09:39:25+00:00"
+        "sequence": 3,
+        "_last_checked": "2026-10-23T04:40:51+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53368,8 +53876,8 @@
           "unreserved": "600/",
           "sc_st_ews": "500/"
         },
-        "sequence": 3,
-        "_last_checked": "2026-10-22T09:39:26+00:00"
+        "sequence": 4,
+        "_last_checked": "2026-10-23T04:40:53+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53831,8 +54339,8 @@
           "nil_all_females": "0/- (",
           "all_females": "0/- (Nil)"
         },
-        "sequence": 4,
-        "_last_checked": "2026-10-22T09:39:27+00:00"
+        "sequence": 5,
+        "_last_checked": "2026-10-23T04:40:54+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54206,8 +54714,8 @@
           "gen_obc_ews_fees_refund": "400/",
           "pay_level": "Level 2 and Level 7 (Post Wise)"
         },
-        "sequence": 5,
-        "_last_checked": "2026-10-22T09:39:28+00:00"
+        "sequence": 6,
+        "_last_checked": "2026-10-23T04:40:55+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54587,367 +55095,8 @@
           "general_obc": "R",
           "s_400_will_be_refunded_and_other_candidates": "Rs. 250/- will be refunded to the bank account after appearing in Written Exam"
         },
-        "sequence": 6,
-        "_last_checked": "2026-10-22T09:39:29+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
-        "title": "Mumbai DGMA 30 MSA Vacancy Online Form",
-        "slug": "mumbai-dgma-30-msa-vacancy-online-form",
-        "_scraped_from": "",
-        "advt_no": "",
-        "department": "Mumbai DGMA",
-        "post_name": "Management Support Associate (MSA)",
-        "total_vacancy": "30",
-        "last_date": "2026-11-12",
-        "application_start": "2026-10-23",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "18-35",
-        "salary": "Rs. 75,000/- per month (Consolidated)",
-        "qualification": "Graduation Degree in Any Stream.",
-        "selection_process": "Written Exam, Medical Examination, Document Verification",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "official_website": "https://dgma.gov.in/personnel-branch/vacancy"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Online Form",
-            "job_location": "Mumbai",
-            "total_posts": "30 Posts",
-            "job_type": "Contractual"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "DGMA Management Support Associate Vacancy 2026 : Get complete details about DGMA Management Support Associate (MSA) Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Location",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "Mumbai",
-                      "links": []
-                    },
-                    {
-                      "text": "30 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Contractual",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Directorate General of Maritime Administration, Mumbai Management Support Associate (MSA) Vacancy 2026 Short Details of Advertisement Notification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Short Notice Out : 21/10/2026 Full Notification : 23/10/2026 Starting Date : 23/10/2026 Last Date : 12/11/2026 11:59 PM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Gen / OBC / EWS : Available Soon SC / ST / PH : Available Soon Payment Mode : Online Mode",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 18-35 Years Age Limit as on : 23/10/2026 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process (Tentative)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Written Exam Medical Examination Document Verification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Monthly Salary",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Salary : Rs. 75,000/- per month (Consolidated)",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Short Notice Out : 21/10/2026",
-                  "Full Notification : 23/10/2026",
-                  "Starting Date : 23/10/2026",
-                  "Last Date : 12/11/2026 11:59 PM"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Gen / OBC / EWS : Available Soon",
-                  "SC / ST / PH : Available Soon",
-                  "Payment Mode : Online Mode"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 18-35 Years",
-                  "Age Limit as on : 23/10/2026",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process (Tentative)",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Written Exam",
-                  "Medical Examination",
-                  "Document Verification"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Monthly Salary",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Salary : Rs. 75,000/- per month (Consolidated)"
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Total Post & Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Management Support Associate (MSA)",
-                      "links": []
-                    },
-                    {
-                      "text": "30",
-                      "links": []
-                    },
-                    {
-                      "text": "Graduation Degree in Any Stream.",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Total Post & Qualification",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Short Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "21/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "21/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://dgma.gov.in/personnel-branch/vacancy"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "short_notice_out": "21/10/2026",
-          "full_notification": "23/10/2026",
-          "gen_obc_ews": "Available Soon",
-          "sc_st_ph": "Available Soon"
-        },
         "sequence": 7,
-        "_last_checked": "2026-10-22T09:39:30+00:00"
+        "_last_checked": "2026-10-23T04:40:56+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -55454,7 +55603,7 @@
           "assistant": "Pay Level-04"
         },
         "sequence": 8,
-        "_last_checked": "2026-10-22T09:39:31+00:00"
+        "_last_checked": "2026-10-23T04:40:57+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56180,7 +56329,7 @@
           "bikri_karta": "12th Passed and 03 Years Sales Experience."
         },
         "sequence": 9,
-        "_last_checked": "2026-10-22T09:39:32+00:00"
+        "_last_checked": "2026-10-23T04:40:57+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56645,7 +56794,7 @@
           "ex_servicemen": "750/"
         },
         "sequence": 10,
-        "_last_checked": "2026-10-22T09:39:33+00:00"
+        "_last_checked": "2026-10-23T04:40:59+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57112,7 +57261,7 @@
           "hours_min_qualifying_marks": "50 Marks"
         },
         "sequence": 11,
-        "_last_checked": "2026-10-22T09:39:34+00:00"
+        "_last_checked": "2026-10-23T04:41:00+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57459,7 +57608,7 @@
           "sc_st_obc": "750/"
         },
         "sequence": 12,
-        "_last_checked": "2026-10-22T09:39:34+00:00"
+        "_last_checked": "2026-10-23T04:41:01+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58105,7 +58254,7 @@
           "marks_for_other_candidates": "60% (90 Marks)"
         },
         "sequence": 13,
-        "_last_checked": "2026-10-22T09:39:35+00:00"
+        "_last_checked": "2026-10-23T04:41:03+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58561,7 +58710,7 @@
           "mechanic": "Diploma in Automobile Engineering / Mechanical Engineering from a Recognized Polytechnic Institute."
         },
         "sequence": 14,
-        "_last_checked": "2026-10-22T09:39:36+00:00"
+        "_last_checked": "2026-10-23T04:41:04+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58883,7 +59032,7 @@
           "correction_date": "Upto 04/12/2026"
         },
         "sequence": 15,
-        "_last_checked": "2026-10-22T09:39:38+00:00"
+        "_last_checked": "2026-10-23T04:41:05+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59401,7 +59550,7 @@
           "get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
         },
         "sequence": 16,
-        "_last_checked": "2026-10-22T09:39:39+00:00"
+        "_last_checked": "2026-10-23T04:41:06+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59793,7 +59942,7 @@
           "sc_st_ph": "Avail. Soon"
         },
         "sequence": 17,
-        "_last_checked": "2026-10-22T09:39:40+00:00"
+        "_last_checked": "2026-10-23T04:41:08+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -60093,8 +60242,8 @@
         "extra_fields": {
           "class_12th_additional_subject_fees": "400/"
         },
-        "sequence": 1,
-        "_last_checked": "2026-10-22T09:39:41+00:00"
+        "sequence": 4,
+        "_last_checked": "2026-10-23T04:41:12+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -60535,8 +60684,8 @@
           "apply_date_b_des_for_artisan": "16 Oct 2026 To 31 Jan 2027",
           "marking_scheme": "Each correct answer carries one mark, each incorrect answer deducts 0.25 marks, and no marks are given for unattempted questions."
         },
-        "sequence": 2,
-        "_last_checked": "2026-10-22T09:39:42+00:00"
+        "sequence": 5,
+        "_last_checked": "2026-10-23T04:41:13+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -60900,8 +61049,8 @@
           "e_mode_practical_subject_fees_for_class_12th": "160/",
           "practical_subject_fees_for_class_12th": "160/"
         },
-        "sequence": 3,
-        "_last_checked": "2026-10-22T09:39:43+00:00"
+        "sequence": 6,
+        "_last_checked": "2026-10-23T04:41:14+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61182,7 +61331,7 @@
           "all_india_bar_examination_aibe_xxii": "Bachelor Degree in Law (LLB)"
         },
         "sequence": 14,
-        "_last_checked": "2026-10-22T09:39:54+00:00"
+        "_last_checked": "2026-10-23T04:41:22+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61781,7 +61930,7 @@
           "rpnlup_prayagraj": "IIULER, Goa"
         },
         "sequence": 16,
-        "_last_checked": "2026-10-22T09:39:57+00:00"
+        "_last_checked": "2026-10-23T04:41:25+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62585,7 +62734,7 @@
           "not_declared_11": "59 PM"
         },
         "sequence": 29,
-        "_last_checked": "2026-10-22T09:40:14+00:00"
+        "_last_checked": "2026-10-23T04:41:40+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62621,7 +62770,7 @@
         "sections": [],
         "extra_fields": {},
         "sequence": 30,
-        "_last_checked": "2026-10-22T09:40:15+00:00"
+        "_last_checked": "2026-10-23T04:41:41+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62884,7 +63033,7 @@
           "fees": "Course Wise"
         },
         "sequence": 39,
-        "_last_checked": "2026-10-22T09:40:26+00:00"
+        "_last_checked": "2026-10-23T04:41:49+00:00"
       }
     ]
   },
@@ -775384,10 +775533,10 @@
   "scraper_errors": {},
   "sync_stats": {
     "run_type": "incremental",
-    "last_updated": "education_jobs",
-    "added": 13,
-    "removed": 13,
-    "unchanged": 1297,
-    "synced_at": "2026-10-23 03:32:39"
+    "last_updated": "sarkari_data",
+    "added": 2,
+    "removed": 3,
+    "unchanged": 296,
+    "synced_at": "2026-10-23 04:43:42"
   }
 }
