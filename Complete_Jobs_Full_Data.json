@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-10-24 08:43:14",
+  "generated_at": "2026-10-25 05:02:06",
   "sources": {
     "freejobalert_categories": 0,
-    "sarkari_data": 297,
+    "sarkari_data": 294,
     "education_jobs": 1310,
     "state_jobs": 0,
     "freejobalert_unified": 1142
   },
-  "total_records": 1607,
+  "total_records": 1604,
   "freejobalert_categories": {},
   "sarkari_data": {
-    "scraped_at": "2026-10-24 14:03:59",
-    "total": 299,
+    "scraped_at": "2026-10-25 10:17:28",
+    "total": 296,
     "summary": {
       "sarkariresultshine_offline_jobs_top30": 30,
       "sarkariresultshine_latest_jobs_top100": 100,
       "sarkariresult_categories": {
+        "SR_Answer_Key": 20,
         "SR_Admit_Card": 25,
-        "SR_Latest_Jobs": 76,
         "SR_Result": 25,
-        "SR_Answer_Key": 20
+        "SR_Latest_Jobs": 76
       },
       "sarkariresult_total": 146,
-      "upcoming_jobs": 16,
+      "upcoming_jobs": 13,
       "state_jobs_active": 0,
       "central_jobs_active": 0,
       "admissions_active": 7
@@ -34,14 +34,14 @@
       "SR_Answer_Key": 20,
       "OFFLINE_FORM": 30,
       "LATEST_JOBS NEW": 100,
-      "UPCOMING_JOBS": 16,
+      "UPCOMING_JOBS": 13,
       "ADMISSIONS": 7
     },
     "jobs": [
       {
         "category": "SR_Latest_Jobs",
         "title": "Uttar Pradesh UPESSC UP Trained Graduate Teacher (TGT Teacher) Recruitment 2026 : Apply Online Form 2026 for 17735 Post",
-        "postDate": "23/10/2026",
+        "postDate": "25/10/2026",
         "organization": "UPESSC",
         "totalPost": "17735",
         "shortInfo": "Uttar Pradesh Education Service Selection Commission (UPESSC) has released the Trained Graduate Teacher TGT Advt No 07/2026 Notification. Those Candidates are Interested to the Following Exam Can Apply Online from 24/10/2026 to 23/11/2026 .candidates should read the UP TGT Teacher 2026 information brochure for all the information related to the UP PGT Teacher exam like syllabus, eligibility, age limit, fees, information and other types of information and then apply",
@@ -521,16 +521,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-tgt-07-2026/",
-          "scrapedAt": "2026-10-24T14:04:16",
+          "scrapedAt": "2026-10-25T10:17:46",
           "pageTitle": "UPESSC UP TGT Teacher Online Form 2026 for 17735 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
-          "publishedTime": "2026-10-23T21:23:28+05:30",
-          "modifiedTime": "2026-10-23T21:42:12+05:30",
+          "publishedTime": "2026-10-25T01:28:12+05:30",
+          "modifiedTime": "2026-10-25T01:28:14+05:30",
           "articleSection": "2026",
           "homepageSerial": 1
         },
-        "_last_checked": "2026-10-24T08:34:16+00:00"
+        "_last_checked": "2026-10-25T04:47:46+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -649,7 +649,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-headmaster-09-2026/",
-          "scrapedAt": "2026-10-24T14:04:16",
+          "scrapedAt": "2026-10-25T10:17:46",
           "pageTitle": "UPESSC UP Head Master Online Form 2026 for 1172 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -658,7 +658,7 @@
           "articleSection": "2026",
           "homepageSerial": 2
         },
-        "_last_checked": "2026-10-24T08:34:16+00:00"
+        "_last_checked": "2026-10-25T04:47:46+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -780,7 +780,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/lic-hfl-apprentice-oct26/",
-          "scrapedAt": "2026-10-24T14:04:17",
+          "scrapedAt": "2026-10-25T10:17:47",
           "pageTitle": "LIC HFL Apprentice Online Online Form 2026 for 232 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -789,7 +789,7 @@
           "articleSection": "2026",
           "homepageSerial": 3
         },
-        "_last_checked": "2026-10-24T08:34:17+00:00"
+        "_last_checked": "2026-10-25T04:47:47+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -908,7 +908,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-principal-08-2026/",
-          "scrapedAt": "2026-10-24T14:04:19",
+          "scrapedAt": "2026-10-25T10:17:47",
           "pageTitle": "UPESSC UP Principal Inter Level Online Form 2026 for 1475 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -917,7 +917,7 @@
           "articleSection": "2026",
           "homepageSerial": 4
         },
-        "_last_checked": "2026-10-24T08:34:19+00:00"
+        "_last_checked": "2026-10-25T04:47:47+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1026,7 +1026,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nwr-rrc-jaipur-apprentices-04-2026/",
-          "scrapedAt": "2026-10-24T14:04:20",
+          "scrapedAt": "2026-10-25T10:17:47",
           "pageTitle": "RRC Jaipur NWR Apprentices Online Form 2026 for 2008 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1035,7 +1035,7 @@
           "articleSection": "2026",
           "homepageSerial": 5
         },
-        "_last_checked": "2026-10-24T08:34:20+00:00"
+        "_last_checked": "2026-10-25T04:47:47+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1163,7 +1163,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/bhel-artisan-various-trade-oct26/",
-          "scrapedAt": "2026-10-24T14:04:21",
+          "scrapedAt": "2026-10-25T10:17:48",
           "pageTitle": "BHEL Artisan Various Trade Post Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1172,7 +1172,7 @@
           "articleSection": "2026",
           "homepageSerial": 6
         },
-        "_last_checked": "2026-10-24T08:34:21+00:00"
+        "_last_checked": "2026-10-25T04:47:48+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1296,7 +1296,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-23-exam-2026/",
-          "scrapedAt": "2026-10-24T14:04:21",
+          "scrapedAt": "2026-10-25T10:17:48",
           "pageTitle": "UPSSSC Physical Instructor and Other Post Online Form 2026 for 412 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1305,7 +1305,7 @@
           "articleSection": "2026",
           "homepageSerial": 7
         },
-        "_last_checked": "2026-10-24T08:34:21+00:00"
+        "_last_checked": "2026-10-25T04:47:48+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1403,7 +1403,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rrb-station-master-08-26/",
-          "scrapedAt": "2026-10-24T14:04:22",
+          "scrapedAt": "2026-10-25T10:17:49",
           "pageTitle": "Railway RRB Station Master Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1412,7 +1412,7 @@
           "articleSection": "2026",
           "homepageSerial": 8
         },
-        "_last_checked": "2026-10-24T08:34:22+00:00"
+        "_last_checked": "2026-10-25T04:47:49+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1499,7 +1499,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/sci-court-master-oct26/",
-          "scrapedAt": "2026-10-24T14:04:23",
+          "scrapedAt": "2026-10-25T10:17:49",
           "pageTitle": "Supreme Court of India Court Master Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1508,7 +1508,7 @@
           "articleSection": "2026",
           "homepageSerial": 9
         },
-        "_last_checked": "2026-10-24T08:34:23+00:00"
+        "_last_checked": "2026-10-25T04:47:49+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1742,7 +1742,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/cwc-am-je-oct26/",
-          "scrapedAt": "2026-10-24T14:04:23",
+          "scrapedAt": "2026-10-25T10:17:49",
           "pageTitle": "CWC Assistant Manager and Junior Executive Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1751,7 +1751,7 @@
           "articleSection": "2026",
           "homepageSerial": 11
         },
-        "_last_checked": "2026-10-24T08:34:23+00:00"
+        "_last_checked": "2026-10-25T04:47:49+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -1928,7 +1928,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-lower-pcs-26-exam-oct26/",
-          "scrapedAt": "2026-10-24T14:04:24",
+          "scrapedAt": "2026-10-25T10:17:52",
           "pageTitle": "UPSSSC 10+2 Inter Level Various Post Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -1937,7 +1937,7 @@
           "articleSection": "2026",
           "homepageSerial": 12
         },
-        "_last_checked": "2026-10-24T08:34:24+00:00"
+        "_last_checked": "2026-10-25T04:47:52+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2064,7 +2064,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/mpesb-mpp-constable-driver-oct26/",
-          "scrapedAt": "2026-10-24T14:04:25",
+          "scrapedAt": "2026-10-25T10:17:52",
           "pageTitle": "MPESB MP Police Constable Driver Online Form 2026 for 1000 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2073,7 +2073,7 @@
           "articleSection": "2026",
           "homepageSerial": 13
         },
-        "_last_checked": "2026-10-24T08:34:25+00:00"
+        "_last_checked": "2026-10-25T04:47:52+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2160,7 +2160,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/supreme-court-of-india-jca-oct26/",
-          "scrapedAt": "2026-10-24T14:04:25",
+          "scrapedAt": "2026-10-25T10:17:53",
           "pageTitle": "Supreme Court of India Junior Court Attendant Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2169,7 +2169,7 @@
           "articleSection": "2026",
           "homepageSerial": 14
         },
-        "_last_checked": "2026-10-24T08:34:25+00:00"
+        "_last_checked": "2026-10-25T04:47:53+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2299,7 +2299,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-primary-teacher-05-2026/",
-          "scrapedAt": "2026-10-24T14:04:26",
+          "scrapedAt": "2026-10-25T10:17:55",
           "pageTitle": "UPESSC UP Assistant Teacher Primary Super TET Online Form 2026 for 12405 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2308,7 +2308,7 @@
           "articleSection": "2026",
           "homepageSerial": 15
         },
-        "_last_checked": "2026-10-24T08:34:26+00:00"
+        "_last_checked": "2026-10-25T04:47:55+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2551,7 +2551,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/railway-rrb-ntpc-ug-level-07-2026/",
-          "scrapedAt": "2026-10-24T14:04:27",
+          "scrapedAt": "2026-10-25T10:17:55",
           "pageTitle": "Railway RRB NTPC 10+2 Under Graduate Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2560,7 +2560,7 @@
           "articleSection": "Railway",
           "homepageSerial": 16
         },
-        "_last_checked": "2026-10-24T08:34:27+00:00"
+        "_last_checked": "2026-10-25T04:47:55+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2657,7 +2657,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/army-tes-57th-oct26/",
-          "scrapedAt": "2026-10-24T14:04:28",
+          "scrapedAt": "2026-10-25T10:17:56",
           "pageTitle": "Indian Army 10+2 TES 57 Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2666,7 +2666,7 @@
           "articleSection": "2026",
           "homepageSerial": 17
         },
-        "_last_checked": "2026-10-24T08:34:28+00:00"
+        "_last_checked": "2026-10-25T04:47:56+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -2961,7 +2961,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/bihar/bpsc-tre-4-2026/",
-          "scrapedAt": "2026-10-24T14:04:29",
+          "scrapedAt": "2026-10-25T10:17:57",
           "pageTitle": "Bihar BPSC School Teacher TRE 4 Online Form 2026 for 33320 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -2970,7 +2970,7 @@
           "articleSection": "Bihar",
           "homepageSerial": 18
         },
-        "_last_checked": "2026-10-24T08:34:29+00:00"
+        "_last_checked": "2026-10-25T04:47:57+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3615,7 +3615,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-anganwadi-worker/",
-          "scrapedAt": "2026-10-24T14:04:29",
+          "scrapedAt": "2026-10-25T10:17:57",
           "pageTitle": "UP Anganwadi Bharti Worker Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3624,7 +3624,7 @@
           "articleSection": "2026",
           "homepageSerial": 20
         },
-        "_last_checked": "2026-10-24T08:34:30+00:00"
+        "_last_checked": "2026-10-25T04:47:57+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3715,7 +3715,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/sci-senior-personal-assistant-oct26/",
-          "scrapedAt": "2026-10-24T14:04:30",
+          "scrapedAt": "2026-10-25T10:17:58",
           "pageTitle": "Supreme Court of India Senior Personal Assistant Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3724,7 +3724,7 @@
           "articleSection": "2026",
           "homepageSerial": 21
         },
-        "_last_checked": "2026-10-24T08:34:30+00:00"
+        "_last_checked": "2026-10-25T04:47:58+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -3964,7 +3964,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/delhi-dsssb-advt-no-05-2026/",
-          "scrapedAt": "2026-10-24T14:04:31",
+          "scrapedAt": "2026-10-25T10:17:58",
           "pageTitle": "Delhi DSSSB Sweeper / Safai Karamchari and Chowkida Online Form 2026 Advt. No. 05/2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -3973,7 +3973,7 @@
           "articleSection": "2026",
           "homepageSerial": 23
         },
-        "_last_checked": "2026-10-24T08:34:31+00:00"
+        "_last_checked": "2026-10-25T04:47:58+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4090,7 +4090,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-cje-electrical-adv-25-exam/",
-          "scrapedAt": "2026-10-24T14:04:32",
+          "scrapedAt": "2026-10-25T10:17:59",
           "pageTitle": "UPSSSC Junior Engineer Electrical Online Form 2026 for 380 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4099,7 +4099,7 @@
           "articleSection": "2026",
           "homepageSerial": 24
         },
-        "_last_checked": "2026-10-24T08:34:32+00:00"
+        "_last_checked": "2026-10-25T04:47:59+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4286,7 +4286,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upsssc-junior-engg-adv-24-exam/",
-          "scrapedAt": "2026-10-24T14:04:32",
+          "scrapedAt": "2026-10-25T10:17:59",
           "pageTitle": "UPSSSC Combined Junior Engineer (Mechanical) Online Form 2026 for 1156 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4295,7 +4295,7 @@
           "articleSection": "2026",
           "homepageSerial": 25
         },
-        "_last_checked": "2026-10-24T08:34:32+00:00"
+        "_last_checked": "2026-10-25T04:47:59+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4386,7 +4386,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/nta-ugc-net-december2026/",
-          "scrapedAt": "2026-10-24T14:04:33",
+          "scrapedAt": "2026-10-25T10:18:00",
           "pageTitle": "NTA UGC NET December 2026 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4395,7 +4395,7 @@
           "articleSection": "Railway",
           "homepageSerial": 26
         },
-        "_last_checked": "2026-10-24T08:34:33+00:00"
+        "_last_checked": "2026-10-25T04:48:00+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4482,7 +4482,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/nta-csir-ugc-net-dec2026/",
-          "scrapedAt": "2026-10-24T14:04:34",
+          "scrapedAt": "2026-10-25T10:18:00",
           "pageTitle": "NTA CSIR UGC NET December 2026 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4491,7 +4491,7 @@
           "articleSection": "Railway",
           "homepageSerial": 27
         },
-        "_last_checked": "2026-10-24T08:34:34+00:00"
+        "_last_checked": "2026-10-25T04:48:00+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4614,7 +4614,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/army-tgc-145-sep26/",
-          "scrapedAt": "2026-10-24T14:04:34",
+          "scrapedAt": "2026-10-25T10:18:01",
           "pageTitle": "Army TGC 145 Online Form 2026 for July 2027 Batch",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4623,7 +4623,7 @@
           "articleSection": "2026",
           "homepageSerial": 28
         },
-        "_last_checked": "2026-10-24T08:34:34+00:00"
+        "_last_checked": "2026-10-25T04:48:01+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -4866,7 +4866,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rrb-ntpc-graduate-cen-06-2026/",
-          "scrapedAt": "2026-10-24T14:04:35",
+          "scrapedAt": "2026-10-25T10:18:01",
           "pageTitle": "Railway RRB NTPC Graduate Level Online Form 2026 for 3548 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -4875,7 +4875,7 @@
           "articleSection": "2026",
           "homepageSerial": 29
         },
-        "_last_checked": "2026-10-24T08:34:35+00:00"
+        "_last_checked": "2026-10-25T04:48:01+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5013,7 +5013,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nicl-ao-oct2026/",
-          "scrapedAt": "2026-10-24T14:04:36",
+          "scrapedAt": "2026-10-25T10:18:01",
           "pageTitle": "National Insurance NICL Administrative Officers AO Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5022,7 +5022,7 @@
           "articleSection": "2026",
           "homepageSerial": 30
         },
-        "_last_checked": "2026-10-24T08:34:36+00:00"
+        "_last_checked": "2026-10-25T04:48:01+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5113,7 +5113,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/sci-junior-court-assistant-sep26/",
-          "scrapedAt": "2026-10-24T14:04:37",
+          "scrapedAt": "2026-10-25T10:18:02",
           "pageTitle": "Supreme Court of India Junior Court Assistant Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5122,7 +5122,7 @@
           "articleSection": "2026",
           "homepageSerial": 31
         },
-        "_last_checked": "2026-10-24T08:34:37+00:00"
+        "_last_checked": "2026-10-25T04:48:02+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5284,7 +5284,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/mphc-stenographer-grade-ii-666-exam/",
-          "scrapedAt": "2026-10-24T14:04:38",
+          "scrapedAt": "2026-10-25T10:18:03",
           "pageTitle": "MP High Court MPHC Stenographer and AG III Online Form 2026 for 418 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5293,7 +5293,7 @@
           "articleSection": "2026",
           "homepageSerial": 32
         },
-        "_last_checked": "2026-10-24T08:34:38+00:00"
+        "_last_checked": "2026-10-25T04:48:03+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5442,7 +5442,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/dsssb-various-post-oct26/",
-          "scrapedAt": "2026-10-24T14:04:39",
+          "scrapedAt": "2026-10-25T10:18:03",
           "pageTitle": "Delhi DSSSB Various Post Online Form 2026 Advt. No. 04/2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5451,7 +5451,7 @@
           "articleSection": "2026",
           "homepageSerial": 33
         },
-        "_last_checked": "2026-10-24T08:34:39+00:00"
+        "_last_checked": "2026-10-25T04:48:03+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5545,7 +5545,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-teaching-oct26/",
-          "scrapedAt": "2026-10-24T14:04:39",
+          "scrapedAt": "2026-10-25T10:18:03",
           "pageTitle": "CSJMU Kanpur Teaching Post Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5554,7 +5554,7 @@
           "articleSection": "2026",
           "homepageSerial": 34
         },
-        "_last_checked": "2026-10-24T08:34:39+00:00"
+        "_last_checked": "2026-10-25T04:48:03+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -5763,7 +5763,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ssc-chsl-2026-sep/",
-          "scrapedAt": "2026-10-24T14:04:41",
+          "scrapedAt": "2026-10-25T10:18:06",
           "pageTitle": "SSC 10+2 CHSL Online Form 2026 for 2536 Post",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -5772,7 +5772,7 @@
           "articleSection": "2026",
           "homepageSerial": 37
         },
-        "_last_checked": "2026-10-24T08:34:41+00:00"
+        "_last_checked": "2026-10-25T04:48:06+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6026,7 +6026,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-up-super-tet-2026/",
-          "scrapedAt": "2026-10-24T14:04:42",
+          "scrapedAt": "2026-10-25T10:18:06",
           "pageTitle": "UPESSC UP Super TET Assistant Teacher Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6035,7 +6035,7 @@
           "articleSection": "2026",
           "homepageSerial": 39
         },
-        "_last_checked": "2026-10-24T08:34:42+00:00"
+        "_last_checked": "2026-10-25T04:48:06+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6667,7 +6667,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/upessc-uptgt-uppgt-syllabus/",
-          "scrapedAt": "2026-10-24T14:04:43",
+          "scrapedAt": "2026-10-25T10:18:07",
           "pageTitle": "UPESSC UP TGT",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6676,7 +6676,7 @@
           "articleSection": "2026",
           "homepageSerial": 43
         },
-        "_last_checked": "2026-10-24T08:34:43+00:00"
+        "_last_checked": "2026-10-25T04:48:07+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -6936,7 +6936,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/clat-admission-jul26/",
-          "scrapedAt": "2026-10-24T14:04:44",
+          "scrapedAt": "2026-10-25T10:18:07",
           "pageTitle": "CLAT 2027 Admission Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -6945,7 +6945,7 @@
           "articleSection": "2026",
           "homepageSerial": 45
         },
-        "_last_checked": "2026-10-24T08:34:44+00:00"
+        "_last_checked": "2026-10-25T04:48:07+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -7258,7 +7258,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-graduate-level-july26/",
-          "scrapedAt": "2026-10-24T14:04:45",
+          "scrapedAt": "2026-10-25T10:18:08",
           "pageTitle": "Rajasthan RSSB Graduate Level CET Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -7267,7 +7267,7 @@
           "articleSection": "2026",
           "homepageSerial": 48
         },
-        "_last_checked": "2026-10-24T08:34:45+00:00"
+        "_last_checked": "2026-10-25T04:48:08+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -7454,7 +7454,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rssb-cet-june26/",
-          "scrapedAt": "2026-10-24T14:04:45",
+          "scrapedAt": "2026-10-25T10:18:08",
           "pageTitle": "Rajasthan RSSB 10+2 Senior Secondary Level CET Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
@@ -7463,7 +7463,7 @@
           "articleSection": "2026",
           "homepageSerial": 50
         },
-        "_last_checked": "2026-10-24T08:34:45+00:00"
+        "_last_checked": "2026-10-25T04:48:08+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8240,6 +8240,120 @@
       },
       {
         "category": "SR_Latest_Jobs",
+        "title": "NTA JEEMAIN Admissions 2027 Apply Online for Session I January 2027 Exam",
+        "postDate": "25/10/2026",
+        "organization": "NTA",
+        "shortInfo": "National Testing Agency NTA has released the Joint Entrance Examination JEEMAIN Session I All the candidates who want to apply from 24/10/2026 to 22/11/2026. candidates should read the JEEMAIN 2027 information brochure for all the information related to the entrance exam like syllabus, eligibility, age limit, fees, Course and University List, information and other types of information and then apply",
+        "importantDates": {
+          "applicationBegin": "24/10/2026",
+          "lastDateApplyOnline": "22/11/2026",
+          "formCorrectionDate": "27-29 November 2026",
+          "examDate": "20-28 January 2027",
+          "admitCardDate": "13/01/2027",
+          "lastDatePayFee": "22/11/2026",
+          "examCityDate": "30/12/2026"
+        },
+        "applicationFee": {
+          "general": "1000",
+          "obc": "900",
+          "sc": "500",
+          "paymentMode": "Online / Debit Card / Credit Card / Net Banking / Upi",
+          "generalMale": "1000",
+          "ewsObcNclMale": "900",
+          "generalObcEwsFemale": "800",
+          "scStMale": "500",
+          "female": "500",
+          "rPaper_1_2BothPaperGeneralObcEwsM": "2000"
+        },
+        "eligibilitySection": [
+          {
+            "heading": "NTA JEEMAIN Entrance Test Eligibility 2027",
+            "items": [
+              "NTA JEEMAIN Entrance Test Eligibility 2027"
+            ]
+          }
+        ],
+        "courseDetails": [
+          {
+            "courseName": "BE / B.Tech / B.Arch.",
+            "eligibility": "Passed / Appearing 10+2 (Intermediate) with Physics, Chemistry, Math PCM Stream Exam in Any Recognized Board in India."
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill NTA JEEMAIN Session I Admissions Online Form 2027",
+            "content": "National Testing Agency NTA Conducted National Joint Entrance Exam JEEMAIN Session I BE / B.Tech / B.Arch Courses Admission Test Examination 2027 Online Form Candidate Apply Between 24/10/2026 to 22/11/2026. | Candidate Read the Notification Before Apply the Admissions Application Form in NTA JEEMAIN Session I Latest Admissions 2027. | Kindly Check and Collect the All Document – ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Apply Online",
+            "url": "https://examinationservices.nic.in/JeeMaink2027/root/Home.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBr/RK0fiT9U+NCx0+00pns5"
+          },
+          {
+            "label": "Download Information Brochure",
+            "url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/10/202610241890224107.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://jeemain.nta.nic.in/"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "National Testing Agency NTA Conducted National Joint Entrance Exam JEEMAIN Session I BE / B.Tech / B.Arch Courses Admission Test Examination 2027 Online Form Candidate Apply Between 24/10/2026 to 22/11/2026",
+            "Candidate Read the Notification Before Apply the Admissions Application Form in NTA JEEMAIN Session I Latest Admissions 2027",
+            "Kindly Check and Collect the All Document – ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ],
+          "course_name": "NTA JEEMAIN Entrance Test Eligibility 2027",
+          "be_b_tech_b_arch": "Passed / Appearing 10+2 (Intermediate) with Physics, Chemistry, Math PCM Stream Exam in Any Recognized Board in India.",
+          "rs_500": "With Late Fee Last Date :26/11/2026",
+          "male_1000": "General",
+          "male_900": "EWS / OBC NCL",
+          "male_2000": "General / OBC / EWS"
+        },
+        "faq": [
+          {
+            "question": "When did the NTA JEEMAIN Session I Admissions 2027 Online Application Process Start?",
+            "answer": "The online application process started on 24 October 2026."
+          },
+          {
+            "question": "What is the Exam Date for NTA JEEMAIN Admissions 2027?",
+            "answer": "The Examination will be conducted in 20,21,22,23,24 and 28 January 2027."
+          },
+          {
+            "question": "Where can I find the syllabus for the NTA JEEMAIN Admissions 2027 Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for NTA JEEMAIN Admissions 2027?",
+            "answer": "The last date to apply online is 2211/2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 22/11/2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2027/nta-jeemain-session1-jan27/",
+          "scrapedAt": "2026-10-25T10:18:09",
+          "pageTitle": "NTA JEEMAIN Session I Online Form 2027",
+          "detectedCategory": "SR_Latest_Jobs",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-25T08:15:07+05:30",
+          "modifiedTime": "2026-10-25T08:15:10+05:30",
+          "articleSection": "2027",
+          "homepageSerial": 58
+        },
+        "_last_checked": "2026-10-25T04:48:09+00:00"
+      },
+      {
+        "category": "SR_Latest_Jobs",
         "title": "UP SCHOLARSHIP 2026-2027 Apply Online For Pre Matric, Post Matric, Dashmottar Courses BA, BSC, MSC, BED, BTC & Other UG, PG, Diploma Courses Form 2026",
         "postDate": "13/10/2026",
         "organization": "UP",
@@ -8472,16 +8586,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/nta-niftee-admission/",
-          "scrapedAt": "2026-10-24T14:04:46",
+          "scrapedAt": "2026-10-25T10:18:09",
           "pageTitle": "NTA NIFTEE Admission Online Form 2027",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-10-16T20:54:39+05:30",
           "modifiedTime": "2026-10-16T20:54:42+05:30",
           "articleSection": "2027",
-          "homepageSerial": 59
+          "homepageSerial": 60
         },
-        "_last_checked": "2026-10-24T08:34:46+00:00"
+        "_last_checked": "2026-10-25T04:48:09+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8598,16 +8712,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/gate-2027/",
-          "scrapedAt": "2026-10-24T14:04:47",
+          "scrapedAt": "2026-10-25T10:18:10",
           "pageTitle": "IIT GATE 2027 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-10-15T08:55:44+05:30",
           "modifiedTime": "2026-10-15T08:55:47+05:30",
           "articleSection": "2027",
-          "homepageSerial": 60
+          "homepageSerial": 61
         },
-        "_last_checked": "2026-10-24T08:34:47+00:00"
+        "_last_checked": "2026-10-25T04:48:10+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8696,16 +8810,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/iit-jam-august26/",
-          "scrapedAt": "2026-10-24T14:04:47",
+          "scrapedAt": "2026-10-25T10:18:10",
           "pageTitle": "IIT JAM 2027 Online Form",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-10-15T13:34:44+05:30",
           "modifiedTime": "2026-10-15T13:34:47+05:30",
           "articleSection": "2027",
-          "homepageSerial": 61
+          "homepageSerial": 62
         },
-        "_last_checked": "2026-10-24T08:34:47+00:00"
+        "_last_checked": "2026-10-25T04:48:10+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8878,16 +8992,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/uprtou-ph-d-entrance-exam-sep26/",
-          "scrapedAt": "2026-10-24T14:04:48",
+          "scrapedAt": "2026-10-25T10:18:11",
           "pageTitle": "UPRTOU Ph.D Entrance Exam Admission Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-09-18T10:16:51+05:30",
           "modifiedTime": "2026-09-18T10:16:53+05:30",
           "articleSection": "2026",
-          "homepageSerial": 62
+          "homepageSerial": 63
         },
-        "_last_checked": "2026-10-24T08:34:48+00:00"
+        "_last_checked": "2026-10-25T04:48:11+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -8995,16 +9109,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/iim-cat-jul26/",
-          "scrapedAt": "2026-10-24T14:04:49",
+          "scrapedAt": "2026-10-25T10:18:11",
           "pageTitle": "IIM CAT Admission Online Form 2026 Date Extended",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-09-15T16:27:57+05:30",
           "modifiedTime": "2026-09-15T16:28:00+05:30",
           "articleSection": "2026",
-          "homepageSerial": 63
+          "homepageSerial": 64
         },
-        "_last_checked": "2026-10-24T08:34:49+00:00"
+        "_last_checked": "2026-10-25T04:48:11+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9113,16 +9227,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nta-rimcee-class-8th-sep26/",
-          "scrapedAt": "2026-10-24T14:04:50",
+          "scrapedAt": "2026-10-25T10:18:11",
           "pageTitle": "NTA RIMCEE 2027 Class 8th Admissions Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-09-04T07:34:18+05:30",
           "modifiedTime": "2026-09-04T07:34:21+05:30",
           "articleSection": "2026",
-          "homepageSerial": 65
+          "homepageSerial": 66
         },
-        "_last_checked": "2026-10-24T08:34:50+00:00"
+        "_last_checked": "2026-10-25T04:48:11+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9297,16 +9411,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/aibe-22nd-august26/",
-          "scrapedAt": "2026-10-24T14:04:51",
+          "scrapedAt": "2026-10-25T10:18:12",
           "pageTitle": "All India Bar Exam AIBE 22nd XXII Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-08-22T13:10:19+05:30",
           "modifiedTime": "2026-08-22T13:10:21+05:30",
           "articleSection": "2026",
-          "homepageSerial": 67
+          "homepageSerial": 68
         },
-        "_last_checked": "2026-10-24T08:34:51+00:00"
+        "_last_checked": "2026-10-25T04:48:12+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -9512,16 +9626,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nvs-class-6th-admission-july26/",
-          "scrapedAt": "2026-10-24T14:04:52",
+          "scrapedAt": "2026-10-25T10:18:12",
           "pageTitle": "Jawahar Navodaya Vidyalaya JNV NVS Class 6th Admission Online Form 2027",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-08-07T20:28:00+05:30",
           "modifiedTime": "2026-08-07T20:28:01+05:30",
           "articleSection": "2026",
-          "homepageSerial": 69
+          "homepageSerial": 70
         },
-        "_last_checked": "2026-10-24T08:34:52+00:00"
+        "_last_checked": "2026-10-25T04:48:12+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10522,17 +10636,17 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2021/up-btc-deled-result/",
-          "scrapedAt": "2026-10-24T14:04:53",
+          "scrapedAt": "2026-10-25T10:18:13",
           "pageTitle": "UP DELEd BTC 2018, 2021, 2023 and 2024 Semester Result 2026",
           "detectedCategory": "SR_Result",
           "categoryOverridden": true,
           "publishedTime": "2026-10-24T12:14:44+05:30",
           "modifiedTime": "2026-10-24T12:14:46+05:30",
           "articleSection": "2021",
-          "homepageSerial": 75
+          "homepageSerial": 76
         },
         "resultUrl": "https://updeledinfo.in/June25/checkFourResult",
-        "_last_checked": "2026-10-24T08:34:53+00:00"
+        "_last_checked": "2026-10-25T04:48:13+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10909,16 +11023,16 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/csjmu-kanpur-degree-sep26/",
-          "scrapedAt": "2026-10-24T14:04:54",
+          "scrapedAt": "2026-10-25T10:18:13",
           "pageTitle": "CSJMU Kanpur Degree, Provisional & Migration Certificate Online Form 2026",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-09-06T15:21:29+05:30",
           "modifiedTime": "2026-09-06T15:21:31+05:30",
           "articleSection": "2026",
-          "homepageSerial": 78
+          "homepageSerial": 79
         },
-        "_last_checked": "2026-10-24T08:34:54+00:00"
+        "_last_checked": "2026-10-25T04:48:13+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10978,90 +11092,227 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ccsu-meerut-provisional-certificate/",
-          "scrapedAt": "2026-10-24T14:04:55",
+          "scrapedAt": "2026-10-25T10:18:14",
           "pageTitle": "CCSU Meerut University Provisional & Migration Certificate Download",
           "detectedCategory": "SR_Latest_Jobs",
           "categoryOverridden": false,
           "publishedTime": "2026-08-29T21:58:28+05:30",
           "modifiedTime": "2026-08-29T21:59:22+05:30",
           "articleSection": "2026",
-          "homepageSerial": 79
+          "homepageSerial": 80
         },
-        "_last_checked": "2026-10-24T08:34:55+00:00"
+        "_last_checked": "2026-10-25T04:48:14+00:00"
       },
       {
-        "category": "SR_Latest_Jobs",
-        "title": "PRSU Prayagraj University Provisional Certificate All Course Online Form 2026",
-        "postDate": "29/08/2026",
-        "shortInfo": "Prof. Rajendra Singh (Rajju Bhaiya) University, Prayagraj has made the provisional & migration certificate of all its courses online. Candidates who are in need of Provisional & Migration Certificate, new and old of any session, they can get their Provisional Certificate online immediately by filling a small online form. The information that the candidate will be provided with will be useful in making an informed decision",
+        "category": "SR_Result",
+        "title": "ISRO Various Post Recruitment 2026 Result",
+        "postDate": "24/10/2026",
+        "organization": "ISRO",
+        "totalPost": "244",
+        "shortInfo": "Indian Space Research Organization (ISRO) Centralized Recruitment Board ICRB has released Assistants, Junior Personal Assistants, Upper Division Clerk and Stenographer notification for the recruitment of ISRO 2026. Those Candidates Are Interested to the Following ISRO Various Post Recruitment 2026 Vacancy Can Apply Online from 27/07/2026 to 16/08/2026. See the advertisement for information related to age limit, syllabus, Department wise post, selection procedure, pay scale in ISRO Various Post Recruitment 2026",
         "importantDates": {
-          "prsuPrayagrajProvisionalLinkAvailable": "Already Started",
-          "otherDates": {
-            "prsuPrayagrajProvisionalLinkAvailable": "Already Started",
-            "prsuPrayagrajProvisionalLinkAvailabl": "Already Started"
-          }
+          "applicationBegin": "27/07/2026",
+          "lastDateApplyOnline": "16/08/2026",
+          "lastDatePayFee": "16/08/2026",
+          "examDate": "21/09/2026",
+          "admitCardDate": "10/09/2026",
+          "answerKeyDate": "25/09/2026",
+          "resultDate": "24/10/2026",
+          "skillTestDate": "01/11/2026"
         },
         "applicationFee": {
-          "allCategoryCandidates": "300",
-          "paymentMode": "Online / Offline"
+          "sc": "Full Amount Refunded",
+          "forSinglePostAllCategory": "500",
+          "forDoublePostAllCategory": "1000"
         },
+        "ageLimit": {
+          "minAge": "N/A",
+          "maxAge": "28",
+          "ageAsOnDate": "16/08/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Assistant",
+            "totalPost": "113",
+            "eligibility": "Bachelor Degree in Any Stream with minimum 60% Marks or CGPA 6.32/10 from any recognized University. More Eligibility Details Read the Notification",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Upper Division Clerk",
+            "totalPost": "22",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Assistant (Autonomous Institutions)",
+            "totalPost": "17",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Junior Personal Assistant",
+            "totalPost": "81",
+            "eligibility": "Bachelor Degree in Any Stream with minimum 60% Marks or CGPA 6.32/10 from any recognized University. English Stenography Speed 60 WPM Proficiency in the use of Computer. More Eligibility Details Read the Notification",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Stenographer",
+            "totalPost": "10",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Junior Personal Assistant (Autonomous Institutions)",
+            "totalPost": "01",
+            "tableHeading": "ISRO Various Post Recruitment 2026 : Vacancy Details Total : 244 Post"
+          },
+          {
+            "postName": "Assistant",
+            "totalPost": "113",
+            "categoryWise": {
+              "UR": "47",
+              "OBC": "16",
+              "EWS": "15",
+              "SC": "19",
+              "ST": "16"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Junior Personal Assistant",
+            "totalPost": "81",
+            "categoryWise": {
+              "UR": "50",
+              "OBC": "11",
+              "EWS": "07",
+              "SC": "08",
+              "ST": "05"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Upper Division Clerk",
+            "totalPost": "22",
+            "categoryWise": {
+              "UR": "08",
+              "OBC": "05",
+              "EWS": "03",
+              "SC": "04",
+              "ST": "02"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Stenographer",
+            "totalPost": "10",
+            "categoryWise": {
+              "UR": "08",
+              "OBC": "01",
+              "EWS": "00",
+              "SC": "00",
+              "ST": "01"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Assistant (Autonomous Institutions)",
+            "totalPost": "17",
+            "categoryWise": {
+              "UR": "09",
+              "OBC": "04",
+              "EWS": "01",
+              "SC": "01",
+              "ST": "02"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          },
+          {
+            "postName": "Junior Personal Assistant (Autonomous Institutions)",
+            "totalPost": "01",
+            "categoryWise": {
+              "UR": "01",
+              "OBC": "00",
+              "EWS": "00",
+              "SC": "00",
+              "ST": "00"
+            },
+            "tableHeading": "ISRO Various Post Notification 2026 : Category Wise Vacancy Details"
+          }
+        ],
         "textSections": [
           {
-            "section": "How to Fill PRSU Prayagraj Provisional & Migration Certificate Online Form 2026",
-            "content": "Step 1 : To apply the provisional certificate of PRSU Prayagraj University, the candidate will have to go down in this page of , in the Some Useful Important Link section, the candidate will get the link of Apply Online PRSU Provisional Certificate, click on it. | Step 2 : The candidate has to select his/her examination session as under Example : 2015-16, 2016-17, 2017-18, 2018-19, 2020-21, 2021-22, 2022-23, 2023-24, 2024-25, 2025-26. | Step 3 : The type of course has to be selected such as Under Graduate UG OR Post Graduate PG. | Step 4 : Select Course Type : Regular OR Private. | Step 5 : Now the candidate has to select his course, the course list will also be available there. Some examples: BA, B.Com, B.SC, B.Ed, LLB, LLM, M.A, M.Com, M.Sc, M.Ed & Other Various Courses Are Available at PRSU Prayagraj University. | Step 6 : Year/Semester has to be selected. | Step 7 : The roll number of the medium through which the examination was given in the last year or last semester will have to be entered and submitted. | Step 8 : All the information of the candidate such as candidate’s name, father’s name, candidate’s enrollment number, institute/college name, division and other information"
+            "section": "How to Fill ISRO ICRB Various Post Online Form 2026",
+            "content": "Indian Space Research Organization (ISRO) Are Issued Various Post Examination 2026. Notification and Invited Online Application Form for the ISRO Various Post Recruitment 2026 Candidate Can Apply Online for 27/07/2026 to 16/08/2026. | Candidate Read the Notification Before Apply the ISRO Various Post Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
           }
         ],
         "importantLinks": [
           {
-            "label": "Apply Online (Provision Certificate)",
-            "url": "https://admission.prsuprayagraj.in/Online_PDC_Login.aspx"
+            "label": "Download Result",
+            "url": "https://www.isro.gov.in/ICRB_Recruitment11.html"
           },
           {
-            "label": "Apply Online (Migration Certificate)",
-            "url": "https://admission.prsuprayagraj.in/Online_MigrationLogin.aspx"
+            "label": "Download Answer key",
+            "url": "https://cdn.digialm.com//EForms/configuredHtml/1258/101396//Index.html"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.isro.gov.in/media_isro/pdf/recruitmentNotice/2026/July/Bilingual%20Advertisement_Asst_JPA_UDC_Steno_ICRB_2026_27072026.pdf"
           },
           {
             "label": "Official Website",
-            "url": "https://prsuniv.ac.in/"
+            "url": "https://www.isro.gov.in/"
+          },
+          {
+            "label": "Download Syllabus",
+            "url": "https://doc.sarkariresults.org.in/Microsoft%20Word%20-%20Final%20Advertisement%20Assistant%20JPA%2024%20july%20-%20Bilingual%20Advertisement_Asst_JPA_UDC_Steno_ICRB_2026_27072026.pdf"
           }
         ],
         "additionalData": {
           "howToApply": [
-            "Step 1 : To apply the provisional certificate of PRSU Prayagraj University, the candidate will have to go down in this page of , in the Some Useful Important Link section, the candidate will get the link of Apply Online PRSU Provisional Certificate, click on it",
-            "Step 2 : The candidate has to select his/her examination session as under Example : 2015-16, 2016-17, 2017-18, 2018-19, 2020-21, 2021-22, 2022-23, 2023-24, 2024-25, 2025-26",
-            "Step 3 : The type of course has to be selected such as Under Graduate UG OR Post Graduate PG",
-            "Step 4 : Select Course Type : Regular OR Private",
-            "Step 5 : Now the candidate has to select his course, the course list will also be available there. Some examples: BA, B.Com, B.SC, B.Ed, LLB, LLM, M.A, M.Com, M.Sc, M.Ed & Other Various Courses Are Available at PRSU Prayagraj University",
-            "Step 6 : Year/Semester has to be selected",
-            "Step 7 : The roll number of the medium through which the examination was given in the last year or last semester will have to be entered and submitted",
-            "Step 8 : All the information of the candidate such as candidate’s name, father’s name, candidate’s enrollment number, institute/college name, division and other information will be visible, the candidate has to check all the information. If everything is correct then the button of YES will appear on it, click on it",
-            "Step 9 : After that the candidate has to fill his/her contact details such as mobile number/email ID and complete address. & Submit Form",
-            "Step 10: The candidate will now have to pay Rs.300/- which is the prescribed fee for the provisional certificate, the provisional certificate of the candidate will be generated immediately after making the payment. Now the candidate can save, download and print it",
-            "Note : The validity of the provisional certificate is for 06 months only"
+            "Indian Space Research Organization (ISRO) Are Issued Various Post Examination 2026. Notification and Invited Online Application Form for the ISRO Various Post Recruitment 2026 Candidate Can Apply Online for 27/07/2026 to 16/08/2026",
+            "Candidate Read the Notification Before Apply the ISRO Various Post Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
           ],
-          "already_started": "PRSU Prayagraj Provisional Link Available",
-          "step_2": "The candidate has to select his/her examination session as under Example : 2015-16, 2016-17, 2017-18, 2018-19, 2020-21, 2021-22, 2022-23, 2023-24, 2024-25, 2025-26.",
-          "step_3": "The type of course has to be selected such as Under Graduate UG OR Post Graduate PG.",
-          "step_4": "Select Course Type : Regular OR Private.",
-          "step_5": "Now the candidate has to select his course, the course list will also be available there. Some examples: BA, B.Com, B.SC, B.Ed, LLB, LLM, M.A, M.Com, M.Sc, M.Ed & Other Various Courses Are Available at PRSU Prayagraj University.",
-          "step_6": "Year/Semester has to be selected.",
-          "step_8": "All the information of the candidate such as candidate’s name, father’s name, candidate’s enrollment number, institute/college name, division and other information will be visible, the candidate has to check all the information. If everything is correct then the button of YES will appear on it, click on it.",
-          "step_9": "After that the candidate has to fill his/her contact details such as mobile number/email ID and complete address. & Submit Form",
-          "step_10": "The candidate will now have to pay Rs.300/- which is the prescribed fee for the provisional certificate, the provisional certificate of the candidate will be generated immediately after making the payment. Now the candidate can save, download and print it.",
-          "note": "The validity of the provisional certificate is for 06 months only."
+          "note": "If Candidate Not Appear CBT / Written Exam Fee Will Not Refunded.",
+          "n_a": "Minimum Age"
         },
+        "faq": [
+          {
+            "question": "When did the ISRO Various Post Online Application Process Start?",
+            "answer": "The online application process started on 27 July 2026."
+          },
+          {
+            "question": "What is the Exam Date for ISRO Various Post 2026?",
+            "answer": "The Examination will be conducted in As Per Schedule."
+          },
+          {
+            "question": "Where can I find the syllabus for the ISRO Various Post Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for ISRO Various Post 2026?",
+            "answer": "The last date to apply online is 16 August 2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 16 August 2026."
+          }
+        ],
         "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/prsu-prayagraj-provisional-aug26/",
-          "scrapedAt": "2026-10-24T14:04:56",
-          "pageTitle": "PRSU Prayagraj University Provisional & Migration Certificate Download",
-          "detectedCategory": "SR_Latest_Jobs",
+          "sourceUrl": "https://www.sarkariresult.com/2026/isro-various-post-jul26/",
+          "scrapedAt": "2026-10-25T10:17:44",
+          "pageTitle": "ISRO ICRB Assistant and Other Post Result 2026",
+          "detectedCategory": "SR_Result",
           "categoryOverridden": false,
-          "publishedTime": "2026-08-29T21:38:15+05:30",
-          "modifiedTime": "2026-08-29T21:44:17+05:30",
+          "publishedTime": "2026-10-24T19:01:58+05:30",
+          "modifiedTime": "2026-10-24T19:02:02+05:30",
           "articleSection": "2026",
-          "homepageSerial": 80
+          "homepageSerial": 1
         },
-        "_last_checked": "2026-10-24T08:34:56+00:00"
+        "resultUrl": "https://www.isro.gov.in/ICRB_Recruitment11.html",
+        "_last_checked": "2026-10-25T04:47:44+00:00"
       },
       {
         "category": "SR_Result",
@@ -13821,17 +14072,17 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/delhi/dsssb-latest-result/",
-          "scrapedAt": "2026-10-24T14:04:58",
+          "scrapedAt": "2026-10-25T10:17:44",
           "pageTitle": "DSSSB Latest Result 2026",
           "detectedCategory": "SR_Result",
           "categoryOverridden": false,
           "publishedTime": "2026-10-13T17:49:45+05:30",
           "modifiedTime": "2026-10-13T17:49:48+05:30",
           "articleSection": "Delhi",
-          "homepageSerial": 14
+          "homepageSerial": 15
         },
         "resultUrl": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/universal-tab/382.pdf",
-        "_last_checked": "2026-10-24T08:34:58+00:00"
+        "_last_checked": "2026-10-25T04:47:44+00:00"
       },
       {
         "category": "SR_Result",
@@ -13910,16 +14161,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2027/up-board-exam-2027/",
-          "scrapedAt": "2026-10-24T14:04:59",
+          "scrapedAt": "2026-10-25T10:17:45",
           "pageTitle": "UP Board Time Table 2027 for 10th and 12th Subject Wise Dates",
           "detectedCategory": "SR_Result",
           "categoryOverridden": false,
           "publishedTime": "2026-10-13T06:56:41+05:30",
           "modifiedTime": "2026-10-13T06:56:44+05:30",
           "articleSection": "2027",
-          "homepageSerial": 15
+          "homepageSerial": 16
         },
-        "_last_checked": "2026-10-24T08:34:59+00:00"
+        "_last_checked": "2026-10-25T04:47:45+00:00"
       },
       {
         "category": "SR_Result",
@@ -15223,147 +15474,6 @@
         "_last_checked": "2026-10-09T03:30:52+00:00"
       },
       {
-        "category": "SR_Result",
-        "title": "SSC Multi Tasking Staff MTS & Havaldar Recruitment 2025 Download PET / PST Schedule, Additional Result for 8021 Post",
-        "postDate": "07/10/2026",
-        "organization": "SSC",
-        "totalPost": "8021",
-        "shortInfo": "Staff Selection Commission SSC has released the notification for Multi-Tasking (Non-Technical) Staff and Havaldar (CBIC & CBN) Examination, 2025. Those Candidate Are Enrolled with Vacancy Can Check the Exam Download Result. Before applying, candidates must read the complete advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available",
-        "importantDates": {
-          "applicationBegin": "26/06/2025",
-          "lastDateApplyOnline": "24/07/2025 upto 11 PM",
-          "formCorrectionDate": "04-06 August 2025",
-          "examDate": "04/02/2026",
-          "admitCardDate": "02/02/2026",
-          "lastDatePayFee": "25/07/2025",
-          "slotBooking": "16/01/2026 to 25/01/2026 (11:00 pm)",
-          "examCityDate": "Before Exam",
-          "answerKeyDate": "03/03/2026",
-          "resultDate": "03/08/2026"
-        },
-        "applicationFee": {
-          "general": "100",
-          "sc": "0",
-          "female": "0",
-          "paymentMode": "Debit Card / Credit Card / Net Banking",
-          "allCategoryFemale": "0"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "25",
-          "ageAsOnDate": "01/08/2025",
-          "details": "S Post Maximum Age : 27 Years for Havaldar Post Age Relaxation Extra as per SSC Multi Tasking & Havaldar CBIC & CBN Recruitment Examination Rules 2025. SSC MTS Multi Tasking Staff & Havaldar Recruitment 2025"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Multi-Tasking (Non-Technical) Staff (MTS)",
-            "totalPost": "6810",
-            "eligibility": "Class 10 High School Exam Passed in Any Recognized Board in India.",
-            "tableHeading": "SSC MTS Multi Tasking Staff & Havaldar Recruitment 2025 : Vacancy Details Total : 8021 Post"
-          },
-          {
-            "postName": "Havaldar",
-            "totalPost": "1211",
-            "eligibility": "Class 10 High School Exam Passed in Any Recognized Walking : Male : 1600 Meter in 15 Min. Female : 1 Km in 20 Min. Height : Male : 157.5 CMS | Female : 152 CMS More Details Read the Notification Chest Male : 81-86 CMS",
-            "tableHeading": "SSC MTS Multi Tasking Staff & Havaldar Recruitment 2025 : Vacancy Details Total : 8021 Post"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill SSC Matric Level Multi Tasking MTS & Havaldar Online Form 2025",
-            "content": "SSC OTR Instruction : SSC has started one-time registration on its new website www.ssc.gov.in. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration. | Staff Selection Commission Are Released Matric Level Multi Tasking Staff MTS Non Technical & Havaldar Exam 2025 Candidate Can Apply Between 26/06/2025 to 24/07/2025 | SSC Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white. | SSC Signature Resize : The signature to be uploaded in the SSC online application must be of a specific dimension and its size should also be between 10 to 20 KB. Candidates can set the dimensions of SSC signature online with the Option at Tools website. | Candidate Read the Notification Before Apply the Recruitment Application Form in SSC Apply Online for MTS & Havaldar Recruitment 2025. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Detai"
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Additional Result",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/result_07102026.pdf"
-          },
-          {
-            "label": "Download PET/PST Exam Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_20082026.pdf"
-          },
-          {
-            "label": "Download Result",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/List1_03082026.pdf"
-          },
-          {
-            "label": "Download Cutoff",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/writeup_mts_03082026.pdf"
-          },
-          {
-            "label": "Download Answer Key",
-            "url": "https://ssc.gov.in/login"
-          },
-          {
-            "label": "Download Answer Key Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/writeupMTS2025_03032026.pdf"
-          },
-          {
-            "label": "Exam Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_020126.pdf"
-          },
-          {
-            "label": "Download Vacancy Details",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/tentative_vacancy_09092025.pdf"
-          },
-          {
-            "label": "Download Correction Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_29072025.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://ssc.gov.in/"
-          },
-          {
-            "label": "Cutoff",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/writeup_07102026.pdf"
-          },
-          {
-            "label": "List II",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/List2_03082026.pdf"
-          },
-          {
-            "label": "List III",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/List3_03082026.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "SSC OTR Instruction : SSC has started one-time registration on its new website www.ssc.gov.in. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration",
-            "Staff Selection Commission Are Released Matric Level Multi Tasking Staff MTS Non Technical & Havaldar Exam 2025 Candidate Can Apply Between 26/06/2025 to 24/07/2025",
-            "SSC Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white",
-            "SSC Signature Resize : The signature to be uploaded in the SSC online application must be of a specific dimension and its size should also be between 10 to 20 KB. Candidates can set the dimensions of SSC signature online with the Option at Tools website",
-            "Candidate Read the Notification Before Apply the Recruitment Application Form in SSC Apply Online for MTS & Havaldar Recruitment 2025",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "Take A Print Out of Final Submitted Form"
-          ],
-          "ssc_otr_instruction": "SSC has started one-time registration on its new website www.ssc.gov.in. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration.",
-          "ssc_photo_instruction": "SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white."
-        },
-        "faq": [
-          {
-            "question": "SSC MTS and Havaldar Exam Eligibility",
-            "answer": "Multi-Tasking (Non-Technical) Staff (MTS)"
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-mts-2025/",
-          "scrapedAt": "2026-10-09T09:00:53",
-          "pageTitle": "SSC Multi Tasking MTS, Havaldar 2025 Additional Result 2026",
-          "detectedCategory": "SR_Result",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-07T13:35:49+05:30",
-          "modifiedTime": "2026-10-07T13:35:52+05:30",
-          "articleSection": "SSC",
-          "homepageSerial": 6
-        },
-        "resultUrl": "https://ssc.gov.in/api/attachment/uploads/masterData/Results/result_07102026.pdf",
-        "_last_checked": "2026-10-09T03:30:53+00:00"
-      },
-      {
         "category": "SR_Admit_Card",
         "title": "Bank of Baroda BOB Specialist Officer SO Recruitment 2026 Admit Card for 206 Post",
         "postDate": "24/10/2026",
@@ -15599,7 +15709,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/bank-of-baroda-so-august26/",
-          "scrapedAt": "2026-10-24T14:04:05",
+          "scrapedAt": "2026-10-25T10:17:36",
           "pageTitle": "Bank of Baroda Specialist Officer SO Admit Card 2026 for 206 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -15609,7 +15719,7 @@
           "homepageSerial": 1
         },
         "admitCardUrl": "https://ibpsreg.ibps.in/bobdoct26/oecla_oct26/login.php?appid=f45182b711dcad2d160e2b9de0f01c64",
-        "_last_checked": "2026-10-24T08:34:05+00:00"
+        "_last_checked": "2026-10-25T04:47:36+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -15657,6 +15767,22 @@
             "heading": "Railway RRB ALP Eligibility 2026",
             "items": [
               "Railway RRB ALP Eligibility 2026"
+            ]
+          }
+        ],
+        "dataTables": [
+          {
+            "heading": "RRB ALP Recruitment 2026 : Vacancy Details Total : 11127 Post",
+            "headers": [
+              "Post Name",
+              "Total Post",
+              "Railway RRB ALP Eligibility 2026"
+            ],
+            "rows": [
+              [
+                "How To Check Exam City / Admit Card (Hindi Video)",
+                "Watch Video"
+              ]
             ]
           }
         ],
@@ -15722,17 +15848,17 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/railway/rrb-alp-cen-01-2026/",
-          "scrapedAt": "2026-10-24T14:04:06",
+          "scrapedAt": "2026-10-25T10:17:36",
           "pageTitle": "Railway RRB ALP Exam City / Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
-          "publishedTime": "2026-10-24T09:49:27+05:30",
-          "modifiedTime": "2026-10-24T09:49:30+05:30",
+          "publishedTime": "2026-10-24T15:46:04+05:30",
+          "modifiedTime": "2026-10-24T15:46:06+05:30",
           "articleSection": "Railway",
           "homepageSerial": 2
         },
         "admitCardUrl": "https://rrb.digialm.com/EForms/configuredHtml/33244/102956/cOPXnjiLXCY5nEw5Vt/login.html",
-        "_last_checked": "2026-10-24T08:34:06+00:00"
+        "_last_checked": "2026-10-25T04:47:36+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -16125,7 +16251,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/up-special-tet-exam/",
-          "scrapedAt": "2026-10-24T14:04:07",
+          "scrapedAt": "2026-10-25T10:17:37",
           "pageTitle": "UPESSC UP Special TET Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -16135,7 +16261,7 @@
           "homepageSerial": 4
         },
         "admitCardUrl": "https://apply.upessc.org/login",
-        "_last_checked": "2026-10-24T08:34:07+00:00"
+        "_last_checked": "2026-10-25T04:47:37+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -16299,16 +16425,16 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/ssc-junior-engineer-2026/",
-          "scrapedAt": "2026-10-24T14:04:08",
+          "scrapedAt": "2026-10-25T10:17:38",
           "pageTitle": "SSC Junior Engineer JE Exam City Details 2026 for 1748 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
-          "publishedTime": "2026-10-24T00:33:37+05:30",
-          "modifiedTime": "2026-10-24T00:33:39+05:30",
+          "publishedTime": "2026-10-24T18:13:34+05:30",
+          "modifiedTime": "2026-10-24T18:13:35+05:30",
           "articleSection": "2026",
           "homepageSerial": 5
         },
-        "_last_checked": "2026-10-24T08:34:08+00:00"
+        "_last_checked": "2026-10-25T04:47:38+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -16422,7 +16548,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/bseb-stet-august26/",
-          "scrapedAt": "2026-10-24T14:04:10",
+          "scrapedAt": "2026-10-25T10:17:39",
           "pageTitle": "Bihar Secondary Teacher Eligibility Test BSEB STET Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -16432,7 +16558,7 @@
           "homepageSerial": 7
         },
         "admitCardUrl": "https://stetregistration.cbrt.co.in/",
-        "_last_checked": "2026-10-24T08:34:10+00:00"
+        "_last_checked": "2026-10-25T04:47:39+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -16789,7 +16915,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/railway-rrb-junior-engineer-cen-04-2026/",
-          "scrapedAt": "2026-10-24T14:04:11",
+          "scrapedAt": "2026-10-25T10:17:40",
           "pageTitle": "Railway RRB Junior Engineer JE Admit Card 2026 for 4029 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -16799,7 +16925,7 @@
           "homepageSerial": 8
         },
         "admitCardUrl": "https://rrb.digialm.com//EForms/configuredHtml/33244/102815/9hhNyUtYzKG0WENxBk/login.html",
-        "_last_checked": "2026-10-24T08:34:11+00:00"
+        "_last_checked": "2026-10-25T04:47:40+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -17246,7 +17372,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/mp/mppsc-adpo-2026/",
-          "scrapedAt": "2026-10-24T14:04:11",
+          "scrapedAt": "2026-10-25T10:17:40",
           "pageTitle": "MPPSC ADPO Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -17256,7 +17382,7 @@
           "homepageSerial": 11
         },
         "admitCardUrl": "https://mppsc.mponline.gov.in/Portal/Examinations/MPPSC/2026/AdmitCard/PO26Login.aspx",
-        "_last_checked": "2026-10-24T08:34:11+00:00"
+        "_last_checked": "2026-10-25T04:47:40+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -18084,7 +18210,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/uiic-ao-sep26/",
-          "scrapedAt": "2026-10-24T14:04:12",
+          "scrapedAt": "2026-10-25T10:17:41",
           "pageTitle": "United India Insurance UIIC AO Admit Card 2026 for 225 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -18094,7 +18220,7 @@
           "homepageSerial": 14
         },
         "admitCardUrl": "https://ibpsreg.ibps.in/uiicljul26/oecla_oct26/login.php?appid=ce02324495f4184290ee0e7c5a463df6",
-        "_last_checked": "2026-10-24T08:34:12+00:00"
+        "_last_checked": "2026-10-25T04:47:41+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -18277,7 +18403,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/aai-manager-junior-executive-july26/",
-          "scrapedAt": "2026-10-24T14:04:13",
+          "scrapedAt": "2026-10-25T10:17:42",
           "pageTitle": "AAI Manager, Junior Executive Admit Card 2026 for 389 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -18287,7 +18413,7 @@
           "homepageSerial": 16
         },
         "admitCardUrl": "https://ibpsreg.ibps.in/aaioct25/oecla_sep26/login.php?appid=c29840a936e11a8543bb8d3a80f48ed4",
-        "_last_checked": "2026-10-24T08:34:13+00:00"
+        "_last_checked": "2026-10-25T04:47:42+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -18419,7 +18545,7 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/rajasthan-high-court-july26/",
-          "scrapedAt": "2026-10-24T14:04:13",
+          "scrapedAt": "2026-10-25T10:17:42",
           "pageTitle": "Rajasthan High Court Stenographer Admit Card 2026 for 163 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -18429,7 +18555,7 @@
           "homepageSerial": 17
         },
         "admitCardUrl": "http://103.203.137.249/steno2026/index.php",
-        "_last_checked": "2026-10-24T08:34:13+00:00"
+        "_last_checked": "2026-10-25T04:47:42+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -18885,7 +19011,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-cgl-2026/",
-          "scrapedAt": "2026-10-24T14:04:14",
+          "scrapedAt": "2026-10-25T10:17:43",
           "pageTitle": "SSC Combined Graduate Level CGL Exam City / Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -18895,7 +19021,7 @@
           "homepageSerial": 19
         },
         "admitCardUrl": "https://ssc.gov.in/login",
-        "_last_checked": "2026-10-24T08:34:14+00:00"
+        "_last_checked": "2026-10-25T04:47:43+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -19025,7 +19151,7 @@
         },
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/bihar/bpsc-72-pre-exam-2026/",
-          "scrapedAt": "2026-10-24T14:04:15",
+          "scrapedAt": "2026-10-25T10:17:43",
           "pageTitle": "Bihar BPSC 72 Pre Exam Date 2026 for 1189 Post",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": false,
@@ -19034,7 +19160,7 @@
           "articleSection": "Bihar",
           "homepageSerial": 20
         },
-        "_last_checked": "2026-10-24T08:34:15+00:00"
+        "_last_checked": "2026-10-25T04:47:43+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -51750,849 +51876,6 @@
       },
       {
         "category": "UPCOMING_JOBS",
-        "title": "UPESSC 17735 TGT Teacher Online Form 2026",
-        "slug": "upessc-17735-tgt-teacher-online-form-2026",
-        "_scraped_from": "",
-        "advt_no": "07/2026",
-        "department": "UPESSC",
-        "post_name": "Assistant Teacher – Trained Graduate Teacher (TGT)",
-        "total_vacancy": "17735",
-        "last_date": "2026-11-23",
-        "application_start": "2026-10-23",
-        "exam_date": "2026-12-24",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "Available Soon",
-        "age_limit": "21-62",
-        "salary": "Level-07 (Rs. 44,900-1,42,400/-)",
-        "qualification": "Graduation Degree in Related Subject with B.Ed and UP TET / CTET ( Read Subject wise Details ).",
-        "selection_process": "Written Exam, Medical Examination, Document Verification",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "300",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "official_website": "https://www.upessc.up.gov.in/"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Online Form",
-            "job_location": "Uttar Pradesh",
-            "total_posts": "17735 Posts",
-            "job_type": "Permanent"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "UPESSC TGT Teacher Recruitment 2026 : Get complete details about UPESSC TGT Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Location",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "Uttar Pradesh",
-                      "links": []
-                    },
-                    {
-                      "text": "17735 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Permanent",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Uttar Pradesh Education Service Selection Commission (UPESSC) UPESSC Assistant Teacher (TGT) Recruitment 2026 Advt. No. : 07/2026 Short Details of Notification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Notification Out : 23/10/2026 Starting Date : 24/10/2026 Last Date : 23/11/2026 11:59 PM Correction Date : Upto 26/11/2026 Exam Date : 23-24 December 2026 Admit Card : Available Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Gen / OBC / EWS : 1000/- SC / ST : 500/- PH (Divyang) : 300/- Payment Mode : Online Mode",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 21-62 Years Age Limit as on : 01/07/2026 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Written Exam Medical Examination Document Verification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Pay Scale Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Pay Scale : Level-07 (Rs. 44,900-1,42,400/-)",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Notification Out : 23/10/2026",
-                  "Starting Date : 24/10/2026",
-                  "Last Date : 23/11/2026 11:59 PM",
-                  "Correction Date : Upto 26/11/2026",
-                  "Exam Date : 23-24 December 2026",
-                  "Admit Card : Available Soon"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Gen / OBC / EWS : 1000/",
-                  "SC / ST : 500/",
-                  "PH (Divyang) : 300/",
-                  "Payment Mode : Online Mode"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 21-62 Years",
-                  "Age Limit as on : 01/07/2026",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Written Exam",
-                  "Medical Examination",
-                  "Document Verification"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Pay Scale Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Pay Scale : Level-07 (Rs. 44,900-1,42,400/-)"
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Total Post & Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Assistant Teacher – Trained Graduate Teacher (TGT)",
-                      "links": []
-                    },
-                    {
-                      "text": "17735",
-                      "links": []
-                    },
-                    {
-                      "text": "Graduation Degree in Related Subject with B.Ed and UP TET / CTET ( Read Subject wise Details ).",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Total Post & Qualification",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Subject / Category Wise Vacancies",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Subject / Category Wise Vacancies",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "24/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://www.upessc.up.gov.in/"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "gen_obc_ews": "1000/",
-          "sc_st": "500/",
-          "correction_date": "Upto 26/11/2026"
-        },
-        "sequence": 1,
-        "_last_checked": "2026-10-24T08:35:00+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
-        "title": "ISRO-URSC 61 Technician, Driver Online Form",
-        "slug": "isro-ursc-61-technician-driver-online-form",
-        "_scraped_from": "",
-        "advt_no": "URSC",
-        "department": "ISRO-URSC",
-        "post_name": "Form Mode",
-        "total_vacancy": "61",
-        "last_date": "2026-11-13",
-        "application_start": "2026-10-23",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "18-35",
-        "salary": "",
-        "qualification": "Job Type",
-        "selection_process": "Written Examination, Skill Test / Driving Test (Post Wise), Medical Examination, Document Verification",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "official_website": "https://www.isro.gov.in/Careers.html"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Online Form",
-            "job_location": "Bengaluru",
-            "total_posts": "61 Posts",
-            "job_type": "Read Notice"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "ISRO URSC Technician, Driver Recruitment 2026 : Get complete details about ISRO URSC Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Location",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "Bengaluru",
-                      "links": []
-                    },
-                    {
-                      "text": "61 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Read Notice",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "ISRO-U R Rao Satellite Centre (URSC), Bengaluru (Karnataka) ISRO-URSC Technician, Driver Recruitment 2026 Advt. No. : URSC:04/2026 Short Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Notification Out : 23/10/2026 Starting Date : 24/10/2026 05 PM Last Date : 13/11/2026 11:55 PM Fees Last Date : 13/11/2026",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "General / OBC / EWS : 500/- SC / ST / PH / ESM : 500/- All Female Category : 500/- Payment Mode : Online Mode Refund of Fees After Appear Exam :- General / OBC / EWS : 400/- SC / ST / PH / ESM / Female : 500/",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 18-35 Years Age Limit as on : 13/11/2026 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Written Examination Skill Test / Driving Test (Post Wise) Medical Examination Document Verification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Pay Scale Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician ‘B’ : Level-3 (Rs. 21,700-69,100/-) Light Vehicle Driver ‘A’ : Level-2 (Rs. 19,900-63,200/-) Heavy Vehicle Driver ‘A’ : Level-2 (Rs. 19,900-63,200/-) Staff Car Driver-A : Level-2 (Rs. 19,900-63,200/-)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Wise Qualification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician ‘B’ : 10th Passed with ITI / NTC / NAC in Relevant Trade. Light Vehicle Driver ‘A’ : 10th Passed and Valid LVD License with 03 Years Experience. Heavy Vehicle Driver ‘A’ : 10th Passed and Valid HVD License with 05 Years Experience (3 Years as HVD). Staff Car Driver-A : 10th Class Passed and Valid LMV Licensee with 03 Years Experience.",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Notification Out : 23/10/2026",
-                  "Starting Date : 24/10/2026 05 PM",
-                  "Last Date : 13/11/2026 11:55 PM",
-                  "Fees Last Date : 13/11/2026"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "General / OBC / EWS : 500/",
-                  "SC / ST / PH / ESM : 500/",
-                  "All Female Category : 500/",
-                  "Payment Mode : Online Mode",
-                  "Refund of Fees After Appear Exam",
-                  "General / OBC / EWS : 400/",
-                  "SC / ST / PH / ESM / Female : 500/"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 18-35 Years",
-                  "Age Limit as on : 13/11/2026",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Written Examination",
-                  "Skill Test / Driving Test (Post Wise)",
-                  "Medical Examination",
-                  "Document Verification"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Pay Scale Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Technician ‘B’ : Level-3 (Rs. 21,700-69,100/-)",
-                  "Light Vehicle Driver ‘A’ : Level-2 (Rs. 19,900-63,200/-)",
-                  "Heavy Vehicle Driver ‘A’ : Level-2 (Rs. 19,900-63,200/-)",
-                  "Staff Car Driver-A : Level-2 (Rs. 19,900-63,200/-)"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Post Wise Qualification",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Technician ‘B’ : 10th Passed with ITI / NTC / NAC in Relevant Trade.",
-                  "Light Vehicle Driver ‘A’ : 10th Passed and Valid LVD License with 03 Years Experience.",
-                  "Heavy Vehicle Driver ‘A’ : 10th Passed and Valid HVD License with 05 Years Experience (3 Years as HVD).",
-                  "Staff Car Driver-A : 10th Class Passed and Valid LMV Licensee with 03 Years Experience."
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Post Wise Vacancies",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    },
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician (Electronics Mechanic)",
-                      "links": []
-                    },
-                    {
-                      "text": "24",
-                      "links": []
-                    },
-                    {
-                      "text": "Technician (Fitter)",
-                      "links": []
-                    },
-                    {
-                      "text": "08",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician (Electrician)",
-                      "links": []
-                    },
-                    {
-                      "text": "04",
-                      "links": []
-                    },
-                    {
-                      "text": "Technician (Turner)",
-                      "links": []
-                    },
-                    {
-                      "text": "01",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician (Refrigeration & Air Conditioning)",
-                      "links": []
-                    },
-                    {
-                      "text": "05",
-                      "links": []
-                    },
-                    {
-                      "text": "Technician (Motor Vehicle Mechanic)",
-                      "links": []
-                    },
-                    {
-                      "text": "01",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Technician (Machinist)",
-                      "links": []
-                    },
-                    {
-                      "text": "02",
-                      "links": []
-                    },
-                    {
-                      "text": "Technician (Electroplater)",
-                      "links": []
-                    },
-                    {
-                      "text": "01",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Staff Car Driver-A",
-                      "links": []
-                    },
-                    {
-                      "text": "02",
-                      "links": []
-                    },
-                    {
-                      "text": "Light Vehicle Driver ‘A’",
-                      "links": []
-                    },
-                    {
-                      "text": "03",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Heavy Vehicle Driver-A",
-                      "links": []
-                    },
-                    {
-                      "text": "10",
-                      "links": []
-                    },
-                    {
-                      "text": "Grand Total Post",
-                      "links": []
-                    },
-                    {
-                      "text": "61",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Post Wise Vacancies",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "24/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "23/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://www.isro.gov.in/Careers.html"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "ursc": "04/2026 Short Details",
-          "general_obc_ews": "500/",
-          "sc_st_ph_esm": "500/",
-          "all_female_category": "500/",
-          "sc_st_ph_esm_female": "500/",
-          "staff_car_driver_a": "Level-2 (Rs. 19,900-63,200/-)",
-          "xperience_3_years_as_hvd_staff_car_driver_a": "10th Class Passed and Valid LMV Licensee with 03 Years Experience"
-        },
-        "sequence": 2,
-        "_last_checked": "2026-10-24T08:35:00+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
         "title": "SCL Technician, Tech. Asst, AO, Jr. PA Online Form",
         "slug": "scl-technician-tech-asst-ao-jr-pa-online-form",
         "_scraped_from": "",
@@ -53077,435 +52360,8 @@
           "junior_personal_assistant": "Max. 25 Years",
           "technical_assistant": "18-30 Years"
         },
-        "sequence": 3,
-        "_last_checked": "2026-10-24T08:35:01+00:00"
-      },
-      {
-        "category": "UPCOMING_JOBS",
-        "title": "Lucknow CGST Havaldar, Tax Asst. Offline Form",
-        "slug": "lucknow-cgst-havaldar-tax-asst-offline-form",
-        "_scraped_from": "",
-        "advt_no": "",
-        "department": "",
-        "post_name": "Form Mode",
-        "total_vacancy": "17",
-        "last_date": "2026-11-23",
-        "application_start": "2026-10-24",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "18-27",
-        "salary": "",
-        "qualification": "Job Type",
-        "selection_process": "Scrutiny of Applications, Sports Trials, PET & PFT Test (For Havaldar), Typing Test (For Tax Assistant), Medical Examination, Document Verification",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "",
-        "job_location": "",
-        "status": "active",
-        "important_links": {
-          "official_website": "https://www.cbic.gov.in/"
-        },
-        "vacancy_details": [
-          {
-            "form_mode": "Offline Form",
-            "job_location": "Lucknow (UP)",
-            "total_posts": "17 Posts",
-            "job_type": "Permanent"
-          }
-        ],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "Lucknow CGST Sports Quota Recruitment 2026 : Get complete details about Lucknow CGST Sports Quota Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, admit card, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Form Mode",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Location",
-                      "links": []
-                    },
-                    {
-                      "text": "Total Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Job Type",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Offline Form",
-                      "links": []
-                    },
-                    {
-                      "text": "Lucknow (UP)",
-                      "links": []
-                    },
-                    {
-                      "text": "17 Posts",
-                      "links": []
-                    },
-                    {
-                      "text": "Permanent",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Office of the Principal Chief Commissioner of CGST & Central Excise, Lucknow Tax Assistant, Havaldar (Sports Quota) Vacancy 2026 Short Details of Advertisement Notification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Starting Date : 24/10/2026 Last Date : 23/11/2026 05:00 PM Last Date (For Remote Areas) : 03/12/2026 05:00 PM",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "No Fees For All Candidates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit Details (Tentative)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Age Limit : 18-27 Years Age Limit as on : 23/11/2026 The Age Relaxation Extra as per Rules.",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Selection Process (Tentative)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Scrutiny of Applications Sports Trials PET & PFT Test (For Havaldar) Typing Test (For Tax Assistant) Medical Examination Document Verification",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Pay Scale Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Tax Assistant : Level-04 (Rs. 25500-81100/-) Havaldar : Level-01 (Rs. 18000-56900/-)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Wise Qualification (Tentative)",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Tax Assistant : Graduation Degree in any Stream, Typing: 8000 key depression per hour, Computer Knowledge, Sports Certificate. Havaldar : 10th Class Passed, Sports Certificate.",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Starting Date : 24/10/2026",
-                  "Last Date : 23/11/2026 05:00 PM",
-                  "Last Date (For Remote Areas) : 03/12/2026 05:00 PM"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "No Fees For All Candidates"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Age Limit Details (Tentative)",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Age Limit : 18-27 Years",
-                  "Age Limit as on : 23/11/2026",
-                  "The Age Relaxation Extra as per Rules."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Selection Process (Tentative)",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Scrutiny of Applications",
-                  "Sports Trials",
-                  "PET & PFT Test (For Havaldar)",
-                  "Typing Test (For Tax Assistant)",
-                  "Medical Examination",
-                  "Document Verification"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Pay Scale Details",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Tax Assistant : Level-04 (Rs. 25500-81100/-)",
-                  "Havaldar : Level-01 (Rs. 18000-56900/-)"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Post Wise Qualification (Tentative)",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Tax Assistant : Graduation Degree in any Stream, Typing: 8000 key depression per hour, Computer Knowledge, Sports Certificate.",
-                  "Havaldar : 10th Class Passed, Sports Certificate."
-                ]
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Post Wise Vacancies",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    },
-                    {
-                      "text": "Post Name",
-                      "links": []
-                    },
-                    {
-                      "text": "Total",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Tax Assistant",
-                      "links": []
-                    },
-                    {
-                      "text": "03",
-                      "links": []
-                    },
-                    {
-                      "text": "Havaldar",
-                      "links": []
-                    },
-                    {
-                      "text": "14",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Post Wise Vacancies",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Send Application To",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Additional Commissioner (CCA), Office of the Principal Chief Commissioner of CGST & Central Excise, Lucknow Zone, 7-A, Ashok Marg, Lucknow-226001",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Send Application To",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "Additional Commissioner (CCA)"
-              },
-              {
-                "type": "paragraph",
-                "text": "Office of the Principal Chief Commissioner of CGST & Central Excise"
-              },
-              {
-                "type": "paragraph",
-                "text": "Lucknow Zone, 7-A, Ashok Marg, Lucknow-226001"
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Form",
-                      "links": []
-                    },
-                    {
-                      "text": "24/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Full Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "24/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Coming Soon",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Short Notification",
-                      "links": []
-                    },
-                    {
-                      "text": "21/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "21/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://www.cbic.gov.in/"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "level_04_rs_25500_81100_havaldar": "Level-01 (Rs. 18000-56900/-)",
-          "tax_assistant": "Graduation Degree in any Stream",
-          "typing": "8000 key depression per hour, Computer Knowledge",
-          "sports_certificate_havaldar": "10th Class Passed, Sports Certificate",
-          "havaldar": "Level-01 (Rs. 18000-56900/-)"
-        },
-        "sequence": 4,
-        "_last_checked": "2026-10-24T08:35:01+00:00"
+        "sequence": 1,
+        "_last_checked": "2026-10-25T04:48:15+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -53939,8 +52795,8 @@
           "unreserved": "600/",
           "sc_st_ews": "500/"
         },
-        "sequence": 5,
-        "_last_checked": "2026-10-24T08:35:02+00:00"
+        "sequence": 2,
+        "_last_checked": "2026-10-25T04:48:16+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54314,8 +53170,8 @@
           "gen_obc_ews_fees_refund": "400/",
           "pay_level": "Level 2 and Level 7 (Post Wise)"
         },
-        "sequence": 6,
-        "_last_checked": "2026-10-24T08:35:04+00:00"
+        "sequence": 3,
+        "_last_checked": "2026-10-25T04:48:16+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54695,8 +53551,8 @@
           "general_obc": "R",
           "s_400_will_be_refunded_and_other_candidates": "Rs. 250/- will be refunded to the bank account after appearing in Written Exam"
         },
-        "sequence": 7,
-        "_last_checked": "2026-10-24T08:35:04+00:00"
+        "sequence": 4,
+        "_last_checked": "2026-10-25T04:48:17+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -55421,8 +54277,8 @@
           "farm_lipik": "12th Passed and 03 Years Agriculture Experience.",
           "bikri_karta": "12th Passed and 03 Years Sales Experience."
         },
-        "sequence": 8,
-        "_last_checked": "2026-10-24T08:35:05+00:00"
+        "sequence": 5,
+        "_last_checked": "2026-10-25T04:48:18+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -55886,8 +54742,8 @@
           "sc_st_obc": "750/",
           "ex_servicemen": "750/"
         },
-        "sequence": 9,
-        "_last_checked": "2026-10-24T08:35:06+00:00"
+        "sequence": 6,
+        "_last_checked": "2026-10-25T04:48:19+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56353,8 +55209,8 @@
           "mark_time_duration": "01.30",
           "hours_min_qualifying_marks": "50 Marks"
         },
-        "sequence": 10,
-        "_last_checked": "2026-10-24T08:35:07+00:00"
+        "sequence": 7,
+        "_last_checked": "2026-10-25T04:48:20+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56700,8 +55556,8 @@
           "unreserved": "1500/",
           "sc_st_obc": "750/"
         },
-        "sequence": 11,
-        "_last_checked": "2026-10-24T08:35:08+00:00"
+        "sequence": 8,
+        "_last_checked": "2026-10-25T04:48:20+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57346,8 +56202,8 @@
           "for_sc_ph_of_haryana": "55% (82",
           "marks_for_other_candidates": "60% (90 Marks)"
         },
-        "sequence": 12,
-        "_last_checked": "2026-10-24T08:35:08+00:00"
+        "sequence": 9,
+        "_last_checked": "2026-10-25T04:48:21+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57802,8 +56658,8 @@
           "assistant_storekeeper": "Diploma in Automobile Engineering / Mechanical Engineering from a Recognized Polytechnic Institute.",
           "mechanic": "Diploma in Automobile Engineering / Mechanical Engineering from a Recognized Polytechnic Institute."
         },
-        "sequence": 13,
-        "_last_checked": "2026-10-24T08:35:09+00:00"
+        "sequence": 10,
+        "_last_checked": "2026-10-25T04:48:22+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58124,8 +56980,8 @@
           "for_all_candidates": "25/",
           "correction_date": "Upto 04/12/2026"
         },
-        "sequence": 14,
-        "_last_checked": "2026-10-24T08:35:10+00:00"
+        "sequence": 11,
+        "_last_checked": "2026-10-25T04:48:23+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58642,8 +57498,8 @@
           "get_mining": "B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score.",
           "get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
         },
-        "sequence": 15,
-        "_last_checked": "2026-10-24T08:35:10+00:00"
+        "sequence": 12,
+        "_last_checked": "2026-10-25T04:48:24+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59034,8 +57890,8 @@
           "gen_obc_ews": "Avail. Soon",
           "sc_st_ph": "Avail. Soon"
         },
-        "sequence": 16,
-        "_last_checked": "2026-10-24T08:35:11+00:00"
+        "sequence": 13,
+        "_last_checked": "2026-10-25T04:48:24+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -59336,7 +58192,7 @@
           "class_12th_additional_subject_fees": "400/"
         },
         "sequence": 4,
-        "_last_checked": "2026-10-24T08:35:13+00:00"
+        "_last_checked": "2026-10-25T04:48:28+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -59778,7 +58634,270 @@
           "marking_scheme": "Each correct answer carries one mark, each incorrect answer deducts 0.25 marks, and no marks are given for unattempted questions."
         },
         "sequence": 5,
-        "_last_checked": "2026-10-24T08:35:14+00:00"
+        "_last_checked": "2026-10-25T04:48:29+00:00"
+      },
+      {
+        "category": "ADMISSIONS",
+        "title": "MDU UG / PG Reappear Exam Online Form 2026",
+        "slug": "mdu-ug-pg-reappear-exam-online-form-2026",
+        "_scraped_from": "",
+        "advt_no": "",
+        "department": "MDU UG / PG Reappear Exam",
+        "post_name": "",
+        "total_vacancy": "",
+        "last_date": "2026-11-03",
+        "application_start": "2026-10-14",
+        "exam_date": "",
+        "interview_date": "",
+        "result_date": "",
+        "admit_card_date": "",
+        "age_limit": "",
+        "salary": "",
+        "qualification": "",
+        "selection_process": "",
+        "application_mode": "",
+        "fee_general": "",
+        "fee_obc": "",
+        "fee_sc_st": "",
+        "fee_female": "",
+        "fee_payment_mode": "Online Mode",
+        "job_location": "",
+        "course_name": "Online Mode",
+        "admission_type": "",
+        "status": "active",
+        "important_links": {
+          "apply_online": "https://student.mdu.ac.in/index",
+          "schedule_notice": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/Oct/4_10-13-2026_16-43-13_Schedule%20of%20Exams%202026-27.pdf",
+          "official_website": "https://mdu.ac.in/"
+        },
+        "vacancy_details": [],
+        "sections": [
+          {
+            "title": "Overview",
+            "content": [
+              {
+                "type": "paragraph",
+                "text": "MDU UG / PG Reappear Exam December 2026 : Get complete details about MDU UG / PG Reappear Exam December 2026, including examination updates, important dates, application fees, eligibility criteria, syllabus, exam pattern, admit card, result, and more."
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Maharshi Dayanand University (MDU), Rohtak (HR) UG & PG Reappear / Improvement / Add. Exam 2026 MDU Reappear Exam December 2026 Short Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Important Dates",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Form Starting Date : 14/10/2026 Last Date (No Late Fee) : 03/11/2026 11:59 PM Last Date (1070/- Late Fee) : 10/11/2026 11:59 PM Last Date (2140/- Late Fee) : 21/11/2026 11:59 PM Written Exam Date : December 2026",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Application Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fees : Course Wise Payment Mode : Online Mode",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Application Late Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Form Date",
+                      "links": []
+                    },
+                    {
+                      "text": "To Date",
+                      "links": []
+                    },
+                    {
+                      "text": "Late Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "14/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "03/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "0.00",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "04/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "10/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "1070/",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "11/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "21/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "2140/",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Important Dates",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Form Starting Date : 14/10/2026",
+                  "Last Date (No Late Fee) : 03/11/2026 11:59 PM",
+                  "Last Date (1070/- Late Fee) : 10/11/2026 11:59 PM",
+                  "Last Date (2140/- Late Fee) : 21/11/2026 11:59 PM",
+                  "Written Exam Date : December 2026"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Application Fees",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Fees : Course Wise",
+                  "Payment Mode : Online Mode"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Application Late Fees",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Important Related Links",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Source Title",
+                      "links": []
+                    },
+                    {
+                      "text": "Issue Date",
+                      "links": []
+                    },
+                    {
+                      "text": "Source Link",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fill Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "14/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Apply Now",
+                      "links": [
+                        {
+                          "text": "Apply Now",
+                          "url": "https://student.mdu.ac.in/index"
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Schedule Notice",
+                      "links": []
+                    },
+                    {
+                      "text": "14/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": [
+                        {
+                          "text": "Download",
+                          "url": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/Oct/4_10-13-2026_16-43-13_Schedule%20of%20Exams%202026-27.pdf"
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Official Website",
+                      "links": []
+                    },
+                    {
+                      "text": "14/10/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Visit Now",
+                      "links": [
+                        {
+                          "text": "Visit Now",
+                          "url": "https://mdu.ac.in/"
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "extra_fields": {
+          "fees": "Course Wise"
+        },
+        "sequence": 6,
+        "_last_checked": "2026-10-25T04:48:29+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -60058,8 +59177,8 @@
           "exam_name": "Qualification",
           "all_india_bar_examination_aibe_xxii": "Bachelor Degree in Law (LLB)"
         },
-        "sequence": 14,
-        "_last_checked": "2026-10-24T08:35:23+00:00"
+        "sequence": 15,
+        "_last_checked": "2026-10-25T04:48:37+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -60657,8 +59776,8 @@
           "dbranlu_haryana": "NLUT AGARTALA",
           "rpnlup_prayagraj": "IIULER, Goa"
         },
-        "sequence": 16,
-        "_last_checked": "2026-10-24T08:35:24+00:00"
+        "sequence": 17,
+        "_last_checked": "2026-10-25T04:48:39+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61461,8 +60580,8 @@
         "extra_fields": {
           "not_declared_11": "59 PM"
         },
-        "sequence": 29,
-        "_last_checked": "2026-10-24T08:35:37+00:00"
+        "sequence": 30,
+        "_last_checked": "2026-10-25T04:48:51+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61497,271 +60616,8 @@
         "vacancy_details": [],
         "sections": [],
         "extra_fields": {},
-        "sequence": 30,
-        "_last_checked": "2026-10-24T08:35:37+00:00"
-      },
-      {
-        "category": "ADMISSIONS",
-        "title": "MDU UG / PG Reappear Exam Online Form 2026",
-        "slug": "mdu-ug-pg-reappear-exam-online-form-2026",
-        "_scraped_from": "",
-        "advt_no": "",
-        "department": "MDU UG / PG Reappear Exam",
-        "post_name": "",
-        "total_vacancy": "",
-        "last_date": "2026-11-03",
-        "application_start": "2026-10-14",
-        "exam_date": "",
-        "interview_date": "",
-        "result_date": "",
-        "admit_card_date": "",
-        "age_limit": "",
-        "salary": "",
-        "qualification": "",
-        "selection_process": "",
-        "application_mode": "",
-        "fee_general": "",
-        "fee_obc": "",
-        "fee_sc_st": "",
-        "fee_female": "",
-        "fee_payment_mode": "Online Mode",
-        "job_location": "",
-        "course_name": "Online Mode",
-        "admission_type": "",
-        "status": "active",
-        "important_links": {
-          "apply_online": "https://student.mdu.ac.in/index",
-          "schedule_notice": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/Oct/4_10-13-2026_16-43-13_Schedule%20of%20Exams%202026-27.pdf",
-          "official_website": "https://mdu.ac.in/"
-        },
-        "vacancy_details": [],
-        "sections": [
-          {
-            "title": "Overview",
-            "content": [
-              {
-                "type": "paragraph",
-                "text": "MDU UG / PG Reappear Exam December 2026 : Get complete details about MDU UG / PG Reappear Exam December 2026, including examination updates, important dates, application fees, eligibility criteria, syllabus, exam pattern, admit card, result, and more."
-              },
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Maharshi Dayanand University (MDU), Rohtak (HR) UG & PG Reappear / Improvement / Add. Exam 2026 MDU Reappear Exam December 2026 Short Details",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Important Dates",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Form Starting Date : 14/10/2026 Last Date (No Late Fee) : 03/11/2026 11:59 PM Last Date (1070/- Late Fee) : 10/11/2026 11:59 PM Last Date (2140/- Late Fee) : 21/11/2026 11:59 PM Written Exam Date : December 2026",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fees : Course Wise Payment Mode : Online Mode",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Application Late Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Form Date",
-                      "links": []
-                    },
-                    {
-                      "text": "To Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Late Fees",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "14/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "03/11/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "0.00",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "04/11/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "10/11/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "1070/",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "11/11/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "21/11/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "2140/",
-                      "links": []
-                    }
-                  ]
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Important Dates",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Form Starting Date : 14/10/2026",
-                  "Last Date (No Late Fee) : 03/11/2026 11:59 PM",
-                  "Last Date (1070/- Late Fee) : 10/11/2026 11:59 PM",
-                  "Last Date (2140/- Late Fee) : 21/11/2026 11:59 PM",
-                  "Written Exam Date : December 2026"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Fees",
-            "content": [
-              {
-                "type": "list",
-                "items": [
-                  "Fees : Course Wise",
-                  "Payment Mode : Online Mode"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Application Late Fees",
-            "content": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    {
-                      "text": "Important Related Links",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Source Title",
-                      "links": []
-                    },
-                    {
-                      "text": "Issue Date",
-                      "links": []
-                    },
-                    {
-                      "text": "Source Link",
-                      "links": []
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Fill Online Form",
-                      "links": []
-                    },
-                    {
-                      "text": "14/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Apply Now",
-                      "links": [
-                        {
-                          "text": "Apply Now",
-                          "url": "https://student.mdu.ac.in/index"
-                        }
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Schedule Notice",
-                      "links": []
-                    },
-                    {
-                      "text": "14/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Download",
-                      "links": [
-                        {
-                          "text": "Download",
-                          "url": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/Oct/4_10-13-2026_16-43-13_Schedule%20of%20Exams%202026-27.pdf"
-                        }
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "text": "Official Website",
-                      "links": []
-                    },
-                    {
-                      "text": "14/10/2026",
-                      "links": []
-                    },
-                    {
-                      "text": "Visit Now",
-                      "links": [
-                        {
-                          "text": "Visit Now",
-                          "url": "https://mdu.ac.in/"
-                        }
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
-        ],
-        "extra_fields": {
-          "fees": "Course Wise"
-        },
-        "sequence": 39,
-        "_last_checked": "2026-10-24T08:35:45+00:00"
+        "sequence": 31,
+        "_last_checked": "2026-10-25T04:48:52+00:00"
       }
     ]
   },
@@ -774262,9 +773118,9 @@
   "sync_stats": {
     "run_type": "incremental",
     "last_updated": "sarkari_data",
-    "added": 15,
-    "removed": 16,
-    "unchanged": 282,
-    "synced_at": "2026-10-24 08:43:14"
+    "added": 2,
+    "removed": 5,
+    "unchanged": 292,
+    "synced_at": "2026-10-25 05:02:06"
   }
 }
