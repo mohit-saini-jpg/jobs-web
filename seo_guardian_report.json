@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-26T02:32:56.362504+00:00",
+  "timestamp": "2026-10-26T03:32:12.967977+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 13723,
+  "files_scanned": 13889,
   "issues_found_by_check": {
-    "jobposting_schema": 312,
-    "expired_job": 21,
+    "jobposting_schema": 320,
     "ai_marker_integrity": 13,
+    "expired_job": 3,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 139,
+  "issues_auto_fixed": 126,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -60,6 +60,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/aiims-jodhpur-project-nurse-iii-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/aiims-jodhpur-project-technical-support-ii-recruitment-2026-walk-in/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -73,6 +79,12 @@
     },
     {
       "file": "jobs/aiims-jodhpur-research-associate-iii-recruitment-2026-walkin/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/aiims-jodhpur-scientist-c-recruitment-2026-walkin/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
@@ -691,6 +703,12 @@
     },
     {
       "file": "jobs/iit-madras-project-technician-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-madras-recruitment-2026-apply-online-for-8-project-technical-support-project/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
@@ -2460,5 +2478,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               128 urls [ok]"
   ],
-  "duration_sec": 35.7
+  "duration_sec": 49.6
 }
