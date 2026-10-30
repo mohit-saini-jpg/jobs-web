@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-10-30T03:47:39.936800+00:00",
+  "timestamp": "2026-10-30T04:39:48.220353+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 14271,
+  "files_scanned": 14408,
   "issues_found_by_check": {
-    "jobposting_schema": 331,
-    "expired_job": 31,
+    "jobposting_schema": 333,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 155,
+  "issues_auto_fixed": 126,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -37,6 +36,12 @@
     },
     {
       "file": "jobs/abhyudaya-bank-recruitment-2026-apply-online-for-manager-credit-officer-and-mo/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/actrec-junior-research-fellow-recruitment-2026-walkin/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
@@ -682,12 +687,6 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/iit-delhi-consultant-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Delhi/110001 [L3]) — manual review"
     },
     {
       "file": "jobs/iit-gandhinagar-project-engineer-recruitment-2026-apply-online/index.html",
@@ -2536,7 +2535,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               124 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               123 urls [ok]"
   ],
-  "duration_sec": 36.2
+  "duration_sec": 61.4
 }
