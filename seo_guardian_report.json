@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-31T03:32:24.423859+00:00",
+  "timestamp": "2026-10-31T04:23:20.077544+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 14414,
+  "files_scanned": 14602,
   "issues_found_by_check": {
-    "jobposting_schema": 333,
-    "expired_job": 42,
+    "jobposting_schema": 335,
     "ai_marker_integrity": 13,
+    "expired_job": 4,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 168,
+  "issues_auto_fixed": 131,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -684,6 +684,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/iiser-kolkata-recruitment-2026-apply-online-for-2-librarian-deputy-librarian-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/iit-bhu-varanasi-recruitment-2026-apply-online-for-8-project-assistant-jrf-and-m/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -706,12 +712,6 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Telangana/500001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/iit-ism-dhanbad-project-associate-i-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Jharkhand/834001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iit-ism-dhanbad-senior-project-associate-recruitment-2026-apply-online/index.html",
@@ -988,6 +988,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nit-rourkela-junior-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> West Bengal/700001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/nlc-india-apprentice-recruitment-2026-apply-online-for-1067-iti-and-graduate-a/index.html",
@@ -1420,12 +1426,6 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aai-junior-executive-recruitment-2026-apply-online-for-389-manager-junior-exec/"
-    },
-    {
-      "file": "jobs/aai-medical-consultant-recruitment-2026-apply-offline/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aai-medical-consultant-recruitment-2026-apply-offline/"
     },
     {
       "file": "jobs/aai-medical-consultant-recruitment-2026-apply-online/index.html",
@@ -2530,13 +2530,19 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-technical-officer-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-deoghar-lab-assistant-cum-data-entry-operator-recruitment-2026-apply-onl/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-deoghar-lab-assistant-cum-data-entry-operator-recruitment-2026-apply-onl/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               123 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               122 urls [ok]"
   ],
-  "duration_sec": 57.6
+  "duration_sec": 35.6
 }
