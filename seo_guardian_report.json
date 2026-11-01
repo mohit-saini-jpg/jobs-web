@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-11-01T03:36:06.563974+00:00",
+  "timestamp": "2026-11-01T04:08:53.672672+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 14610,
+  "files_scanned": 14735,
   "issues_found_by_check": {
-    "jobposting_schema": 335,
-    "expired_job": 35,
+    "jobposting_schema": 338,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 162,
+  "issues_auto_fixed": 129,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -1228,6 +1227,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/sp-sukma-bastar-fighter-constable-recruitment-2026-apply-offline-for-375-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/stpi-apprentice-trainee-recruitment-2026-notification-out-apply-online-for-15/index.html",
@@ -2542,7 +2547,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               122 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               124 urls [ok]"
   ],
-  "duration_sec": 60.3
+  "duration_sec": 63.2
 }
