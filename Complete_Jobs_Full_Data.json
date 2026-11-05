@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-04 08:24:29",
+  "generated_at": "2026-11-05 03:56:23",
   "sources": {
     "freejobalert_categories": 0,
-    "sarkari_data": 294,
+    "sarkari_data": 297,
     "education_jobs": 1312,
     "state_jobs": 0,
     "freejobalert_unified": 1317
   },
-  "total_records": 1606,
+  "total_records": 1609,
   "freejobalert_categories": {},
   "sarkari_data": {
-    "scraped_at": "2026-11-04 13:50:48",
-    "total": 298,
+    "scraped_at": "2026-11-05 09:23:36",
+    "total": 300,
     "summary": {
       "sarkariresultshine_offline_jobs_top30": 30,
       "sarkariresultshine_latest_jobs_top100": 100,
       "sarkariresult_categories": {
         "SR_Admit_Card": 25,
+        "SR_Latest_Jobs": 77,
         "SR_Answer_Key": 20,
-        "SR_Result": 25,
-        "SR_Latest_Jobs": 77
+        "SR_Result": 25
       },
       "sarkariresult_total": 147,
-      "upcoming_jobs": 16,
+      "upcoming_jobs": 18,
       "state_jobs_active": 0,
       "central_jobs_active": 0,
       "admissions_active": 5
@@ -34,10 +34,157 @@
       "SR_Answer_Key": 20,
       "OFFLINE_FORM": 30,
       "LATEST_JOBS NEW": 100,
-      "UPCOMING_JOBS": 16,
+      "UPCOMING_JOBS": 18,
       "ADMISSIONS": 5
     },
     "jobs": [
+      {
+        "category": "SR_Latest_Jobs",
+        "title": "Railway RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026",
+        "postDate": "31/10/2026",
+        "organization": "RRB",
+        "totalPost": "195",
+        "shortInfo": "Indian Railway Railway Recruitment Board RRB Ministerial and Isolated Post Recruitment CEN 09/2026. Those candidates who are Interested in This RRB CEN 09/2026 Vacancy Can Apply Online from 05/11/2026 to 04/12/2026 eligibility, post information, selection procedure, Details, age limit, pay scale and all other information",
+        "importantDates": {
+          "applicationBegin": "05/11/2026",
+          "lastDateApplyOnline": "04/12/2026",
+          "lastDatePayFee": "04/12/2026",
+          "formCorrectionDate": "As Per Schedule",
+          "examDate": "As Per Schedule",
+          "admitCardDate": "4 Days Before Exam",
+          "examCityDate": "10 Days Before Exam"
+        },
+        "applicationFee": {
+          "general": "500",
+          "sc": "250",
+          "female": "250",
+          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
+          "scStPh": "250",
+          "allCategoryFemale": "250",
+          "appearTheStageIExamGeneralObcEws_": "400",
+          "scStPhFemaleRefund": "250"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "30",
+          "ageAsOnDate": "01/01/2027"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Chief Law Assistant",
+            "eligibility": "Bachelor Degree in Law with 3 Year Experience. Age Limit : 18-40 Years. More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Public Prosecution",
+            "eligibility": "Bachelor Degree in Law from Any Recognized University 5 Year Practice Age Limit : 18-32 Years More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Junior Translator Hindi",
+            "eligibility": "Master Degree in Hindi or English with English or Hindi as a Subject in Degree Level OR Master Degree in Any Subject with Hindi or English Medium and English or Hindi a Subject at Degree Level. Diploma / Certificate Course in Translation from Hindi to English. Age Limit : 18-33 Years More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Senior Publicity Inspector",
+            "eligibility": "Bachelor Degree / Diploma in Public Relation / Advertising / Journalism / Mass Communication. Age Limit : 18-33 Years. More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Staff & Welfare Inspector",
+            "eligibility": "Bachelor Degree in Any Stream. Diploma in Labour / Social Welfare OR Diploma in Labour Laws OR LLB with Papers in Labour Laws OR PG Diploma in Personal Management OR MBA with Papers in Personnel Management. Age Limit : 18-33 Years. More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Scientific Assistant Training",
+            "eligibility": "Master Degree in Psychology with Second Class with 1 Year Experience. Age Limit : 18-35 Years More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Lab Assistant Grade 3 Chemist & Metallurgist",
+            "eligibility": "10+2 Intermediate Exam with Science (Physics and Chemistry) as a Subject Age Limit : 18-30 Years More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Scientific Supervisor / Ergonomics and Training",
+            "eligibility": "Master Degree in Psychology / Physiology with Second Class and 2 Year Experience. Age Limit : 18-35 Years More Eligibility Details Read the Notification.",
+            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
+          },
+          {
+            "postName": "Railway Ministerial and Isolated Various Post",
+            "totalPost": "196",
+            "tableHeading": "Railway Ministerial and Isolated Post Level Notification 2026 : Category Wise Vacancy Details"
+          }
+        ],
+        "eligibilitySection": [
+          {
+            "heading": "RRB Ministerial and Isolated Eligibility 2026",
+            "items": [
+              "RRB Ministerial and Isolated Eligibility 2026"
+            ]
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to RRB Ministerial and Isolated Post CEN 09/2026 Recruitment Online Form 2026",
+            "content": "RRB Ministerial and Isolated Post CEN 09/2026 Recruitment for Various Post Candidate Can Apply Between 05/11/2026 to 04/12/2026 | Candidate Read the Notification Before Apply the Recruitment Application Form in RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Apply Online",
+            "url": "https://www.rrbapply.gov.in/#/auth/landing"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "RRB Ministerial and Isolated Post CEN 09/2026 Recruitment for Various Post Candidate Can Apply Between 05/11/2026 to 04/12/2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ],
+          "rs_400": "General/OBC/EWS Fee Refund",
+          "rs_250": "SC / ST / PH / Female Refund"
+        },
+        "faq": [
+          {
+            "question": "When did the Railway RRB Ministerial and Isolated Post CEN 09/2026 Online Application Process Start?",
+            "answer": "The online application process started on 05 November 2026."
+          },
+          {
+            "question": "What is the Exam Date for Railway RRB Ministerial and Isolated Post CEN 09/2026?",
+            "answer": "The Examination will be conducted in As per Schedule"
+          },
+          {
+            "question": "Where can I find the syllabus for the Railway RRB Ministerial and Isolated Post CEN 09/2026 Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for Railway RRB Ministerial and Isolated Post CEN 09/2026?",
+            "answer": "The last date to apply online is 04 December 2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 04 December 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/rrb-ministerial-isolated-cen-09-2026/",
+          "scrapedAt": "2026-11-04T13:51:13",
+          "pageTitle": "Railway RRB Ministerial and Isolated Post Online Form 2026",
+          "detectedCategory": "SR_Latest_Jobs",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-31T10:23:22+05:30",
+          "modifiedTime": "2026-10-31T10:23:25+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 18
+        },
+        "_last_checked": "2026-11-04T08:21:13+00:00"
+      },
       {
         "category": "SR_Latest_Jobs",
         "title": "Supreme Court of India SCI Junior Court Attendant JCA Recruitment 2026 Exam for 130 Post",
@@ -3237,264 +3384,6 @@
       },
       {
         "category": "SR_Latest_Jobs",
-        "title": "Railway RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026",
-        "postDate": "31/10/2026",
-        "organization": "RRB",
-        "totalPost": "195",
-        "shortInfo": "Indian Railway Railway Recruitment Board RRB Ministerial and Isolated Post Recruitment CEN 09/2026. Those candidates who are Interested in This RRB CEN 09/2026 Vacancy Can Apply Online from 05/11/2026 to 04/12/2026 eligibility, post information, selection procedure, Details, age limit, pay scale and all other information",
-        "importantDates": {
-          "applicationBegin": "05/11/2026",
-          "lastDateApplyOnline": "04/12/2026",
-          "lastDatePayFee": "04/12/2026",
-          "formCorrectionDate": "As Per Schedule",
-          "examDate": "As Per Schedule",
-          "admitCardDate": "4 Days Before Exam",
-          "examCityDate": "10 Days Before Exam"
-        },
-        "applicationFee": {
-          "general": "500",
-          "sc": "250",
-          "female": "250",
-          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
-          "scStPh": "250",
-          "allCategoryFemale": "250",
-          "appearTheStageIExamGeneralObcEws_": "400",
-          "scStPhFemaleRefund": "250"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "30",
-          "ageAsOnDate": "01/01/2027"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Chief Law Assistant",
-            "eligibility": "Bachelor Degree in Law with 3 Year Experience. Age Limit : 18-40 Years. More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Public Prosecution",
-            "eligibility": "Bachelor Degree in Law from Any Recognized University 5 Year Practice Age Limit : 18-32 Years More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Junior Translator Hindi",
-            "eligibility": "Master Degree in Hindi or English with English or Hindi as a Subject in Degree Level OR Master Degree in Any Subject with Hindi or English Medium and English or Hindi a Subject at Degree Level. Diploma / Certificate Course in Translation from Hindi to English. Age Limit : 18-33 Years More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Senior Publicity Inspector",
-            "eligibility": "Bachelor Degree / Diploma in Public Relation / Advertising / Journalism / Mass Communication. Age Limit : 18-33 Years. More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Staff & Welfare Inspector",
-            "eligibility": "Bachelor Degree in Any Stream. Diploma in Labour / Social Welfare OR Diploma in Labour Laws OR LLB with Papers in Labour Laws OR PG Diploma in Personal Management OR MBA with Papers in Personnel Management. Age Limit : 18-33 Years. More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Scientific Assistant Training",
-            "eligibility": "Master Degree in Psychology with Second Class with 1 Year Experience. Age Limit : 18-35 Years More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Lab Assistant Grade 3 Chemist & Metallurgist",
-            "eligibility": "10+2 Intermediate Exam with Science (Physics and Chemistry) as a Subject Age Limit : 18-30 Years More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Scientific Supervisor / Ergonomics and Training",
-            "eligibility": "Master Degree in Psychology / Physiology with Second Class and 2 Year Experience. Age Limit : 18-35 Years More Eligibility Details Read the Notification.",
-            "tableHeading": "RRB Ministerial and Isolated Recruitment 2026: Vacancy Details Total : 195 Post (Approx)"
-          },
-          {
-            "postName": "Railway Ministerial and Isolated Various Post",
-            "totalPost": "196",
-            "tableHeading": "Railway Ministerial and Isolated Post Level Notification 2026 : Category Wise Vacancy Details"
-          }
-        ],
-        "eligibilitySection": [
-          {
-            "heading": "RRB Ministerial and Isolated Eligibility 2026",
-            "items": [
-              "RRB Ministerial and Isolated Eligibility 2026"
-            ]
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to RRB Ministerial and Isolated Post CEN 09/2026 Recruitment Online Form 2026",
-            "content": "RRB Ministerial and Isolated Post CEN 09/2026 Recruitment for Various Post Candidate Can Apply Between 05/11/2026 to 04/12/2026 | Candidate Read the Notification Before Apply the Recruitment Application Form in RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Apply Online",
-            "url": "https://www.rrbapply.gov.in/#/auth/landing"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "RRB Ministerial and Isolated Post CEN 09/2026 Recruitment for Various Post Candidate Can Apply Between 05/11/2026 to 04/12/2026",
-            "Candidate Read the Notification Before Apply the Recruitment Application Form in RRB Ministerial and Isolated Post CEN 09/2026 Recruitment 2026",
-            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ],
-          "rs_400": "General/OBC/EWS Fee Refund",
-          "rs_250": "SC / ST / PH / Female Refund"
-        },
-        "faq": [
-          {
-            "question": "When did the Railway RRB Ministerial and Isolated Post CEN 09/2026 Online Application Process Start?",
-            "answer": "The online application process started on 05 November 2026."
-          },
-          {
-            "question": "What is the Exam Date for Railway RRB Ministerial and Isolated Post CEN 09/2026?",
-            "answer": "The Examination will be conducted in As per Schedule"
-          },
-          {
-            "question": "Where can I find the syllabus for the Railway RRB Ministerial and Isolated Post CEN 09/2026 Examination?",
-            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-          },
-          {
-            "question": "What is the last date to apply online for Railway RRB Ministerial and Isolated Post CEN 09/2026?",
-            "answer": "The last date to apply online is 04 December 2026."
-          },
-          {
-            "question": "What is the last date to pay the application fee?",
-            "answer": "Candidates can pay the application fee up to 04 December 2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/2026/rrb-ministerial-isolated-cen-09-2026/",
-          "scrapedAt": "2026-11-04T13:51:13",
-          "pageTitle": "Railway RRB Ministerial and Isolated Post Online Form 2026",
-          "detectedCategory": "SR_Latest_Jobs",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-31T10:23:22+05:30",
-          "modifiedTime": "2026-10-31T10:23:25+05:30",
-          "articleSection": "2026",
-          "homepageSerial": 18
-        },
-        "_last_checked": "2026-11-04T08:21:13+00:00"
-      },
-      {
-        "category": "SR_Latest_Jobs",
-        "title": "NTA UGC NET December 2026 : Correction / Edit Form",
-        "postDate": "02/11/2026",
-        "organization": "NTA",
-        "shortInfo": "National Testing Agency (NTA) has released the University Grant Commission UGC National Eligibility Test NET Assistant Professor / JRF December 2026 Examination online application Form 2026 will start from 08 October 2026 and the last date to apply will be 31 October 2026. candidates should read the NTA UGC NET December 2026 information brochure for all the information related to the NET / JRF exam like syllabus, eligibility, age limit, fees, Subject Details, information and other types of information and then apply",
-        "importantDates": {
-          "applicationBegin": "08/10/2026",
-          "lastDateApplyOnline": "28/10/2026",
-          "lastDatePayFee": "31/10/2026",
-          "formCorrectionDate": "02-04 November 2026",
-          "examDate": "14-19 December 2026",
-          "admitCardDate": "Before Exam",
-          "examCityDate": "Before Exam"
-        },
-        "applicationFee": {
-          "general": "1150",
-          "obc": "600",
-          "sc": "325",
-          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
-          "ewsObc": "600",
-          "stScPh": "325"
-        },
-        "ageLimit": {
-          "maxAge": "30",
-          "ageAsOnDate": "01/12/2026"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "S No."
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to NTA UGC NET December 2026 Online Form 2026",
-            "content": "National Testing Agency NTA Are Conducted the UGC NET December 2026 Exam Candidate Can Apply Between 08/10/2026 to 31/10/2026 | Candidate Read the Notification Before Apply the Recruitment Application Form in NTA UGC NET Exam December 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Correction / Edit Form",
-            "url": "https://examinationservices.nic.in/ExamSys27/root/CandidateLogin.aspx?enc=Ei4cajBkK1gZSfgr53ImFV/yIzhTZHBze3wooSg9DjjOvzupXmjixBOc0vZyJQ9v"
-          },
-          {
-            "label": "Download Correction Notice",
-            "url": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/11/20261102472201336.pdf"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://examinationservices.nic.in/ExamSys27/root/home.aspx?enc=Ei4cajBkK1gZSfgr53ImFV/yIzhTZHBze3wooSg9DjjOvzupXmjixBOc0vZyJQ9v"
-          },
-          {
-            "label": "Download Date Extended Notice",
-            "url": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/10/202610271960110862.pdf"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/10/202610081852912625.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://ugcnet.nta.nic.in/"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "National Testing Agency NTA Are Conducted the UGC NET December 2026 Exam Candidate Can Apply Between 08/10/2026 to 31/10/2026",
-            "Candidate Read the Notification Before Apply the Recruitment Application Form in NTA UGC NET Exam December 2026",
-            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ]
-        },
-        "faq": [
-          {
-            "question": "When did the NTA UGC NET December 2026 Online Application Process Start?",
-            "answer": "The online application process started on 08 October 2026."
-          },
-          {
-            "question": "What is the Exam Date for NTA UGC NET December 2026?",
-            "answer": "The Examination will be conducted in 14-19 December 2026"
-          },
-          {
-            "question": "Where can I find the syllabus for the NTA UGC NET December 2026 Examination?",
-            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
-          },
-          {
-            "question": "What is the last date to apply online for NTA UGC NET December 2026?",
-            "answer": "The last date to apply online is 31 October 2026."
-          },
-          {
-            "question": "What is the last date to pay the application fee?",
-            "answer": "Candidates can pay the application fee up to 31 October 2026."
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/railway/nta-ugc-net-december2026/",
-          "scrapedAt": "2026-11-04T13:51:14",
-          "pageTitle": "NTA UGC NET December 2026 Correction / Edit Form",
-          "detectedCategory": "SR_Latest_Jobs",
-          "categoryOverridden": false,
-          "publishedTime": "2026-11-02T20:28:21+05:30",
-          "modifiedTime": "2026-11-02T20:28:43+05:30",
-          "articleSection": "Railway",
-          "homepageSerial": 19
-        },
-        "_last_checked": "2026-11-04T08:21:14+00:00"
-      },
-      {
-        "category": "SR_Latest_Jobs",
         "title": "Dr. RMLIMS Lucknow Non Teaching Various Group B & C Post Recruitment 2026 Apply Online",
         "postDate": "29/10/2026",
         "organization": "RMLIMS",
@@ -6284,6 +6173,112 @@
           "homepageSerial": 35
         },
         "_last_checked": "2026-11-04T08:21:22+00:00"
+      },
+      {
+        "category": "SR_Latest_Jobs",
+        "title": "Indian Army 10+2 TES 57 Recruitment 2026 Apply Online",
+        "postDate": "14/10/2026",
+        "organization": "TES",
+        "shortInfo": "Army Recruitment (Join Indian Army) has released the advertisement of recruitment to the post of 10+2 Technical Entry Scheme TES 57 Entry. All the candidates who want to apply in this Army Recruitment can apply online from 14/10/2026 to 12/11/2026. See advertisement for other recruitment related information like syllabus, qualification, age limit, selection procedure",
+        "importantDates": {
+          "applicationBegin": "14/10/2026",
+          "lastDateApplyOnline": "12/11/2026",
+          "examDate": "As per Schedule",
+          "admitCardDate": "Before Exam"
+        },
+        "applicationFee": {
+          "general": "0",
+          "sc": "0",
+          "isFree": true,
+          "scStFemale": "0"
+        },
+        "ageLimit": {
+          "minAge": "16",
+          "maxAge": "19",
+          "ageAsOnDate": "01/07/2027"
+        },
+        "vacancyDetails": [
+          {
+            "totalPost": "90",
+            "eligibility": "JEE Mains 2026 has been made Mandatory from Indian Army TES 57 Course. Passed 10+2 Intermediate with at Least Minimum 60% Aggregate Marks in Physics, Chemistry, Maths PCM Stream",
+            "postName": "Technical Entry Scheme (TES-57) Jul 2027"
+          }
+        ],
+        "eligibilitySection": [
+          {
+            "heading": "Army TES 57 Eligibility 2026",
+            "items": [
+              "Army TES 57 Eligibility 2026"
+            ]
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill Join Indian Army 10+2 TES 57 Entry Online Form 2026",
+            "content": "Join Indian Army Are Going to be Released Notification and Invited Online Application Form for the 10+2 Technical Entry Scheme TES 57 Recruitment 2026 Candidate Can Apply Online from 14/10/2026 to 12/11/2026. | Candidate Read the Notification Before Apply the Join Indian Army TES 57 Recruitment Application Form in Defense Latest 10+2 Vacancies 2026. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Apply Online",
+            "url": "https://joinindianarmy.nic.in/Authentication.aspx"
+          },
+          {
+            "label": "Official Website",
+            "url": "http://joinindianarmy.nic.in/"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://doc.sarkariresults.org.in/SarkariResult.Com_Army_NOTIFICATION_OF_TES-57.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Join Indian Army Are Going to be Released Notification and Invited Online Application Form for the 10+2 Technical Entry Scheme TES 57 Recruitment 2026 Candidate Can Apply Online from 14/10/2026 to 12/11/2026",
+            "Candidate Read the Notification Before Apply the Join Indian Army TES 57 Recruitment Application Form in Defense Latest 10+2 Vacancies 2026",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ],
+          "from_14_10_2026_to_12_11_2026": "Join Indian Army Are Going to be Released Notification and Invited Online Application Form for the 10+2 Technical Entry Scheme TES 57 Recruitment 2026 Candidate Can Apply Online"
+        },
+        "faq": [
+          {
+            "question": "When did the Join Indian Army TES 57 Online Application Process Start?",
+            "answer": "The online application process started on 14/10/2026."
+          },
+          {
+            "question": "What is the Exam Date for Join Indian Army TES 57 Entry 2026?",
+            "answer": "The Examination will be conducted in As per Schedule."
+          },
+          {
+            "question": "Where can I find the syllabus for the Join Indian Army TES 57 Entry Examination?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for Join Indian Army TES 57 Entry 2026?",
+            "answer": "The last date to apply online is 12/11/2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "No Application Fee."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/army-tes-57th-oct26/",
+          "scrapedAt": "2026-11-05T09:23:43",
+          "pageTitle": "Indian Army 10+2 TES 57 Online Form 2026",
+          "detectedCategory": "SR_Latest_Jobs",
+          "categoryOverridden": false,
+          "publishedTime": "2026-10-14T14:05:13+05:30",
+          "modifiedTime": "2026-10-14T14:05:16+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 35
+        },
+        "_last_checked": "2026-11-05T03:53:43+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -10466,17 +10461,17 @@
         ],
         "meta": {
           "sourceUrl": "https://www.sarkariresult.com/2026/nvs-class-6th-admission-july26/",
-          "scrapedAt": "2026-11-01T12:01:32",
+          "scrapedAt": "2026-11-05T09:23:44",
           "pageTitle": "Jawahar Navodaya JNVST 2027 NVS Class 6th Admit Card 2026",
           "detectedCategory": "SR_Admit_Card",
           "categoryOverridden": true,
           "publishedTime": "2026-10-28T18:02:38+05:30",
           "modifiedTime": "2026-10-28T18:02:41+05:30",
           "articleSection": "2026",
-          "homepageSerial": 70
+          "homepageSerial": 71
         },
         "admitCardUrl": "https://cbseitms.rcil.gov.in/nvs/AdminCard/Admit2027Card",
-        "_last_checked": "2026-11-01T06:31:32+00:00"
+        "_last_checked": "2026-11-05T03:53:44+00:00"
       },
       {
         "category": "SR_Latest_Jobs",
@@ -11872,6 +11867,364 @@
           "homepageSerial": 72
         },
         "_last_checked": "2026-09-25T07:06:40+00:00"
+      },
+      {
+        "category": "SR_Result",
+        "title": "PFRDA Officer Grade A Assistant Manager Recruitment 2026 Result",
+        "postDate": "04/11/2026",
+        "organization": "PFRDA",
+        "totalPost": "30",
+        "shortInfo": "Pension Fund Regulatory and Development Authority PFRDA has released the notification for the recruitment of Assistant Manager Exam 2026. Those Candidates Are Interested to the Following PFRDA Assistant Manager Recruitment 2026 Vacancy Can Download Results. See the advertisement for information related to age limit, syllabus, Department wise post, selection procedure, pay scale in PFRDA Officer Grade A Assistant Manager Recruitment 2026",
+        "importantDates": {
+          "applicationBegin": "03/09/2026",
+          "lastDateApplyOnline": "24/09/2026",
+          "lastDatePayFee": "24/09/2026",
+          "admitCardDate": "Before Exam",
+          "examDate": "24/09/2026",
+          "resultDate": "04/11/2026",
+          "interviewDate": "As per Schedule"
+        },
+        "applicationFee": {
+          "general": "1000",
+          "sc": "0",
+          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
+          "scStPhExm": "0"
+        },
+        "ageLimit": {
+          "minAge": "NA",
+          "maxAge": "30",
+          "ageAsOnDate": "31/07/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Officer Grade A (Assistant Manager) – General",
+            "totalPost": "25",
+            "eligibility": "Master Degree/PG Diploma (2 Years) in any discipline or Bachelor Degree in Law (LLB) / Engineering Degree or ACA/FCA/ACS/FCS/ACMA/FCMA/CFA. More Eligibility Details Read the Notification.",
+            "tableHeading": "PFRDA Officer Grade A Assistant Manager Recruitment 2026 : Vacancy Details Total : 30 Post"
+          },
+          {
+            "postName": "Officer Grade A (Assistant Manager) – Research",
+            "totalPost": "02",
+            "eligibility": "Master Degree/PG Diploma (2 Years) in Economics/Commerce/Business Administration/Econometrics/Finance/Statistics/Mathematics/Data Science/AI/ML or related subjects More Eligibility Details Read the Notification.",
+            "tableHeading": "PFRDA Officer Grade A Assistant Manager Recruitment 2026 : Vacancy Details Total : 30 Post"
+          },
+          {
+            "postName": "Officer Grade A (Assistant Manager) – Actuary",
+            "totalPost": "02",
+            "eligibility": "Bachelor Degree from a recognized University/Institute with Pass/Exemption in all 7 Core Principles subjects of Institute of Actuaries of India (IAI). More Eligibility Details Read the Notification.",
+            "tableHeading": "PFRDA Officer Grade A Assistant Manager Recruitment 2026 : Vacancy Details Total : 30 Post"
+          },
+          {
+            "postName": "Officer Grade A (Assistant Manager) – Official Language (Rajbhasha)",
+            "totalPost": "01",
+            "eligibility": "Master Degree in Hindi/Hindi Translation with English at Bachelor’s level or Master Degree in Sanskrit/English/Economics/Commerce with Hindi at Bachelor’s level or Master Degree in both English and Hindi/Hindi Translation. More Eligibility Details Read the Notification.",
+            "tableHeading": "PFRDA Officer Grade A Assistant Manager Recruitment 2026 : Vacancy Details Total : 30 Post"
+          },
+          {
+            "postName": "Assistant Manager",
+            "totalPost": "30",
+            "categoryWise": {
+              "UR": "12",
+              "OBC": "08",
+              "EWS": "03",
+              "SC": "05",
+              "ST": "02"
+            },
+            "tableHeading": "PFRDA Assistant Manager Notification 2026 : Category Wise Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill PFRDA Assistant Manager Online Form 2026",
+            "content": "Pension Fund Regulatory and Development Authority PFRDA Are Issued Assistant Manager Examination 2026. Notification and Invited Online Application Form for the PFRDA Grade A Officer Assistant Manager Recruitment 2026 Candidate Can Apply Online for 03/09/2026 to 24/09/2026. | Candidate Read the Notification Before Apply the PFRDA Latest Recruitment 2026 Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Apply Online",
+            "url": "https://ibpsreg.ibps.in/pfrdajul26/"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://www.pfrda.org.in/"
+          },
+          {
+            "label": "Download Stage I Result",
+            "url": "https://doc.sarkariresults.org.in/Result%20of%20Phase%20Online%20Examination%20Recruitment%20of%20Officers%20Grade%20A%202026%20(1).pdf"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://doc.sarkariresults.org.in/Recruitment%20of%20Officer%20Grade%20A%20(Assistant%20Manager)-2026.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Pension Fund Regulatory and Development Authority PFRDA Are Issued Assistant Manager Examination 2026. Notification and Invited Online Application Form for the PFRDA Grade A Officer Assistant Manager Recruitment 2026 Candidate Can Apply Online for 03/09/2026 to 24/09/2026",
+            "Candidate Read the Notification Before Apply the PFRDA Latest Recruitment 2026 Application Form in Recruitment Latest Job Section",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ],
+          "with": "Bachelor Degree from a recognized University/Institute Pass/Exemption in all 7 Core Principles subjects of Institute of Actuaries of India (IAI).",
+          "phase_i_15_10_2026_phase_ii_20_11_2026": "The Examination Phase – I and Phase – II will be conducted in"
+        },
+        "faq": [
+          {
+            "question": "When did the PFRDA Grade A Officer Assistant Manager Recruitment 2026 Online Application Process Start?",
+            "answer": "The online application process started on 03 September 2026."
+          },
+          {
+            "question": "What is the Exam Date for PFRDA Grade A Officer Assistant Manager Recruitment 2026?",
+            "answer": "The Examination Phase – I and Phase – II will be conducted in Phase – I 15/10/2026, Phase – II 20/11/2026"
+          },
+          {
+            "question": "Where can I find the syllabus for the Indian PFRDA Grade A Officer Assistant Manager Recruitment Examination 2026?",
+            "answer": "The detailed syllabus and examination scheme are available in the official notification. Candidates are advised to read the notification carefully for complete details."
+          },
+          {
+            "question": "What is the last date to apply online for PFRDA Grade A Officer Assistant Manager Recruitment 2026?",
+            "answer": "The last date to apply online is 24 September 2026."
+          },
+          {
+            "question": "What is the last date to pay the application fee?",
+            "answer": "Candidates can pay the application fee up to 24 September 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/pfrda-assistant-manager-sep26/",
+          "scrapedAt": "2026-11-05T09:23:46",
+          "pageTitle": "PFRDA Officer Grade A Assistant Manager Result 2026",
+          "detectedCategory": "SR_Result",
+          "categoryOverridden": false,
+          "publishedTime": "2026-11-04T21:22:56+05:30",
+          "modifiedTime": "2026-11-04T21:22:58+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 1
+        },
+        "resultUrl": "https://doc.sarkariresults.org.in/Result%20of%20Phase%20Online%20Examination%20Recruitment%20of%20Officers%20Grade%20A%202026%20(1).pdf",
+        "_last_checked": "2026-11-05T03:53:46+00:00"
+      },
+      {
+        "category": "SR_Result",
+        "title": "Rajasthan Staff Selection Board RSSB Women Supervisor Recruitment 2026 Result, Cutoff, Merit List",
+        "postDate": "04/11/2026",
+        "organization": "RSSB",
+        "totalPost": "72",
+        "shortInfo": "Rajasthan Staff Selection Board RSSB RSMSSB has released the Women Supervisor Notification 2026. Those candidates who are interested in this Rajasthan Women Supervisor Recruitment 2026 Exam can Apply Online from 07 January 2026 to 11 February 2026. Read the notification for RSSB Women Supervisor Exam, eligibility, Subject Details information, Document Required, age limit, How to Apply and all other information",
+        "importantDates": {
+          "applicationBegin": "07/01/2026",
+          "lastDateApplyOnline": "11/02/2026",
+          "lastDatePayFee": "11/02/2026",
+          "examDate": "24/07/2026",
+          "admitCardDate": "20/07/2026",
+          "resultDate": "04/11/2026"
+        },
+        "applicationFee": {
+          "general": "600",
+          "obc": "400",
+          "paymentMode": "E Challan / Debit Card / Credit Card / Net Banking",
+          "obcNclScSt": "400",
+          "correctionCharges": "300"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "40",
+          "ageAsOnDate": "01/01/2027"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "RSSB Women Supervisor",
+            "eligibility": "Bachelor Degree from Any Recognized Board/University in India. O Level / COPA / Degree / Diploma / Certificate in Computer Science / Application / 10+2 with Computer Subject / Diploma in Computer Science Polytechnic / RSCIT. More Eligibility Details Read the Notification.",
+            "tableHeading": "RSSB Women Supervisor Recruitment 2026: Vacancy Details Total : 72 Post"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill RSSB Women Supervisor Recruitment Online Form 2026",
+            "content": "RSSB Women Supervisor Recruitment for Various Post Candidate Can Apply Between 07/01/2026 to 11/02/2026 | Candidate Read the Notification Before Apply the Recruitment Application Form in RSSB Women Supervisor Recruitment 2026. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Result",
+            "url": "https://rssb.rajasthan.gov.in/storage/result_item/1793801154.pdf"
+          },
+          {
+            "label": "Check Exam City",
+            "url": "https://recruitment.rajasthan.gov.in/knowlocationservlet"
+          },
+          {
+            "label": "Download Date Extended Notice",
+            "url": "https://rssb.rajasthan.gov.in/storage/news_item/1770123562.pdf"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://rssb.rajasthan.gov.in/storage/advertisement_item/1767701401.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://rssb.rajasthan.gov.in/"
+          },
+          {
+            "label": "Non TSP",
+            "url": "https://rssb.rajasthan.gov.in/storage/result_item/1793800973.pdf"
+          },
+          {
+            "label": "Cutoff",
+            "url": "https://rssb.rajasthan.gov.in/storage/result_item/1793800923.pdf"
+          },
+          {
+            "label": "Server-2",
+            "url": "https://sso.rajasthan.gov.in/"
+          },
+          {
+            "label": "Download Exam City Notice",
+            "url": "https://rojgarresult.com/wp-content/uploads/2026/07/rssb-women-supervisor.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "RSSB Women Supervisor Recruitment for Various Post Candidate Can Apply Between 07/01/2026 to 11/02/2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in RSSB Women Supervisor Recruitment 2026",
+            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form"
+          ],
+          "note": "This fee is for one time registration, now after paying the OTR fee once, the candidate will not have to pay the application fee again and again."
+        },
+        "faq": [
+          {
+            "question": "RSSB Women Supervisor Eligibility",
+            "answer": "RSSB Women Supervisor"
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/rpsc/rssb-women-supervisor-01-2026/",
+          "scrapedAt": "2026-11-05T09:23:47",
+          "pageTitle": "RSSB Women Supervisor Result 2026 for 72 Post",
+          "detectedCategory": "SR_Result",
+          "categoryOverridden": false,
+          "publishedTime": "2026-11-04T21:14:27+05:30",
+          "modifiedTime": "2026-11-04T21:14:30+05:30",
+          "articleSection": "RPSC",
+          "homepageSerial": 2
+        },
+        "resultUrl": "https://rssb.rajasthan.gov.in/storage/result_item/1793801154.pdf",
+        "_last_checked": "2026-11-05T03:53:47+00:00"
+      },
+      {
+        "category": "SR_Result",
+        "title": "Reserve Bank of India RBI Office Attendant Recruitment 2026 Score Card",
+        "postDate": "04/11/2026",
+        "organization": "RBI",
+        "totalPost": "572",
+        "shortInfo": "Reserve Bank of India RBI has released Office Attendant Recruitment 2026 Notification . Those candidates who are Enrolled in this RBI Office Attendant recruitment can Download Admit Card. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information",
+        "importantDates": {
+          "applicationBegin": "15/01/2026",
+          "lastDateApplyOnline": "04/02/2026",
+          "lastDatePayFee": "04/02/2026",
+          "examDate": "28/02/2026 & 01/03/2026",
+          "admitCardDate": "23/02/2026",
+          "resultDate": "22/06/2026"
+        },
+        "applicationFee": {
+          "general": "450",
+          "sc": "50",
+          "ph": "50",
+          "paymentMode": "E Challan / Debit Card / Credit Card / Net Banking"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "25",
+          "ageAsOnDate": "01/01/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Office Attendant",
+            "totalPost": "572",
+            "eligibility": "Class 10th Matric Exam from Any Recognized Board Bachelor Degree in Any Stream from Any Recognized University in India. Knowledge of Local Language More Eligibility Details Read the Notification.",
+            "tableHeading": "RBI Office Attendant Recruitment 2026: Vacancy Details Total : 572 Post"
+          },
+          {
+            "postName": "Office Attendant",
+            "totalPost": "572",
+            "categoryWise": {
+              "General (UR)": "291",
+              "EWS": "51",
+              "OBC": "83",
+              "SC": "89",
+              "ST": "58"
+            },
+            "tableHeading": "RBI Office Attendant Exam 2026: Category Wise Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill RBI Office Attendant Recruitment Online Form 2026",
+            "content": "RBI Office Attendant Recruitment for Various Post Candidate Can Apply Between 15/01/2026 to 04/02/2026 | Candidate Read the Notification Before Apply the Recruitment Application Form in RBI Office Attendant Recruitment 2026. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Answer Key Notice",
+            "url": "http://ibpsreg.ibps.in/rbipodec25/msocty_oct26/login.php?appid=570dc5ce05c03092a8704b0800a50da5"
+          },
+          {
+            "label": "Download Cutoff Table",
+            "url": "https://rbidocs.rbi.org.in/rdocs/content/pdfs/CutOffTable04112026.pdf"
+          },
+          {
+            "label": "Download Admit Card",
+            "url": "https://ibpsreg.ibps.in/rbipodec25/oecla_feb26/login.php?appid=967ee8e6005100c68d533ada7208f4f4"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://ibpsreg.ibps.in/rbipodec25/"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://opportunities.rbi.org.in/scripts/vacancies.aspx"
+          },
+          {
+            "label": "Download Result",
+            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/02/rbi_office_Attendant_Result_2026.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "RBI Office Attendant Recruitment for Various Post Candidate Can Apply Between 15/01/2026 to 04/02/2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in RBI Office Attendant Recruitment 2026",
+            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form"
+          ]
+        },
+        "faq": [
+          {
+            "question": "RBI Office Attendant Eligibility",
+            "answer": "Office Attendant"
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/bank/rbi-office-attendant-jan26/",
+          "scrapedAt": "2026-11-05T09:23:48",
+          "pageTitle": "RBI Office Attendant Score Card 2026 for 572 Post",
+          "detectedCategory": "SR_Result",
+          "categoryOverridden": false,
+          "publishedTime": "2026-11-04T18:44:37+05:30",
+          "modifiedTime": "2026-11-04T18:44:39+05:30",
+          "articleSection": "Bank",
+          "homepageSerial": 3
+        },
+        "resultUrl": "https://www.sarkariresult.com/wp-content/uploads/2026/02/rbi_office_Attendant_Result_2026.pdf",
+        "_last_checked": "2026-11-05T03:53:48+00:00"
       },
       {
         "category": "SR_Result",
@@ -15858,414 +16211,6 @@
         "_last_checked": "2026-10-16T03:49:21+00:00"
       },
       {
-        "category": "SR_Result",
-        "title": "Sashastra Seema Bal SSB Head Constable (Min) 2020 CBT Exam Result / Marks 2026",
-        "postDate": "14/10/2026",
-        "organization": "SSB",
-        "totalPost": "115",
-        "shortInfo": "Sashastra Seema Bal (SSB) Are Recently Uploaded Result / Marks for the Post of Head Constable Ministerial Recruitment PET/PST Exam Admit Card, Those Candidates Are Enrolled with Vacancies Can Download the Result",
-        "importantDates": {
-          "applicationBegin": "24/07/2021",
-          "lastDateApplyOnline": "22/08/2021",
-          "lastDatePayFee": "22/08/2021",
-          "admitCardDate": "04/02/2026",
-          "examDate": "07/07/2026",
-          "answerKeyDate": "09/07/2026",
-          "resultDate": "14/10/2026"
-        },
-        "applicationFee": {
-          "general": "100",
-          "sc": "0",
-          "female": "0",
-          "paymentMode": "Debit Card / Credit Card / Net Banking",
-          "scStPh": "0",
-          "allCategoryFemale": "0"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "25",
-          "ageAsOnDate": "22/08/2021"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Head Constable HC (Ministerial)",
-            "totalPost": "115",
-            "eligibility": "10+2 Intermediate Exam in Any Recognized Board in India. English Typing : 35 WPM OR Hindi Typing : 30 WPM",
-            "tableHeading": "Vacancy Details Total : 115 Post"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill Form",
-            "content": "Sashastra Seema Bal SSB Head Constable HC Ministerial Recruitment 2021, Candidate Can Apply Between 24/07/2021 to 22/08/2021. | Candidate Read the Notification Before Apply the Vacancies Application Form in Govt. Jobs of Defense SSB Latest Govt. Recruitment Online 2021. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If you have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Result / Marks",
-            "url": "https://cdn.digialm.com//EForms/configuredHtml/1258/101413/login.html"
-          },
-          {
-            "label": "Download Answer Key Notice",
-            "url": "https://recruitment.ssb.gov.in/"
-          },
-          {
-            "label": "Download PET/PST Admit Card",
-            "url": "https://applyssb.com/ssb_hcmin_pet_admitcardsv1/applicationHome"
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://applyssb.com/SSBDMEAdmitcard/applicationAfterIndex"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://applyssb.com/hcmin2021/applicationAfterIndex"
-          },
-          {
-            "label": "Official Website",
-            "url": "http://www.ssbrectt.gov.in/default.aspx"
-          },
-          {
-            "label": "Download Result Notice",
-            "url": "https://doc.sarkariresults.org.in/Circular0__2026_10_14_12_00_16_957.pdf"
-          },
-          {
-            "label": "Download Answer Key Re Open Notice",
-            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/07/Circular0__2026_07_13_19_32_08_434.pdf"
-          },
-          {
-            "label": "Download CBT Exam Notice",
-            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/02/Circular0__2026_06_09_19_12_10_467-1.pdf"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://www.sarkariresults.org.in/wp-content/uploads/2021/07/ADVT_338_HC_MIN_2020.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Sashastra Seema Bal SSB Head Constable HC Ministerial Recruitment 2021, Candidate Can Apply Between 24/07/2021 to 22/08/2021",
-            "Candidate Read the Notification Before Apply the Vacancies Application Form in Govt. Jobs of Defense SSB Latest Govt. Recruitment Online 2021",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
-            "Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If you have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form"
-          ],
-          "physicalEligibility": {
-            "racing": "1.6 KM in 6 Min. 30 Second",
-            "height": "165 CMS",
-            "height_st_only": "162.5 CMS",
-            "chest": "77-82 CMS"
-          }
-        },
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/force/ssb-hc-ministerial-jul21/",
-          "scrapedAt": "2026-10-14T13:42:58",
-          "pageTitle": "SSB Head Constable Ministerial 2020 Result / Marks 2026",
-          "detectedCategory": "SR_Result",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-14T12:59:25+05:30",
-          "modifiedTime": "2026-10-14T12:59:29+05:30",
-          "articleSection": "Force",
-          "homepageSerial": 1
-        },
-        "resultUrl": "https://cdn.digialm.com//EForms/configuredHtml/1258/101413/login.html",
-        "_last_checked": "2026-10-14T08:12:58+00:00"
-      },
-      {
-        "category": "SR_Result",
-        "title": "UPSC NDA & NDA II Recruitment 2026 Result",
-        "postDate": "09/10/2026",
-        "organization": "UPSC",
-        "totalPost": "394",
-        "shortInfo": "Union Public Service Commission (UPSC) has released National Defence Academy NDA & NA Second Examination 2026 Notification. Those candidates who are Enrolled in this UPSC NDA and NA II Examination 2026 can Download Result. Read the notification for recruitment eligibility, post information, selection procedure, pay scale and all other information",
-        "importantDates": {
-          "applicationBegin": "20/05/2026",
-          "lastDateApplyOnline": "11/06/2026 upto 06:00 PM only",
-          "lastDatePayFee": "11/06/2026",
-          "formCorrectionDate": "As per Schedule",
-          "admitCardDate": "03/09/2026",
-          "examDate": "13/09/2026",
-          "answerKeyDate": "16/09/2026",
-          "resultDate": "09/10/2026"
-        },
-        "applicationFee": {
-          "general": "100",
-          "sc": "0",
-          "paymentMode": "Net Banking / Debit Card / Credit Card / Offline / E Challan",
-          "generalUrEwsObc": "100"
-        },
-        "ageLimit": {
-          "relaxation": "Extra as per NDA II Exam Notification 2026 Recruitment Rules."
-        },
-        "vacancyDetails": [
-          {
-            "postName": "NDA Army",
-            "totalPost": "208",
-            "genderWise": {
-              "male": "198",
-              "female": "10"
-            }
-          },
-          {
-            "postName": "NDA Navy",
-            "totalPost": "42",
-            "genderWise": {
-              "male": "37",
-              "female": "05"
-            }
-          },
-          {
-            "postName": "NDA Airforce Flying",
-            "totalPost": "92",
-            "genderWise": {
-              "male": "90",
-              "female": "02"
-            }
-          },
-          {
-            "postName": "NDA Airforce Ground Duties Tech",
-            "totalPost": "18",
-            "genderWise": {
-              "male": "16",
-              "female": "02"
-            }
-          },
-          {
-            "postName": "NDA Airforce Ground Duties Non Tech",
-            "totalPost": "10",
-            "genderWise": {
-              "male": "08",
-              "female": "02"
-            }
-          },
-          {
-            "postName": "Naval Academy 10+2 Scheme",
-            "totalPost": "24",
-            "genderWise": {
-              "male": "21",
-              "female": "03"
-            }
-          }
-        ],
-        "eligibilitySection": [
-          {
-            "heading": "UPSC NDA II Eligibility 2026",
-            "items": [
-              "Army Wing : Passed /Appearing 10+2 Exam in Any Recognized Board in India.",
-              "For Airforce & Naval Wing : Passed /Appearing 10+2 Exam with Physics & Math Subjects"
-            ]
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill NDA II Exam Online Form 2026",
-            "content": "Live Photo Instruction : Candidates must upload a live photo when applying, using the website on a laptop or mobile phone. The photo must meet the criteria specified in the notification. | One time registration has become necessary for all the applications of Union Public Service Commission, so all the candidates will be able to apply only after OTR. | Union Public Service Commission UPSC NDA II Recruitment 2026. Candidate Can Apply Between 20/05/2026 to 11/06/2026. | Candidate Read the NDA II Notification Before Apply the Recruitment Application Form in NDA Apply Online 2026. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Admission Entrance Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Result",
-            "url": "https://www.upsc.gov.in/sites/default/files/WR-RollList-Engl-NDA-II-2026-091026.pdf"
-          },
-          {
-            "label": "Download Answer Key",
-            "url": "https://www.upsc.gov.in/sites/default/files/ProvAnsKey-Math-NDANA-II-26-160926.pdf"
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://upsconline.nic.in/"
-          },
-          {
-            "label": "Download Exam Schedule",
-            "url": "https://www.upsc.gov.in/sites/default/files/TimeTable-NDA-%20NA-Exam-II-2026-Engl-120826.pdf"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://upsconline.nic.in/upsc/OTRP/index.php"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://upsc.gov.in/sites/default/files/Notif-NDA-II-2026-Engl-200526.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "http://upsc.gov.in/"
-          },
-          {
-            "label": "General Ability Test",
-            "url": "https://www.upsc.gov.in/sites/default/files/ProvAnsKey-GAT-NDANA-II-26-160926.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Live Photo Instruction : Candidates must upload a live photo when applying, using the website on a laptop or mobile phone. The photo must meet the criteria specified in the notification",
-            "One time registration has become necessary for all the applications of Union Public Service Commission, so all the candidates will be able to apply only after OTR",
-            "Union Public Service Commission UPSC NDA II Recruitment 2026. Candidate Can Apply Between 20/05/2026 to 11/06/2026",
-            "Candidate Read the NDA II Notification Before Apply the Recruitment Application Form in NDA Apply Online 2026",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Admission Entrance Form – Photo, Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ],
-          "army_wing": "Passed /Appearing 10+2 Exam in Any Recognized Board in India.",
-          "for_airforce_naval_wing": "Passed /Appearing 10+2 Exam with Physics & Math Subjects",
-          "live_photo_instruction": "Candidates must upload a live photo when applying, using the website on a laptop or mobile phone. The photo must meet the criteria specified in the notification."
-        },
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/upsc/upsc-nda-ii-exam-2026/",
-          "scrapedAt": "2026-10-10T12:33:34",
-          "pageTitle": "UPSC NDA II Written Exam Result 2026",
-          "detectedCategory": "SR_Result",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-09T19:21:55+05:30",
-          "modifiedTime": "2026-10-09T19:21:58+05:30",
-          "articleSection": "UPSC",
-          "homepageSerial": 2
-        },
-        "resultUrl": "https://www.upsc.gov.in/sites/default/files/WR-RollList-Engl-NDA-II-2026-091026.pdf",
-        "_last_checked": "2026-10-10T07:03:34+00:00"
-      },
-      {
-        "category": "SR_Result",
-        "title": "UPSC Central Armed Police Force CAPF AC Examination 2024, Final Result with Reserve List, Marks 2026 for 506 Post",
-        "postDate": "13/10/2026",
-        "organization": "UPSC",
-        "totalPost": "506",
-        "shortInfo": "Union Public Service Commission UPSC Central Armed Police Force CAPF Assistant Commandant (CPF AC) Recruitment 2024. Those candidates who are interested in this UPSC CPF Assistant Commandant 2024 Examination can Download Result. Read the notification for recruitment eligibility, post information, selection procedure, age limit, pay scale and all other information",
-        "importantDates": {
-          "applicationBegin": "26/04/2023",
-          "lastDateApplyOnline": "14/05/2024 Upto 06:00 PM Only",
-          "formCorrectionDate": "15-21 May 2024",
-          "examDate": "04/08/2024",
-          "admitCardDate": "26/07/2024",
-          "lastDatePayFee": "14/05/2024",
-          "resultDate": "24/09/2024",
-          "interviewDate": "04/04/2025",
-          "marksAvailable": "13/10/2026"
-        },
-        "applicationFee": {
-          "general": "200",
-          "sc": "0",
-          "female": "0",
-          "paymentMode": "Debit Card / Credit Card / Net Banking / E Challan",
-          "nilAllCategoryFemale": "0"
-        },
-        "vacancyDetails": [
-          {
-            "totalPost": "186",
-            "ageLimit": "20-25 Years as on 01/08/2024",
-            "eligibility": "Bachelor Degree in Any Stream in Any Recognized University in India. Physical Eligibility",
-            "postName": "BSF",
-            "tableHeading": "UPSC CAPF Assistant Commandant Recruitment 2024 : Vacancy Details Total : 506 Post"
-          },
-          {
-            "totalPost": "120",
-            "postName": "CRPF",
-            "tableHeading": "UPSC CAPF Assistant Commandant Recruitment 2024 : Vacancy Details Total : 506 Post"
-          },
-          {
-            "totalPost": "100",
-            "postName": "CISF",
-            "tableHeading": "UPSC CAPF Assistant Commandant Recruitment 2024 : Vacancy Details Total : 506 Post"
-          },
-          {
-            "totalPost": "58",
-            "postName": "ITBP",
-            "tableHeading": "UPSC CAPF Assistant Commandant Recruitment 2024 : Vacancy Details Total : 506 Post"
-          },
-          {
-            "totalPost": "42",
-            "postName": "SSB",
-            "tableHeading": "UPSC CAPF Assistant Commandant Recruitment 2024 : Vacancy Details Total : 506 Post"
-          },
-          {
-            "postName": "Details",
-            "eligibility": "Male Female",
-            "tableHeading": "UPSC CPF AC 2024 Notification : Physical Eligibility Details"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill UPSC CPF Assistant Commandant Online Form 2024",
-            "content": "Photo Instruction : This time a new arrangement has been made for a photo, the photo of the candidate should not be more than 10 days old and the name of the candidate and the date of the photo should be written on the photo and the background of the photo should also be light. | Exam Center Instruction : The exam city is on first come first serve basis, so if you want the exam city of your choice then apply as soon as possible. | Union Public Service Commission UPSC Central Armed Police Forces CAPF Recruitment 2024 Candidate Can Apply Between 24/04/2024 to 14/05/2024 | Candidate Read the Notification Before Apply the UPSC Recruitment 2024 Apply Online Form for CAPF Armed Force Various Post Form Latest UPSC Vacancies 2024. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Marks",
-            "url": "https://www.upsc.gov.in/sites/default/files/MksRcdCndt-CAPF-2024-Engl-131026.pdf"
-          },
-          {
-            "label": "Download Reserve List",
-            "url": "https://www.upsc.gov.in/sites/default/files/ReserveList-CAPF-2024-Engl-12062026.pdf"
-          },
-          {
-            "label": "Download Result",
-            "url": "https://upsc.gov.in/sites/default/files/WR-CAPF-24-NameList-Engl-081024.pdf"
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://upsconline.nic.in/eadmitcard/admitcard_capf_2024/"
-          },
-          {
-            "label": "Apply Online",
-            "url": "https://upsconline.nic.in/upsc/OTRP/"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://upsc.gov.in/sites/default/files/CAPF_AC_Exam_2024_ExamNotif_Eng_24042024.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://upsc.gov.in/whats-new"
-          },
-          {
-            "label": "Download Interview Schedule",
-            "url": "https://doc.sarkariresults.org.in/UPSC_CPF_AC_Interview_Schedule_2025.pdf"
-          },
-          {
-            "label": "Roll Wise",
-            "url": "https://upsc.gov.in/sites/default/files/WR-CAPF-2024-Roll-Engl-240924.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "Photo Instruction : This time a new arrangement has been made for a photo, the photo of the candidate should not be more than 10 days old and the name of the candidate and the date of the photo s hould be written on the photo and the background of the photo should also be light",
-            "Exam Center Instruction : The exam city is on first come first serve basis , so if you want the exam city of your choice then apply as soon as possible",
-            "Union Public Service Commission UPSC Central Armed Police Forces CAPF Recruitment 2024 Candidate Can Apply Between 24/04/2024 to 14/05/2024",
-            "Candidate Read the Notification Before Apply the UPSC Recruitment 2024 Apply Online Form for CAPF Armed Force Various Post Form Latest UPSC Vacancies 2024",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form"
-          ],
-          "photo_instruction": "This time a new arrangement has been made for a photo, the photo of the candidate should not be more than 10 days old and the name of the candidate and the date of the photo should be written on the photo and the background of the photo should also be light.",
-          "physicalEligibility": {
-            "height": "165 CM",
-            "chest": "81-86 CM",
-            "long_jump": "3.5 Meter",
-            "shot_put_7_26_kg": "4.5 Meter"
-          }
-        },
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/upsc/upsc-cpf-ac-2024/",
-          "scrapedAt": "2026-10-14T13:43:00",
-          "pageTitle": "UPSC CPF CAPF AC 2024 Marks Details 2026",
-          "detectedCategory": "SR_Result",
-          "categoryOverridden": false,
-          "publishedTime": "2026-10-13T18:45:11+05:30",
-          "modifiedTime": "2026-10-13T18:45:15+05:30",
-          "articleSection": "UPSC",
-          "homepageSerial": 3
-        },
-        "resultUrl": "https://upsc.gov.in/sites/default/files/WR-CAPF-24-NameList-Engl-081024.pdf",
-        "_last_checked": "2026-10-14T08:13:00+00:00"
-      },
-      {
         "category": "SR_Admit_Card",
         "title": "UPSSSC Junior Assistant Recruitment 2024 Admit Card 2026",
         "postDate": "03/11/2026",
@@ -16416,6 +16361,126 @@
         },
         "admitCardUrl": "https://upsssc.gov.in/upssscadmitcard/admitCard.aspx?ID=INTRIM",
         "_last_checked": "2026-11-04T08:20:52+00:00"
+      },
+      {
+        "category": "SR_Admit_Card",
+        "title": "Sashastra Seema Bal SSB Head Constable (Min) 2020 CBT Exam Result / Marks 2026",
+        "postDate": "02/11/2026",
+        "organization": "SSB",
+        "totalPost": "115",
+        "shortInfo": "Sashastra Seema Bal (SSB) Are Recently Uploaded Result / Marks for the Post of Head Constable Ministerial Recruitment PET/PST Exam Admit Card, Those Candidates Are Enrolled with Vacancies Can Download the Result",
+        "importantDates": {
+          "applicationBegin": "24/07/2021",
+          "lastDateApplyOnline": "22/08/2021",
+          "lastDatePayFee": "22/08/2021",
+          "admitCardDate": "04/02/2026",
+          "examDate": "07/07/2026",
+          "answerKeyDate": "09/07/2026",
+          "resultDate": "02/11/2026"
+        },
+        "applicationFee": {
+          "general": "100",
+          "sc": "0",
+          "female": "0",
+          "paymentMode": "Debit Card / Credit Card / Net Banking",
+          "scStPh": "0",
+          "allCategoryFemale": "0"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "25",
+          "ageAsOnDate": "22/08/2021"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Head Constable HC (Ministerial)",
+            "totalPost": "115",
+            "eligibility": "10+2 Intermediate Exam in Any Recognized Board in India. English Typing : 35 WPM OR Hindi Typing : 30 WPM",
+            "tableHeading": "Vacancy Details Total : 115 Post"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill Form",
+            "content": "Sashastra Seema Bal SSB Head Constable HC Ministerial Recruitment 2021, Candidate Can Apply Between 24/07/2021 to 22/08/2021. | Candidate Read the Notification Before Apply the Vacancies Application Form in Govt. Jobs of Defense SSB Latest Govt. Recruitment Online 2021. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully. | If Candidate Required to Paying the Application Fee Must Submit. If you have Not the Required Application Fees Your Form is Not Completed. | Take A Print Out of Final Submitted Form."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Result / Marks",
+            "url": "https://cdn.digialm.com//EForms/configuredHtml/1258/101413/login.html"
+          },
+          {
+            "label": "Download Answer Key Notice",
+            "url": "https://recruitment.ssb.gov.in/"
+          },
+          {
+            "label": "Download PET/PST Admit Card",
+            "url": "https://applyssb.com/ssb_hcmin_pet_admitcardsv1/applicationHome"
+          },
+          {
+            "label": "Download Admit Card",
+            "url": "https://applyssb.com/SSBDMEAdmitcard/applicationAfterIndex"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://applyssb.com/hcmin2021/applicationAfterIndex"
+          },
+          {
+            "label": "Official Website",
+            "url": "http://www.ssbrectt.gov.in/default.aspx"
+          },
+          {
+            "label": "Download CBT Result & Typing Test Notice",
+            "url": "https://doc.sarkariresults.org.in/Circular202__2026_11_02_19_05_37_978.pdf"
+          },
+          {
+            "label": "Download Result Notice",
+            "url": "https://doc.sarkariresults.org.in/Circular0__2026_10_14_12_00_16_957.pdf"
+          },
+          {
+            "label": "Download Answer Key Re Open Notice",
+            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/07/Circular0__2026_07_13_19_32_08_434.pdf"
+          },
+          {
+            "label": "Download CBT Exam Notice",
+            "url": "https://www.sarkariresult.com/wp-content/uploads/2026/02/Circular0__2026_06_09_19_12_10_467-1.pdf"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://www.sarkariresults.org.in/wp-content/uploads/2021/07/ADVT_338_HC_MIN_2020.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Sashastra Seema Bal SSB Head Constable HC Ministerial Recruitment 2021, Candidate Can Apply Between 24/07/2021 to 22/08/2021",
+            "Candidate Read the Notification Before Apply the Vacancies Application Form in Govt. Jobs of Defense SSB Latest Govt. Recruitment Online 2021",
+            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
+            "Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If you have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form"
+          ],
+          "physicalEligibility": {
+            "racing": "1.6 KM in 6 Min. 30 Second",
+            "height": "165 CMS",
+            "height_st_only": "162.5 CMS",
+            "chest": "77-82 CMS"
+          }
+        },
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/force/ssb-hc-ministerial-jul21/",
+          "scrapedAt": "2026-11-03T12:17:55",
+          "pageTitle": "SSB Head Constable Ministerial 2020 CBT Exam Result 2026",
+          "detectedCategory": "SR_Result",
+          "categoryOverridden": true,
+          "publishedTime": "2026-11-02T20:33:20+05:30",
+          "modifiedTime": "2026-11-02T20:33:22+05:30",
+          "articleSection": "Force",
+          "homepageSerial": 1
+        },
+        "resultUrl": "https://cdn.digialm.com//EForms/configuredHtml/1258/101413/login.html",
+        "_last_checked": "2026-11-03T06:47:55+00:00"
       },
       {
         "category": "SR_Admit_Card",
@@ -20429,6 +20494,453 @@
       },
       {
         "category": "SR_Answer_Key",
+        "title": "Supreme Court of India SCI Senior Personal Assistant SPA Recruitment 2026 Answer Key for 65 Post",
+        "postDate": "04/11/2026",
+        "organization": "SCI",
+        "totalPost": "65",
+        "shortInfo": "Supreme Court of India SCI has released Senior Personal Assistant SPA Notification. Those candidates who are interested in this SCI Senior Personal Assistant SPA Recruitment 2026 Exam can can Download Answer Key. Read the notification for SCI Senior Personal Assistant 2026 Exam, eligibility, Subject Details information, Document Required, age limit, How to Apply and all other information",
+        "importantDates": {
+          "applicationBegin": "20/10/2026",
+          "lastDateApplyOnline": "10/11/2026",
+          "lastDatePayFee": "10/11/2026",
+          "examDate": "02/11/2026",
+          "answerKeyDate": "04/11/2026"
+        },
+        "applicationFee": {
+          "general": "1500",
+          "obc": "750",
+          "paymentMode": "Debit Card / Credit Card / Net Banking / Online",
+          "sGeneral": "1500",
+          "obcScStPh": "750"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "30",
+          "ageAsOnDate": "01/10/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "SCI Senior Personal Assistant",
+            "totalPost": "65",
+            "eligibility": "Bachelor Degree in Any Stream Passed from Recognized Institute / University in India. English Shorthand : 110 WPM Computer Typing Speed 40 WPM Computer Knowledge More Eligibility Details Read the Notification.",
+            "tableHeading": "SCI Senior Personal Assistant Recruitment 2026 : Vacancy Details"
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill SCI Senior Personal Assistant : Online Form 2026",
+            "content": "Supreme Court of India SCI has Released Senior Personal Assistant 2026 Notification. Candidate Can Apply Between 20 October 2026 to 10 November 2026. | Candidate Read the Notification Before Apply the Recruitment Application Form in SCI Apply Online for SCI Senior Personal Assistant 2026. | Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Carefully. | Take A Print Out of Final Submitted Form. | For the latest updates on , admit card, answer key, and result, always visit , the official website for in India ()."
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Answer Key",
+            "url": "https://cdn3.digialm.com/EForms/configuredHtml/32912/102864/14v7jBxcoPI08LH2vw/login.html"
+          },
+          {
+            "label": "Download Answer Key Notice",
+            "url": "https://cdnbbsr.s3waas.gov.in/s3ec0490f1f4972d133619a60c30f3559e/uploads/2026/11/2026110495.pdf"
+          },
+          {
+            "label": "Apply Online",
+            "url": "https://cdn3.digialm.com/EForms/configuredHtml/32912/102864/14v7jBxcoPI08LH2vw/Index.html"
+          },
+          {
+            "label": "Download Notification",
+            "url": "https://cdnbbsr.s3waas.gov.in/s3ec0490f1f4972d133619a60c30f3559e/uploads/2026/10/2026101325.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://www.sci.gov.in/"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "Supreme Court of India SCI has Released Senior Personal Assistant 2026 Notification. Candidate Can Apply Between 20 October 2026 to 10 November 2026",
+            "Candidate Read the Notification Before Apply the Recruitment Application Form in SCI Apply Online for SCI Senior Personal Assistant 2026",
+            "Kindly Check and College the All Document – Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "Take A Print Out of Final Submitted Form",
+            "admit card, answer key, and result"
+          ]
+        },
+        "faq": [
+          {
+            "question": "SCI Senior Personal Assistant Online Form 2026 Start Date?",
+            "answer": "The online application process started on 20 October 2026."
+          },
+          {
+            "question": "SCI Senior Personal Assistant 2026 Exam Date?",
+            "answer": "The Stage-I Examination will be conducted in As Per Schedule."
+          },
+          {
+            "question": "Where can I find the syllabus for the SCI Senior Personal Assistant Examination 2026?",
+            "answer": "The detailed syllabus and examination scheme for the SCI Senior Personal Assistant Examination are available in the official notification. Candidates are advised to read the notification carefully for complete syllabus details."
+          },
+          {
+            "question": "SCI Senior Personal Assistant Recruitment 2026 Last Date?",
+            "answer": "The last date to apply online is 10 November 2026."
+          },
+          {
+            "question": "What is the last date to Pay application fee Details?",
+            "answer": "Candidates can pay the application fee up to 10 November 2026."
+          }
+        ],
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/2026/sci-senior-personal-assistant-oct26/",
+          "scrapedAt": "2026-11-05T09:23:44",
+          "pageTitle": "Supreme Court of India Senior Personal Assistant Answer Key 2026",
+          "detectedCategory": "SR_Answer_Key",
+          "categoryOverridden": false,
+          "publishedTime": "2026-11-04T21:29:10+05:30",
+          "modifiedTime": "2026-11-04T21:29:12+05:30",
+          "articleSection": "2026",
+          "homepageSerial": 1
+        },
+        "answerKeyUrl": "https://cdn3.digialm.com/EForms/configuredHtml/32912/102864/14v7jBxcoPI08LH2vw/login.html",
+        "_last_checked": "2026-11-05T03:53:44+00:00"
+      },
+      {
+        "category": "SR_Answer_Key",
+        "title": "SSC Combined Graduate Level CGL Recruitment 2026 Answer Key for 12256 Post",
+        "postDate": "04/11/2026",
+        "organization": "SSC",
+        "totalPost": "10731",
+        "shortInfo": "Staff Selection Commission SSC has released the notification for Combined Graduate Level CGL Examination 2026 Exam City and Admit Card Released before Exam. Those Candidates Are Interested with Vacancy Can Apply Online from 21/05/2026 to 25/06/2026. Before applying, candidates must read the complete advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available",
+        "importantDates": {
+          "applicationBegin": "21/05/2026",
+          "lastDateApplyOnline": "25/06/2026 upto 11 PM Only",
+          "lastDatePayFee": "26/06/2026",
+          "formCorrectionDate": "01-07 July 2026",
+          "examDate": "30 September to 30 October 2026",
+          "answerKeyDate": "04/11/2026"
+        },
+        "applicationFee": {
+          "general": "100",
+          "sc": "0",
+          "female": "0",
+          "paymentMode": "Debit Card / Credit Card / Net Banking / Upi",
+          "scStPh": "0",
+          "nilAllCategoryFemale": "0",
+          "exemptedCorrectionFeeFirstTime": "200",
+          "correctionFeeSecondTime": "500"
+        },
+        "ageLimit": {
+          "minAge": "18",
+          "maxAge": "27",
+          "ageAsOnDate": "01/08/2026"
+        },
+        "vacancyDetails": [
+          {
+            "postName": "Junior Statistical Officer",
+            "eligibility": "Bachelor Degree in Any Stream / Subject with 60 marks in Mathematics at 10+2 Inter Level OR Bachelor Degree in Any Subject with Statistics as One the Subject in Degree level.",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Statistical Investigator Grade-II",
+            "eligibility": "Bachelor Degree in Any Subject with Statistics as One of the Subjects.",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Research Assistant in National Human Rights Commission (NHRC)",
+            "eligibility": "Bachelor Degree in Any Stream from Any Recognized University in India.",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "All other Posts",
+            "eligibility": "Bachelor Degree in Any Stream from Any Recognized University in India.",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Assistant Section Officer ASO",
+            "department": "Central Secretariat Service",
+            "ageLimit": "20-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Intelligence Bureau",
+            "department": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Ministry of Railways",
+            "department": "20-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Ministry of External Affairs",
+            "department": "20-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "AFHQ",
+            "department": "20-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Ministry of Electronics and Information Technology",
+            "department": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Assistant / Assistant Section Officer ASO",
+            "department": "Other Ministries/ Departments/ Organizations",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector of Income Tax",
+            "department": "CBDT",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector, (Central Excise)",
+            "department": "CBIC",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector (Preventive Officer)",
+            "department": "CBIC",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector (Examiner)",
+            "department": "CBIC",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Assistant Enforcement Officer AEO",
+            "department": "Directorate of Enforcement, Department of Revenue",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Sub Inspector SI",
+            "department": "Central Bureau of Investigation CBI",
+            "ageLimit": "20-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector Posts",
+            "department": "Department of Posts, Ministry of Communications",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Inspector",
+            "department": "Central Bureau of Narcotics, Ministry of Finance",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Section Head",
+            "department": "Director General of Foreign Trade",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Assistant / Assistant Section Officer ASO",
+            "department": "Other Ministries/ Departments/ Organizations",
+            "ageLimit": "18-30 years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Executive Assistant",
+            "department": "CBIC",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Research Assistant RA",
+            "department": "National Human Rights Commission (NHRC)",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Divisional Accountant",
+            "department": "Offices under C&AG",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Sub Inspector SI",
+            "department": "National Investigation Agency (NIA)",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Sub-Inspector SI / Junior Intelligence Officer JIO",
+            "department": "Narcotics Control Bureau (MHA)",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Junior Statistical Officer JSO",
+            "department": "Ministry of Statistics & Programme Implementation.",
+            "ageLimit": "18-32 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Statistical Investigator Grade-II",
+            "department": "Ministry of Home Affairs",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Office Superintendent",
+            "department": "CBDT",
+            "ageLimit": "18-30 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Auditor",
+            "department": "Offices under C&AG",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Offices under CGDA",
+            "department": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Other Ministry/ Departments",
+            "department": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Accountant",
+            "department": "Offices under C&AG",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Accountant",
+            "department": "Controller General of Accounts",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Accountant / Junior Accountant",
+            "department": "Other Ministry/ Departments",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Postal Assistant PA / Sorting Assistant SA",
+            "department": "Department of Posts, Ministry of Communications",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Senior Secretariat Assistant SSA / Upper Division Clerks UDC",
+            "department": "Central Govt. Offices/ Ministries other than CSCS cadres.",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Senior Administrative Assistant SAA",
+            "department": "Military Engineering Services, Ministry of Defence",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Tax Assistant",
+            "department": "CBDT & CBIC",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          },
+          {
+            "postName": "Sub Inspector SI",
+            "department": "Central Bureau of Narcotics, Ministry of Finance",
+            "ageLimit": "18-27 Years",
+            "tableHeading": "SSC Combined Graduate Level CGL Recruitment 2026 : Vacancy Details Total 10731 Post"
+          }
+        ],
+        "eligibilitySection": [
+          {
+            "heading": "SSC Combined Graduate Level CGL Eligibility 2026",
+            "items": [
+              "SSC Combined Graduate Level CGL Eligibility 2026"
+            ]
+          }
+        ],
+        "textSections": [
+          {
+            "section": "How to Fill SSC CGL 2026 Exam Online Form",
+            "content": "OTR Instruction : SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration. | Staff Selection Commission SSC Are Issued Combined Graduate Level CGL Exam 2026 Notification and Invited Online Application Form for the SSC Graduate Level Recruitment 2026 Candidate Can Apply Online for 21/05/2026 to 25/06/2026. | Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white. | Candidate Read the Notification Before Apply the Staff Selection Commission SSC CGL Career Latest Various Graduate Level Recruitment 2026 . Application Form in Recruitment Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the"
+          }
+        ],
+        "importantLinks": [
+          {
+            "label": "Download Answer Key",
+            "url": "https://ssc.gov.in/login"
+          },
+          {
+            "label": "Download Answer Key Notice",
+            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/writeup_04112026.pdf"
+          },
+          {
+            "label": "Download Vacancy Details Notice",
+            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Tentative_vacancy_CGLE2026_24092026.pdf"
+          },
+          {
+            "label": "Download Exam Schedule",
+            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Important%20Notice%202026_cgle_2026_12092026.pdf"
+          },
+          {
+            "label": "Download Re Open Notice",
+            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/CGLE_Reopen_23062026.pdf"
+          },
+          {
+            "label": "Download SSC CGL Notification",
+            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf"
+          },
+          {
+            "label": "Official Website",
+            "url": "https://ssc.gov.in/"
+          },
+          {
+            "label": "SSC CGL Tier I & II Syllabus",
+            "url": "https://www.sarkariresults.org.in/wp-content/uploads/2024/06/SarkariResult.Com-SSC-CGL-New-Syllabus-2024-for-tier-ii-and-tier-New-New.pdf"
+          }
+        ],
+        "additionalData": {
+          "howToApply": [
+            "OTR Instruction : SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration",
+            "Staff Selection Commission SSC Are Issued Combined Graduate Level CGL Exam 2026 Notification and Invited Online Application Form for the SSC Graduate Level Recruitment 2026 Candidate Can Apply Online for 21/05/2026 to 25/06/2026",
+            "Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white",
+            "Candidate Read the Notification Before Apply the Staff Selection Commission SSC CGL Career Latest Various Graduate Level Recruitment 2026 . Application Form in Recruitment Latest Job Section",
+            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
+            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
+            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
+            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
+            "Take A Print Out of Final Submitted Form"
+          ],
+          "otr_instruction": "SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration.",
+          "photo_instruction": "SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white."
+        },
+        "meta": {
+          "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-cgl-2026/",
+          "scrapedAt": "2026-11-05T09:23:45",
+          "pageTitle": "SSC Combined Graduate Level CGL Tier I Answer Key 2026",
+          "detectedCategory": "SR_Answer_Key",
+          "categoryOverridden": false,
+          "publishedTime": "2026-11-04T21:08:22+05:30",
+          "modifiedTime": "2026-11-04T21:08:24+05:30",
+          "articleSection": "SSC",
+          "homepageSerial": 2
+        },
+        "answerKeyUrl": "https://ssc.gov.in/login",
+        "_last_checked": "2026-11-05T03:53:45+00:00"
+      },
+      {
+        "category": "SR_Answer_Key",
         "title": "SSC Constable (GD) in Central Armed Police Forces (CAPFs) and SSF, and Rifleman (GD) in Assam Rifles Examination, 2026 : Final Answer Key with Marks",
         "postDate": "03/11/2026",
         "organization": "GD",
@@ -23389,260 +23901,6 @@
         },
         "answerKeyUrl": "https://cdn.digialm.com/EForms/configuredHtml/1149/101044/login.html",
         "_last_checked": "2026-09-24T08:17:57+00:00"
-      },
-      {
-        "category": "SR_Answer_Key",
-        "title": "SSC Stenographer Grade C and D Recruitment 2026 Answer Key for 731 Post",
-        "postDate": "23/09/2026",
-        "organization": "SSC",
-        "totalPost": "731",
-        "shortInfo": "Staff Selection Commission SSC has released the notification for Stenographer Grade C and D Examination 2026. Students who want to appear in this exam can apply online between 24 April 2026 to 15 May 2026 through SSC website. Before applying, candidates must read the complete SSC Stenographer advertisement in which selection procedure, exam syllabus, pattern, exam date and other information will be available",
-        "importantDates": {
-          "applicationBegin": "24/04/2026",
-          "lastDateApplyOnline": "15/05/2026 upto 11 PM",
-          "lastDatePayFee": "16/05/2026",
-          "formCorrectionDate": "20-21 May 2026",
-          "examDate": "09-15 September 2026",
-          "examCityDate": "31/08/2026",
-          "skillTestDate": "As per Schedule"
-        },
-        "applicationFee": {
-          "general": "100",
-          "sc": "0",
-          "female": "0",
-          "paymentMode": "Debit Card / Credit Card / Net Banking / E Challan / Offline",
-          "nilAllCategoryFemale": "0",
-          "exemptedCorrectionCharge": "200",
-          "firstTimeCorrectionCharge": "500"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "27",
-          "ageAsOnDate": "01/08/2026",
-          "details": "mum Age : 30 Year for Grade C Age Relaxation Extra as per Staff Selection Commission SSC Stenographer Examination 2026 Rules. SSC Stenographer C & D Recruitment 2026"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "SSC Stenographer Examination 2026",
-            "eligibility": "Passed 10+2 Intermediate Exam in Any Recognized Board in India Stenographer Group D Transcription English : 50 Minutes | Hindi 65 Minutes Stenographer Group C Transcription English : 40 Minutes | Hindi 55 Minutes",
-            "tableHeading": "SSC Stenographer C & D Recruitment 2026 : Vacancy Details Total : 731 Post"
-          }
-        ],
-        "eligibilitySection": [
-          {
-            "heading": "SSC Stenographer Eligibility 2026",
-            "items": [
-              "SSC Stenographer Eligibility 2026"
-            ]
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill SSC Stenographer Grade C & D Online Form2026",
-            "content": "SSC OTR Instruction : SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration. | Staff Selection Commission SSC Are Issued Stenographer Grade C and Grade D 10+2 Recruitment 2026. Notification and Invited Online Application Form for the SSC Steno Post Jobs 2026 Candidate Can Apply Online for 24/04/2026 to 15/05/2026. | SSC Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white. | Candidate Read the Notification Before Apply the SSC Latest Recruitment 2026. Application Form in Latest Job Section. | Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc. | Before Submit the Application Form Must Check the Preview and All Column Car"
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Download Answer Key",
-            "url": "https://ssc.gov.in/login"
-          },
-          {
-            "label": "Download Answer Key Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/AnswerKeys/Approved_WriteUp_23092026.pdf"
-          },
-          {
-            "label": "Download Exam City Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_31082026.pdf"
-          },
-          {
-            "label": "Download Exam Notice",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/notice_12082026.pdf"
-          },
-          {
-            "label": "Download Tentative Vacancy Details",
-            "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/tentative_vacancy_04062026.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "https://ssc.gov.in/"
-          },
-          {
-            "label": "Download Notification",
-            "url": "https://doc.sarkariresults.org.in/SarkariResult.Com_SSC_Stenographer_Notification_Notice_of_adv_steno_2026.pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "SSC OTR Instruction : SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration",
-            "Staff Selection Commission SSC Are Issued Stenographer Grade C and Grade D 10+2 Recruitment 2026. Notification and Invited Online Application Form for the SSC Steno Post Jobs 2026 Candidate Can Apply Online for 24/04/2026 to 15/05/2026",
-            "SSC Photo Instruction : SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white",
-            "Candidate Read the Notification Before Apply the SSC Latest Recruitment 2026. Application Form in Latest Job Section",
-            "Kindly Check and Collect the All Document – Hand Writing, Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID, Thumb, Proof, Etc",
-            "Before Submit the Application Form Must Check the Preview and All Column Carefully",
-            "If Candidate Required to Paying the Application Fee Must Submit. If You have Not the Required Application Fees Your Form is Not Completed",
-            "Take A Print Out of Final Submitted Form",
-            "admit card, answer key, and result"
-          ],
-          "ssc_otr_instruction": "SSC has started one-time registration on its new website SSC.GOV.IN. Candidates who have not yet done OTR registration on the new website will be able to apply for any recruitment only after completing the registration.",
-          "ssc_photo_instruction": "SSC has made a big change in the application process. Now the photo of the candidate will be uploaded live, that too through webcam or through the official SSC App. The candidate has to take care that he looks straight ahead in the photo and the background should also be light/white."
-        },
-        "faq": [
-          {
-            "question": "SSC Stenographer Eligibility 2026",
-            "answer": "SSC Stenographer Examination 2026"
-          }
-        ],
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/ssc/ssc-stenographer-2026/",
-          "scrapedAt": "2026-09-24T13:47:58",
-          "pageTitle": "SSC Stenographer 2026 Answer Key",
-          "detectedCategory": "SR_Answer_Key",
-          "categoryOverridden": false,
-          "publishedTime": "2026-09-23T22:53:24+05:30",
-          "modifiedTime": "2026-09-23T22:53:26+05:30",
-          "articleSection": "SSC",
-          "homepageSerial": 3
-        },
-        "answerKeyUrl": "https://ssc.gov.in/login",
-        "_last_checked": "2026-09-24T08:17:58+00:00"
-      },
-      {
-        "category": "SR_Answer_Key",
-        "title": "UPSSSC Pharmaceutical Pharmacists Ayurvedic Recruitment 2024 Answer Key",
-        "postDate": "22/09/2026",
-        "organization": "UPSSSC",
-        "totalPost": "1002",
-        "shortInfo": "Uttar Pradesh Subordinate Service Selection Commission (UPSSSC) has released Pharmaceutical Ayurvedic Advt No. 01-Exam/2024 Recruitment Notification. Those candidates who are Enrolled in this UPSSSC Pharmaceutical Ayurvedic Vacancy 2024 can Check the Exam City / Admit Card. Read the notification for recruitment eligibility, post information, selection procedure, Practice Test, pay scale and all other information",
-        "importantDates": {
-          "applicationBegin": "12/02/2024",
-          "lastDateApplyOnline": "03/03/2024",
-          "lastDatePayFee": "03/03/2024",
-          "formCorrectionDate": "11/03/2024",
-          "examDate": "20/09/2026",
-          "admitCardDate": "Before Exam",
-          "resultDate": "28/07/2026",
-          "examCityDate": "11/09/2026",
-          "answerKeyDate": "22/09/2026"
-        },
-        "applicationFee": {
-          "general": "25",
-          "sc": "25",
-          "ph": "25",
-          "paymentMode": "Sbi I Collect / E Challan",
-          "phDviyang": "25"
-        },
-        "ageLimit": {
-          "minAge": "18",
-          "maxAge": "40",
-          "ageAsOnDate": "01/07/2024"
-        },
-        "vacancyDetails": [
-          {
-            "postName": "Pharmaceutical Ayurvedic",
-            "totalPost": "1002",
-            "eligibility": "UPSSSC PET 2023 Score Card. 10+2 Intermediate Exam with Biology / Mathematics Subject. Diploma in Pharmaceutical Ayurvedic and Registration in Council. More Details Read the Notification.",
-            "tableHeading": "UPSSSC Pharmaceutical Recruitment 2024 : Vacancy Details Total : 1002 Post"
-          },
-          {
-            "postName": "Pharmaceutical Ayurvedic",
-            "totalPost": "1002",
-            "categoryWise": {
-              "General": "448",
-              "EWS": "100",
-              "OBC": "126",
-              "SC": "291",
-              "ST": "37"
-            },
-            "tableHeading": "UPSSSC Advt. No. 01-Exam/2024 Various Post : Category Wise Vacancy Details"
-          }
-        ],
-        "textSections": [
-          {
-            "section": "How to Fill : UPSSSC Pharmaceutical Ayurvedic Recruitment Online Form 2024",
-            "content": "There are 02 types to apply online for UPSSSC Pharmaceutical Ayurvedic Recruitment Advt No. 01-Exam/2024 Recruitment 2024. | First: In this, the candidate will have to login with his personal information, the information that has to be given is: PET Registration Number, Date of Birth, Gender, Domicile and Category. | Second : In this, the candidate will have to login through his OTP, the information that has to be given is: UPSSSC PET 2023 Registration Number and OTP Password. | After login, the complete information of the candidate, his photo and signature will also be visible, the candidate will have to fill the information related to the post he is asking for and the application fee: Rs.25/- will have to be paid. | Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details. | Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc. | Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully. | Take A Print Out of Final Submitted Form."
-          }
-        ],
-        "importantLinks": [
-          {
-            "label": "Answer Key Notice",
-            "url": "https://drive.google.com/file/d/1m-NpfwvfkSTdh7B-wMbcN-ib5gku4Oyc/view"
-          },
-          {
-            "label": "Download Answer Key Notice",
-            "url": "https://upsssc.gov.in/ViewPdf.aspx?o3zvZdcK2dQwmfnZQx07jiRfeUEF/gbivozqXZZS/SA="
-          },
-          {
-            "label": "Download Admit Card",
-            "url": "https://upsssc.gov.in/upssscadmitcard/admitCard.aspx?ID=MAIN"
-          },
-          {
-            "label": "Download Admit Card Notice",
-            "url": "https://upsssc.gov.in/ViewPdf.aspx?F8369rK82JRoI2ACv6L1qGSmlVsrqqtpht3mLGtelsU="
-          },
-          {
-            "label": "Check Exam City Details",
-            "url": "https://upsssc.gov.in/upssscadvdistinti/AdmitCard_wc.aspx?ID=MAIN&L=ac"
-          },
-          {
-            "label": "Download Exam City Notice",
-            "url": "https://upsssc.gov.in//ViewPdf.aspx?DxfkmGMNIOxAsNMhfwcLugJph62c9ea4g93RScWBNKM="
-          },
-          {
-            "label": "Pay Mains Exam Fee",
-            "url": "https://upsssc.gov.in/Interface/Authentication.aspx?NO/WElvPxNJJ/MszfbTUoiya6+j+60nloRK/wJ+Hma/peo+LypGARxykN88mZ0GWnpIBcPHGPx6XKnMmy76dwCXeE3KYnOjOH3riGr1fN9P9B2Efupj9zX0CKJSMG6ToGn9MH0ABA3Sd9Ni7A20mRA=="
-          },
-          {
-            "label": "Download Exam Date, Fee Payment Notice",
-            "url": "https://upsssc.gov.in//ViewPdf.aspx?79yZ3cyczigOaXp8zxqw5Zt+urFt9GUZTJUZ9xlP+Pk="
-          },
-          {
-            "label": "Download Eligibility Result",
-            "url": "https://upsssc.gov.in/ResultsDire.aspx"
-          },
-          {
-            "label": "Download Result Notice",
-            "url": "https://upsssc.gov.in//ViewPdf.aspx?NunT3KTUf6f9ifVl20iD1EE1qj4rhBRnqCS+Is5sFl0="
-          },
-          {
-            "label": "Download Notification",
-            "url": "http://164.100.181.233/document/Files/UP005/UploadNotices/2402011824176948_C.pdf"
-          },
-          {
-            "label": "Official Website",
-            "url": "http://upsssc.gov.in/Default.aspx"
-          },
-          {
-            "label": "Download Syllabus",
-            "url": "https://doc.sarkariresults.org.in/upsssc_Pharmacist_Ayurved_2024_Syllabus%20(1).pdf"
-          }
-        ],
-        "additionalData": {
-          "howToApply": [
-            "There are 02 types to apply online for UPSSSC Pharmaceutical Ayurvedic Recruitment Advt No. 01-Exam/2024 Recruitment 2024",
-            "First: In this, the candidate will have to login with his personal information, the information that has to be given is: PET Registration Number, Date of Birth, Gender, Domicile and Category",
-            "Second : In this, the candidate will have to login through his OTP, the information that has to be given is: UPSSSC PET 2023 Registration Number and OTP Password",
-            "After login, the complete information of the candidate, his photo and signature will also be visible, the candidate will have to fill the information related to the post he is asking for and the application fee: Rs.25/- will have to be paid",
-            "Kindly Check and Collect the All Document – Eligibility, ID Proof, Address Details, Basic Details",
-            "Kindly Ready Scan Document Related to Recruitment Form – Photo, Sign, ID Proof, Etc",
-            "Before Apply Online / Submit Application Form Must Check the Preview and All Column Carefully",
-            "Take A Print Out of Final Submitted Form"
-          ]
-        },
-        "meta": {
-          "sourceUrl": "https://www.sarkariresult.com/upsssc/upsssc-pharmaceutical-01-2024/",
-          "scrapedAt": "2026-09-22T17:02:03",
-          "pageTitle": "UPSSSC Pharmacist Ayurvedic 2024 Answer Key 2026",
-          "detectedCategory": "SR_Answer_Key",
-          "categoryOverridden": false,
-          "publishedTime": "2026-09-22T16:57:26+05:30",
-          "modifiedTime": "2026-09-22T16:57:29+05:30",
-          "articleSection": "UPSSSC",
-          "homepageSerial": 1
-        },
-        "answerKeyUrl": "https://drive.google.com/file/d/1m-NpfwvfkSTdh7B-wMbcN-ib5gku4Oyc/view",
-        "_last_checked": "2026-09-22T11:32:03+00:00"
       },
       {
         "category": "OFFLINE_FORM",
@@ -52507,6 +52765,897 @@
       },
       {
         "category": "UPCOMING_JOBS",
+        "title": "HPRCA Radiographer Vacancy Online Form",
+        "slug": "hprca-radiographer-vacancy-online-form",
+        "_scraped_from": "",
+        "advt_no": "15/2026",
+        "department": "HPRCA Radiographer",
+        "post_name": "Radiographer (Post Code : 26061)",
+        "total_vacancy": "43",
+        "last_date": "2026-12-07",
+        "application_start": "2026-11-03",
+        "exam_date": "",
+        "interview_date": "",
+        "result_date": "",
+        "admit_card_date": "",
+        "age_limit": "18-45",
+        "salary": "",
+        "qualification": "12th Passed with Science & B.Sc Medical Technology / B.Sc Radiation Technology / B.Sc Medical Imaging Technology / Bachelor of Radiation & Imaging Technology",
+        "selection_process": "Written Exam, Medical Examination, Document Verification, Consolidated monthly fixed amount Rs. 18000/",
+        "application_mode": "",
+        "fee_general": "",
+        "fee_obc": "",
+        "fee_sc_st": "",
+        "fee_female": "",
+        "fee_payment_mode": "Online Mode",
+        "job_location": "",
+        "status": "active",
+        "important_links": {
+          "official_website": "https://hprca.hp.gov.in/homepage"
+        },
+        "vacancy_details": [
+          {
+            "form_mode": "Online Form",
+            "job_state": "Himachal Pr.",
+            "total_posts": "43 Posts",
+            "job_type": "Temporary"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Overview",
+            "content": [
+              {
+                "type": "paragraph",
+                "text": "HPRCA Radiographer Recruitment 2026 : Get complete details about HPRCA Radiographer Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Form Mode",
+                      "links": []
+                    },
+                    {
+                      "text": "Job State",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Job Type",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "Himachal Pr.",
+                      "links": []
+                    },
+                    {
+                      "text": "43 Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Temporary",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Himachal Pradesh Rajya Chayan Aayog (HPRCA) Radiographer (Job Trainee) Recruitment 2026 Advt. No. : 15/2026 Short Details Of Notification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Important Dates",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Notification Out : 03/11/2026 Starting Date : 12/11/2026 Last Date : 07/12/2026 11:59 PM Correction Date : 11-14 December 2026",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Application Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "For All Candidates : 800/- Form Correction Fees : 100/- Payment Mode : Online Mode",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit : 18-45 Years Age Limit as on : 01/01/2026 The Age Relaxation Extra as per Rules.",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Selection Process",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Written Exam Medical Examination Document Verification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Monthly Salary Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Consolidated monthly fixed amount Rs. 18000/",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Important Dates",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Notification Out : 03/11/2026",
+                  "Starting Date : 12/11/2026",
+                  "Last Date : 07/12/2026 11:59 PM",
+                  "Correction Date : 11-14 December 2026"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Application Fees",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "For All Candidates : 800/",
+                  "Form Correction Fees : 100/",
+                  "Payment Mode : Online Mode"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Age Limit Details",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Age Limit : 18-45 Years",
+                  "Age Limit as on : 01/01/2026",
+                  "The Age Relaxation Extra as per Rules."
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Selection Process",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Written Exam",
+                  "Medical Examination",
+                  "Document Verification"
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  "Consolidated monthly fixed amount Rs. 18000/"
+                ]
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Total Post & Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Post Name",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Post",
+                      "links": []
+                    },
+                    {
+                      "text": "Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Radiographer (Post Code : 26061)",
+                      "links": []
+                    },
+                    {
+                      "text": "43",
+                      "links": []
+                    },
+                    {
+                      "text": "12th Passed with Science & B.Sc Medical Technology / B.Sc Radiation Technology / B.Sc Medical Imaging Technology / Bachelor of Radiation & Imaging Technology",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Total Post & Qualification",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Written Exam Pattern",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Subject",
+                      "links": []
+                    },
+                    {
+                      "text": "Question",
+                      "links": []
+                    },
+                    {
+                      "text": "Marks",
+                      "links": []
+                    },
+                    {
+                      "text": "Duration",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Related to Subject",
+                      "links": []
+                    },
+                    {
+                      "text": "120",
+                      "links": []
+                    },
+                    {
+                      "text": "120",
+                      "links": []
+                    },
+                    {
+                      "text": "90 Minutes",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "General Knowledge Including General Knowledge of Himachal Pradesh, Current Affairs",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Everyday Science, Logical Reasoning, Social Science, General English & General Hindi of Matric Standard",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Written Exam Pattern",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Important Related Links",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Source Title",
+                      "links": []
+                    },
+                    {
+                      "text": "Issue Date",
+                      "links": []
+                    },
+                    {
+                      "text": "Source Link",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fill Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "12/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Coming Soon",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Full Notification",
+                      "links": []
+                    },
+                    {
+                      "text": "03/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Official Website",
+                      "links": []
+                    },
+                    {
+                      "text": "03/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Visit Now",
+                      "links": [
+                        {
+                          "text": "Visit Now",
+                          "url": "https://hprca.hp.gov.in/homepage"
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "extra_fields": {
+          "pm_correction_date": "11-14 December 2026",
+          "for_all_candidates": "800/",
+          "form_correction_fees": "100/",
+          "correction_date": "11-14 December 2026"
+        },
+        "sequence": 1,
+        "_last_checked": "2026-11-05T03:53:49+00:00"
+      },
+      {
+        "category": "UPCOMING_JOBS",
+        "title": "Bihar Vidhan Sabha JSA, Office Attendant Form 2026",
+        "slug": "bihar-vidhan-sabha-jsa-office-attendant-form-2026",
+        "_scraped_from": "",
+        "advt_no": "01/2026",
+        "department": "Bihar Vidhan Sabha JSA, Office Attendant Form",
+        "post_name": "Junior Secretariat Assistant",
+        "total_vacancy": "20",
+        "last_date": "2026-12-06",
+        "application_start": "2026-11-04",
+        "exam_date": "Available Soon",
+        "interview_date": "",
+        "result_date": "",
+        "admit_card_date": "Available Soon",
+        "age_limit": "18-37",
+        "salary": "",
+        "qualification": "12th Passed, Typing (English & Hindi) : 30 wpm",
+        "selection_process": "Preliminary Written Exam (For Jr Secretariat Assistant), Hindi & English Typing Test (For Jr Secretariat Assistant), Interview (Only For Office Attendant), Medical Examination & Document Verification",
+        "application_mode": "",
+        "fee_general": "",
+        "fee_obc": "",
+        "fee_sc_st": "",
+        "fee_female": "",
+        "fee_payment_mode": "Online Mode",
+        "job_location": "",
+        "status": "active",
+        "important_links": {
+          "official_website": "https://vidhansabha.bihar.gov.in/Recruitment%20Advertisment.html"
+        },
+        "vacancy_details": [
+          {
+            "form_mode": "Online Form",
+            "job_state": "Bihar",
+            "total_posts": "20 Posts",
+            "job_type": "Permanent"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Overview",
+            "content": [
+              {
+                "type": "paragraph",
+                "text": "Bihar Vidhan Sabha JSA, Office Attendant Vacancy 2026 : Get complete details about Bihar Vidhan Sabha JSA, Office Attendant Recruitment 2026, including recruitment updates, total vacancies, important dates, application fees, eligibility criteria, age limit, selection process, salary, syllabus, exam pattern, admit card, answer key, result, and more."
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Form Mode",
+                      "links": []
+                    },
+                    {
+                      "text": "Job State",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Job Type",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "Bihar",
+                      "links": []
+                    },
+                    {
+                      "text": "20 Posts",
+                      "links": []
+                    },
+                    {
+                      "text": "Permanent",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Bihar Vidhan Sabha Secretariat, Bihar Jr Secretariat Assistant, Office Attendant Vacancy 2026 Advt. No. : 01/2026 & 02/2026 Short Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Important Dates",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Notification Out : 04/11/2026 Starting Date : 07/11/2026 11 AM Last Date : 06/12/2026 11:59 PM Fees Last Date : 06/12/2026 Exam Date : Available Soon Admit Card : Available Soon",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Application Fees",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Junior Secretariat Assistant :- Gen / OBC / EWS / Other State : 600/- SC / ST / PH / All Females : 150/- Office Attendant :- Gen / OBC / EWS / Other State : 400/- SC / ST / PH / All Females : 100/- Payment Mode : Online Mode",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Age Limit : 18-37 Years Age Limit as on : 01/08/2026 The Age Relaxation Extra as per Rules.",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Selection Process",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Preliminary Written Exam (For Jr Secretariat Assistant) Hindi & English Typing Test (For Jr Secretariat Assistant) Interview (Only For Office Attendant) Medical Examination & Document Verification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Pay Scale Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Junior Secretariat Assistant : Level-02 (Rs. 19,900-63,200/-) Office Attendant : Level-1 (Rs. 18,000-56,900/-)",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Important Dates",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Notification Out : 04/11/2026",
+                  "Starting Date : 07/11/2026 11 AM",
+                  "Last Date : 06/12/2026 11:59 PM",
+                  "Fees Last Date : 06/12/2026",
+                  "Exam Date : Available Soon",
+                  "Admit Card : Available Soon"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Application Fees",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Junior Secretariat Assistant",
+                  "Gen / OBC / EWS / Other State : 600/",
+                  "SC / ST / PH / All Females : 150/",
+                  "Office Attendant",
+                  "Gen / OBC / EWS / Other State : 400/",
+                  "SC / ST / PH / All Females : 100/",
+                  "Payment Mode : Online Mode"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Age Limit Details",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Age Limit : 18-37 Years",
+                  "Age Limit as on : 01/08/2026",
+                  "The Age Relaxation Extra as per Rules."
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Selection Process",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Preliminary Written Exam (For Jr Secretariat Assistant)",
+                  "Hindi & English Typing Test (For Jr Secretariat Assistant)",
+                  "Interview (Only For Office Attendant)",
+                  "Medical Examination & Document Verification"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Pay Scale Details",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Junior Secretariat Assistant : Level-02 (Rs. 19,900-63,200/-)",
+                  "Office Attendant : Level-1 (Rs. 18,000-56,900/-)"
+                ]
+              },
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Total Post & Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Post Name",
+                      "links": []
+                    },
+                    {
+                      "text": "Total Post",
+                      "links": []
+                    },
+                    {
+                      "text": "Qualification",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Junior Secretariat Assistant",
+                      "links": []
+                    },
+                    {
+                      "text": "15",
+                      "links": []
+                    },
+                    {
+                      "text": "12th Passed, Typing (English & Hindi) : 30 wpm",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Office Attendant",
+                      "links": []
+                    },
+                    {
+                      "text": "05",
+                      "links": []
+                    },
+                    {
+                      "text": "10th Class Passed",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Total Post & Qualification",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Category Wise Vacancies",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Post Name",
+                      "links": []
+                    },
+                    {
+                      "text": "Gen",
+                      "links": []
+                    },
+                    {
+                      "text": "EWS",
+                      "links": []
+                    },
+                    {
+                      "text": "EBC",
+                      "links": []
+                    },
+                    {
+                      "text": "BC",
+                      "links": []
+                    },
+                    {
+                      "text": "SC",
+                      "links": []
+                    },
+                    {
+                      "text": "Total",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Jr Secretariat Assistant",
+                      "links": []
+                    },
+                    {
+                      "text": "07",
+                      "links": []
+                    },
+                    {
+                      "text": "02",
+                      "links": []
+                    },
+                    {
+                      "text": "02",
+                      "links": []
+                    },
+                    {
+                      "text": "00",
+                      "links": []
+                    },
+                    {
+                      "text": "04",
+                      "links": []
+                    },
+                    {
+                      "text": "15",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Office Attendant",
+                      "links": []
+                    },
+                    {
+                      "text": "01",
+                      "links": []
+                    },
+                    {
+                      "text": "00",
+                      "links": []
+                    },
+                    {
+                      "text": "01",
+                      "links": []
+                    },
+                    {
+                      "text": "02",
+                      "links": []
+                    },
+                    {
+                      "text": "01",
+                      "links": []
+                    },
+                    {
+                      "text": "05",
+                      "links": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Category Wise Vacancies",
+            "content": [
+              {
+                "type": "table",
+                "rows": [
+                  [
+                    {
+                      "text": "Important Related Links",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Source Title",
+                      "links": []
+                    },
+                    {
+                      "text": "Issue Date",
+                      "links": []
+                    },
+                    {
+                      "text": "Source Link",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fill Online Form",
+                      "links": []
+                    },
+                    {
+                      "text": "07/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Coming Soon",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Notification (JSA)",
+                      "links": []
+                    },
+                    {
+                      "text": "04/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Notification (Office Attendant)",
+                      "links": []
+                    },
+                    {
+                      "text": "04/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Download",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Official Website",
+                      "links": []
+                    },
+                    {
+                      "text": "04/11/2026",
+                      "links": []
+                    },
+                    {
+                      "text": "Visit Now",
+                      "links": [
+                        {
+                          "text": "Visit Now",
+                          "url": "https://vidhansabha.bihar.gov.in/Recruitment%20Advertisment.html"
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "extra_fields": {
+          "gen_obc_ews_other_state": "600/",
+          "sc_st_ph_all_females": "150/",
+          "junior_secretariat_assistant": "Level-02 (Rs. 19,900-63,200/-)",
+          "office_attendant": "Level-1 (Rs. 18,000-56,900/-)"
+        },
+        "sequence": 2,
+        "_last_checked": "2026-11-05T03:53:52+00:00"
+      },
+      {
+        "category": "UPCOMING_JOBS",
         "title": "Indian Bank 1500 Apprentice Online Form",
         "slug": "indian-bank-1500-apprentice-online-form",
         "_scraped_from": "",
@@ -53950,8 +55099,8 @@
           "born_between": "02/11/1998 To 01/11/2006 The Age Relaxation Extra as per Rules",
           "sc_st_ph": "175/- + GST"
         },
-        "sequence": 1,
-        "_last_checked": "2026-11-04T08:21:36+00:00"
+        "sequence": 3,
+        "_last_checked": "2026-11-05T03:53:52+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54518,8 +55667,8 @@
           "exam_duration": "90 Minutes",
           "total_questions": "120"
         },
-        "sequence": 2,
-        "_last_checked": "2026-11-04T08:21:37+00:00"
+        "sequence": 4,
+        "_last_checked": "2026-11-05T03:53:53+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -54992,8 +56141,8 @@
           "years_experience_civilian_mt_driver": "10th Class Passed, LMV & HMV Driving License, 02",
           "years_experience_mts_mt_cleaner": "10th Class Passed, 02 Years Experience"
         },
-        "sequence": 3,
-        "_last_checked": "2026-11-04T08:21:37+00:00"
+        "sequence": 5,
+        "_last_checked": "2026-11-05T03:53:54+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -55853,8 +57002,8 @@
           "aeronautical_engineering_electronics": "12th Passed with Physics and Maths (50% Marks), and 4 Years Graduation / Integrated PG Degree in Engineering / Technology.",
           "aeronautical_engineering_mechanical": "12th Passed with Physics and Maths (50% Marks), 4 Years Engineering / Technology Degree in Mechanical Engineering, Industrial Engineering, Aeronautical Engineering or Equivalent Degree."
         },
-        "sequence": 4,
-        "_last_checked": "2026-11-04T08:21:38+00:00"
+        "sequence": 6,
+        "_last_checked": "2026-11-05T03:53:55+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56243,8 +57392,8 @@
           "for_mbbs_degree_holder": "Max. 30 Years",
           "for_pg_degree_holder": "Max. 35 Years"
         },
-        "sequence": 5,
-        "_last_checked": "2026-11-04T08:21:38+00:00"
+        "sequence": 7,
+        "_last_checked": "2026-11-05T03:53:56+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -56732,8 +57881,8 @@
           "assistant_teacher_primary": "Pay Level-06",
           "and_ctet_paper_ii_passed_for_tgt_sports": "B.P.Ed. / M.P.Ed.)"
         },
-        "sequence": 6,
-        "_last_checked": "2026-11-04T08:21:39+00:00"
+        "sequence": 8,
+        "_last_checked": "2026-11-05T03:53:59+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57149,8 +58298,8 @@
           "note": "Candidates who Applied Earlier Under Advt. No. R&P/311/2024 are Exempted from Fee.",
           "assistant": "Pay Level-04"
         },
-        "sequence": 7,
-        "_last_checked": "2026-11-04T08:21:40+00:00"
+        "sequence": 9,
+        "_last_checked": "2026-11-05T03:54:00+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -57479,8 +58628,8 @@
           }
         ],
         "extra_fields": {},
-        "sequence": 8,
-        "_last_checked": "2026-11-04T08:21:40+00:00"
+        "sequence": 10,
+        "_last_checked": "2026-11-05T03:54:01+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58028,8 +59177,8 @@
           "unreserved": "600/",
           "sc_st_ews": "500/"
         },
-        "sequence": 9,
-        "_last_checked": "2026-11-04T08:21:41+00:00"
+        "sequence": 11,
+        "_last_checked": "2026-11-05T03:54:02+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58463,8 +59612,8 @@
           "unreserved": "600/",
           "sc_st_ews": "500/"
         },
-        "sequence": 10,
-        "_last_checked": "2026-11-04T08:21:41+00:00"
+        "sequence": 12,
+        "_last_checked": "2026-11-05T03:54:04+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -58838,8 +59987,8 @@
           "gen_obc_ews_fees_refund": "400/",
           "pay_level": "Level 2 and Level 7 (Post Wise)"
         },
-        "sequence": 11,
-        "_last_checked": "2026-11-04T08:21:42+00:00"
+        "sequence": 13,
+        "_last_checked": "2026-11-05T03:54:05+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59564,8 +60713,8 @@
           "farm_lipik": "12th Passed and 03 Years Agriculture Experience.",
           "bikri_karta": "12th Passed and 03 Years Sales Experience."
         },
-        "sequence": 12,
-        "_last_checked": "2026-11-04T08:21:43+00:00"
+        "sequence": 14,
+        "_last_checked": "2026-11-05T03:54:06+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -59886,8 +61035,8 @@
           "for_all_candidates": "25/",
           "correction_date": "Upto 04/12/2026"
         },
-        "sequence": 13,
-        "_last_checked": "2026-11-04T08:21:44+00:00"
+        "sequence": 15,
+        "_last_checked": "2026-11-05T03:54:10+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -60532,8 +61681,8 @@
           "for_sc_ph_of_haryana": "55% (82",
           "marks_for_other_candidates": "60% (90 Marks)"
         },
-        "sequence": 14,
-        "_last_checked": "2026-11-04T08:21:45+00:00"
+        "sequence": 16,
+        "_last_checked": "2026-11-05T03:54:10+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -60544,20 +61693,20 @@
         "department": "NLC Graduate Executive Trainee",
         "post_name": "Form Mode",
         "total_vacancy": "143",
-        "last_date": "Coming Soon",
-        "application_start": "2026-09-24",
+        "last_date": "2026-12-14",
+        "application_start": "2026-11-04",
         "exam_date": "",
         "interview_date": "",
         "result_date": "",
         "admit_card_date": "",
-        "age_limit": "Available Soon The Age Relaxation Extra as per Rules",
+        "age_limit": "01/11/2026 The Age Relaxation Extra as per Rules",
         "salary": "",
         "qualification": "Job Type",
-        "selection_process": "Shortlisting based on GATE 2025 Scores, Personal Interview, Medical Examination, Document Verification",
+        "selection_process": "Shortlisting based on GATE Score 2025 (80 Marks), Document Verification, Personal Interview (20 Marks), Medical Examination",
         "application_mode": "",
         "fee_general": "",
         "fee_obc": "",
-        "fee_sc_st": "",
+        "fee_sc_st": "354",
         "fee_female": "",
         "fee_payment_mode": "Online Mode",
         "job_location": "",
@@ -60569,9 +61718,9 @@
         "vacancy_details": [
           {
             "form_mode": "Online Form",
-            "job_state": "Avail. Soon",
+            "job_location": "Read Notice",
             "total_posts": "143 Posts",
-            "job_type": "Avail. Soon"
+            "job_type": "Permanent"
           }
         ],
         "sections": [
@@ -60591,7 +61740,7 @@
                       "links": []
                     },
                     {
-                      "text": "Job State",
+                      "text": "Job Location",
                       "links": []
                     },
                     {
@@ -60609,7 +61758,7 @@
                       "links": []
                     },
                     {
-                      "text": "Avail. Soon",
+                      "text": "Read Notice",
                       "links": []
                     },
                     {
@@ -60617,7 +61766,7 @@
                       "links": []
                     },
                     {
-                      "text": "Avail. Soon",
+                      "text": "Permanent",
                       "links": []
                     }
                   ],
@@ -60635,7 +61784,7 @@
                   ],
                   [
                     {
-                      "text": "Notification Out : 24/09/2026 Starting Date : Coming Soon Last Date : Coming Soon",
+                      "text": "Notification Out : 04/11/2026 Starting Date : 13/11/2026 Last Date : 14/12/2026 05:00 PM Fees Last Date : 14/12/2026 11:45 PM Final Form Submission Last Date : 16/12/2026",
                       "links": []
                     }
                   ],
@@ -60647,7 +61796,7 @@
                   ],
                   [
                     {
-                      "text": "Gen / OBC / EWS : Available Soon SC / ST / ESM : Available Soon Payment Mode : Online Mode",
+                      "text": "Gen / OBC / EWS : 854/- SC / ST / ESM : 354/- PH (Divyang) : 354/- Payment Mode : Online Mode",
                       "links": []
                     }
                   ],
@@ -60659,7 +61808,7 @@
                   ],
                   [
                     {
-                      "text": "Age Limit : Available Soon Age Limit as on : Available Soon The Age Relaxation Extra as per Rules.",
+                      "text": "Age Limit : Max. 30 Years Age Limit as on : 01/11/2026 The Age Relaxation Extra as per Rules.",
                       "links": []
                     }
                   ],
@@ -60671,7 +61820,19 @@
                   ],
                   [
                     {
-                      "text": "Shortlisting based on GATE 2025 Scores Personal Interview Medical Examination Document Verification",
+                      "text": "Shortlisting based on GATE Score 2025 (80 Marks) Document Verification Personal Interview (20 Marks) Medical Examination",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Pay Scale Details",
+                      "links": []
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Rs. 50,000 – 1,60,000/- (E-2 Grade)",
                       "links": []
                     }
                   ],
@@ -60683,7 +61844,7 @@
                   ],
                   [
                     {
-                      "text": "GET (Mechanical) : B.E. / B.Tech in Mechanical Engineering and Valid GATE 2025 Score. GET (Electrical) : B.E. / B.Tech in Electrical Engineering and Valid GATE 2025 Score. GET (Civil) : B.E. / B.Tech in Civil Engineering and Valid GATE 2025 Score. GET (Mining) : B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score. GET (Computer) : B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score.",
+                      "text": "GET (Mechanical) : B.E./ B.Tech in Mechanical Engineering & Valid GATE 2025 Score. GET (Electrical) : B.E. / B.Tech in Electrical / EEE / Power Engineering and Valid GATE 2025 Score. GET (Civil) : B.E. / B.Tech in Civil Engineering and Valid GATE 2025 Score. GET (Mining) : B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score. GET (Computer) : B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score.",
                       "links": []
                     }
                   ]
@@ -60697,9 +61858,11 @@
               {
                 "type": "list",
                 "items": [
-                  "Notification Out : 24/09/2026",
-                  "Starting Date : Coming Soon",
-                  "Last Date : Coming Soon"
+                  "Notification Out : 04/11/2026",
+                  "Starting Date : 13/11/2026",
+                  "Last Date : 14/12/2026 05:00 PM",
+                  "Fees Last Date : 14/12/2026 11:45 PM",
+                  "Final Form Submission Last Date : 16/12/2026"
                 ]
               }
             ]
@@ -60710,8 +61873,9 @@
               {
                 "type": "list",
                 "items": [
-                  "Gen / OBC / EWS : Available Soon",
-                  "SC / ST / ESM : Available Soon",
+                  "Gen / OBC / EWS : 854/",
+                  "SC / ST / ESM : 354/",
+                  "PH (Divyang) : 354/",
                   "Payment Mode : Online Mode"
                 ]
               }
@@ -60723,8 +61887,8 @@
               {
                 "type": "list",
                 "items": [
-                  "Age Limit : Available Soon",
-                  "Age Limit as on : Available Soon",
+                  "Age Limit : Max. 30 Years",
+                  "Age Limit as on : 01/11/2026",
                   "The Age Relaxation Extra as per Rules."
                 ]
               }
@@ -60736,10 +61900,21 @@
               {
                 "type": "list",
                 "items": [
-                  "Shortlisting based on GATE 2025 Scores",
-                  "Personal Interview",
-                  "Medical Examination",
-                  "Document Verification"
+                  "Shortlisting based on GATE Score 2025 (80 Marks)",
+                  "Document Verification",
+                  "Personal Interview (20 Marks)",
+                  "Medical Examination"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Pay Scale Details",
+            "content": [
+              {
+                "type": "list",
+                "items": [
+                  "Rs. 50,000 – 1,60,000/- (E-2 Grade)"
                 ]
               }
             ]
@@ -60750,8 +61925,8 @@
               {
                 "type": "list",
                 "items": [
-                  "GET (Mechanical) : B.E. / B.Tech in Mechanical Engineering and Valid GATE 2025 Score.",
-                  "GET (Electrical) : B.E. / B.Tech in Electrical Engineering and Valid GATE 2025 Score.",
+                  "GET (Mechanical) : B.E./ B.Tech in Mechanical Engineering & Valid GATE 2025 Score.",
+                  "GET (Electrical) : B.E. / B.Tech in Electrical / EEE / Power Engineering and Valid GATE 2025 Score.",
                   "GET (Civil) : B.E. / B.Tech in Civil Engineering and Valid GATE 2025 Score.",
                   "GET (Mining) : B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score.",
                   "GET (Computer) : B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
@@ -60958,7 +62133,7 @@
                       "links": []
                     },
                     {
-                      "text": "Soon",
+                      "text": "13/11/2026",
                       "links": []
                     },
                     {
@@ -60972,11 +62147,11 @@
                       "links": []
                     },
                     {
-                      "text": "Soon",
+                      "text": "04/11/2026",
                       "links": []
                     },
                     {
-                      "text": "Coming Soon",
+                      "text": "Download",
                       "links": []
                     }
                   ],
@@ -61038,20 +62213,20 @@
           }
         ],
         "extra_fields": {
-          "get_mechanical": "B.E. / B.Tech in Mechanical Engineeri",
-          "ng_and_valid_gate_2025_score_get_electrical": "B.E. / B.Tech in Electrical Engi",
+          "gen_obc_ews": "854/",
+          "sc_st_esm": "354/",
+          "get_mechanical": "B.E./ B.Tech in Mechanical Enginee",
+          "ring_valid_gate_2025_score_get_electrical": "B.E. / B.Tech in Electrical / EEE / Power Engi",
           "neering_and_valid_gate_2025_score_get_civil": "B.E. / B.Tech in Civil Engin",
           "eering_and_valid_gate_2025_score_get_mining": "B.E. / B.Tech in Mining Enginee",
           "ring_and_valid_gate_2025_score_get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score",
-          "gen_obc_ews": "Available Soon",
-          "sc_st_esm": "Available Soon",
-          "get_electrical": "B.E. / B.Tech in Electrical Engineering and Valid GATE 2025 Score.",
+          "get_electrical": "B.E. / B.Tech in Electrical / EEE / Power Engineering and Valid GATE 2025 Score.",
           "get_civil": "B.E. / B.Tech in Civil Engineering and Valid GATE 2025 Score.",
           "get_mining": "B.E. / B.Tech in Mining Engineering and Valid GATE 2025 Score.",
           "get_computer": "B.E. / B.Tech in Computer Engineering / IT and Valid GATE 2025 Score."
         },
-        "sequence": 15,
-        "_last_checked": "2026-11-04T08:21:45+00:00"
+        "sequence": 17,
+        "_last_checked": "2026-11-05T03:54:11+00:00"
       },
       {
         "category": "UPCOMING_JOBS",
@@ -61442,8 +62617,8 @@
           "gen_obc_ews": "Avail. Soon",
           "sc_st_ph": "Avail. Soon"
         },
-        "sequence": 16,
-        "_last_checked": "2026-11-04T08:21:46+00:00"
+        "sequence": 18,
+        "_last_checked": "2026-11-05T03:54:12+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -61936,7 +63111,7 @@
           "correction_date": "07-09 December 2026"
         },
         "sequence": 1,
-        "_last_checked": "2026-11-04T08:21:47+00:00"
+        "_last_checked": "2026-11-05T03:54:15+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62357,7 +63532,7 @@
           "exam_city_release_date": "30/12/2026"
         },
         "sequence": 4,
-        "_last_checked": "2026-11-04T08:21:49+00:00"
+        "_last_checked": "2026-11-05T03:54:17+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -62799,7 +63974,7 @@
           "marking_scheme": "Each correct answer carries one mark, each incorrect answer deducts 0.25 marks, and no marks are given for unattempted questions."
         },
         "sequence": 9,
-        "_last_checked": "2026-11-04T08:21:52+00:00"
+        "_last_checked": "2026-11-05T03:54:20+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -63603,7 +64778,7 @@
           "not_declared_11": "59 PM"
         },
         "sequence": 32,
-        "_last_checked": "2026-11-04T08:22:13+00:00"
+        "_last_checked": "2026-11-05T03:54:35+00:00"
       },
       {
         "category": "ADMISSIONS",
@@ -63639,7 +64814,7 @@
         "sections": [],
         "extra_fields": {},
         "sequence": 33,
-        "_last_checked": "2026-11-04T08:22:14+00:00"
+        "_last_checked": "2026-11-05T03:54:36+00:00"
       }
     ]
   },
@@ -833471,8 +834646,8 @@
     "run_type": "incremental",
     "last_updated": "sarkari_data",
     "added": 8,
-    "removed": 9,
-    "unchanged": 286,
-    "synced_at": "2026-11-04 08:24:29"
+    "removed": 5,
+    "unchanged": 289,
+    "synced_at": "2026-11-05 03:56:23"
   }
 }
