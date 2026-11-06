@@ -21,7 +21,7 @@
 // VERSION — Replaced by generate_version.js on every deploy
 // Do NOT manually edit — CI/CD replaces this line
 // ══════════════════════════════════════════════════════════════
-const SW_VERSION = '20261106103220'; // auto-updated by generate_version.js
+const SW_VERSION = '20261106113301'; // auto-updated by generate_version.js
 
 // ══════════════════════════════════════════════════════════════
 // CACHE NAMES — version-stamped, old ones auto-deleted
