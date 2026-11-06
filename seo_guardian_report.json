@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-11-06T04:31:19.863777+00:00",
+  "timestamp": "2026-11-06T05:04:33.140853+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 15144,
+  "files_scanned": 15293,
   "issues_found_by_check": {
-    "jobposting_schema": 344,
-    "expired_job": 16,
+    "jobposting_schema": 352,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 149,
+  "issues_auto_fixed": 136,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -180,6 +179,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/bbci-recruitment-2026-apply-online-for-9-consultant-senior-resident-and-more-pos/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/becil-supervisor-recruitment-2026-apply-online-for-10-posts/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -294,6 +299,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Rajasthan/302001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/chamarajanagar-anganwadi-recruitment-2026-apply-online-for-390-anganwadi-helper/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/chennai-port-authority-deputy-chief-mechanical-engineer-recruitment-2026-apply/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -340,6 +351,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/crcsre-guwahati-recruitment-2026-apply-online-for-4-guest-faculty-and-lecturer-p/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/csb-junior-research-fellow-recruitment-2026-walkin/index.html",
@@ -592,6 +609,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/icds-mainpur-recruitment-2026-apply-online-for-11-anganwadi-worker-anganwadi-hel/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/icf-act-apprentice-recruitment-2026-notification-out-apply-online-for-1010-fit/index.html",
@@ -1222,6 +1245,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/smc-recruitment-2026-apply-online-for-70-deputy-town-planner-assistant-town-plan/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/smp-smp-dy-personnel-officer-recruitment-2026-apply-offline-for-3-posts/index.html",
@@ -2560,7 +2589,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               125 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 67.2
+  "duration_sec": 36.2
 }
