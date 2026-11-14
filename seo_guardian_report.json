@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-11-14T04:21:24.258540+00:00",
+  "timestamp": "2026-11-14T04:58:21.227634+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 15934,
+  "files_scanned": 16099,
   "issues_found_by_check": {
-    "jobposting_schema": 360,
-    "expired_job": 36,
+    "jobposting_schema": 362,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 173,
+  "issues_auto_fixed": 139,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -688,12 +687,6 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Bihar/800001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/iim-kozhikode-admin-associate-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Kerala/695001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iim-kozhikode-recruitment-2026-apply-online-for-11-assistant-junior-assistant-an/index.html",
@@ -1408,6 +1401,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Telangana/500001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/up-anganwadi-lucknow-recruitment-2026-apply-online-for-428-anganwadi-helper-anga/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/up-anganwadi-recruitment-2026-apply-online-for-171-anganwadi-helper-in-bareill/index.html",
@@ -2634,5 +2633,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               125 urls [ok]"
   ],
-  "duration_sec": 75.0
+  "duration_sec": 65.8
 }
