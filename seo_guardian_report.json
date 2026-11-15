@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-11-15T04:03:29.996434+00:00",
+  "timestamp": "2026-11-15T04:40:01.126603+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 16108,
+  "files_scanned": 16144,
   "issues_found_by_check": {
-    "jobposting_schema": 362,
-    "expired_job": 18,
+    "jobposting_schema": 363,
     "ai_marker_integrity": 13,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 157,
+  "issues_auto_fixed": 140,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -2298,12 +2297,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-nursing-officerproject-technical-support-recruitment-2026-apply-on/"
     },
     {
-      "file": "jobs/aiims-delhi-project-assistant-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-assistant-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-project-associate-ii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -2626,6 +2619,12 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-scientist-d-recruitment-2026-apply-online/"
+    },
+    {
+      "file": "jobs/aiims-delhi-senior-consultant-recruitment-2026-apply-online/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-senior-consultant-recruitment-2026-apply-online/"
     }
   ],
   "critical_unfixable": 0,
@@ -2634,5 +2633,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               125 urls [ok]"
   ],
-  "duration_sec": 40.6
+  "duration_sec": 46.0
 }
