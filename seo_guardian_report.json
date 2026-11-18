@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-18T05:23:50.132512+00:00",
+  "timestamp": "2026-11-18T06:09:14.278166+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 16275,
+  "files_scanned": 16429,
   "issues_found_by_check": {
-    "jobposting_schema": 368,
-    "expired_job": 33,
+    "jobposting_schema": 369,
     "ai_marker_integrity": 13,
+    "expired_job": 1,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 176,
+  "issues_auto_fixed": 144,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -250,6 +250,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bhu-non-teaching-recruitment-2026-notification-out-apply-online-for-601-group-a/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/blw-sports-quota-recruitment-2026-notification-pdf-apply-online-for-25-sportsp/index.html",
@@ -2644,7 +2650,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               125 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 67.7
+  "duration_sec": 61.3
 }
