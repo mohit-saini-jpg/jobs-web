@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-21T05:01:01.099469+00:00",
+  "timestamp": "2026-11-21T05:40:22.297287+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 16725,
+  "files_scanned": 16885,
   "issues_found_by_check": {
-    "jobposting_schema": 375,
-    "expired_job": 70,
+    "jobposting_schema": 379,
     "ai_marker_integrity": 13,
+    "expired_job": 2,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 218,
+  "issues_auto_fixed": 152,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -390,12 +390,6 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/csb-junior-research-fellow-recruitment-2026-walkin/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
-    },
-    {
       "file": "jobs/csir-neeri-project-assistant-ii-recruitment-2026-walk-in/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -444,10 +438,22 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/dhs-krishnagiri-staff-nurse-recruitment-2026-apply-offline-for-73-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/directorate-of-lighthouses-and-lightships-navigational-assistant-recruitment-202/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/district-health-society-tirupathur-staff-nurse-recruitment-2026-apply-offline-fo/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Uttar Pradesh/226001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/dmft-chatra-medical-officer-recruitment-2026-apply-offline-for-15-posts/index.html",
@@ -1348,6 +1354,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Tamil Nadu/600001 -> Delhi/110001 [L2 skip]) — manual review"
+    },
+    {
+      "file": "jobs/thanjavur-district-health-society-staff-nurse-recruitment-2026-apply-offline-for/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/tifr-recruitment-2026-apply-online-for-project-associate-project-assistant-pos/index.html",
@@ -2656,7 +2668,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 49.1
+  "duration_sec": 73.5
 }
