@@ -5943,4 +5943,6 @@ http://www.topsarkarijobs.com/*  https://www.topsarkarijobs.com/:splat  301
 
 # ══ SARK→FJA cross-source dedup (same job, different title) ══
 /jobs/rajasthan-rssb-junior-engineer-recruitment-2026-apply-online-for-1909-post/  /jobs/rssb-je-recruitment-2026-vacancy-increased-apply-online-for-1909-junior-engine/  301
-/jobs/gujarat-police-recruitment-2026-online-form-for-3000-posts/  /jobs/gujarat-police-bharti-2026-apply-online-for-3000-constable-and-technical-posts/  301
+
+# ══ SARK→FJA cross-source dedup (same job, different title) ══
+/jobs/bhel-engineer-supervisor-trainee-online-form/  /jobs/bhel-trainee-recruitment-2027-415-engineer-executive-and-supervisor-trainee-po/  301

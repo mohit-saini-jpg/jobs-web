@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-24T05:53:02.447197+00:00",
+  "timestamp": "2026-11-24T08:27:36.448499+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 17048,
+  "files_scanned": 17201,
   "issues_found_by_check": {
-    "jobposting_schema": 385,
-    "expired_job": 40,
+    "jobposting_schema": 387,
     "ai_marker_integrity": 13,
+    "expired_job": 4,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 194,
+  "issues_auto_fixed": 159,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -616,6 +616,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Andhra Pradesh/520001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/greater-chennai-corporation-staff-nurse-recruitment-2026-apply-offline-for-130-p/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/gsvm-medical-college-faculty-recruitment-2026-walkin-for-133-professor-associate/index.html",
@@ -2680,7 +2686,7 @@
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               125 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 77.0
+  "duration_sec": 76.8
 }
