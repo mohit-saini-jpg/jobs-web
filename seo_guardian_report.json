@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-25T06:21:13.318326+00:00",
+  "timestamp": "2026-11-25T07:01:11.301399+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 17201,
+  "files_scanned": 17269,
   "issues_found_by_check": {
-    "jobposting_schema": 387,
-    "expired_job": 23,
+    "jobposting_schema": 391,
     "ai_marker_integrity": 13,
+    "expired_job": 5,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 178,
+  "issues_auto_fixed": 161,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -552,6 +552,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/esic-faridabad-senior-resident-recruitment-2026-walkin-for-22-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/esic-medical-college-hospital-faridabad-teaching-faculty-recruitment-2026-walkin/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -784,6 +790,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-guwahati-administrative-assistant-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iit-hyderabad-recruitment-2026-apply-online-for-senior-architect-ai-engineer-a/index.html",
@@ -1036,6 +1048,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/mti-powai-recruitment-2026-apply-offline-for-37-nautical-faculty-engineering-fac/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/mumbai-port-authority-computer-operator-and-programming-assistant-recruitment-20/index.html",
@@ -2688,5 +2706,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
   ],
-  "duration_sec": 47.1
+  "duration_sec": 77.7
 }
