@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-27T06:02:58.281164+00:00",
+  "timestamp": "2026-11-27T06:39:09.053806+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 17280,
+  "files_scanned": 17575,
   "issues_found_by_check": {
-    "jobposting_schema": 391,
-    "expired_job": 46,
+    "jobposting_schema": 396,
     "ai_marker_integrity": 13,
+    "expired_job": 6,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 202,
+  "issues_auto_fixed": 162,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -190,6 +190,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/bbci-recruitment-2026-apply-online-for-4-consultant-d-senior-resident-technician/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/bbci-recruitment-2026-apply-online-for-9-consultant-senior-resident-and-more-pos/index.html",
@@ -546,6 +552,12 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
     },
     {
+      "file": "jobs/eil-associate-engineer-recruitment-2026-apply-online-for-87-posts/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/epil-graduate-apprentice-recruitment-2026-2-vacancies-apply-by-5-august/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -726,6 +738,12 @@
       "reason": "unbalanced 'TSJ_AI_BLOCK' (1 START vs 2 END)"
     },
     {
+      "file": "jobs/iiitdm-kancheepuram-lady-medical-officer-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Madhya Pradesh/462001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
+    },
+    {
       "file": "jobs/iim-bodh-gaya-faculty-recruitment-2026-apply-online-for-professor-associate-prof/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -792,16 +810,16 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Gujarat/380001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/iit-guwahati-administrative-assistant-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Assam/781001 [L_DISTRICT]) — manual review"
-    },
-    {
       "file": "jobs/iit-hyderabad-recruitment-2026-apply-online-for-senior-architect-ai-engineer-a/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Telangana/500001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/iit-indore-technical-assistant-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Madhya Pradesh/462001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/iit-ism-dhanbad-senior-project-associate-recruitment-2026-apply-online/index.html",
@@ -1108,6 +1126,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/nit-kurukshetra-research-fellow-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/nlc-india-apprentice-recruitment-2026-apply-online-for-1067-iti-and-graduate-a/index.html",
@@ -1444,6 +1468,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Maharashtra/400001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/tmc-hbch-varanasi-senior-resident-recruitment-2026-apply-online/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Uttar Pradesh/226001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/tmc-senior-assistant-data-manager-recruitment-2026-walkin/index.html",
@@ -2514,12 +2544,6 @@
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-i-recruitment-2026-apply-online/"
     },
     {
-      "file": "jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/index.html",
-      "check": "sitemap_sync",
-      "severity": "non_critical",
-      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-project-research-scientist-ii-recruitment-2026-apply-online/"
-    },
-    {
       "file": "jobs/aiims-delhi-project-research-scientist-iii-recruitment-2026-apply-online/index.html",
       "check": "sitemap_sync",
       "severity": "non_critical",
@@ -2698,13 +2722,19 @@
       "check": "sitemap_sync",
       "severity": "non_critical",
       "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-research-scientist-resea/"
+    },
+    {
+      "file": "jobs/aiims-delhi-recruitment-2026-apply-online-for-project-scientist-i-project-tech/index.html",
+      "check": "sitemap_sync",
+      "severity": "non_critical",
+      "reason": "page on disk not in any sitemap: /jobs/aiims-delhi-recruitment-2026-apply-online-for-project-scientist-i-project-tech/"
     }
   ],
   "critical_unfixable": 0,
   "seo_clean": true,
   "notes": [
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
-    "build_sitemaps:   sitemap-pages.xml               126 urls [ok]"
+    "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 48.4
+  "duration_sec": 44.2
 }
