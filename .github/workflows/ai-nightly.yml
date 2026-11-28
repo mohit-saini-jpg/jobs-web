@@ -2,6 +2,11 @@
 # FILE: .github/workflows/ai-nightly.yml
 # PURPOSE: HTML pages seedha read → Groq API → HTML mein AI write
 # JSON touch nahi karta
+#
+# DEPLOY-STORAGE FIX: ai_html_enricher.py ka default tha "har 10 pages pe
+# git push" (PUSH_EVERY_CHECKPOINT=true) = ek run me 15-30 Vercel deployments
+# (har ek ~1.2 GB). Ab PUSH_EVERY_CHECKPOINT='false': poore run me SIRF EK
+# commit + EK push, end me => ek hi Vercel deployment.
 # ══════════════════════════════════════════════════════════════════
 name: 🌙 AI Content Enrichment (Nightly)
 
@@ -26,8 +31,8 @@ on:
   workflow_dispatch:
     inputs:
       run_limit:
-        description: 'Pages per run (default: 300)'
-        default: '300'
+        description: 'Pages per run (default: 800; Groq daily token quota usually stops it earlier)'
+        default: '800'
         required: false
       force:
         description: 'Force re-enrich already done pages'
@@ -75,7 +80,7 @@ jobs:
   enrich:
     needs: guard
     runs-on: ubuntu-latest
-    timeout-minutes: 170       # room for 300 pages @ 3 RPM (~100 min) + 429 waits
+    timeout-minutes: 230       # 800 pages @ 4 RPM (~200 min) worst case + final commit/push headroom
     permissions:
       contents: write
     if: needs.guard.outputs.skip != 'true'
@@ -128,15 +133,29 @@ jobs:
           echo "✅ Groq API key valid"
 
       - name: 🤖 Run AI HTML Enricher
+        # Step cap < job cap, so the 'Final commit' step below (if: always())
+        # still gets time to push whatever was enriched even on a timeout.
+        timeout-minutes: 200
         env:
           GROQ_API_KEY:  ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL:    'openai/gpt-oss-120b'
-          # 3 RPM (20s) keeps us under the free-tier tokens-per-minute limit so we
-          # don't burn the budget in a 429 storm. The script also reads Retry-After
-          # on any 429 and waits exactly, then continues (never skips/stops early).
-          GROQ_SAFE_RPM: '3'
-          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '300' }}
-          DAILY_LIMIT:   '300'
+          # Groq free plan (openai/gpt-oss-120b): 30 RPM, 1,000 req/day, 8K tokens/min,
+          # 200K tokens/day. 4 RPM (15s) stays inside the 8K tokens/min limit; the script
+          # also reads Retry-After on any 429 and waits exactly (page never skipped), and
+          # stops cleanly when the daily token quota is exhausted (retry-after > 150s).
+          GROQ_SAFE_RPM: '4'
+          RUN_LIMIT:     ${{ github.event.inputs.run_limit || '800' }}
+          DAILY_LIMIT:   '800'          # < 1,000 req/day Groq cap, margin for retries
+          # *** THE FIX *** one commit + one push at the very end (=1 Vercel deploy)
+          PUSH_EVERY_CHECKPOINT: 'false'
+          # Quota guard (ai_html_enricher.py): counts tokens from each response and
+          # stops/spills over to gpt-oss-20b (its own separate daily quota) at 88% of
+          # 200K tokens/day per model - i.e. BEFORE Groq ever returns a 429 - then
+          # commits + deploys once.
+          TPD_LIMIT:             '200000'
+          TPD_SAFETY:            '0.88'
+          RPD_RESERVE:           '40'
+          ALLOW_MODEL_SPILLOVER: 'true'
           FORCE_REGEN:   ${{ github.event.inputs.force || 'false' }}
           JOBS_DIR:      'jobs'
         run: |
@@ -148,6 +167,9 @@ jobs:
           fi
 
       - name: 💾 Final commit
+        # always(): even if the enricher step timed out or failed midway, commit and
+        # push the pages already enriched (one single push = one single deployment).
+        if: ${{ always() }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
