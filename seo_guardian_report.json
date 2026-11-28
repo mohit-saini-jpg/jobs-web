@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-28T05:45:12.916555+00:00",
+  "timestamp": "2026-11-28T06:23:02.761813+00:00",
   "mode": "changed-only",
   "dry_run": false,
-  "files_scanned": 17586,
+  "files_scanned": 17720,
   "issues_found_by_check": {
     "jobposting_schema": 396,
-    "expired_job": 57,
     "ai_marker_integrity": 13,
+    "expired_job": 4,
     "sitemap_sync": 200
   },
-  "issues_auto_fixed": 213,
+  "issues_auto_fixed": 161,
   "unfixable": [
     {
       "file": "jobs/aai-apprentice-recruitment-2026-apply-online-for-graduate-diploma-apprentice-p/index.html",
@@ -370,6 +370,12 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Karnataka/560001 [L_DISTRICT]) — manual review"
+    },
+    {
+      "file": "jobs/coimbatore-institute-of-technology-assistant-professor-recruitment-2026-apply-on/index.html",
+      "check": "jobposting_schema",
+      "severity": "non_critical",
+      "reason": "region differs on weak/bad signal (Delhi/110001 -> Tamil Nadu/600001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/concor-general-manager-senior-general-manager-recruitment-2026-apply-offline/index.html",
@@ -816,12 +822,6 @@
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Telangana/500001 [L_DISTRICT]) — manual review"
     },
     {
-      "file": "jobs/iit-indore-technical-assistant-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Madhya Pradesh/462001 [L_DISTRICT]) — manual review"
-    },
-    {
       "file": "jobs/iit-ism-dhanbad-senior-project-associate-recruitment-2026-apply-online/index.html",
       "check": "jobposting_schema",
       "severity": "non_critical",
@@ -1126,12 +1126,6 @@
       "check": "jobposting_schema",
       "severity": "non_critical",
       "reason": "region differs on weak/bad signal (Delhi/110001 -> Chhattisgarh/492001 [L_DISTRICT]) — manual review"
-    },
-    {
-      "file": "jobs/nit-kurukshetra-research-fellow-recruitment-2026-apply-online/index.html",
-      "check": "jobposting_schema",
-      "severity": "non_critical",
-      "reason": "region differs on weak/bad signal (Delhi/110001 -> Haryana/122001 [L_DISTRICT]) — manual review"
     },
     {
       "file": "jobs/nlc-india-apprentice-recruitment-2026-apply-online-for-1067-iti-and-graduate-a/index.html",
@@ -2736,5 +2730,5 @@
     "broken_links:   [ImportantCSC PDF] drive-google-com-dca2e21e",
     "build_sitemaps:   sitemap-pages.xml               127 urls [ok]"
   ],
-  "duration_sec": 50.0
+  "duration_sec": 51.8
 }
