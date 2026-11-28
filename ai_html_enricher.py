@@ -39,6 +39,53 @@ RUN_LIMIT    = int(os.environ.get("RUN_LIMIT", "800"))
 # every push triggers a Vercel deploy, so a 700-page manual run pushing
 # every 10 pages would burn ~70 deploys instead of 1.
 PUSH_EVERY_CHECKPOINT = os.environ.get("PUSH_EVERY_CHECKPOINT", "true").strip().lower() != "false"
+# ── Groq free-plan QUOTA GUARD (proactive: stop BEFORE the quota is hit) ─────
+# Free plan per model (openai/gpt-oss-120b and -20b each have their OWN quota):
+#   30 req/min | 1,000 req/day | 8K tokens/min | 200K tokens/day.
+# Groq's response headers expose requests/day remaining but NOT tokens/day
+# (x-ratelimit-remaining-tokens is per-MINUTE), so tokens/day is counted here
+# from each response's usage block and persisted in .ai_progress_html.json
+# (survives multiple runs the same day). When a model reaches TPD_SAFETY of its
+# daily token quota we spill over to the next model in MODEL_FALLBACK_CHAIN
+# (its own separate quota); when all are near-exhausted we stop cleanly so the
+# single end-of-run commit+push (=1 Vercel deploy) happens BEFORE any 429.
+TPD_LIMIT    = int(os.environ.get("TPD_LIMIT", "200000"))
+TPD_SAFETY   = float(os.environ.get("TPD_SAFETY", "0.88"))      # stop at 88% of quota
+RPD_RESERVE  = int(os.environ.get("RPD_RESERVE", "40"))         # stop if <40 req/day left
+SPILLOVER    = os.environ.get("ALLOW_MODEL_SPILLOVER", "true").strip().lower() != "false"
+_tokens_base = {}      # model -> tokens already used earlier today (from progress file)
+_tokens_run  = {}      # model -> tokens used in THIS run
+_rpd_left    = {}      # model -> requests/day remaining per Groq headers (latest)
+
+def _tokens_used(model):
+    return _tokens_base.get(model, 0) + _tokens_run.get(model, 0)
+
+def _tokens_snapshot():
+    return {m: _tokens_used(m) for m in set(_tokens_base) | set(_tokens_run)}
+
+def _model_ok(model):
+    if _tokens_used(model) >= TPD_LIMIT * TPD_SAFETY:
+        return False
+    rl = _rpd_left.get(model)
+    return not (rl is not None and rl <= RPD_RESERVE)
+
+def pick_model():
+    """Return the model to use now (advancing along the fallback chain when the
+    current one is near its daily quota), or None when every allowed model is
+    near-exhausted. Never moves backwards."""
+    i = _current_model_idx[0]
+    last = len(MODEL_FALLBACK_CHAIN) - 1 if SPILLOVER else _current_model_idx[0]
+    while i <= last:
+        if _model_ok(MODEL_FALLBACK_CHAIN[i]):
+            if i != _current_model_idx[0]:
+                print(f"  🔀 {MODEL_FALLBACK_CHAIN[_current_model_idx[0]]} near daily quota "
+                      f"({_tokens_used(MODEL_FALLBACK_CHAIN[_current_model_idx[0]]):,} tokens) "
+                      f"— switching to {MODEL_FALLBACK_CHAIN[i]} (separate quota)")
+                _current_model_idx[0] = i
+            return MODEL_FALLBACK_CHAIN[i]
+        i += 1
+    return None
+
 FORCE        = "--force" in sys.argv or os.environ.get("FORCE_REGEN","false").lower() == "true"
 DRY_RUN      = "--dry-run" in sys.argv
 JOBS_DIR     = Path(os.environ.get("JOBS_DIR", "jobs"))
@@ -453,6 +500,19 @@ def call_groq(facts: dict, intent: str = "job"):
             )
             with urllib.request.urlopen(req, timeout=45) as resp:
                 raw = json.loads(resp.read().decode())
+                _rl = resp.headers.get("x-ratelimit-remaining-requests")
+            _m = body["model"]
+            try:
+                _u = raw.get("usage") or {}
+                _tokens_run[_m] = _tokens_run.get(_m, 0) + int(
+                    _u.get("total_tokens") or (_u.get("prompt_tokens", 0) + _u.get("completion_tokens", 0)))
+            except Exception:
+                pass
+            try:
+                if _rl is not None:
+                    _rpd_left[_m] = int(float(_rl))
+            except Exception:
+                pass
             content = raw["choices"][0]["message"]["content"]
             parsed = _extract_json(content)
             if parsed is not None:
@@ -889,7 +949,8 @@ def main():
     progress = load_progress()
     today = datetime.now().strftime("%Y-%m-%d")
     if progress.get("date") != today:
-        progress = {"done_slugs": [], "calls_today": 0, "date": today}
+        progress = {"done_slugs": [], "calls_today": 0, "date": today, "tokens_by_model": {}}
+    _tokens_base.update(progress.get("tokens_by_model") or {})
     done_slugs = set(progress["done_slugs"])
     calls_today = progress["calls_today"]
 
@@ -1009,6 +1070,14 @@ def main():
             processed += 1
             continue
 
+        # Quota guard: stop (or spill over to the next model) BEFORE hitting a 429
+        if pick_model() is None:
+            print("\n🛡️  Groq free-plan quota nearly used on all models "
+                  f"({', '.join(f'{m}: {t:,}/{TPD_LIMIT:,} tok' for m, t in _tokens_snapshot().items())})"
+                  " — stopping BEFORE the limit; committing + deploying once now.")
+            rate_stopped = True
+            break
+
         # Call Groq
         result = call_groq(facts, intent)
         if result is RATE_LIMITED:
@@ -1033,7 +1102,8 @@ def main():
         tmp.write_text(new_html, encoding="utf-8")
         tmp.replace(html_path)
 
-        print(f"   ✅ Done — HTML patched")
+        print(f"   ✅ Done — HTML patched   "
+              f"[tokens today: {', '.join(f'{m.split(chr(47))[-1]} {t:,}' for m, t in _tokens_snapshot().items())}]")
 
         processed += 1
         calls_today += 1
@@ -1042,6 +1112,7 @@ def main():
         # Save progress
         progress["done_slugs"] = list(done_slugs)
         progress["calls_today"] = calls_today
+        progress["tokens_by_model"] = _tokens_snapshot()
         save_progress(progress)
 
         # GitHub Actions ka default (unchanged): har 10 pages pe commit +
